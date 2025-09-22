@@ -1,5 +1,4 @@
 {
-  "smeargle": { "id": 235 },
   "bulbasaur": { "id": 1 },
   "ivysaur": { "id": 2 },
   "venusaur": { "id": 3 },
@@ -77,3 +76,4 @@
   "drizzile": { "id": 817 },
   "inteleon": { "id": 818 }
 }
+
