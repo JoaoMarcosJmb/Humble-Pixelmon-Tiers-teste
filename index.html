@@ -1,0 +1,247 @@
+<!DOCTYPE html> 
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Pagina inicial</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="img/mike_anotando2.png">
+  <link rel="shortcut icon" type="image/png" href="img/mike_anotando2.png">
+  <link rel="apple-touch-icon" href="img/mike_anotando2.png">
+
+  <style>
+    :root {
+      --cor-dourado: #d1a720;
+      --cor-fundo: #1a1a1a;
+      --cor-card: rgba(40, 35, 25, 0.85);
+      --cor-texto: #f5f5f5;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
+                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--cor-texto);
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(20, 20, 20, 0.9);
+      border-bottom: 2px solid var(--cor-dourado);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      z-index: 1000;
+      box-sizing: border-box;
+    }
+
+    header h1 {
+      font-size: 1.8rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--cor-dourado);
+    }
+
+    header h1 img {
+      height: 40px;
+      cursor: pointer;
+    }
+
+    /* MENU HAMBURGUER */
+    .menu-toggle {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      width: 30px;
+      height: 22px;
+      cursor: pointer;
+      z-index: 1100;
+    }
+
+    .menu-toggle span {
+      display: block;
+      height: 4px;
+      background: var(--cor-texto);
+      border-radius: 4px;
+      transition: 0.3s;
+    }
+
+    .menu-toggle.active span:nth-child(1) {
+      transform: rotate(45deg) translate(5px, 5px);
+    }
+    .menu-toggle.active span:nth-child(2) {
+      opacity: 0;
+    }
+    .menu-toggle.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(5px, -5px);
+    }
+
+    /* MENU DROPDOWN */
+    nav {
+      position: absolute;
+      top: 65px;
+      right: 10px;
+      background: rgba(30, 25, 20, 0.95);
+      border: 1px solid var(--cor-dourado);
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+      display: none;
+      flex-direction: column;
+      padding: 15px;
+      gap: 12px;
+      z-index: 1200;
+      max-width: calc(100% - 20px);
+      overflow-wrap: break-word;
+    }
+
+    nav.active {
+      display: flex;
+    }
+
+    nav a {
+      color: var(--cor-dourado);
+      text-decoration: none;
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+
+    nav a:hover {
+      color: var(--cor-texto);
+    }
+
+    /* CONTAINER DOS BOTÕES */
+    .container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px;
+      width: 90%;
+      max-width: 1200px;
+      padding: 120px 30px 60px;
+    }
+
+    .card {
+      background: var(--cor-card);
+      border-radius: 20px;
+      padding: 30px 20px;
+      text-align: center;
+      box-shadow: 0 6px 16px rgba(0,0,0,0.7);
+      transition: transform 0.25s, box-shadow 0.25s;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--cor-dourado);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .card:hover {
+      transform: translateY(-10px) scale(1.03);
+      box-shadow: 0 10px 25px rgba(209, 167, 32, 0.4);
+    }
+
+    .card img {
+      width: 160px;
+      height: auto;
+      border-radius: 12px;
+      background-color: var(--cor-card);
+    }
+
+    .card h2 {
+      margin: 0;
+      font-size: 2rem;
+      color: var(--cor-dourado);
+    }
+
+    .card p {
+      margin: 0;
+      font-size: 1.1rem;
+      color: var(--cor-texto);
+    }
+
+    /* RESPONSIVO PARA CELULAR */
+    @media (max-width: 768px) {
+      .container {
+        grid-template-columns: 1fr;
+      }
+      .card img {
+        width: 120px;
+      }
+      .card h2 {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>
+      <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
+      Selecione Sua Versão
+    </h1>
+
+    <!-- MENU HAMBURGUER -->
+    <div class="menu-toggle" id="menuBtn">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </header>
+
+  <!-- MENU DROPDOWN -->
+  <nav id="dropdownMenu">
+    <a href="index.html">🏠 Início</a>
+    <a href="https://www.humblepixelmon.com.br">🌐 Site Oficial</a>
+    <a href="Tiers_1.12.html">🗡️ Tiers 1.12</a>
+    <a href="Tiers_1.16.html">🛡️ Tiers 1.16</a>
+    <a href="notas.html">📝 Notas de Atualização</a>
+  </nav>
+
+  <div class="container">
+    <a href="Tiers_1.12.html" class="card">
+      <img src="img/Monomon.png" alt="1.12">
+      <h2>1.12</h2>
+      <p>Estratégias clássicas e batalhas intensas da 8ª Geração.</p>
+    </a>
+
+    <a href="Tiers_1.16.html" class="card">
+      <img src="img/Starters.png" alt="1.16">
+      <h2>1.16</h2>
+      <p>Paradoxos em destaque e combates estratégicos da 9ª Geração.</p>
+    </a>
+  </div>
+
+  <script>
+    const menuBtn = document.getElementById("menuBtn");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+
+    menuBtn.addEventListener("click", () => {
+      dropdownMenu.classList.toggle("active");
+      menuBtn.classList.toggle("active");
+    });
+
+    document.addEventListener("click", function(e) {
+      if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+        dropdownMenu.classList.remove("active");
+        menuBtn.classList.remove("active");
+      }
+    });
+  </script>
+</body>
+</html>
