@@ -18,7 +18,6 @@
       --cor-texto: #f5f5f5;
     }
 
-    /* ---------- Reset / Body ---------- */
     * { box-sizing: border-box; }
     html,body { height: 100%; margin: 0; padding: 0; }
     body {
@@ -31,7 +30,6 @@
       -moz-osx-font-smoothing: grayscale;
     }
 
-    /* ---------- Header ---------- */
     header {
       position: fixed;
       top: 0;
@@ -58,7 +56,6 @@
     }
     header h1 img { height: 40px; cursor: pointer; display: block; }
 
-    /* ---------- Menu hambúrguer ---------- */
     .menu-toggle {
       position: relative;
       display: flex;
@@ -84,7 +81,6 @@
       transform: rotate(-45deg) translate(5px, -5px);
     }
 
-    /* ---------- Dropdown ---------- */
     nav {
       position: absolute;
       top: 65px;
@@ -109,9 +105,8 @@
     }
     nav a:hover { color: var(--cor-texto); }
 
-    /* ---------- Container dos cards (centralizado) ---------- */
     .wrap {
-      padding-top: 120px; /* evita sobreposição com header */
+      padding-top: 120px;
       display: flex;
       justify-content: center;
     }
@@ -126,28 +121,26 @@
       margin: 0 auto;
     }
 
-    /* ---------- Cartões travados (580 x 220) ---------- */
     .card {
       position: relative;
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      width: 580px;     /* largura fixa exata */
-      height: 220px;    /* altura fixa exata */
+      width: 580px;
+      height: 220px;
       border-radius: 20px;
       overflow: hidden;
       box-shadow: 0 6px 16px rgba(0,0,0,0.7);
       transition: transform .25s, box-shadow .25s;
       cursor: pointer;
       text-decoration: none;
-      background-color: var(--cor-card); /* mantém tom caso imagem falhe */
+      background-color: var(--cor-card);
       background-size: cover;
       background-position: center;
       color: var(--cor-texto);
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* camada escura geral pra preservar leitura */
     .card::before {
       content: "";
       position: absolute;
@@ -156,9 +149,8 @@
       z-index: 0;
     }
 
-    /* overlay degradê na parte de baixo (onde fica o texto) */
     .card .overlay {
-      position: relative; /* z-index acima do ::before */
+      position: relative;
       z-index: 1;
       width: 100%;
       padding: 14px 18px;
@@ -180,10 +172,7 @@
     }
 
     .card:hover { transform: translateY(-8px) scale(1.01); box-shadow: 0 12px 30px rgba(0,0,0,0.85); }
-
-    /* acessibilidade de foco */
     .card:focus { outline: 3px solid rgba(209,167,32,0.18); outline-offset: 2px; }
-
   </style>
 </head>
 <body>
@@ -217,7 +206,8 @@
         </div>
       </a>
 
-      <a href="Tiers_1.16.html" class="card" style="background-image: url('img/1.16.2.png');" aria-label="Versão 1.16">
+      <!-- Card 1.16 com easter egg -->
+      <a href="Tiers_1.16.html" id="card116" class="card" style="background-image: url('img/1.16.png');" aria-label="Versão 1.16">
         <div class="overlay">
           <h2>1.16</h2>
           <p>Paradoxos em destaque e combates estratégicos da 9ª Geração.</p>
@@ -237,7 +227,12 @@
     }
 
     menuBtn.addEventListener("click", toggleMenu);
-    menuBtn.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleMenu(); } });
+    menuBtn.addEventListener("keydown", (e) => { 
+      if (e.key === "Enter" || e.key === " ") { 
+        e.preventDefault(); 
+        toggleMenu(); 
+      } 
+    });
 
     document.addEventListener("click", function(e) {
       if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
@@ -246,6 +241,16 @@
         dropdownMenu.setAttribute("aria-hidden", "true");
       }
     });
+
+    // -------- Easter Egg no card 1.16 --------
+    const card116 = document.getElementById("card116");
+    if (card116) {
+      // chance de 2% de mostrar a imagem alternativa
+      const chance = Math.random();
+      if (chance < 0.05) {
+        card116.style.backgroundImage = "url('img/1.16.2.png')";
+      }
+    }
   </script>
 </body>
 </html>
