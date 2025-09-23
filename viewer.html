@@ -5,7 +5,7 @@
 <title>Carregando...</title>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-<!-- FAVICON ) -->
+<!-- FAVICON -->
 <link rel="icon" type="image/png" href="img/mike_anotando2.png">
 <link rel="shortcut icon" type="image/png" href="img/mike_anotando2.png">
 <link rel="apple-touch-icon" href="img/mike_anotando2.png">
@@ -234,15 +234,33 @@ function prettifyKey(key){
 
 function normalizeName(key){
   let name = key.toLowerCase().replace(/\s+/g,'-');
-  const keepForms=["lycanroc-dusk","lycanroc-midnight","landorus-therian","thundurus-therian","tornadus-therian","urshifu-rapid-strike","urshifu-single-strike"];
+
+  const keepForms=[
+    "lycanroc-dusk","lycanroc-midnight",
+    "landorus-therian","thundurus-therian","tornadus-therian",
+    "urshifu-rapid-strike","urshifu-single-strike"
+  ];
+
   if(keepForms.includes(name)) return name;
+
+  // mantém mega evoluções
+  if(name.endsWith("-mega") || name.endsWith("-mega-x") || name.endsWith("-mega-y")) return name;
+
   if(name.includes("-alola")||name.includes("-galar")||name.includes("-hisui")||name.includes("-paldea")) return name;
   if(name.startsWith("oricorio")) return "oricorio";
   if(name.startsWith("arceus-")) return "arceus";
   if(name==="giratina-origin") return "giratina";
-  if(name.endsWith("-mega")) return name.replace("-mega","");
-  const removeSuffixes=["-origin","-therian","-resolute","-pirouette","-eternal","-blade","-base","-average","-school","-dusk","-dawn","-midday","-ice","-fire","-water","-grass","-rock","-fighting","-flying","-ghost","-dark","-fairy","-dragon","-bug","-ground","-poison","-psychic","-steel","-electric","-normal"];
-  for(const suf of removeSuffixes) if(name.endsWith(suf)) return name.replace(suf,"");
+
+  const removeSuffixes=[
+    "-origin","-therian","-resolute","-pirouette","-eternal","-blade","-base",
+    "-average","-school","-dusk","-dawn","-midday",
+    "-ice","-fire","-water","-grass","-rock","-fighting",
+    "-flying","-ghost","-dark","-fairy","-dragon","-bug",
+    "-ground","-poison","-psychic","-steel","-electric","-normal"
+  ];
+  for(const suf of removeSuffixes)
+    if(name.endsWith(suf)) return name.replace(suf,"");
+
   return name;
 }
 
@@ -254,32 +272,26 @@ document.addEventListener('DOMContentLoaded', async ()=> {
   const params = new URLSearchParams(window.location.search);
   const file = params.get('file') || 'allowlist_Starters.json';
 
-  // Nome da pasta (versão)
   let version = file.includes('/') ? file.split('/')[0] : 'SemVersao';
   version = version.replace(/^tiers_/, '');
 
-  // Nome da tier
   let tierName = file.replace(/^.*\//,'')
                      .replace('.json','')
                      .replace('allowlist_','')
                      .replace(/_/g,' ');
 
-  // Atualiza título e header
   const fullTitle = `${tierName} (${version})`;
   tierTitleHeader.textContent = fullTitle;
   document.title = fullTitle;
 
-  // Criadores por tier (mapeie conforme quiser)
   const creators = {
     "Starters": "Jacksonflz",
     "Monomon": "DD4rk",
     "Only Smeargle": "FrysendeStorm"
   };
 
-  // Mostrar criador (tenta remoto -> local -> placeholder)
   if (creators[tierName]) {
     const nick = creators[tierName];
-    // exemplo de URL remota (ajuste se tiver outro repositório)
     const remoteImg = `https://raw.githubusercontent.com/joaomarcosjmb/Humble-Pixelmon-Tiers/main/img/Criadores/${nick}.png`;
     const localImg = `img/Criadores/${nick}.png`;
     const placeholderData = 'data:image/svg+xml;utf8,'+encodeURIComponent(
@@ -300,15 +312,14 @@ document.addEventListener('DOMContentLoaded', async ()=> {
     creatorImg.onerror = function(){
       if(!triedLocal){
         triedLocal = true;
-        this.src = localImg; // tenta local
+        this.src = localImg;
       } else {
         this.onerror = null;
-        this.src = placeholderData; // placeholder final
+        this.src = placeholderData;
       }
     };
   }
 
-  // Fetch dos pokémons (espera JSON leve - só ids ou objeto com id)
   try{
     const res = await fetch(file);
     if(!res.ok) throw new Error('Arquivo não encontrado: '+res.statusText);
@@ -321,19 +332,15 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       const smogonName = normalizeName(key);
       const smogonUrl = `https://www.smogon.com/dex/ss/pokemon/${smogonName}`;
 
-      // aceita { "charmander": 4 } ou { "charmander": { "id": 4, "sprite": "..." } }
       const id = (typeof info === "number") ? info : (info && typeof info.id === "number" ? info.id : null);
       const spriteFromJson = info && info.sprite ? info.sprite : null;
 
-      // monta a URL: prioridade -> id gerado -> sprite do json -> placeholder
       let spriteUrl = null;
       if(id){
         spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
       } else if(spriteFromJson){
         spriteUrl = spriteFromJson;
       } else {
-        // sem id nem sprite: tentamos uma URL por nome (pode falhar) — fallback final é placeholder SVG
-        // OBS: essa URL por nome pode não existir para todos os casos; placeholder garantido abaixo
         spriteUrl = `https://img.pokemondb.net/artwork/large/${encodeURIComponent(normalizeName(key))}.jpg`;
       }
 
@@ -347,8 +354,6 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       img.alt=namePretty;
       img.loading='lazy';
       img.src=spriteUrl;
-
-      // Fallback único (SVG embutido)
       img.onerror=function(){
         this.onerror=null;
         this.src='data:image/svg+xml;utf8,'+encodeURIComponent(
@@ -375,6 +380,3 @@ document.addEventListener('DOMContentLoaded', async ()=> {
 </script>
 </body>
 </html>
-
-
-
