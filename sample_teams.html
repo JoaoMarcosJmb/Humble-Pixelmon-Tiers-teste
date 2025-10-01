@@ -50,6 +50,12 @@
 
     header h1 img { height: 40px; cursor:pointer; }
 
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
     .menu-toggle {
       display: flex; flex-direction: column; justify-content: space-between;
       width: 30px; height: 22px; cursor:pointer; z-index:1100;
@@ -62,7 +68,9 @@
     .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
 
     nav {
-      position: absolute; top:65px; right:10px;
+      position: absolute; 
+      top: 100%; 
+      right: 20px;
       background: rgba(30,25,20,0.95);
       border:1px solid var(--cor-dourado);
       border-radius:12px;
@@ -76,7 +84,7 @@
     nav a:hover { color: var(--cor-texto); }
 
     main {
-      padding:120px 20px 20px 20px;
+      padding: calc(70px + 30px) 20px 20px 20px;
       max-width:1200px;
       margin:auto;
       box-sizing:border-box;
@@ -86,7 +94,6 @@
     .auth-buttons {
       display:flex;
       gap:10px;
-      margin-bottom:10px;
     }
 
     button {
@@ -98,7 +105,6 @@
       display:flex;
       align-items:center;
       gap:10px;
-      margin-bottom:10px;
     }
     .user-info img { width:32px; height:32px; border-radius:50%; }
 
@@ -160,20 +166,24 @@
     .popup-content {
       background:#fff; color:#000; padding:20px; border-radius:10px; width:300px; text-align:center;
     }
+    .popup-content button { margin-top:8px; }
 
     @media (max-width:500px){
       header h1{ font-size:1.3rem; }
       nav{ right:5px; left:5px; }
+      .header-right{ flex-direction:column; align-items:flex-end; }
     }
   </style>
 </head>
 <body>
   <header>
     <h1><a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a>Humble</h1>
-    <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
-    <div class="auth-buttons" id="authArea">
-      <button id="loginBtn">Login</button>
-      <button id="registerBtn">Cadastrar</button>
+    <div class="header-right">
+      <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
+      <div class="auth-buttons" id="authArea">
+        <button id="loginBtn">Login</button>
+        <button id="registerBtn">Cadastrar</button>
+      </div>
     </div>
   </header>
 
