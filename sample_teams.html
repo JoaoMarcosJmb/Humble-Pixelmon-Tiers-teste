@@ -30,6 +30,13 @@
       border:1px solid var(--cor-dourado); padding:10px; margin-bottom:15px;
       border-radius:8px; background:rgba(0,0,0,0.4);
     }
+    .stat-row {
+      display:flex; align-items:center; gap:10px; margin-bottom:5px;
+    }
+    .stat-row label { width:40px; }
+    .stat-row input[type=number] {
+      width:60px; padding:3px;
+    }
     #timesContainer .time-card {
       border:1px solid var(--cor-dourado); padding:15px;
       margin-bottom:20px; border-radius:10px; background:rgba(0,0,0,0.5);
@@ -50,7 +57,6 @@
     }
     .user-info { display:flex; align-items:center; gap:10px; }
     .user-info img { width:32px; height:32px; border-radius:50%; }
-    /* filtro */
     #tierFilter { margin-bottom:20px; padding:5px; border-radius:6px; }
   </style>
 </head>
@@ -105,7 +111,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider,
-             createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile }
+             createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut }
              from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
     import { getDatabase, ref, set, push, onValue, query, orderByChild }
              from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
@@ -123,85 +129,34 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    const authArea = document.getElementById("authArea");
     const teamBuilder = document.getElementById("teamBuilder");
-    const authPopup = document.getElementById("authPopup");
-    const popupTitle = document.getElementById("popupTitle");
-    const popupAction = document.getElementById("popupAction");
-    const emailInput = document.getElementById("emailInput");
-    const passInput = document.getElementById("passInput");
-    const nickInput = document.getElementById("nickInput");
-    const googleLogin = document.getElementById("googleLogin");
-    const tierFilter = document.getElementById("tierFilter");
-
-    let isRegister = false;
-
-    // menu
-    document.getElementById("menuBtn").addEventListener("click", () => {
-      document.getElementById("dropdownMenu").classList.toggle("show");
-    });
-
-    // login / cadastro
-    document.getElementById("loginBtn").onclick = () => {
-      isRegister = false; popupTitle.textContent = "Login";
-      nickInput.style.display="none"; authPopup.style.display="flex";
-    };
-    document.getElementById("registerBtn").onclick = () => {
-      isRegister = true; popupTitle.textContent = "Cadastrar";
-      nickInput.style.display="block"; authPopup.style.display="flex";
-    };
-    popupAction.onclick = async () => {
-      try {
-        if (isRegister) {
-          const userCred = await createUserWithEmailAndPassword(auth,emailInput.value,passInput.value);
-          await updateProfile(userCred.user,{ displayName:nickInput.value });
-          await set(ref(db,"users/"+userCred.user.uid),{ displayName:nickInput.value, email:emailInput.value, createdAt:Date.now() });
-        } else {
-          await signInWithEmailAndPassword(auth,emailInput.value,passInput.value);
-        }
-        authPopup.style.display="none";
-      } catch(err){ alert("Erro: "+err.message); }
-    };
-    googleLogin.onclick = async () => {
-      try {
-        const provider = new GoogleAuthProvider();
-        const result = await signInWithPopup(auth,provider);
-        const user = result.user;
-        if(!user.displayName){ alert("Defina nickname no cadastro via Email!"); return; }
-        await set(ref(db,"users/"+user.uid),{ displayName:user.displayName,email:user.email,createdAt:Date.now() });
-        authPopup.style.display="none";
-      } catch(err){ alert("Erro Google: "+err.message); }
-    };
-
-    // auth state
-    onAuthStateChanged(auth,(user)=>{
-      if(user){
-        authArea.innerHTML = `
-          <div class="user-info">
-            <img src="${user.photoURL || 'https://i.pravatar.cc/150'}">
-            <span>${user.displayName||user.email}</span>
-            <button onclick="import('https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js').then(m=>m.getAuth().signOut())">Sair</button>
-          </div>`;
-        teamBuilder.style.display="block";
-      } else {
-        authArea.innerHTML = `
-          <button id="loginBtn">Login</button>
-          <button id="registerBtn">Cadastrar</button>`;
-        teamBuilder.style.display="none";
-        document.getElementById("loginBtn").onclick=()=>{isRegister=false;popupTitle.textContent="Login";nickInput.style.display="none";authPopup.style.display="flex";}
-        document.getElementById("registerBtn").onclick=()=>{isRegister=true;popupTitle.textContent="Cadastrar";nickInput.style.display="block";authPopup.style.display="flex";}
-      }
-    });
-
-    // criar time
     const pokemonList = document.getElementById("pokemonList");
     const addPokemonBtn = document.getElementById("addPokemon");
-    let pokeCount=0;
+    const tierFilter = document.getElementById("tierFilter");
+
     const natures=["Hardy","Lonely","Brave","Adamant","Naughty","Bold","Docile","Relaxed","Impish","Lax","Modest","Mild","Quiet","Bashful","Rash","Calm","Gentle","Sassy","Careful","Quirky","Timid","Hasty","Serious","Jolly","Naive"];
     const tiers=["LC","Monotype","NU","National Dex","National Dex Monotype","National Dex UU","OU","PU","RU","Ubers","UU","ZU","National Dex RU","Monomon","Starter League","Only Smeargle","National Dex Ubers","National Dex AG"];
-    // preencher select filtro
-    tiers.forEach(t=>{ const opt=document.createElement("option"); opt.value=t; opt.textContent=t; tierFilter.appendChild(opt); });
 
+    tiers.forEach(t=>{ let o=document.createElement("option"); o.value=t;o.textContent=t;tierFilter.appendChild(o); });
+
+    // Criar campo de stat (slider + número)
+    function createStatRow(stat, type){
+      const max = type==="iv"?31:252;
+      const row=document.createElement("div");
+      row.className="stat-row";
+      row.innerHTML=`
+        <label>${stat}</label>
+        <input type="range" min="0" max="${max}" value="0" class="${type}-slider" data-stat="${stat}">
+        <input type="number" min="0" max="${max}" value="0" class="${type}-num" data-stat="${stat}">
+      `;
+      const slider=row.querySelector("input[type=range]");
+      const num=row.querySelector("input[type=number]");
+      slider.oninput=()=>num.value=slider.value;
+      num.oninput=()=>slider.value=num.value;
+      return row;
+    }
+
+    let pokeCount=0;
     addPokemonBtn.onclick=()=>{
       if(pokeCount>=6) return alert("Máximo 6 Pokémons!");
       pokeCount++;
@@ -213,10 +168,20 @@
         <select name="tier">${tiers.map(t=>`<option>${t}</option>`).join("")}</select>
         <select name="nature">${natures.map(n=>`<option>${n}</option>`).join("")}</select>
         <input placeholder="Habilidade" name="ability">
-        <input placeholder="Moves (vírgula)" name="moves">`;
+        <input placeholder="Moves (vírgula)" name="moves">
+        <h4>IVs</h4>
+      `;
+      ["HP","Atk","Def","SpA","SpD","Spe"].forEach(stat=>{
+        div.appendChild(createStatRow(stat,"iv"));
+      });
+      div.innerHTML+=`<h4>EVs</h4>`;
+      ["HP","Atk","Def","SpA","SpD","Spe"].forEach(stat=>{
+        div.appendChild(createStatRow(stat,"ev"));
+      });
       pokemonList.appendChild(div);
     };
 
+    // salvar time
     document.getElementById("teamForm").onsubmit=async(e)=>{
       e.preventDefault();
       const user=auth.currentUser;
@@ -229,7 +194,9 @@
         const nature=slot.querySelector("select[name=nature]").value;
         const ability=slot.querySelector("input[name=ability]").value;
         const moves=slot.querySelector("input[name=moves]").value.split(",").map(m=>m.trim()).filter(m=>m);
-        teamData.pokemon[idx]={name,tier,nature,ability,moves};
+        const ivs={}; slot.querySelectorAll(".iv-num").forEach(inp=>ivs[inp.dataset.stat]=parseInt(inp.value)||0);
+        const evs={}; slot.querySelectorAll(".ev-num").forEach(inp=>evs[inp.dataset.stat]=parseInt(inp.value)||0);
+        teamData.pokemon[idx]={name,tier,nature,ability,moves,ivs,evs};
       });
       try{
         await set(teamRef,teamData);
@@ -252,7 +219,6 @@
       const filter=tierFilter.value;
       timesContainer.innerHTML="";
       allTeams.forEach(team=>{
-        // filtrar pelo menos 1 poke na tier escolhida
         if(filter!=="all" && !Object.values(team.pokemon).some(p=>p.tier===filter)) return;
         const card=document.createElement("div"); card.className="time-card";
         const date=new Date(team.createdAt).toLocaleString();
@@ -264,6 +230,8 @@
             <p><b>Nature:</b> ${poke.nature||"N/A"}</p>
             <p><b>Ability:</b> ${poke.ability||"N/A"}</p>
             <p><b>Moves:</b> ${(poke.moves||[]).join(", ")}</p>
+            <p><b>IVs:</b> ${JSON.stringify(poke.ivs||{})}</p>
+            <p><b>EVs:</b> ${JSON.stringify(poke.evs||{})}</p>
           </div>`;
         });
         const likesCount=team.likes?Object.keys(team.likes).length:0;
@@ -286,6 +254,64 @@
         };
       });
     }
+
+    // login / cadastro
+    const authPopup=document.getElementById("authPopup");
+    const popupTitle=document.getElementById("popupTitle");
+    const popupAction=document.getElementById("popupAction");
+    const emailInput=document.getElementById("emailInput");
+    const passInput=document.getElementById("passInput");
+    const nickInput=document.getElementById("nickInput");
+    const googleLogin=document.getElementById("googleLogin");
+    const authArea=document.getElementById("authArea");
+
+    let isRegister=false;
+    document.getElementById("loginBtn").onclick=()=>{isRegister=false;popupTitle.textContent="Login";nickInput.style.display="none";authPopup.style.display="flex";};
+    document.getElementById("registerBtn").onclick=()=>{isRegister=true;popupTitle.textContent="Cadastrar";nickInput.style.display="block";authPopup.style.display="flex";};
+
+    popupAction.onclick=async()=>{
+      try{
+        if(isRegister){
+          const userCred=await createUserWithEmailAndPassword(auth,emailInput.value,passInput.value);
+          await updateProfile(userCred.user,{displayName:nickInput.value});
+          await set(ref(db,"users/"+userCred.user.uid),{ displayName:nickInput.value, email:emailInput.value, createdAt:Date.now() });
+        } else {
+          await signInWithEmailAndPassword(auth,emailInput.value,passInput.value);
+        }
+        authPopup.style.display="none";
+      }catch(err){alert("Erro: "+err.message);}
+    };
+
+    googleLogin.onclick=async()=>{
+      try{
+        const provider=new GoogleAuthProvider();
+        const result=await signInWithPopup(auth,provider);
+        const user=result.user;
+        await set(ref(db,"users/"+user.uid),{ displayName:user.displayName||user.email, email:user.email, createdAt:Date.now() });
+        authPopup.style.display="none";
+      }catch(err){alert("Erro Google: "+err.message);}
+    };
+
+    onAuthStateChanged(auth,(user)=>{
+      if(user){
+        authArea.innerHTML=`
+          <div class="user-info">
+            <img src="${user.photoURL || 'https://i.pravatar.cc/150'}">
+            <span>${user.displayName||user.email}</span>
+            <button id="logoutBtn">Sair</button>
+          </div>`;
+        document.getElementById("logoutBtn").onclick=()=>signOut(auth);
+        teamBuilder.style.display="block";
+      } else {
+        authArea.innerHTML=`<button id="loginBtn">Login</button><button id="registerBtn">Cadastrar</button>`;
+        document.getElementById("loginBtn").onclick=()=>{isRegister=false;popupTitle.textContent="Login";nickInput.style.display="none";authPopup.style.display="flex";};
+        document.getElementById("registerBtn").onclick=()=>{isRegister=true;popupTitle.textContent="Cadastrar";nickInput.style.display="block";authPopup.style.display="flex";};
+        teamBuilder.style.display="none";
+      }
+    });
+
+    // menu toggle
+    document.getElementById("menuBtn").onclick=()=>document.getElementById("dropdownMenu").classList.toggle("show");
   </script>
 </body>
 </html>
