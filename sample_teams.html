@@ -1,740 +1,291 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Humble — Team Builder</title>
-
-<style>
-  :root{
-    --gold: #d1a720;
-    --accent: #f1c53b;
-    --bg: #0f0f0f;
-    --card: rgba(30,25,20,0.95);
-    --muted: #bdbdbd;
-    --text: #eee;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    font-family:"Segoe UI",Arial,Helvetica,sans-serif;
-    background:
-      linear-gradient(135deg, rgba(8,8,8,0.85), rgba(26,22,16,0.85)),
-      url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
-    background-size: cover;
-    color:var(--text);
-    -webkit-font-smoothing:antialiased;
-  }
-
-  /* Header */
-  header{
-    position:fixed; top:0; left:0; right:0; height:72px;
-    display:flex; align-items:center; justify-content:space-between; padding:12px 18px;
-    background: rgba(12,12,12,0.96); border-bottom:2px solid var(--gold); z-index:1200;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.6);
-  }
-  header h1{ display:flex; align-items:center; gap:12px; margin:0; color:var(--gold); font-size:1.35rem;}
-  header h1 img{ height:36px; cursor:pointer; }
-
-  .header-right{ display:flex; align-items:center; gap:10px; }
-  .btn{ background:transparent; border:1px solid var(--gold); color:var(--gold); padding:8px 10px; border-radius:8px; cursor:pointer; }
-  .btn:hover{ background:var(--gold); color:#111; }
-
-  /* user info (avatar + nick) */
-  .user-info{ display:none; align-items:center; gap:8px; color:var(--text); }
-  .user-info img{ width:36px; height:36px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.06); }
-  .user-info .nick{ color:var(--gold); font-weight:700; }
-
-  /* Hamburger */
-  .menu-toggle{ display:flex; flex-direction:column; justify-content:space-between; width:30px; height:22px; cursor:pointer; }
-  .menu-toggle span{ height:4px; background:var(--text); border-radius:4px; transition:0.25s; display:block; }
-  .menu-toggle.active span:nth-child(1){ transform: rotate(45deg) translate(5px,5px); }
-  .menu-toggle.active span:nth-child(2){ opacity:0; }
-  .menu-toggle.active span:nth-child(3){ transform: rotate(-45deg) translate(5px,-5px); }
-
-  nav#dropdownMenu{
-    position:absolute; top:74px; right:10px; display:none; flex-direction:column;
-    background: rgba(26,20,16,0.98); border:1px solid var(--gold); border-radius:12px; padding:12px; gap:8px; min-width:220px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-  }
-  nav#dropdownMenu.active{ display:flex; }
-  nav#dropdownMenu a{ color:var(--gold); text-decoration:none; padding:6px 8px; border-radius:8px; display:block; }
-  nav#dropdownMenu a:hover{ color:#fff; background: rgba(255,215,0,0.06); }
-
-  main{ padding:110px 18px 40px; max-width:1200px; margin:0 auto; }
-
-  /* Create button fixed to right */
-  #criarTimeBtn{
-    position:fixed; top:86px; right:20px; z-index:1150;
-    background:var(--gold); color:#111; border:none; padding:10px 16px; border-radius:10px; cursor:pointer;
-    box-shadow:0 6px 18px rgba(209,167,32,0.12);
-  }
-  #criarTimeBtn:hover{ background:var(--accent); }
-
-  /* Card */
-  .time-card{ background: rgba(18,16,14,0.85); border:1px solid var(--gold); padding:12px; border-radius:10px; margin-bottom:12px; }
-
-  /* Modal base */
-  .modal{ display:none; position:fixed; inset:0; background: rgba(0,0,0,0.72); justify-content:center; align-items:center; z-index:2000; padding:18px; }
-  .modal.open{ display:flex; }
-  .modal-panel{ width:100%; max-width:980px; background:var(--card); border-radius:12px; padding:18px; border:2px solid var(--gold); color:var(--text); max-height:92vh; overflow:auto; }
-
-  /* Auth */
-  .auth-tabs{ display:flex; gap:8px; margin-bottom:12px; }
-  .auth-tabs button{ flex:1; padding:10px; border-radius:8px; background:#222; color:#ddd; border:1px solid transparent; cursor:pointer; }
-  .auth-tabs button.active{ background:var(--gold); color:#111; border-color:var(--gold); }
-  .auth-row{ display:flex; gap:8px; margin-bottom:8px; }
-  .auth-row input{ flex:1; padding:10px; border-radius:8px; border:1px solid #333; background:#111; color:var(--text); }
-  .auth-actions{ display:flex; gap:8px; margin-top:6px; }
-  .error{ color:#ff8b8b; font-size:0.95rem; min-height:1.1em; }
-
-  /* Team builder */
-  .builder-controls{ display:flex; gap:12px; align-items:center; margin-top:10px; flex-wrap:wrap; }
-  #pokemonList{ display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; margin-top:12px; }
-
-  .poke-card{ background:linear-gradient(180deg, rgba(12,12,12,0.86), rgba(20,20,20,0.9)); border:1px solid var(--gold); padding:12px; border-radius:10px; display:flex; flex-direction:column; gap:8px; }
-  .poke-header{ display:flex; justify-content:space-between; align-items:center; }
-  .poke-header h4{ margin:0; color:var(--gold); }
-  .btn-small{ padding:6px 8px; border-radius:8px; border:1px solid var(--gold); background:transparent; color:var(--gold); cursor:pointer; }
-  .btn-small:hover{ background:var(--gold); color:#111; }
-
-  .row{ display:flex; gap:8px; align-items:center; }
-  .label{ width:110px; color:var(--muted); }
-  input[type="text"], select{ flex:1; padding:8px; border-radius:8px; border:1px solid #333; background:#111; color:var(--text); }
-
-  /* IV / EV custom slider visuals */
-  .stat{ display:flex; gap:8px; align-items:center; }
-  .stat label{ width:48px; color:var(--muted); }
-  .stat input[type="range"]{ -webkit-appearance:none; appearance:none; height:8px; background:rgba(255,255,255,0.06); border-radius:8px; outline:none; }
-  .stat input[type="range"]::-webkit-slider-thumb{ -webkit-appearance:none; width:16px; height:16px; border-radius:50%; background:var(--gold); border:2px solid rgba(0,0,0,0.4); cursor:pointer; box-shadow:0 2px 6px rgba(0,0,0,0.4);}
-  .stat input[type="range"]::-moz-range-thumb{ width:16px; height:16px; border-radius:50%; background:var(--gold); border:2px solid rgba(0,0,0,0.4); cursor:pointer;}
-  .val{ display:inline-block; width:44px; text-align:right; color:var(--gold); font-weight:700; }
-
-  .progress{ height:10px; background:rgba(255,255,255,0.06); border-radius:8px; overflow:hidden; margin-top:8px; }
-  .progress .bar{ height:100%; background:var(--gold); width:0%; transition:0.18s ease; }
-
-  .ev-warning{ color:#ff9999; font-size:0.9rem; min-height:1.1em; }
-
-  @media (max-width:760px){
-    .label{ width:95px; }
-    header h1{ font-size:1.05rem; }
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Builder - Humble Pixelmon</title>
+  <style>
+    :root {
+      --cor-dourado: #d4af37;
+      --cor-preto: #121212;
+    }
+    body { font-family: Arial, sans-serif; background: var(--cor-preto); color: #fff; margin:0; }
+    header {
+      background: var(--cor-dourado); color:#000; padding:10px 20px;
+      display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:1000;
+    }
+    .menu-toggle { cursor:pointer; }
+    .menu-toggle span { display:block; width:25px; height:3px; background:#000; margin:5px 0; }
+    nav { display:none; flex-direction:column; background:var(--cor-preto); padding:10px; position:absolute; top:60px; left:0; width:200px; }
+    nav a { color:var(--cor-dourado); margin:5px 0; text-decoration:none; }
+    nav.show { display:flex; }
+    .auth-buttons { display:flex; gap:10px; }
+    button {
+      background:var(--cor-dourado); color:#000; border:none;
+      padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold;
+    }
+    main { padding:20px; }
+    #teamBuilder { display:none; margin-bottom:20px; }
+    .pokemon-slot {
+      border:1px solid var(--cor-dourado); padding:10px; margin-bottom:15px;
+      border-radius:8px; background:rgba(0,0,0,0.4);
+    }
+    #timesContainer .time-card {
+      border:1px solid var(--cor-dourado); padding:15px;
+      margin-bottom:20px; border-radius:10px; background:rgba(0,0,0,0.5);
+    }
+    .poke-slot { margin-bottom:12px; padding:8px; border-radius:6px; background:rgba(0,0,0,0.4); }
+    .poke-slot h4 { color:var(--cor-dourado); margin:0 0 5px; }
+    .like-btn {
+      background:none; border:none; cursor:pointer; color:var(--cor-dourado);
+      font-size:16px; margin-top:10px; display:flex; align-items:center; gap:5px;
+    }
+    .like-btn.liked { color:red; font-weight:bold; }
+    .popup {
+      display:none; position:fixed; top:0; left:0; right:0; bottom:0;
+      background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:2000;
+    }
+    .popup-content {
+      background:#fff; color:#000; padding:20px; border-radius:10px; width:300px; text-align:center;
+    }
+    .user-info { display:flex; align-items:center; gap:10px; }
+    .user-info img { width:32px; height:32px; border-radius:50%; }
+    /* filtro */
+    #tierFilter { margin-bottom:20px; padding:5px; border-radius:6px; }
+  </style>
 </head>
 <body>
-
-  <!-- HEADER -->
   <header>
-    <h1>
-      <a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a>
-      Humble
-    </h1>
-
-    <div class="header-right">
-      <div id="userArea" class="user-info">
-        <img id="userPhoto" src="" alt="avatar">
-        <div class="nick" id="userNick"></div>
-      </div>
-
-      <button id="loginBtn" class="btn" type="button">Login</button>
-      <button id="signupBtn" class="btn" type="button">Cadastrar</button>
-
-      <div class="menu-toggle" id="menuBtn" aria-label="menu"><span></span><span></span><span></span></div>
-    </div>
-
-    <nav id="dropdownMenu" aria-hidden="true">
+    <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
+    <h1>Humble Pixelmon</h1>
+    <nav id="dropdownMenu">
       <a href="index.html">🏠 Início</a>
-      <a href="https://www.humblepixelmon.com.br" target="_blank">🌐 Site Oficial</a>
+      <a href="https://www.humblepixelmon.com.br">🌐 Site Oficial</a>
       <a href="Tiers_1.12.html">🗡️ Tiers 1.12</a>
       <a href="Tiers_1.16.html">🛡️ Tiers 1.16</a>
       <a href="notas.html">📝 Notas de Atualização</a>
     </nav>
+    <div class="auth-buttons" id="authArea">
+      <button id="loginBtn">Login</button>
+      <button id="registerBtn">Cadastrar</button>
+    </div>
   </header>
 
-  <!-- CREATE BUTTON (to the right) -->
-  <button id="criarTimeBtn" type="button">+ Criar Time</button>
-
   <main>
-    <section id="timesContainer"><!-- Teams list --></section>
+    <section id="teamBuilder">
+      <h2>Criar Time</h2>
+      <form id="teamForm">
+        <div id="pokemonList"></div>
+        <button type="button" id="addPokemon">+ Adicionar Pokémon</button>
+        <button type="submit">Salvar Time</button>
+      </form>
+    </section>
+
+    <h2>Feed de Times</h2>
+    <select id="tierFilter">
+      <option value="all">Todas as Tiers</option>
+    </select>
+    <div id="timesContainer"></div>
   </main>
 
-  <!-- AUTH MODAL -->
-  <div class="modal" id="authModal" aria-hidden="true">
-    <div class="modal-panel" role="dialog" aria-modal="true">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <h2 style="margin:0;color:var(--gold)">Entrar / Cadastrar</h2>
-        <div>
-          <button id="authClose" class="btn" type="button">Fechar</button>
-        </div>
-      </div>
-
-      <div class="auth-tabs">
-        <button id="tabEntrar" class="active" type="button">Entrar</button>
-        <button id="tabCadastrar" type="button">Cadastrar</button>
-      </div>
-
-      <!-- Entrar -->
-      <form id="entrarForm" style="display:flex;flex-direction:column;gap:8px">
-        <div class="auth-row"><input id="entrarEmail" type="email" placeholder="Email" autocomplete="username"></div>
-        <div class="auth-row"><input id="entrarSenha" type="password" placeholder="Senha" autocomplete="current-password"></div>
-        <div id="entrarError" class="error"></div>
-        <div class="auth-actions">
-          <button id="entrarBtn" class="btn" type="submit">Entrar</button>
-          <button id="entrarGoogle" class="btn" type="button">Entrar com Google</button>
-        </div>
-      </form>
-
-      <!-- Cadastrar -->
-      <form id="cadastrarForm" style="display:none;flex-direction:column;gap:8px">
-        <div class="auth-row"><input id="cadNick" type="text" placeholder="Nick no jogo (único)" maxlength="20" required></div>
-        <small style="color:#ffcc77">⚠️ O nick não poderá ser alterado depois do cadastro.</small>
-        <div class="auth-row"><input id="cadEmail" type="email" placeholder="Email" autocomplete="email"></div>
-        <div class="auth-row"><input id="cadSenha" type="password" placeholder="Senha" autocomplete="new-password"></div>
-        <div id="cadError" class="error"></div>
-        <div class="auth-actions">
-          <button id="cadastrarBtn" class="btn" type="submit">Cadastrar (Email)</button>
-          <button id="cadastrarGoogle" class="btn" type="button">Cadastrar com Google</button>
-        </div>
-      </form>
+  <!-- Popup Login/Register -->
+  <div class="popup" id="authPopup">
+    <div class="popup-content">
+      <h3 id="popupTitle">Login</h3>
+      <input type="text" id="nickInput" placeholder="Nickname (fixo após cadastro)">
+      <input type="email" id="emailInput" placeholder="Email"><br><br>
+      <input type="password" id="passInput" placeholder="Senha"><br><br>
+      <button id="popupAction">Continuar</button>
+      <button id="googleLogin">Entrar com Google</button>
+      <br><br>
+      <button onclick="document.getElementById('authPopup').style.display='none'">Cancelar</button>
     </div>
   </div>
 
-  <!-- TEAM BUILDER MODAL -->
-  <div class="modal" id="timeModal" aria-hidden="true">
-    <div class="modal-panel">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
-        <h2 style="margin:0;color:var(--gold)">Criador de Time</h2>
-        <div><button id="timeClose" class="btn" type="button">Fechar</button></div>
-      </div>
-
-      <p class="small" style="margin:0 0 10px 0">Adicione pokémons um por vez. Você pode adicionar até 6 pokémons por time.</p>
-
-      <div class="builder-controls">
-        <button id="addPokemonBtn" class="btn" type="button">➕ Adicionar Pokémon</button>
-        <div class="small" style="margin-left:8px">(<span id="pokemonCount">0</span>/6)</div>
-      </div>
-
-      <div id="pokemonList"></div>
-
-      <div style="display:flex;gap:8px;margin-top:12px">
-        <button id="cancelTimeBtn" class="btn" type="button">Cancelar</button>
-        <button id="submitTimeBtn" class="btn" type="button" style="background:var(--gold);color:#111">Salvar Time</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- =========================
-       SCRIPTS (UI + Firebase)
-       ========================= -->
   <script type="module">
-  /* ===========================
-     FIREBASE CONFIG & IMPORTS
-     - replace if needed (already set by you)
-     =========================== */
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import {
-    getAuth, GoogleAuthProvider, signInWithPopup, signOut,
-    createUserWithEmailAndPassword, signInWithEmailAndPassword,
-    onAuthStateChanged, updateProfile
-  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  import {
-    getDatabase, ref, set, push, onValue, get, child, runTransaction
-  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider,
+             createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile }
+             from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getDatabase, ref, set, push, onValue, query, orderByChild }
+             from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
-    authDomain: "sampleteans.firebaseapp.com",
-    databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
-    projectId: "sampleteans",
-    storageBucket: "sampleteans.firebasestorage.app",
-    messagingSenderId: "1069510029261",
-    appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
+      authDomain: "sampleteans.firebaseapp.com",
+      databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
+      projectId: "sampleteans",
+      storageBucket: "sampleteans.firebasestorage.app",
+      messagingSenderId: "1069510029261",
+      appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
 
-  let app, auth, db, provider;
-  try {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getDatabase(app);
-    provider = new GoogleAuthProvider();
-    window._firebaseReady = true;
-  } catch (err) {
-    console.error('Firebase init error:', err);
-    window._firebaseReady = false;
-  }
+    const authArea = document.getElementById("authArea");
+    const teamBuilder = document.getElementById("teamBuilder");
+    const authPopup = document.getElementById("authPopup");
+    const popupTitle = document.getElementById("popupTitle");
+    const popupAction = document.getElementById("popupAction");
+    const emailInput = document.getElementById("emailInput");
+    const passInput = document.getElementById("passInput");
+    const nickInput = document.getElementById("nickInput");
+    const googleLogin = document.getElementById("googleLogin");
+    const tierFilter = document.getElementById("tierFilter");
 
-  /* ===========================
-     DOM helpers
-     =========================== */
-  const $ = (sel, root=document) => root.querySelector(sel);
-  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+    let isRegister = false;
 
-  // header / user area
-  const userArea = $('#userArea');
-  const userPhoto = $('#userPhoto');
-  const userNick = $('#userNick');
-
-  // auth buttons
-  const loginBtn = $('#loginBtn');
-  const signupBtn = $('#signupBtn');
-
-  // menu
-  const menuBtn = $('#menuBtn');
-  const dropdownMenu = $('#dropdownMenu');
-
-  // auth modal
-  const authModal = $('#authModal');
-  const authClose = $('#authClose');
-  const tabEntrar = $('#tabEntrar');
-  const tabCadastrar = $('#tabCadastrar');
-  const entrarForm = $('#entrarForm');
-  const cadastrarForm = $('#cadastrarForm');
-  const entrarError = $('#entrarError');
-  const cadError = $('#cadError');
-
-  const entrarEmail = $('#entrarEmail');
-  const entrarSenha = $('#entrarSenha');
-  const entrarGoogle = $('#entrarGoogle');
-
-  const cadNick = $('#cadNick');
-  const cadEmail = $('#cadEmail');
-  const cadSenha = $('#cadSenha');
-  const cadastrarGoogle = $('#cadastrarGoogle');
-
-  // team builder
-  const criarTimeBtn = $('#criarTimeBtn');
-  const timeModal = $('#timeModal');
-  const timeClose = $('#timeClose');
-  const addPokemonBtn = $('#addPokemonBtn');
-  const pokemonList = $('#pokemonList');
-  const pokemonCountSpan = $('#pokemonCount');
-  const cancelTimeBtn = $('#cancelTimeBtn');
-  const submitTimeBtn = $('#submitTimeBtn');
-
-  // constants
-  const STATS = ["HP","Atk","Def","SpA","SpD","Spe"];
-  const ALL_NATURES = [
-    'Hardy','Lonely','Brave','Adamant','Naughty','Bold','Docile','Relaxed','Impish','Lax','Modest','Mild',
-    'Quiet','Bashful','Rash','Calm','Gentle','Sassy','Careful','Quirky','Timid','Hasty','Serious','Jolly','Naive'
-  ];
-  const ALL_TIERS = [
-    'LC','Monotype','NU','National Dex','National Dex Monotype','National Dex UU','OU','PU','RU','Ubers',
-    'UU','ZU','National Dex RU','Monomon','Starter League','Only Smeargle','National Dex Ubers','National Dex AG'
-  ];
-
-  /* ===========================
-     UI: menu + modal basic behavior
-     =========================== */
-  menuBtn.addEventListener('click', e => { e.stopPropagation(); menuBtn.classList.toggle('active'); dropdownMenu.classList.toggle('active'); });
-  document.addEventListener('click', e => { if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) { menuBtn.classList.remove('active'); dropdownMenu.classList.remove('active'); } });
-
-  function openAuth(tab='entrar'){ tab==='entrar' ? showEntrar() : showCadastrar(); authModal.classList.add('open'); authModal.style.display = 'flex'; }
-  function closeAuth(){ authModal.classList.remove('open'); authModal.style.display = 'none'; entrarError.textContent = ''; cadError.textContent = ''; }
-
-  function showEntrar(){ tabEntrar.classList.add('active'); tabCadastrar.classList.remove('active'); entrarForm.style.display='flex'; cadastrarForm.style.display='none'; }
-  function showCadastrar(){ tabCadastrar.classList.add('active'); tabEntrar.classList.remove('active'); cadastrarForm.style.display='flex'; entrarForm.style.display='none'; }
-
-  authClose.addEventListener('click', closeAuth);
-  tabEntrar.addEventListener('click', showEntrar);
-  tabCadastrar.addEventListener('click', showCadastrar);
-
-  // when clicking login button: if user logged -> sign out; else open modal
-  loginBtn.addEventListener('click', async () => {
-    try {
-      if (auth && auth.currentUser) {
-        await signOut(auth);
-      } else {
-        openAuth('entrar');
-      }
-    } catch (err) {
-      console.error('SignOut error', err);
-      openAuth('entrar');
-    }
-  });
-  signupBtn.addEventListener('click', () => openAuth('cadastrar'));
-
-  // close modals on outside click or Escape
-  window.addEventListener('click', (e) => {
-    if (e.target === authModal) closeAuth();
-    if (e.target === timeModal) closeTimeModal();
-  });
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeAuth(); closeTimeModal(); } });
-
-  /* ===========================
-     Firebase helpers and rules compliance
-     - claimNickAtomic tries to set /nicks/{nick} = uid atomically
-     =========================== */
-  async function claimNickAtomic(nick, uid){
-    if (!db) throw new Error('DB não inicializado');
-    const nickRef = ref(db, `nicks/${nick}`);
-    try {
-      const res = await runTransaction(nickRef, current => {
-        if (current === null) return uid;
-        return; // abort
-      });
-      return res.committed === true;
-    } catch (err) {
-      console.error('claimNickAtomic error', err);
-      return false;
-    }
-  }
-
-  // Expose firebase functions placeholder (will be set below when firebase module available)
-  window.firebaseSaveTeam = null;
-
-  /* ===========================
-     AUTH flows (UI + firebase)
-     - Entrar (email)
-     - Cadastrar (email) and handle google sign
-     =========================== */
-  // Entrar (UI submit handled by firebase module but keep basic validation)
-  entrarForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    entrarError.textContent = '';
-    if (!window._firebaseReady) { entrarError.textContent = 'Autenticação indisponível (Firebase não inicializado)'; return; }
-    // actual auth handled in firebase module wiring below
-    // just trigger the form submit which firebase module also listens to
-    // nothing else here
-  });
-
-  // Cadastrar (UI submit will be handled in Firebase wiring below)
-  cadastrarForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    cadError.textContent = '';
-    if (!window._firebaseReady) { cadError.textContent = 'Autenticação indisponível (Firebase não inicializado)'; return; }
-    // actual register handled by firebase module
-  });
-
-  /* ===========================
-     Update header when auth state changes
-     - hide login/signup, show avatar
-     =========================== */
-  function showUserInHeader(userNickStr, photoURL) {
-    userArea.style.display = 'flex';
-    userNick.textContent = userNickStr || '';
-    userPhoto.src = photoURL || 'https://i.imgur.com/9QKQf3J.png';
-    loginBtn.style.display = 'none';
-    signupBtn.style.display = 'none';
-  }
-  function hideUserInHeader() {
-    userArea.style.display = 'none';
-    userPhoto.src = '';
-    userNick.textContent = '';
-    loginBtn.style.display = 'inline-block';
-    signupBtn.style.display = 'inline-block';
-  }
-
-  /* ===========================
-     Team builder UI (IV/EV sliders improved)
-     =========================== */
-  function updatePokemonCount(){ pokemonCountSpan.textContent = String(pokemonList.children.length); addPokemonBtn.disabled = pokemonList.children.length >= 6; }
-
-  function createPokemonCard(index){
-    const wrapper = document.createElement('div');
-    wrapper.className = 'poke-card-wrapper';
-    const card = document.createElement('div');
-    card.className = 'poke-card';
-
-    const tierOptions = ALL_TIERS.map(t => `<option>${t}</option>`).join('');
-    const natureOptions = ALL_NATURES.map(n => `<option>${n}</option>`).join('');
-
-    card.innerHTML = `
-      <div class="poke-header">
-        <h4>Pokémon ${index}</h4>
-        <div><button type="button" class="btn-small btn-remove">Remover</button></div>
-      </div>
-
-      <div class="row"><div class="label">Tier:</div><select class="tier">${tierOptions}</select></div>
-      <div class="row"><div class="label">Nome:</div><input class="pokemonName" type="text" placeholder="Charizard"></div>
-      <div class="row"><div class="label">Nature:</div><select class="nature">${natureOptions}</select></div>
-      <div class="row"><div class="label">Ability:</div><input class="ability" type="text" placeholder="Ability"></div>
-
-      <div class="row" style="align-items:flex-start"><div class="label">Moves:</div>
-        <div style="flex:1">
-          <input class="move" type="text" placeholder="Move 1"><br>
-          <input class="move" type="text" placeholder="Move 2"><br>
-          <input class="move" type="text" placeholder="Move 3"><br>
-          <input class="move" type="text" placeholder="Move 4"><br>
-        </div>
-      </div>
-
-      <div style="margin-top:6px"><strong>IVs</strong></div>
-      ${STATS.map(s => `<div class="stat"><label>${s}</label><input type="range" min="0" max="31" value="31" class="iv"><div class="val iv-val">31</div></div>`).join('')}
-
-      <div style="margin-top:6px"><strong>EVs</strong></div>
-      ${STATS.map(s => `<div class="stat"><label>${s}</label><input type="range" min="0" max="252" step="4" value="0" class="ev"><div class="val ev-val">0</div></div>`).join('')}
-
-      <div class="progress"><div class="bar"></div></div>
-      <div class="ev-warning"></div>
-    `;
-
-    wrapper.appendChild(card);
-
-    // remove
-    card.querySelector('.btn-remove').addEventListener('click', () => { wrapper.remove(); updatePokemonCount(); });
-
-    // IVs
-    card.querySelectorAll('.iv').forEach((el, idx) => {
-      el.addEventListener('input', (e) => { card.querySelectorAll('.iv-val')[idx].textContent = e.target.value; });
+    // menu
+    document.getElementById("menuBtn").addEventListener("click", () => {
+      document.getElementById("dropdownMenu").classList.toggle("show");
     });
 
-    // EVs with constraints, update bar
-    const evEls = Array.from(card.querySelectorAll('.ev'));
-    evEls.forEach((el, idx) => {
-      el.addEventListener('input', (e) => {
-        let desired = Math.round((parseInt(e.target.value || 0))/4)*4;
-        if (desired < 0) desired = 0;
-        if (desired > 252) desired = 252;
-        const others = evEls.reduce((acc, el2, i2) => i2 === idx ? acc : acc + parseInt(el2.value || 0), 0);
-        const remaining = 508 - others;
-        if (desired > remaining) desired = Math.floor(remaining/4)*4;
-        if (desired < 0) desired = 0;
-        const count252 = evEls.filter((el2, i2) => i2 !== idx && parseInt(el2.value || 0) === 252).length;
-        if (desired === 252 && count252 >= 2) {
-          desired = Math.min(248, Math.floor(remaining/4)*4);
-          if (desired < 0) desired = 0;
-        }
-        e.target.value = desired;
-        card.querySelectorAll('.ev-val')[idx].textContent = String(desired);
-        validateEVsAndBar(card);
-      });
-    });
-
-    function validateEVsAndBar(cardEl){
-      const evVals = Array.from(cardEl.querySelectorAll('.ev')).map(x => parseInt(x.value || 0));
-      const total = evVals.reduce((a,b)=>a+b,0);
-      const cnt252 = evVals.filter(v=>v===252).length;
-      const warn = cardEl.querySelector('.ev-warning');
-      const bar = cardEl.querySelector('.progress .bar');
-      const pct = Math.min(100, (total/508)*100);
-      bar.style.width = pct + '%';
-      if (total > 508) warn.textContent = `⚠ Máx total 508 EVs (atual ${total})`;
-      else if (cnt252 > 2) warn.textContent = `⚠ Máx 2 stats com 252 EVs`;
-      else warn.textContent = '';
-    }
-
-    validateEVsAndBar(card);
-    return wrapper;
-  }
-
-  addPokemonBtn.addEventListener('click', () => {
-    if (pokemonList.children.length >= 6) { alert('Máximo 6 pokémons por time.'); return; }
-    const node = createPokemonCard(pokemonList.children.length + 1);
-    pokemonList.appendChild(node);
-    updatePokemonCount();
-  });
-
-  updatePokemonCount();
-
-  // open/close time modal
-  criarTimeBtn.addEventListener('click', () => { timeModal.classList.add('open'); timeModal.style.display = 'flex'; });
-  timeClose.addEventListener('click', () => closeTimeModal());
-  cancelTimeBtn.addEventListener('click', () => closeTimeModal());
-  function closeTimeModal(){ timeModal.classList.remove('open'); timeModal.style.display = 'none'; }
-
-  // collectTeam -> returns object in the format required by rules
-  function collectTeamObject(){
-    const wrappers = Array.from(pokemonList.children);
-    const pokemons = {};
-    wrappers.forEach((w, idx) => {
-      const c = w.querySelector('.poke-card');
-      if (!c) return;
-      const name = (c.querySelector('.pokemonName')?.value || '').trim();
-      if (!name) return; // skip empty slot
-      const tier = c.querySelector('.tier').value;
-      const nature = c.querySelector('.nature').value;
-      const ability = (c.querySelector('.ability')?.value || '').trim();
-      const moves = Array.from(c.querySelectorAll('.move')).map(m => m.value.trim()).filter(Boolean);
-      const ivs = Object.fromEntries(Array.from(c.querySelectorAll('.iv')).map((el,i)=>[STATS[i], parseInt(el.value || 0)]));
-      const evs = Object.fromEntries(Array.from(c.querySelectorAll('.ev')).map((el,i)=>[STATS[i], parseInt(el.value || 0)]));
-      pokemons[String(idx)] = { name, tier, nature, ability, moves, ivs, evs };
-    });
-    return pokemons;
-  }
-
-  // Save team: use firebaseSaveTeam (exposed by firebase module). If not available, show message.
-  submitTimeBtn.addEventListener('click', async () => {
-    try {
-      if (!window._firebaseReady) { alert('Salvar time requer Firebase configurado.'); return; }
-      if (!auth || !auth.currentUser) { alert('Você precisa estar logado para salvar um time.'); return; }
-      const teamPokemons = collectTeamObject();
-      if (Object.keys(teamPokemons).length === 0) { alert('Adicione pelo menos 1 Pokémon.'); return; }
-
-      // Build final data per rules
-      const ownerUid = auth.currentUser.uid;
-      // try to get ownerName from users/{uid} or from auth displayName
-      let ownerName = auth.currentUser.displayName || null;
+    // login / cadastro
+    document.getElementById("loginBtn").onclick = () => {
+      isRegister = false; popupTitle.textContent = "Login";
+      nickInput.style.display="none"; authPopup.style.display="flex";
+    };
+    document.getElementById("registerBtn").onclick = () => {
+      isRegister = true; popupTitle.textContent = "Cadastrar";
+      nickInput.style.display="block"; authPopup.style.display="flex";
+    };
+    popupAction.onclick = async () => {
       try {
-        const uSnap = await get(child(ref(db), `users/${ownerUid}`));
-        if (uSnap.exists() && uSnap.val().nick) ownerName = uSnap.val().nick;
-      } catch (e){ /* ignore */ }
-      if (!ownerName) ownerName = (auth.currentUser.email ? auth.currentUser.email.split('@')[0] : ownerUid);
-
-      const teamData = {
-        owner: ownerUid,
-        ownerName: ownerName,
-        createdAt: Date.now(),
-        pokemon: teamPokemons
-      };
-
-      // push to /teams
-      await push(ref(db, 'teams'), teamData);
-      alert('Time salvo com sucesso!');
-      pokemonList.innerHTML = '';
-      updatePokemonCount();
-      closeTimeModal();
-    } catch (err) {
-      console.error('Erro ao salvar time', err);
-      // Show clearer message if permission denied
-      if (err && err.code === 'PERMISSION_DENIED') {
-        alert('Permissão negada: verifique as regras do Realtime Database (teams) no Firebase Console.');
-      } else {
-        alert('Erro ao salvar time: ' + (err && err.message ? err.message : String(err)));
-      }
-    }
-  });
-
-  /* ===========================
-     Firebase wiring (auth & DB behaviors)
-     - attach real handlers for auth forms
-     - ensure nick claim atomic
-     =========================== */
-  if (window._firebaseReady) {
-    try {
-      // Entrar with email
-      entrarForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        entrarError.textContent = '';
-        const email = (entrarEmail.value || '').trim();
-        const pass = entrarSenha.value;
-        if (!email || !pass) { entrarError.textContent = 'Preencha email e senha.'; return; }
-        try {
-          await signInWithEmailAndPassword(auth, email, pass);
-          closeAuth();
-        } catch (err) {
-          console.error('Login error', err);
-          entrarError.textContent = err.message || 'Erro ao entrar.';
-        }
-      });
-
-      // Cadastrar with email
-      cadastrarForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        cadError.textContent = '';
-        const nick = (cadNick.value || '').trim();
-        const email = (cadEmail.value || '').trim();
-        const pass = cadSenha.value;
-        if (!nick || !email || !pass) { cadError.textContent = 'Preencha nick, email e senha.'; return; }
-        if (!/^[A-Za-z0-9_]{3,20}$/.test(nick)) { cadError.textContent = 'Nick inválido (3-20, alfanum/_).'; return; }
-        try {
-          // create user if not already signed-in via Google
-          let uid = null;
-          if (!auth.currentUser) {
-            const cred = await createUserWithEmailAndPassword(auth, email, pass);
-            uid = cred.user.uid;
-          } else {
-            // If already signed in via Google, use that uid
-            uid = auth.currentUser.uid;
-          }
-          // claim nick atomically
-          const nickRef = ref(db, `nicks/${nick}`);
-          const ok = await runTransaction(nickRef, current => {
-            if (current === null) return uid;
-            return; // abort
-          });
-          if (!ok.committed) {
-            // if we created an email user above, sign them out to let them pick another nick
-            try { if (auth.currentUser && auth.currentUser.providerData.some(p=>p.providerId==='password')) await signOut(auth); } catch(e){}
-            cadError.textContent = 'Nick já em uso. Escolha outro nick.';
-            return;
-          }
-          // Save user profile under /users/{uid}
-          await set(ref(db, `users/${uid}`), { uid, email, provider: 'email', nick, createdAt: Date.now() });
-          // update auth profile displayName if possible
-          try { if (auth.currentUser) await updateProfile(auth.currentUser, { displayName: nick }); } catch(e){}
-          // done
-          closeAuth();
-        } catch (err) {
-          console.error('Cadastro error', err);
-          cadError.textContent = err.message || 'Erro ao cadastrar.';
-        }
-      });
-
-      // Google sign-in: if user exists in /users use it, else open cadastrar tab and prefill
-      async function handleGoogle(){
-        try {
-          const res = await signInWithPopup(auth, provider);
-          const user = res.user;
-          const uSnap = await get(child(ref(db), `users/${user.uid}`));
-          if (!uSnap.exists()) {
-            // user signed in with Google but no profile yet -> open cadastrar tab and prefill email
-            openAuth('cadastrar');
-            cadEmail.value = user.email || '';
-            cadError.textContent = 'Escolha um nick único para concluir o cadastro e clique em Cadastrar.';
-            // leave user signed in; when they submit cadastrarForm, it will use auth.currentUser.uid and claim nick
-          } else {
-            closeAuth();
-          }
-        } catch (err) {
-          console.error('Google sign-in error', err);
-          entrarError.textContent = err.message || 'Erro no login com Google.';
-        }
-      }
-      entrarGoogle.addEventListener('click', handleGoogle);
-      cadastrarGoogle.addEventListener('click', handleGoogle);
-
-      // signout function already wired by UI (loginBtn click)
-      window.firebaseSignOut = async function(){ if (!auth) throw new Error('Firebase não configurado'); await signOut(auth); };
-
-      // monitor auth changes to update header UI
-      onAuthStateChanged(auth, async (user) => {
-        if (user) {
-          // try find nick in DB
-          let nick = user.displayName || null;
-          try {
-            const uSnap = await get(child(ref(db), `users/${user.uid}`));
-            if (uSnap.exists() && uSnap.val().nick) nick = uSnap.val().nick;
-          } catch(e){}
-          const photo = user.photoURL || '';
-          showUserInHeader(nick || user.email || 'Usuário', photo);
+        if (isRegister) {
+          const userCred = await createUserWithEmailAndPassword(auth,emailInput.value,passInput.value);
+          await updateProfile(userCred.user,{ displayName:nickInput.value });
+          await set(ref(db,"users/"+userCred.user.uid),{ displayName:nickInput.value, email:emailInput.value, createdAt:Date.now() });
         } else {
-          hideUserInHeader();
+          await signInWithEmailAndPassword(auth,emailInput.value,passInput.value);
         }
+        authPopup.style.display="none";
+      } catch(err){ alert("Erro: "+err.message); }
+    };
+    googleLogin.onclick = async () => {
+      try {
+        const provider = new GoogleAuthProvider();
+        const result = await signInWithPopup(auth,provider);
+        const user = result.user;
+        if(!user.displayName){ alert("Defina nickname no cadastro via Email!"); return; }
+        await set(ref(db,"users/"+user.uid),{ displayName:user.displayName,email:user.email,createdAt:Date.now() });
+        authPopup.style.display="none";
+      } catch(err){ alert("Erro Google: "+err.message); }
+    };
+
+    // auth state
+    onAuthStateChanged(auth,(user)=>{
+      if(user){
+        authArea.innerHTML = `
+          <div class="user-info">
+            <img src="${user.photoURL || 'https://i.pravatar.cc/150'}">
+            <span>${user.displayName||user.email}</span>
+            <button onclick="import('https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js').then(m=>m.getAuth().signOut())">Sair</button>
+          </div>`;
+        teamBuilder.style.display="block";
+      } else {
+        authArea.innerHTML = `
+          <button id="loginBtn">Login</button>
+          <button id="registerBtn">Cadastrar</button>`;
+        teamBuilder.style.display="none";
+        document.getElementById("loginBtn").onclick=()=>{isRegister=false;popupTitle.textContent="Login";nickInput.style.display="none";authPopup.style.display="flex";}
+        document.getElementById("registerBtn").onclick=()=>{isRegister=true;popupTitle.textContent="Cadastrar";nickInput.style.display="block";authPopup.style.display="flex";}
+      }
+    });
+
+    // criar time
+    const pokemonList = document.getElementById("pokemonList");
+    const addPokemonBtn = document.getElementById("addPokemon");
+    let pokeCount=0;
+    const natures=["Hardy","Lonely","Brave","Adamant","Naughty","Bold","Docile","Relaxed","Impish","Lax","Modest","Mild","Quiet","Bashful","Rash","Calm","Gentle","Sassy","Careful","Quirky","Timid","Hasty","Serious","Jolly","Naive"];
+    const tiers=["LC","Monotype","NU","National Dex","National Dex Monotype","National Dex UU","OU","PU","RU","Ubers","UU","ZU","National Dex RU","Monomon","Starter League","Only Smeargle","National Dex Ubers","National Dex AG"];
+    // preencher select filtro
+    tiers.forEach(t=>{ const opt=document.createElement("option"); opt.value=t; opt.textContent=t; tierFilter.appendChild(opt); });
+
+    addPokemonBtn.onclick=()=>{
+      if(pokeCount>=6) return alert("Máximo 6 Pokémons!");
+      pokeCount++;
+      const div=document.createElement("div");
+      div.className="pokemon-slot";
+      div.innerHTML=`
+        <h3>Pokémon ${pokeCount}</h3>
+        <input placeholder="Nome" name="name">
+        <select name="tier">${tiers.map(t=>`<option>${t}</option>`).join("")}</select>
+        <select name="nature">${natures.map(n=>`<option>${n}</option>`).join("")}</select>
+        <input placeholder="Habilidade" name="ability">
+        <input placeholder="Moves (vírgula)" name="moves">`;
+      pokemonList.appendChild(div);
+    };
+
+    document.getElementById("teamForm").onsubmit=async(e)=>{
+      e.preventDefault();
+      const user=auth.currentUser;
+      if(!user) return alert("Precisa logar!");
+      const teamRef=push(ref(db,"teams"));
+      let teamData={ owner:user.uid, ownerName:user.displayName||user.email, createdAt:Date.now(), pokemon:{}, likes:{} };
+      [...pokemonList.children].forEach((slot,idx)=>{
+        const name=slot.querySelector("input[name=name]").value;
+        const tier=slot.querySelector("select[name=tier]").value;
+        const nature=slot.querySelector("select[name=nature]").value;
+        const ability=slot.querySelector("input[name=ability]").value;
+        const moves=slot.querySelector("input[name=moves]").value.split(",").map(m=>m.trim()).filter(m=>m);
+        teamData.pokemon[idx]={name,tier,nature,ability,moves};
       });
+      try{
+        await set(teamRef,teamData);
+        alert("Time salvo!"); pokemonList.innerHTML=""; pokeCount=0;
+      }catch(err){console.error("Erro salvar:",err);}
+    };
 
-      // Expose firebaseSaveTeam (not used here because we push directly in UI; but keep available)
-      window.firebaseSaveTeam = async function(teamObj){
-        if (!auth || !auth.currentUser) throw new Error('Usuário não autenticado');
-        // teamObj is expected to be { owner, ownerName, createdAt, pokemon: {...} }
-        await push(ref(db, 'teams'), teamObj);
-      };
+    // feed
+    const timesContainer=document.getElementById("timesContainer");
+    const teamsRef=query(ref(db,"teams"),orderByChild("createdAt"));
+    let allTeams=[];
+    onValue(teamsRef,(snapshot)=>{
+      allTeams=[]; snapshot.forEach(c=>allTeams.push({id:c.key,...c.val()}));
+      allTeams.reverse(); renderFeed();
+    });
 
-      // load teams for display
-      const timesContainer = $('#timesContainer');
-      onValue(ref(db, 'teams'), snap => {
-        timesContainer.innerHTML = '';
-        snap.forEach(childSnap => {
-          const time = childSnap.val();
-          const el = document.createElement('div'); el.className = 'time-card';
-          get(child(ref(db), `users/${time.owner}`)).then(usnap=>{
-            const ownerName = (usnap.exists() && usnap.val().nick) ? usnap.val().nick : (time.ownerName || time.ownerEmail || 'Usuário');
-            el.innerHTML = `<h3>Time de ${ownerName}</h3><pre style="white-space:pre-wrap;word-break:break-word">${JSON.stringify(time.pokemon || time.pokemons || time.pokemonsList || time.pokemons, null, 2)}</pre>`;
-          }).catch(()=>{
-            el.innerHTML = `<h3>Time</h3><pre style="white-space:pre-wrap;word-break:break-word">${JSON.stringify(time.pokemon || time.pokemons || {}, null, 2)}</pre>`;
-          });
-          timesContainer.appendChild(el);
+    tierFilter.onchange=()=>renderFeed();
+
+    function renderFeed(){
+      const filter=tierFilter.value;
+      timesContainer.innerHTML="";
+      allTeams.forEach(team=>{
+        // filtrar pelo menos 1 poke na tier escolhida
+        if(filter!=="all" && !Object.values(team.pokemon).some(p=>p.tier===filter)) return;
+        const card=document.createElement("div"); card.className="time-card";
+        const date=new Date(team.createdAt).toLocaleString();
+        let pokemonsHTML="";
+        Object.values(team.pokemon).forEach((poke,idx)=>{
+          pokemonsHTML+=`<div class="poke-slot">
+            <h4>${idx+1}. ${poke.name}</h4>
+            <p><b>Tier:</b> ${poke.tier||"N/A"}</p>
+            <p><b>Nature:</b> ${poke.nature||"N/A"}</p>
+            <p><b>Ability:</b> ${poke.ability||"N/A"}</p>
+            <p><b>Moves:</b> ${(poke.moves||[]).join(", ")}</p>
+          </div>`;
         });
+        const likesCount=team.likes?Object.keys(team.likes).length:0;
+        const userLiked=auth.currentUser && team.likes && team.likes[auth.currentUser.uid];
+        card.innerHTML=`
+          <h3>Time de ${team.ownerName}</h3>
+          <small>${date}</small>
+          <div>${pokemonsHTML}</div>
+          <button class="like-btn ${userLiked?"liked":""}" data-id="${team.id}">👍 ${likesCount}</button>`;
+        timesContainer.appendChild(card);
       });
-
-    } catch (err) {
-      console.error('Firebase wiring failed:', err);
+      document.querySelectorAll(".like-btn").forEach(btn=>{
+        btn.onclick=async()=>{
+          const user=auth.currentUser;
+          if(!user) return alert("Precisa logar!");
+          const teamId=btn.getAttribute("data-id");
+          const teamPath="teams/"+teamId+"/likes/"+user.uid;
+          const liked=btn.classList.contains("liked");
+          await set(ref(db,teamPath), liked?null:true);
+        };
+      });
     }
-  } else {
-    console.warn('Firebase not initialized — auth/db features disabled.');
-  }
-
-  // small log
-  console.log('App loaded. Firebase ready:', !!window._firebaseReady);
   </script>
 </body>
 </html>
