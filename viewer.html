@@ -136,7 +136,8 @@
 
   /* Campo de busca */
   #searchPokemon {
-    width: 280px;
+    width: 100%;
+    max-width: 260px; /* 🔹 igual ao card */
     padding: 10px;
     border-radius: 8px;
     border: 1px solid var(--cor-dourado);
@@ -388,7 +389,7 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       };
 
       const h2 = document.createElement('h2');
-      h2.textContent=namePretty + (id ? ` (#${id})` : "");
+      h2.textContent=namePretty; // 🔹 ID não aparece mais
 
       card.appendChild(img);
       card.appendChild(h2);
