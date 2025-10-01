@@ -3,10 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Times dos Jogadores - Humble</title>
-  <link rel="icon" type="image/png" href="img/mike_anotando2.png">
-  <link rel="shortcut icon" type="image/png" href="img/mike_anotando2.png">
-  <link rel="apple-touch-icon" href="img/mike_anotando2.png">
-
   <style>
     :root {
       --cor-dourado: #d1a720;
@@ -16,93 +12,22 @@
 
     body {
       font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
-                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
-      background-size: cover;
+      background: #2c2417;
       margin: 0;
       padding: 0;
-      min-height: 100vh;
       color: var(--cor-texto);
     }
 
     header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
       padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: rgba(20, 20, 20, 0.9);
+      background: rgba(20,20,20,0.9);
       border-bottom: 2px solid var(--cor-dourado);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
-      z-index: 1000;
-    }
-
-    header h1 {
-      font-size: 1.6rem;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 12px;
       color: var(--cor-dourado);
     }
-
-    header h1 img {
-      height: 40px;
-      cursor: pointer;
-    }
-
-    .menu-toggle {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      width: 30px;
-      height: 22px;
-      cursor: pointer;
-    }
-    .menu-toggle span {
-      display: block;
-      height: 4px;
-      background: var(--cor-texto);
-      border-radius: 4px;
-      transition: 0.3s;
-    }
-    .menu-toggle.active span:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
-    }
-    .menu-toggle.active span:nth-child(2) {
-      opacity: 0;
-    }
-    .menu-toggle.active span:nth-child(3) {
-      transform: rotate(-45deg) translate(5px, -5px);
-    }
-
-    nav {
-      position: absolute;
-      top: 65px;
-      right: 10px;
-      background: rgba(30, 25, 20, 0.95);
-      border: 1px solid var(--cor-dourado);
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.6);
-      display: none;
-      flex-direction: column;
-      padding: 15px;
-      gap: 12px;
-      z-index: 1200;
-    }
-    nav.active { display: flex; }
-    nav a {
-      color: var(--cor-dourado);
-      text-decoration: none;
-    }
-    nav a:hover { color: var(--cor-texto); }
 
     main {
-      padding: 100px 20px 40px;
-      max-width: 1000px;
+      padding: 20px;
+      max-width: 1200px;
       margin: auto;
     }
 
@@ -113,7 +38,7 @@
 
     textarea {
       width: 100%;
-      height: 200px;
+      height: 180px;
       border-radius: 8px;
       border: 1px solid var(--cor-dourado);
       background: rgba(0,0,0,0.6);
@@ -127,7 +52,7 @@
       border: none;
       color: #000;
       padding: 10px 16px;
-      margin: 8px 4px 20px 0;
+      margin: 10px 5px;
       border-radius: 6px;
       cursor: pointer;
       font-weight: bold;
@@ -136,47 +61,57 @@
     .btn:hover { opacity: 0.8; }
 
     .times-container {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      display: flex;
+      flex-wrap: wrap;
       gap: 16px;
+      margin-top: 20px;
     }
 
     .time-card {
-      background: rgba(0,0,0,0.65);
-      border: 1px solid var(--cor-dourado);
-      border-radius: 10px;
-      padding: 12px;
-      white-space: pre-wrap;
-      overflow-x: auto;
+      background: #2d241a;
+      border-radius: 12px;
+      padding: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      flex: 1 1 300px;
+    }
+
+    .pokemon-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .pokemon-card {
+      background: #1f1a14;
+      border-radius: 12px;
+      padding: 10px;
+      flex: 1 1 140px;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
+    }
+
+    .pokemon-card img {
+      width: 80px;
+      height: 80px;
+      display: block;
+      margin: auto;
+    }
+
+    .pokemon-card h3 {
+      font-size: 1rem;
+      margin: 8px 0 0;
+      color: var(--cor-dourado);
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>
-      <a href="index.html">
-        <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
-      </a>
-      Humble
-    </h1>
-    <div class="menu-toggle" id="menuBtn">
-      <span></span><span></span><span></span>
-    </div>
+    <h1>Times dos Jogadores</h1>
   </header>
-
-  <nav id="dropdownMenu">
-    <a href="index.html">🏠 Início</a>
-    <a href="https://www.humblepixelmon.com.br">🌐 Site Oficial</a>
-    <a href="viewer.html?file=allowlist_Monomon.json">⚔️ Monomon</a>
-    <a href="viewer.html?file=allowlist_Starters.json">🔥 Starters</a>
-    <a href="notas.html">📝 Notas</a>
-    <a href="https://discord.gg/whV6hbVRvk">💬 Discord</a>
-  </nav>
 
   <main>
     <h2>Importar Time</h2>
-    <textarea id="importText" placeholder="Cole aqui seu time no formato Showdown..."></textarea>
-    <br>
+    <textarea id="importText" placeholder="Cole aqui seu time no formato Showdown..."></textarea><br>
     <button class="btn" onclick="importarTime()">📥 Importar</button>
     <button class="btn" onclick="exportarTimes()">📤 Exportar Todos</button>
 
@@ -185,38 +120,59 @@
   </main>
 
   <script>
-    const menuBtn = document.getElementById("menuBtn");
-    const dropdownMenu = document.getElementById("dropdownMenu");
-    menuBtn.addEventListener("click", () => {
-      menuBtn.classList.toggle("active");
-      dropdownMenu.classList.toggle("active");
-    });
-    document.addEventListener("click", (e) => {
-      if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-        menuBtn.classList.remove("active");
-        dropdownMenu.classList.remove("active");
-      }
-    });
-
     let times = [];
 
     function importarTime() {
       const texto = document.getElementById("importText").value.trim();
-      if (texto) {
-        times.push(texto);
-        atualizarLista();
-        document.getElementById("importText").value = "";
-      }
+      if (!texto) return;
+
+      const pokemons = [];
+      const linhas = texto.split("\n");
+      linhas.forEach(l => {
+        if (l && !l.startsWith("EVs") && !l.startsWith("IVs") && !l.startsWith("-") && !l.startsWith("Ability") && !l.startsWith("Nature")) {
+          const nome = l.split("@")[0].trim();
+          if (nome) pokemons.push(nome);
+        }
+      });
+
+      times.push(pokemons);
+      atualizarLista();
+      document.getElementById("importText").value = "";
     }
 
     function atualizarLista() {
       const container = document.getElementById("timesContainer");
       container.innerHTML = "";
-      times.forEach((time, idx) => {
-        const div = document.createElement("div");
-        div.className = "time-card";
-        div.textContent = time;
-        container.appendChild(div);
+
+      times.forEach(time => {
+        const timeCard = document.createElement("div");
+        timeCard.className = "time-card";
+
+        const pokemonList = document.createElement("div");
+        pokemonList.className = "pokemon-list";
+
+        time.forEach(p => {
+          const pokeDiv = document.createElement("div");
+          pokeDiv.className = "pokemon-card";
+
+          // pega nome "limpo" sem mega, (M), etc.
+          const nomeLimpo = p.split("(")[0].trim().replace("Mega", "").trim();
+          const nomeApi = nomeLimpo.toLowerCase().replace(" ", "-");
+
+          const img = document.createElement("img");
+          img.src = `https://img.pokemondb.net/sprites/home/normal/${nomeApi}.png`;
+          img.onerror = () => img.src = "https://img.pokemondb.net/sprites/home/normal/missingno.png";
+
+          const nome = document.createElement("h3");
+          nome.textContent = p;
+
+          pokeDiv.appendChild(img);
+          pokeDiv.appendChild(nome);
+          pokemonList.appendChild(pokeDiv);
+        });
+
+        timeCard.appendChild(pokemonList);
+        container.appendChild(timeCard);
       });
     }
 
@@ -225,7 +181,7 @@
         alert("Nenhum time para exportar!");
         return;
       }
-      const blob = new Blob([times.join("\n\n")], { type: "text/plain" });
+      const blob = new Blob(times.map(t => t.join("\n")).join("\n\n"), { type: "text/plain" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
