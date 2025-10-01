@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <title>Team Builder - Humble</title>
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
 
   <style>
@@ -25,6 +24,7 @@
       color: var(--cor-texto);
     }
 
+    /* ---------- Header ---------- */
     header {
       position: fixed;
       top: 0; left:0; right:0;
@@ -75,7 +75,7 @@
     nav a { color: var(--cor-dourado); text-decoration:none; font-size:1rem; transition:0.2s;}
     nav a:hover { color: var(--cor-texto); }
 
-    main { padding:100px 20px 20px 20px; max-width:1200px; margin:auto; }
+    main { padding:120px 20px 20px 20px; max-width:1200px; margin:auto; }
 
     #teamBuilder {
       display:none;
@@ -134,7 +134,7 @@
     .popup-content {
       background:#fff; color:#000; padding:20px; border-radius:10px; width:300px; text-align:center;
     }
-    .user-info { display:flex; align-items:center; gap:10px; }
+    .user-info { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
     .user-info img { width:32px; height:32px; border-radius:50%; }
   </style>
 </head>
@@ -192,10 +192,8 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider,
-             createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile }
-             from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getDatabase, ref, set, push, onValue, query, orderByChild }
-             from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+             createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getDatabase, ref, set, push, onValue, query, orderByChild } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
@@ -235,38 +233,37 @@
     let pokeCount = 0;
     const natures=["Hardy","Lonely","Brave","Adamant","Naughty","Bold","Docile","Relaxed","Impish","Lax","Modest","Mild","Quiet","Bashful","Rash","Calm","Gentle","Sassy","Careful","Quirky","Timid","Hasty","Serious","Jolly","Naive"];
     const tiers=["LC","Monotype","NU","National Dex","National Dex Monotype","National Dex UU","OU","PU","RU","Ubers","UU","ZU","National Dex RU","Monomon","Starter League","Only Smeargle","National Dex Ubers","National Dex AG"];
-
     tiers.forEach(t=>{ const opt=document.createElement("option"); opt.value=t; opt.textContent=t; tierFilter.appendChild(opt); });
 
-    // ---------- Autenticação ----------
-    document.getElementById("loginBtn").onclick=()=>{ isRegister=false; popupTitle.textContent="Login"; nickInput.style.display="none"; authPopup.style.display="flex";};
-    document.getElementById("registerBtn").onclick=()=>{ isRegister=true; popupTitle.textContent="Cadastrar"; nickInput.style.display="block"; authPopup.style.display="flex";};
+    // ---------- Login/Registro ----------
+    document.getElementById("loginBtn").onclick = ()=>{isRegister=false; popupTitle.textContent="Login"; nickInput.style.display="none"; authPopup.style.display="flex";}
+    document.getElementById("registerBtn").onclick = ()=>{isRegister=true; popupTitle.textContent="Cadastrar"; nickInput.style.display="block"; authPopup.style.display="flex";}
 
     popupAction.onclick=async()=>{
       try{
         if(isRegister){
-          const userCred=await createUserWithEmailAndPassword(auth,emailInput.value,passInput.value);
-          await updateProfile(userCred.user,{displayName:nickInput.value});
-          await set(ref(db,"users/"+userCred.user.uid),{displayName:nickInput.value,email:emailInput.value,createdAt:Date.now()});
-        } else {
+          const userCred = await createUserWithEmailAndPassword(auth,emailInput.value,passInput.value);
+          await updateProfile(userCred.user,{ displayName:nickInput.value });
+          await set(ref(db,"users/"+userCred.user.uid),{ displayName:nickInput.value, email:emailInput.value, createdAt:Date.now() });
+        }else{
           await signInWithEmailAndPassword(auth,emailInput.value,passInput.value);
         }
         authPopup.style.display="none";
-      } catch(err){ alert("Erro: "+err.message);}
+      }catch(err){ alert("Erro: "+err.message);}
     };
 
     googleLogin.onclick=async()=>{
       try{
-        const provider = new GoogleAuthProvider();
+        const provider=new GoogleAuthProvider();
         const result = await signInWithPopup(auth,provider);
-        const user = result.user;
-        if(!user.displayName){ alert("Defina nickname no cadastro via Email!"); return; }
-        await set(ref(db,"users/"+user.uid),{displayName:user.displayName,email:user.email,createdAt:Date.now()});
+        const user=result.user;
+        if(!user.displayName){ alert("Defina nickname!"); return; }
+        await set(ref(db,"users/"+user.uid),{ displayName:user.displayName,email:user.email,createdAt:Date.now() });
         authPopup.style.display="none";
-      } catch(err){ alert("Erro Google: "+err.message);}
+      }catch(err){ alert("Erro Google: "+err.message);}
     };
 
-    // ---------- Auth State ----------
+    // ---------- Auth state ----------
     onAuthStateChanged(auth,(user)=>{
       if(user){
         authArea.innerHTML = `<div class="user-info">
@@ -275,20 +272,17 @@
           <button onclick="import('https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js').then(m=>m.getAuth().signOut())">Sair</button>
         </div>`;
         teamBuilder.style.display="block";
-      } else {
+      }else{
         authArea.innerHTML=`<button id="loginBtn">Login</button><button id="registerBtn">Cadastrar</button>`;
         teamBuilder.style.display="none";
-        document.getElementById("loginBtn").onclick=()=>{ isRegister=false; popupTitle.textContent="Login"; nickInput.style.display="none"; authPopup.style.display="flex";};
-        document.getElementById("registerBtn").onclick=()=>{ isRegister=true; popupTitle.textContent="Cadastrar"; nickInput.style.display="block"; authPopup.style.display="flex";};
       }
     });
 
-    // ---------- Criação de Time ----------
+    // ---------- Criar Time ----------
     addPokemonBtn.onclick=()=>{
       if(pokeCount>=6) return alert("Máximo 6 Pokémons!");
       pokeCount++;
-      const div=document.createElement("div");
-      div.className="pokemon-slot";
+      const div=document.createElement("div"); div.className="pokemon-slot";
       div.innerHTML=`
         <h3>Pokémon ${pokeCount}</h3>
         <input placeholder="Nome" name="name">
@@ -301,10 +295,9 @@
 
     document.getElementById("teamForm").onsubmit=async(e)=>{
       e.preventDefault();
-      const user=auth.currentUser;
-      if(!user) return alert("Precisa logar!");
+      const user=auth.currentUser; if(!user){ alert("Precisa logar!"); return; }
       const teamRef=push(ref(db,"teams"));
-      let teamData={owner:user.uid, ownerName:user.displayName||user.email, createdAt:Date.now(), pokemon:{}, likes:{}};
+      let teamData={ owner:user.uid, ownerName:user.displayName||user.email, createdAt:Date.now(), pokemon:{}, likes:{} };
       [...pokemonList.children].forEach((slot,idx)=>{
         const name=slot.querySelector("input[name=name]").value;
         const tier=slot.querySelector("select[name=tier]").value;
@@ -313,18 +306,16 @@
         const moves=slot.querySelector("input[name=moves]").value.split(",").map(m=>m.trim()).filter(m=>m);
         teamData.pokemon[idx]={name,tier,nature,ability,moves};
       });
-      try{
-        await set(teamRef,teamData);
-        alert("Time salvo!"); pokemonList.innerHTML=""; pokeCount=0;
-      }catch(err){console.error("Erro salvar:",err);}
+      await set(teamRef,teamData);
+      alert("Time salvo!"); pokemonList.innerHTML=""; pokeCount=0;
     };
 
     // ---------- Feed ----------
     let allTeams=[];
     const teamsRef=query(ref(db,"teams"),orderByChild("createdAt"));
     onValue(teamsRef,(snapshot)=>{
-      allTeams=[]; snapshot.forEach(c=>allTeams.push({id:c.key,...c.val()}));
-      allTeams.reverse(); renderFeed();
+      allTeams=[]; snapshot.forEach(c=>allTeams.push({id:c.key,...c.val()})); allTeams.reverse();
+      renderFeed();
     });
 
     tierFilter.onchange=()=>renderFeed();
@@ -352,13 +343,12 @@
           <h3>Time de ${team.ownerName}</h3>
           <small>${date}</small>
           <div>${pokemonsHTML}</div>
-          <button class="like-btn ${userLiked?"liked":""}">❤️ ${likesCount}</button>`;
+          <button class="like-btn ${userLiked?"liked":""}" data-id="${team.id}">❤️ ${likesCount}</button>`;
         const likeBtn=card.querySelector(".like-btn");
         likeBtn.onclick=async()=>{
           const user=auth.currentUser; if(!user){ alert("Precisa logar!"); return; }
           const likeRef=ref(db,`teams/${team.id}/likes/${user.uid}`);
-          if(userLiked) await set(likeRef,null);
-          else await set(likeRef,true);
+          if(userLiked) await set(likeRef,null); else await set(likeRef,true);
         };
         timesContainer.appendChild(card);
       });
