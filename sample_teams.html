@@ -928,43 +928,6 @@ if(authPopupEl){
 
 
 
-// Menu hambúrguer toggle robusto
-const menuBtn = document.getElementById('menuBtn');
-const dropdownMenu = document.getElementById('dropdownMenu');
-if(menuBtn && dropdownMenu){
-  menuBtn.addEventListener('click', ()=>{
-    menuBtn.classList.toggle('active');
-    dropdownMenu.classList.toggle('active');
-  });
-  document.addEventListener('click', (e)=>{
-    if(!menuBtn.contains(e.target) && !dropdownMenu.contains(e.target)){
-      menuBtn.classList.remove('active');
-      dropdownMenu.classList.remove('active');
-    }
-  });
-}
-
-
-
-// Toggle Team Builder
-const toggleBtn = document.getElementById('toggleTeamBuilder');
-const teamBuilder = document.getElementById('teamBuilder');
-if(toggleBtn && teamBuilder){
-  teamBuilder.style.display = 'none'; // initial hidden
-  toggleBtn.textContent = '+ Criar Time';
-  toggleBtn.addEventListener('click', ()=>{
-    if(teamBuilder.style.display === 'none' || teamBuilder.style.display === ''){
-      teamBuilder.style.display = 'block';
-      toggleBtn.textContent = 'Fechar Team Builder';
-      teamBuilder.scrollIntoView({behavior:'smooth', block:'center'});
-    } else {
-      teamBuilder.style.display = 'none';
-      toggleBtn.textContent = '+ Criar Time';
-    }
-  });
-}
-
-
 /* ============================
    END
    ============================ */
