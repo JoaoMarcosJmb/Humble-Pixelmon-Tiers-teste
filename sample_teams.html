@@ -75,8 +75,34 @@
     nav a { color: var(--cor-dourado); text-decoration:none; font-size:1rem; transition:0.2s;}
     nav a:hover { color: var(--cor-texto); }
 
-    main { padding:120px 20px 20px 20px; max-width:1200px; margin:auto; }
+    main {
+      padding:120px 20px 20px 20px;
+      max-width:1200px;
+      margin:auto;
+      box-sizing:border-box;
+    }
 
+    /* ---------- Auth Buttons ---------- */
+    .auth-buttons {
+      display:flex;
+      gap:10px;
+      margin-bottom:10px;
+    }
+
+    button {
+      background:var(--cor-dourado); color:#000; border:none;
+      padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold;
+    }
+
+    .user-info {
+      display:flex;
+      align-items:center;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .user-info img { width:32px; height:32px; border-radius:50%; }
+
+    /* ---------- Team Builder ---------- */
     #teamBuilder {
       display:none;
       margin-bottom:30px;
@@ -92,29 +118,7 @@
       border-radius:8px; background: rgba(0,0,0,0.4);
     }
 
-    #timesContainer .time-card {
-      border:1px solid var(--cor-dourado);
-      padding:15px;
-      margin-bottom:20px;
-      border-radius:10px;
-      background: rgba(0,0,0,0.5);
-    }
-
-    .poke-slot {
-      margin-bottom:12px;
-      padding:8px;
-      border-radius:6px;
-      background: rgba(0,0,0,0.4);
-    }
-
-    .poke-slot h4 { color:var(--cor-dourado); margin:0 0 5px; }
-
-    .like-btn {
-      background:none; border:none; cursor:pointer; color:var(--cor-dourado);
-      font-size:16px; margin-top:10px; display:flex; align-items:center; gap:5px;
-    }
-    .like-btn.liked { color:red; font-weight:bold; }
-
+    /* ---------- Feed ---------- */
     #tierFilter {
       margin-bottom:20px;
       padding:5px;
@@ -124,9 +128,31 @@
       color: var(--cor-texto);
     }
 
-    .auth-buttons { display:flex; gap:10px; margin-bottom:10px; }
-    button { background:var(--cor-dourado); color:#000; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold; }
+    #timesContainer .time-card {
+      border:1px solid var(--cor-dourado);
+      padding:15px;
+      margin-bottom:20px;
+      border-radius:10px;
+      background: rgba(0,0,0,0.5);
+      max-width:100%;
+      word-wrap: break-word;
+    }
 
+    .poke-slot {
+      margin-bottom:12px;
+      padding:8px;
+      border-radius:6px;
+      background: rgba(0,0,0,0.4);
+    }
+    .poke-slot h4 { color:var(--cor-dourado); margin:0 0 5px; }
+
+    .like-btn {
+      background:none; border:none; cursor:pointer; color:var(--cor-dourado);
+      font-size:16px; margin-top:10px; display:flex; align-items:center; gap:5px;
+    }
+    .like-btn.liked { color:red; font-weight:bold; }
+
+    /* ---------- Popup ---------- */
     .popup {
       display:none; position:fixed; top:0; left:0; right:0; bottom:0;
       background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:2000;
@@ -134,17 +160,21 @@
     .popup-content {
       background:#fff; color:#000; padding:20px; border-radius:10px; width:300px; text-align:center;
     }
-    .user-info { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-    .user-info img { width:32px; height:32px; border-radius:50%; }
+
+    @media (max-width:500px){
+      header h1{ font-size:1.3rem; }
+      nav{ right:5px; left:5px; }
+    }
   </style>
 </head>
 <body>
   <header>
-    <h1>
-      <a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a>
-      Humble
-    </h1>
+    <h1><a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a>Humble</h1>
     <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
+    <div class="auth-buttons" id="authArea">
+      <button id="loginBtn">Login</button>
+      <button id="registerBtn">Cadastrar</button>
+    </div>
   </header>
 
   <nav id="dropdownMenu">
@@ -156,11 +186,6 @@
   </nav>
 
   <main>
-    <div class="auth-buttons" id="authArea">
-      <button id="loginBtn">Login</button>
-      <button id="registerBtn">Cadastrar</button>
-    </div>
-
     <section id="teamBuilder">
       <h2>Criar Time</h2>
       <form id="teamForm">
@@ -208,41 +233,41 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // Menu toggle
+    // Menu
     const menuBtn = document.getElementById("menuBtn");
     const dropdownMenu = document.getElementById("dropdownMenu");
-    menuBtn.addEventListener("click", ()=>{menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active");});
-    document.addEventListener("click",(e)=>{ if(!dropdownMenu.contains(e.target)&&!menuBtn.contains(e.target)){menuBtn.classList.remove("active"); dropdownMenu.classList.remove("active");}});
+    menuBtn.addEventListener("click",()=>{menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active");});
+    document.addEventListener("click",(e)=>{if(!dropdownMenu.contains(e.target)&&!menuBtn.contains(e.target)){menuBtn.classList.remove("active"); dropdownMenu.classList.remove("active");}});
 
     // ---------- Variáveis ----------
-    const authArea = document.getElementById("authArea");
-    const teamBuilder = document.getElementById("teamBuilder");
-    const authPopup = document.getElementById("authPopup");
-    const popupTitle = document.getElementById("popupTitle");
-    const popupAction = document.getElementById("popupAction");
-    const emailInput = document.getElementById("emailInput");
-    const passInput = document.getElementById("passInput");
-    const nickInput = document.getElementById("nickInput");
-    const googleLogin = document.getElementById("googleLogin");
-    const tierFilter = document.getElementById("tierFilter");
-    const pokemonList = document.getElementById("pokemonList");
-    const addPokemonBtn = document.getElementById("addPokemon");
-    const timesContainer = document.getElementById("timesContainer");
+    const authArea=document.getElementById("authArea");
+    const teamBuilder=document.getElementById("teamBuilder");
+    const authPopup=document.getElementById("authPopup");
+    const popupTitle=document.getElementById("popupTitle");
+    const popupAction=document.getElementById("popupAction");
+    const emailInput=document.getElementById("emailInput");
+    const passInput=document.getElementById("passInput");
+    const nickInput=document.getElementById("nickInput");
+    const googleLogin=document.getElementById("googleLogin");
+    const tierFilter=document.getElementById("tierFilter");
+    const pokemonList=document.getElementById("pokemonList");
+    const addPokemonBtn=document.getElementById("addPokemon");
+    const timesContainer=document.getElementById("timesContainer");
 
-    let isRegister = false;
-    let pokeCount = 0;
+    let isRegister=false;
+    let pokeCount=0;
     const natures=["Hardy","Lonely","Brave","Adamant","Naughty","Bold","Docile","Relaxed","Impish","Lax","Modest","Mild","Quiet","Bashful","Rash","Calm","Gentle","Sassy","Careful","Quirky","Timid","Hasty","Serious","Jolly","Naive"];
     const tiers=["LC","Monotype","NU","National Dex","National Dex Monotype","National Dex UU","OU","PU","RU","Ubers","UU","ZU","National Dex RU","Monomon","Starter League","Only Smeargle","National Dex Ubers","National Dex AG"];
     tiers.forEach(t=>{ const opt=document.createElement("option"); opt.value=t; opt.textContent=t; tierFilter.appendChild(opt); });
 
-    // ---------- Login/Registro ----------
-    document.getElementById("loginBtn").onclick = ()=>{isRegister=false; popupTitle.textContent="Login"; nickInput.style.display="none"; authPopup.style.display="flex";}
-    document.getElementById("registerBtn").onclick = ()=>{isRegister=true; popupTitle.textContent="Cadastrar"; nickInput.style.display="block"; authPopup.style.display="flex";}
+    // ---------- Login / Register ----------
+    document.getElementById("loginBtn").onclick=()=>{isRegister=false; popupTitle.textContent="Login"; nickInput.style.display="none"; authPopup.style.display="flex";}
+    document.getElementById("registerBtn").onclick=()=>{isRegister=true; popupTitle.textContent="Cadastrar"; nickInput.style.display="block"; authPopup.style.display="flex";}
 
     popupAction.onclick=async()=>{
       try{
         if(isRegister){
-          const userCred = await createUserWithEmailAndPassword(auth,emailInput.value,passInput.value);
+          const userCred=await createUserWithEmailAndPassword(auth,emailInput.value,passInput.value);
           await updateProfile(userCred.user,{ displayName:nickInput.value });
           await set(ref(db,"users/"+userCred.user.uid),{ displayName:nickInput.value, email:emailInput.value, createdAt:Date.now() });
         }else{
@@ -269,11 +294,14 @@
         authArea.innerHTML = `<div class="user-info">
           <img src="${user.photoURL||'https://i.pravatar.cc/150'}">
           <span>${user.displayName||user.email}</span>
-          <button onclick="import('https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js').then(m=>m.getAuth().signOut())">Sair</button>
+          <button id="logoutBtn">Sair</button>
         </div>`;
+        document.getElementById("logoutBtn").onclick=()=>auth.signOut();
         teamBuilder.style.display="block";
       }else{
         authArea.innerHTML=`<button id="loginBtn">Login</button><button id="registerBtn">Cadastrar</button>`;
+        document.getElementById("loginBtn").onclick=()=>{isRegister=false; popupTitle.textContent="Login"; nickInput.style.display="none"; authPopup.style.display="flex";}
+        document.getElementById("registerBtn").onclick=()=>{isRegister=true; popupTitle.textContent="Cadastrar"; nickInput.style.display="block"; authPopup.style.display="flex";}
         teamBuilder.style.display="none";
       }
     });
@@ -283,8 +311,7 @@
       if(pokeCount>=6) return alert("Máximo 6 Pokémons!");
       pokeCount++;
       const div=document.createElement("div"); div.className="pokemon-slot";
-      div.innerHTML=`
-        <h3>Pokémon ${pokeCount}</h3>
+      div.innerHTML=`<h3>Pokémon ${pokeCount}</h3>
         <input placeholder="Nome" name="name">
         <select name="tier">${tiers.map(t=>`<option>${t}</option>`).join("")}</select>
         <select name="nature">${natures.map(n=>`<option>${n}</option>`).join("")}</select>
@@ -339,9 +366,7 @@
         });
         const likesCount=team.likes?Object.keys(team.likes).length:0;
         const userLiked=auth.currentUser && team.likes && team.likes[auth.currentUser.uid];
-        card.innerHTML=`
-          <h3>Time de ${team.ownerName}</h3>
-          <small>${date}</small>
+        card.innerHTML=`<h3>Time de ${team.ownerName}</h3><small>${date}</small>
           <div>${pokemonsHTML}</div>
           <button class="like-btn ${userLiked?"liked":""}" data-id="${team.id}">❤️ ${likesCount}</button>`;
         const likeBtn=card.querySelector(".like-btn");
