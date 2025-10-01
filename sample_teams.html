@@ -1,393 +1,310 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <title>Times dos Jogadores - Humble</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
+  <title>Times - Humble</title>
   <style>
     :root {
       --cor-dourado: #d1a720;
       --cor-fundo: #1a1a1a;
       --cor-texto: #f5f5f5;
     }
-    body{font-family:"Segoe UI",Arial,sans-serif;background:#2c2417;margin:0;color:var(--cor-texto);}
-    header{padding:15px 20px;background:rgba(20,20,20,0.9);border-bottom:2px solid var(--cor-dourado);display:flex;align-items:center;justify-content:space-between}
-    header h1{color:var(--cor-dourado);margin:0;display:flex;gap:12px;align-items:center}
-    header img{height:40px}
-    main{max-width:1200px;margin:24px auto;padding:0 16px}
-    h2{color:var(--cor-dourado)}
-    textarea{width:100%;height:160px;border-radius:8px;border:1px solid var(--cor-dourado);background:rgba(0,0,0,0.6);color:var(--cor-texto);padding:10px;resize:vertical}
-    .btn{background:var(--cor-dourado);border:none;color:#000;padding:10px 14px;margin-right:8px;border-radius:6px;cursor:pointer;font-weight:700}
-    .times-container{display:flex;flex-wrap:wrap;gap:16px;margin-top:18px}
-    .time-card{background:#2d241a;border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,0.6);flex:1 1 320px;position:relative}
-    .pokemon-list{display:flex;flex-wrap:wrap;gap:12px}
-    .pokemon-card{background:#1f1a14;border-radius:12px;padding:10px;flex:1 1 120px;text-align:center;box-shadow:0 4px 8px rgba(0,0,0,0.35)}
-    .pokemon-card img{width:72px;height:72px;display:block;margin:0 auto}
-    .pokemon-card h3{font-size:0.95rem;margin:8px 0 0;color:var(--cor-dourado)}
-    .copy-btn{position:absolute;right:12px;top:12px;background:var(--cor-dourado);border:none;border-radius:6px;padding:6px 10px;cursor:pointer;font-weight:700}
-    .meta{font-size:0.85rem;color:#ddd;margin-bottom:8px}
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
+                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      color: var(--cor-texto);
+    }
+
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(20, 20, 20, 0.9);
+      border-bottom: 2px solid var(--cor-dourado);
+      z-index: 1000;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--cor-dourado);
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    #userInfo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--cor-dourado);
+    }
+    #userInfo img {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+    }
+
+    #loginBtn {
+      background: none;
+      border: 1px solid var(--cor-dourado);
+      color: var(--cor-dourado);
+      padding: 5px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #loginBtn:hover { background: var(--cor-dourado); color: var(--cor-fundo); }
+
+    #criarTimeBtn {
+      position: fixed;
+      top: 80px; right: 20px;
+      background: var(--cor-dourado);
+      color: var(--cor-fundo);
+      font-size: 1rem;
+      font-weight: bold;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 900;
+    }
+
+    main { margin-top: 120px; padding: 20px; }
+    .time-card {
+      background: rgba(30,25,20,0.9);
+      border: 1px solid var(--cor-dourado);
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    #searchBar {
+      width: 100%; max-width: 400px;
+      margin: 0 auto 20px;
+      display: block;
+      padding: 10px;
+      border: 1px solid var(--cor-dourado);
+      border-radius: 8px;
+      background: #222;
+      color: var(--cor-texto);
+    }
+
+    /* MODAL */
+    .modal {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.6);
+      justify-content: center; align-items: center;
+      z-index: 2000;
+    }
+    .modal-content {
+      background: var(--cor-fundo);
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%; max-width: 800px;
+      max-height: 90vh; overflow-y: auto;
+    }
+
+    .pokemon-card {
+      border: 1px solid var(--cor-dourado);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 15px;
+      background: rgba(40,40,40,0.9);
+    }
+    .pokemon-card h3 { margin-top: 0; color: var(--cor-dourado); }
+    .stat { margin: 6px 0; }
+    .stat label { display: inline-block; width: 60px; }
+    .stat input[type=range] { width: 200px; }
+    .ev-warning { color: red; font-size: 0.9rem; }
   </style>
 </head>
 <body>
   <header>
-    <h1>
-      <a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a>
-      Humble - Times
-    </h1>
+    <h1>Humble</h1>
+    <div class="header-right">
+      <div id="userInfo"></div>
+      <button id="loginBtn">Login</button>
+    </div>
   </header>
 
-  <main>
-    <h2>Enviar Time (formato Showdown)</h2>
-    <textarea id="importText" placeholder="Cole aqui seu time no formato Showdown (ex: Primarina @ Choice Specs ... )"></textarea>
-    <div style="margin-top:10px">
-      <button class="btn" id="btnSend">✅ Enviar</button>
-      <button class="btn" id="btnCancel">❌ Cancelar</button>
-    </div>
-
-    <h2 style="margin-top:22px">Times Postados</h2>
-    <div class="times-container" id="timesContainer"></div>
-  </main>
-
-  <!-- Firebase + app -->
-  <script type="module">
-    // IMPORTS (CDN modular SDK)
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js';
-    import {
-      getFirestore, collection, addDoc, serverTimestamp,
-      query, orderBy, onSnapshot
-    } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
-
-    // ====== COLE AQUI O SEU firebaseConfig (pegar no Firebase Console: Project Settings -> SDK snippet -> Config) ======
-    const firebaseConfig = 
-      <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="utf-8" />
-  <title>Times dos Jogadores - Humble</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <style>
-    :root {
-      --cor-dourado: #d1a720;
-      --cor-fundo: #1a1a1a;
-      --cor-texto: #f5f5f5;
-    }
-    body{font-family:"Segoe UI",Arial,sans-serif;background:#2c2417;margin:0;color:var(--cor-texto);}
-    header{padding:15px 20px;background:rgba(20,20,20,0.9);border-bottom:2px solid var(--cor-dourado);display:flex;align-items:center;justify-content:space-between}
-    header h1{color:var(--cor-dourado);margin:0;display:flex;gap:12px;align-items:center}
-    header img{height:40px}
-    main{max-width:1200px;margin:24px auto;padding:0 16px}
-    h2{color:var(--cor-dourado)}
-    textarea{width:100%;height:160px;border-radius:8px;border:1px solid var(--cor-dourado);background:rgba(0,0,0,0.6);color:var(--cor-texto);padding:10px;resize:vertical}
-    .btn{background:var(--cor-dourado);border:none;color:#000;padding:10px 14px;margin-right:8px;border-radius:6px;cursor:pointer;font-weight:700}
-    .times-container{display:flex;flex-wrap:wrap;gap:16px;margin-top:18px}
-    .time-card{background:#2d241a;border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,0.6);flex:1 1 320px;position:relative}
-    .pokemon-list{display:flex;flex-wrap:wrap;gap:12px}
-    .pokemon-card{background:#1f1a14;border-radius:12px;padding:10px;flex:1 1 120px;text-align:center;box-shadow:0 4px 8px rgba(0,0,0,0.35)}
-    .pokemon-card img{width:72px;height:72px;display:block;margin:0 auto}
-    .pokemon-card h3{font-size:0.95rem;margin:8px 0 0;color:var(--cor-dourado)}
-    .copy-btn{position:absolute;right:12px;top:12px;background:var(--cor-dourado);border:none;border-radius:6px;padding:6px 10px;cursor:pointer;font-weight:700}
-    .meta{font-size:0.85rem;color:#ddd;margin-bottom:8px}
-  </style>
-</head>
-<body>
-  <header>
-    <h1>
-      <a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a>
-      Humble - Times
-    </h1>
-  </header>
+  <button id="criarTimeBtn">+ Criar Time</button>
 
   <main>
-    <h2>Enviar Time (formato Showdown)</h2>
-    <textarea id="importText" placeholder="Cole aqui seu time no formato Showdown (ex: Primarina @ Choice Specs ... )"></textarea>
-    <div style="margin-top:10px">
-      <button class="btn" id="btnSend">✅ Enviar</button>
-      <button class="btn" id="btnCancel">❌ Cancelar</button>
-    </div>
-
-    <h2 style="margin-top:22px">Times Postados</h2>
-    <div class="times-container" id="timesContainer"></div>
+    <input type="text" id="searchBar" placeholder="🔎 Pesquisar por tier...">
+    <div id="timesContainer"></div>
+    <button id="loadMoreBtn" style="display:none;">Carregar mais</button>
   </main>
 
-  <!-- Firebase + app -->
+  <!-- Modal Criar Time -->
+  <div class="modal" id="timeModal">
+    <div class="modal-content">
+      <h2>Criar Novo Time</h2>
+      <div id="pokemonSlots"></div>
+      <button id="salvarTimeBtn">Salvar Time</button>
+    </div>
+  </div>
+
   <script type="module">
-    // IMPORTS (CDN modular SDK)
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js';
-    import {
-      getFirestore, collection, addDoc, serverTimestamp,
-      query, orderBy, onSnapshot
-    } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-    // ====== COLE AQUI O SEU firebaseConfig (pegar no Firebase Console: Project Settings -> SDK snippet -> Config) ======
-    const firebaseConfig = /* COLE AQUI SEU firebaseConfig */ {
-      // apiKey: "...",
-      // authDomain: "...",
-      // projectId: "...",
-      // appId: "..."
+    const firebaseConfig = {
+      apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
+      authDomain: "sampleteans.firebaseapp.com",
+      databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
+      projectId: "sampleteans",
+      storageBucket: "sampleteans.firebasestorage.app",
+      messagingSenderId: "1069510029261",
+      appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
     };
 
-    // Inicializa Firebase / Firestore
     const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const timesCol = collection(db, 'times');
-    const timesQuery = query(timesCol, orderBy('createdAt', 'desc'));
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+    const provider = new GoogleAuthProvider();
 
-    // Elementos DOM
-    const importText = document.getElementById('importText');
-    const btnSend = document.getElementById('btnSend');
-    const btnCancel = document.getElementById('btnCancel');
-    const timesContainer = document.getElementById('timesContainer');
+    const loginBtn = document.getElementById("loginBtn");
+    const userInfo = document.getElementById("userInfo");
+    const criarTimeBtn = document.getElementById("criarTimeBtn");
+    const timeModal = document.getElementById("timeModal");
+    const salvarTimeBtn = document.getElementById("salvarTimeBtn");
+    const timesContainer = document.getElementById("timesContainer");
+    const searchBar = document.getElementById("searchBar");
+    const loadMoreBtn = document.getElementById("loadMoreBtn");
+    const pokemonSlots = document.getElementById("pokemonSlots");
 
-    // Enviar (cria documento no Firestore)
-    btnSend.addEventListener('click', async () => {
-      const texto = importText.value.trim();
-      if (!texto) { alert('Cole um time antes de enviar.'); return; }
-      try {
-        await addDoc(timesCol, {
-          texto,
-          createdAt: serverTimestamp()
-        });
-        importText.value = '';
-      } catch (err) {
-        console.error('Erro ao enviar:', err);
-        alert('Erro ao enviar o time. Veja console.');
+    // LOGIN
+    loginBtn.addEventListener("click", async () => {
+      if (auth.currentUser) { await signOut(auth); } 
+      else { await signInWithPopup(auth, provider); }
+    });
+    onAuthStateChanged(auth, user => {
+      if (user) {
+        loginBtn.textContent = "Sair";
+        userInfo.innerHTML = `<img src="${user.photoURL}" alt="user"><span>${user.displayName.split(" ")[0]}</span>`;
+      } else {
+        loginBtn.textContent = "Login";
+        userInfo.innerHTML = "";
       }
     });
 
-    btnCancel.addEventListener('click', () => importText.value = '');
+    // SLOTS DE POKEMON
+    const stats = ["HP","Atk","Def","SpA","SpD","Spe"];
+    for (let i=0;i<6;i++) {
+      const div = document.createElement("div");
+      div.className="pokemon-card";
+      div.innerHTML=`
+        <h3>Pokémon ${i+1}</h3>
+        <label>Tier:</label>
+        <select class="tier"><option>OU</option><option>UU</option><option>NU</option><option>Uber</option></select><br><br>
+        <label>Pokémon:</label><input type="text" class="pokemonName"><br><br>
+        <label>Nature:</label>
+        <select class="nature"><option>Adamant</option><option>Modest</option><option>Jolly</option><option>Timid</option><option>Bold</option></select><br><br>
+        <label>Ability:</label><input type="text" class="ability"><br><br>
+        <label>Moves:</label><br>
+        <input type="text" class="move" placeholder="Move 1"><br>
+        <input type="text" class="move" placeholder="Move 2"><br>
+        <input type="text" class="move" placeholder="Move 3"><br>
+        <input type="text" class="move" placeholder="Move 4"><br><br>
+        <strong>IVs</strong><br>
+        ${stats.map(stat=>`<div class="stat"><label>${stat}</label><input type="range" min="0" max="31" value="31" class="iv"><span class="iv-value">31</span></div>`).join("")}
+        <br><strong>EVs</strong><br>
+        ${stats.map(stat=>`<div class="stat"><label>${stat}</label><input type="range" min="0" max="252" step="4" value="0" class="ev"><span class="ev-value">0</span></div>`).join("")}
+        <div class="ev-warning"></div>
+      `;
+      pokemonSlots.appendChild(div);
+    }
 
-    // Listener em tempo real: atualiza quando qualquer usuário postar/editar
-    onSnapshot(timesQuery, snapshot => {
-      const docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      renderTimes(docs);
-    }, err => {
-      console.error('Erro no snapshot:', err);
+    // Atualizar sliders
+    pokemonSlots.addEventListener("input", e=>{
+      if (e.target.classList.contains("iv")) e.target.nextElementSibling.textContent=e.target.value;
+      if (e.target.classList.contains("ev")) {
+        e.target.nextElementSibling.textContent=e.target.value;
+        validateEVs(e.target.closest(".pokemon-card"));
+      }
     });
 
-    // Renderiza cards a partir de documentos
-    function renderTimes(docs) {
-      timesContainer.innerHTML = '';
-      if (!docs.length) {
-        timesContainer.innerHTML = '<p style="color:#ddd">Nenhum time postado ainda.</p>';
-        return;
-      }
+    function validateEVs(card) {
+      let evs=[...card.querySelectorAll(".ev")].map(ev=>parseInt(ev.value));
+      let total=evs.reduce((a,b)=>a+b,0);
+      let over252=evs.filter(v=>v===252).length;
+      let warning=card.querySelector(".ev-warning");
+      if (total>508) warning.textContent=`⚠️ Máx 508 EVs. Atual: ${total}`;
+      else if (over252>2) warning.textContent=`⚠️ Só 2 stats podem ter 252 EVs`;
+      else warning.textContent="";
+    }
 
-      docs.forEach(doc => {
-        const card = document.createElement('div');
-        card.className = 'time-card';
+    // Criar time
+    criarTimeBtn.addEventListener("click",()=>{
+      if (!auth.currentUser) { alert("Faça login!"); return; }
+      timeModal.style.display="flex";
+    });
+    window.addEventListener("click",e=>{ if(e.target===timeModal) timeModal.style.display="none"; });
 
-        const copyBtn = document.createElement('button');
-        copyBtn.className = 'copy-btn';
-        copyBtn.textContent = '📋 Copiar';
-        copyBtn.onclick = async () => {
-          try {
-            await navigator.clipboard.writeText(doc.texto);
-            alert('Time copiado para a área de transferência!');
-          } catch (e) {
-            alert('Não foi possível copiar.'); console.error(e);
-          }
+    salvarTimeBtn.addEventListener("click",()=>{
+      if (!auth.currentUser) return alert("Login necessário!");
+      let team=[];
+      pokemonSlots.querySelectorAll(".pokemon-card").forEach(card=>{
+        const pokemon={
+          tier: card.querySelector(".tier").value,
+          name: card.querySelector(".pokemonName").value,
+          nature: card.querySelector(".nature").value,
+          ability: card.querySelector(".ability").value,
+          moves: [...card.querySelectorAll(".move")].map(m=>m.value).filter(m=>m),
+          ivs: stats.reduce((acc,s,idx)=>{acc[s]=card.querySelectorAll(".iv")[idx].value;return acc;},{}),
+          evs: stats.reduce((acc,s,idx)=>{acc[s]=card.querySelectorAll(".ev")[idx].value;return acc;},{})
         };
-
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        const date = doc.createdAt && doc.createdAt.toDate ? doc.createdAt.toDate().toLocaleString() : '';
-        meta.textContent = `Postado em: ${date}`;
-
-        const pokemonList = document.createElement('div');
-        pokemonList.className = 'pokemon-list';
-
-        const pokes = parsePokemons(doc.texto);
-        pokes.forEach(p => {
-          const pDiv = document.createElement('div');
-          pDiv.className = 'pokemon-card';
-
-          // limpa formas para montar URL da sprite (não é perfeito pra todos os casos)
-          const nomeLimpo = p.split('(')[0].replace(/Mega/gi, '').trim();
-          const apiName = nomeLimpo.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/\s+/g, '-');
-
-          const img = document.createElement('img');
-          img.src = `https://img.pokemondb.net/sprites/home/normal/${apiName}.png`;
-          img.onerror = () => img.src = 'https://img.pokemondb.net/sprites/home/normal/missingno.png';
-
-          const h = document.createElement('h3');
-          h.textContent = p;
-
-          pDiv.appendChild(img);
-          pDiv.appendChild(h);
-          pokemonList.appendChild(pDiv);
-        });
-
-        card.appendChild(copyBtn);
-        card.appendChild(meta);
-        card.appendChild(pokemonList);
-        timesContainer.appendChild(card);
+        if(pokemon.name) team.push(pokemon);
       });
-    }
-
-    // Extrai nomes de pokémon do texto em formato Showdown
-    function parsePokemons(text) {
-      const linhas = text.split(/\r?\n/);
-      const pokes = [];
-      for (let i = 0; i < linhas.length; i++) {
-        let l = linhas[i].trim();
-        if (!l) continue;
-        // ignora linhas de moves e detalhes
-        if (l.startsWith('-')) continue;
-        if (/^Ability:/i.test(l)) continue;
-        if (/^EVs:/i.test(l)) continue;
-        if (/^IVs:/i.test(l)) continue;
-        if (/Nature/i.test(l)) continue;
-        // se tem @ é a linha do Pokémon
-        if (l.includes('@')) {
-          const nome = l.split('@')[0].trim();
-          if (nome) pokes.push(nome);
-          continue;
-        }
-        // alguns times começam com nome sem @ (menos comum)
-        // assumir que linha válida com palavra inicial maiúscula e não "Ability"
-        if (/^[A-ZÍÉÁÀÇ].+/.test(l) && !l.includes(':')) {
-          // evita pegar "Moves:" etc.
-          pokes.push(l.split('@')[0].trim());
-        }
-      }
-      return pokes.slice(0,6); // limitar a 6 por segurança
-    }
-  </script>
-</body>
-</html>
-{
-      // apiKey: "...",
-      // authDomain: "...",
-      // projectId: "...",
-      // appId: "..."
-    };
-
-    // Inicializa Firebase / Firestore
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const timesCol = collection(db, 'times');
-    const timesQuery = query(timesCol, orderBy('createdAt', 'desc'));
-
-    // Elementos DOM
-    const importText = document.getElementById('importText');
-    const btnSend = document.getElementById('btnSend');
-    const btnCancel = document.getElementById('btnCancel');
-    const timesContainer = document.getElementById('timesContainer');
-
-    // Enviar (cria documento no Firestore)
-    btnSend.addEventListener('click', async () => {
-      const texto = importText.value.trim();
-      if (!texto) { alert('Cole um time antes de enviar.'); return; }
-      try {
-        await addDoc(timesCol, {
-          texto,
-          createdAt: serverTimestamp()
-        });
-        importText.value = '';
-      } catch (err) {
-        console.error('Erro ao enviar:', err);
-        alert('Erro ao enviar o time. Veja console.');
-      }
+      const novoTime={ ownerName: auth.currentUser.displayName, ownerUid: auth.currentUser.uid, pokemons: team };
+      push(ref(db,"teams"),novoTime);
+      alert("Time salvo!");
+      timeModal.style.display="none";
     });
 
-    btnCancel.addEventListener('click', () => importText.value = '');
-
-    // Listener em tempo real: atualiza quando qualquer usuário postar/editar
-    onSnapshot(timesQuery, snapshot => {
-      const docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-      renderTimes(docs);
-    }, err => {
-      console.error('Erro no snapshot:', err);
-    });
-
-    // Renderiza cards a partir de documentos
-    function renderTimes(docs) {
-      timesContainer.innerHTML = '';
-      if (!docs.length) {
-        timesContainer.innerHTML = '<p style="color:#ddd">Nenhum time postado ainda.</p>';
-        return;
-      }
-
-      docs.forEach(doc => {
-        const card = document.createElement('div');
-        card.className = 'time-card';
-
-        const copyBtn = document.createElement('button');
-        copyBtn.className = 'copy-btn';
-        copyBtn.textContent = '📋 Copiar';
-        copyBtn.onclick = async () => {
-          try {
-            await navigator.clipboard.writeText(doc.texto);
-            alert('Time copiado para a área de transferência!');
-          } catch (e) {
-            alert('Não foi possível copiar.'); console.error(e);
-          }
-        };
-
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        const date = doc.createdAt && doc.createdAt.toDate ? doc.createdAt.toDate().toLocaleString() : '';
-        meta.textContent = `Postado em: ${date}`;
-
-        const pokemonList = document.createElement('div');
-        pokemonList.className = 'pokemon-list';
-
-        const pokes = parsePokemons(doc.texto);
-        pokes.forEach(p => {
-          const pDiv = document.createElement('div');
-          pDiv.className = 'pokemon-card';
-
-          // limpa formas para montar URL da sprite (não é perfeito pra todos os casos)
-          const nomeLimpo = p.split('(')[0].replace(/Mega/gi, '').trim();
-          const apiName = nomeLimpo.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/\s+/g, '-');
-
-          const img = document.createElement('img');
-          img.src = `https://img.pokemondb.net/sprites/home/normal/${apiName}.png`;
-          img.onerror = () => img.src = 'https://img.pokemondb.net/sprites/home/normal/missingno.png';
-
-          const h = document.createElement('h3');
-          h.textContent = p;
-
-          pDiv.appendChild(img);
-          pDiv.appendChild(h);
-          pokemonList.appendChild(pDiv);
-        });
-
-        card.appendChild(copyBtn);
-        card.appendChild(meta);
-        card.appendChild(pokemonList);
-        timesContainer.appendChild(card);
+    // Listagem de times com busca/paginação
+    let allTimes=[]; let loaded=0; let itemsPerPage=5;
+    function renderTimes(filter=""){
+      timesContainer.innerHTML="";
+      let filtered=allTimes.filter(t=>t.pokemons.some(p=>p.tier.toLowerCase().includes(filter.toLowerCase())));
+      let toShow=filtered.slice(0,loaded);
+      toShow.forEach(time=>{
+        const div=document.createElement("div");
+        div.className="time-card";
+        div.innerHTML=`<h3>Time de ${time.ownerName}</h3>
+          ${time.pokemons.map(p=>`<div><b>${p.name}</b> (${p.tier}) - ${p.nature} | ${p.ability}<br>
+          Moves: ${p.moves.join(", ")}<br>
+          IVs: ${JSON.stringify(p.ivs)}<br>
+          EVs: ${JSON.stringify(p.evs)}</div><hr>`).join("")}`;
+        timesContainer.appendChild(div);
       });
+      loadMoreBtn.style.display=filtered.length>loaded?"block":"none";
     }
+    loadMoreBtn.addEventListener("click",()=>{loaded+=itemsPerPage;renderTimes(searchBar.value);});
+    searchBar.addEventListener("input",e=>{loaded=itemsPerPage;renderTimes(e.target.value);});
 
-    // Extrai nomes de pokémon do texto em formato Showdown
-    function parsePokemons(text) {
-      const linhas = text.split(/\r?\n/);
-      const pokes = [];
-      for (let i = 0; i < linhas.length; i++) {
-        let l = linhas[i].trim();
-        if (!l) continue;
-        // ignora linhas de moves e detalhes
-        if (l.startsWith('-')) continue;
-        if (/^Ability:/i.test(l)) continue;
-        if (/^EVs:/i.test(l)) continue;
-        if (/^IVs:/i.test(l)) continue;
-        if (/Nature/i.test(l)) continue;
-        // se tem @ é a linha do Pokémon
-        if (l.includes('@')) {
-          const nome = l.split('@')[0].trim();
-          if (nome) pokes.push(nome);
-          continue;
-        }
-        // alguns times começam com nome sem @ (menos comum)
-        // assumir que linha válida com palavra inicial maiúscula e não "Ability"
-        if (/^[A-ZÍÉÁÀÇ].+/.test(l) && !l.includes(':')) {
-          // evita pegar "Moves:" etc.
-          pokes.push(l.split('@')[0].trim());
-        }
-      }
-      return pokes.slice(0,6); // limitar a 6 por segurança
-    }
+    const timesRef=ref(db,"teams");
+    onValue(timesRef,snapshot=>{
+      allTimes=[]; snapshot.forEach(snap=>allTimes.push(snap.val()));
+      allTimes.reverse(); loaded=itemsPerPage; renderTimes(searchBar.value);
+    });
   </script>
 </body>
 </html>
