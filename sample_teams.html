@@ -1,542 +1,829 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <title>Team Builder - Humble</title>
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <link rel="icon" type="image/png" href="img/mike_anotando2.png">
+  <title>Team Builder - Humble (Showdown Import/Export + Firebase)</title>
+  <link rel="icon" href="img/mike_anotando2.png" />
 
   <style>
-    :root {
-      --cor-dourado: #d1a720;
-      --cor-fundo: #1a1a1a;
-      --cor-texto: #f5f5f5;
-    }
+  :root{
+    --gold:#d1a720;
+    --bg:#0f0f0f;
+    --panel: rgba(0,0,0,0.55);
+    --text:#f3f3f3;
+    --muted:#cfcfcf;
+    --accent: #1e90ff;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    color:var(--text);
+    background: linear-gradient(135deg, rgba(10,10,10,0.9), rgba(30,20,10,0.85)),
+      url("https://i.imgur.com/vATNRmF.png") center/cover fixed no-repeat;
+    min-height:100vh;
+  }
 
-    * { box-sizing: border-box; }
+  /* Header */
+  header{
+    position:fixed; top:0; left:0; right:0;
+    display:flex; align-items:center; gap:12px;
+    padding:10px 16px; background: rgba(8,8,8,0.92);
+    border-bottom:3px solid var(--gold); z-index:1200;
+  }
+  .header-left{ display:flex; align-items:center; gap:12px; flex:1 1 auto; }
+  .header-center{ flex:0 1 auto; display:none; }
+  .header-right{ display:flex; gap:12px; align-items:center; justify-content:flex-end; flex:0 0 auto; }
 
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
-                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
-      background-size: cover;
-      margin: 0;
-      padding: 0;
-      min-height: 100vh;
-      color: var(--cor-texto);
-    }
+  a.brand{ text-decoration:none; color:var(--gold); display:flex; align-items:center; gap:10px; font-weight:700; }
+  a.brand img{ height:34px; display:block; }
 
-    /* ---------- Header ---------- */
-    header {
-      position: fixed;
-      top: 0; left:0; right:0;
-      width: 100%;
-      padding: 12px 16px;
-      display: flex;
-      align-items: center;
-      background: rgba(20,20,20,0.92);
-      border-bottom: 2px solid var(--cor-dourado);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
-      z-index: 1000;
-      gap: 12px;
-    }
+  .auth-buttons, .user-info{ display:flex; gap:8px; align-items:center; }
+  button { background:var(--gold); color:#000; border:none; padding:7px 10px; border-radius:8px; cursor:pointer; font-weight:700; }
+  .ghost { background: transparent; color:var(--text); border:1px solid rgba(255,255,255,0.06); }
 
-    .header-left { display:flex; align-items:center; gap:12px; flex: 1 1 auto; }
-    .header-center { display:flex; align-items:center; gap:12px; justify-content:center; flex: 0 1 auto; }
-    .header-right { display:flex; align-items:center; gap:12px; justify-content:flex-end; flex: 0 0 auto; }
+  .menu-toggle{ width:36px; height:22px; display:inline-flex; flex-direction:column; justify-content:space-between; cursor:pointer; padding:2px; }
+  .menu-toggle span{ height:3px; border-radius:3px; background:var(--text); transition:0.18s; }
+  .menu-toggle.active span:nth-child(1){ transform:rotate(45deg) translate(5px,4px);}
+  .menu-toggle.active span:nth-child(2){ opacity:0; transform:scale(0);}
+  .menu-toggle.active span:nth-child(3){ transform:rotate(-45deg) translate(5px,-4px); }
 
-    header h1 {
-      font-size: 1.4rem;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      color: var(--cor-dourado);
-      text-decoration: none;
-    }
-    header h1 img { height: 34px; cursor:pointer; display:block; }
+  nav#dropdownMenu{
+    position:absolute; top:calc(100% + 8px); right:12px;
+    background:var(--panel); border:1px solid var(--gold); padding:12px; border-radius:10px;
+    display:none; flex-direction:column; gap:8px; min-width:180px; z-index:1250;
+  }
+  nav#dropdownMenu.active{ display:flex; }
+  nav a{ color:var(--gold); text-decoration:none; padding:6px 8px; border-radius:6px; display:block; }
+  nav a:hover{ color:var(--text); background: rgba(255,255,255,0.02); }
 
-    .auth-buttons { display:flex; gap:8px; align-items:center; }
-    .auth-buttons button { padding:6px 10px; font-weight:700; border-radius:6px; border: none; }
+  /* Main area */
+  main{ max-width:1200px; margin: calc(64px + 18px) auto 48px; padding:0 16px; box-sizing:border-box; }
 
-    .user-info { display:flex; align-items:center; gap:8px; background: rgba(0,0,0,0.2); padding:6px 8px; border-radius:8px; }
-    .user-info img { width:32px; height:32px; border-radius:50%; object-fit:cover; }
+  section.card{
+    background: var(--panel); border:1px solid var(--gold); padding:14px; border-radius:12px; margin-bottom:18px;
+  }
+  h2{ color:var(--gold); margin:0 0 10px; }
 
-    /* ---------- Menu Toggle (at the right-most) ---------- */
-    .menu-toggle {
-      display: inline-flex; flex-direction: column; justify-content: space-between;
-      width: 34px; height: 22px; cursor:pointer; z-index:1100;
-      padding: 2px;
-    }
-    .menu-toggle span {
-      display: block; height:3px; background: var(--cor-texto); border-radius:4px; transition:0.2s;
-    }
-    .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px);}
-    .menu-toggle.active span:nth-child(2) { opacity:0; transform: scale(0); }
-    .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+  /* Builder layout */
+  .builder-grid{
+    display:grid; grid-template-columns: 1fr 340px; gap:12px;
+  }
+  .builder-left{ display:flex; flex-direction:column; gap:12px; }
+  .builder-right{ display:flex; flex-direction:column; gap:12px; }
 
-    /* ---------- Dropdown nav (positioned relative to header right) ---------- */
-    nav {
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 12px;
-      background: rgba(30,25,20,0.98);
-      border:1px solid var(--cor-dourado);
-      border-radius:12px;
-      box-shadow:0 8px 20px rgba(0,0,0,0.6);
-      display:none;
-      flex-direction: column;
-      padding:12px;
-      gap:8px;
-      z-index:1200;
-      min-width:170px;
-    }
-    nav.active { display:flex; }
-    nav a { color: var(--cor-dourado); text-decoration:none; font-size:0.98rem; padding:6px 8px; border-radius:6px; display:block; }
-    nav a:hover { color: var(--cor-texto); background: rgba(255,255,255,0.02); }
+  label{ font-size:0.9rem; color:var(--muted); margin-bottom:6px; display:block; }
+  input[type="text"], input[type="number"], select, textarea{
+    width:100%; padding:8px; border-radius:8px; border:1px solid rgba(255,255,255,0.06);
+    background: rgba(255,255,255,0.02); color:var(--text);
+  }
+  textarea{ min-height:120px; font-family:inherit; resize:vertical; }
 
-    /* ---------- Main ---------- */
-    main {
-      padding: calc(64px + 18px) 18px 30px 18px; /* espaço dinâmico para header */
-      max-width:1200px;
-      margin: auto;
-      box-sizing:border-box;
-      width: 100%;
-    }
+  .row{ display:flex; gap:8px; align-items:center; }
+  .row > *{ flex:1 1 auto; }
 
-    h2 { margin-top: 0; color: var(--cor-dourado); }
+  .small-grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:8px; }
+  .six-grid{ display:grid; grid-template-columns: repeat(6,1fr); gap:6px; align-items:center; }
 
-    /* ---------- Team Builder ---------- */
-    #teamBuilder {
-      display:none;
-      margin-bottom:20px;
-      border:1px solid var(--cor-dourado);
-      padding:14px;
-      border-radius:12px;
-      background: rgba(0,0,0,0.55);
-      width:100%;
-    }
+  .stat-input{ width:100%; padding:6px; text-align:center; border-radius:6px; }
 
-    #teamForm { display:flex; flex-direction:column; gap:10px; }
-    #pokemonList { display:flex; flex-direction:column; gap:10px; }
+  .warning{ color:#ffb86b; font-size:0.9rem; margin-top:6px; }
 
-    .pokemon-slot {
-      border:1px solid var(--cor-dourado);
-      padding:10px;
-      border-radius:8px;
-      background: rgba(0,0,0,0.4);
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-    }
-    .pokemon-slot h3 { margin:0; color: var(--cor-dourado); }
+  .btn-row{ display:flex; gap:8px; flex-wrap:wrap; }
+  .ghost-btn{ background:transparent; border:1px solid rgba(255,255,255,0.06); color:var(--text); padding:7px 10px; border-radius:8px; }
 
-    .pokemon-slot input, .pokemon-slot select {
-      padding:8px; border-radius:6px; border:1px solid rgba(255,255,255,0.06); background: rgba(255,255,255,0.02); color: var(--cor-texto);
-    }
+  /* feed */
+  .controls{ display:flex; gap:8px; align-items:center; justify-content:space-between; flex-wrap:wrap; margin-bottom:12px; }
+  #timesContainer{ display:flex; flex-direction:column; gap:12px; }
 
-    .team-actions { display:flex; gap:8px; flex-wrap:wrap; }
+  .time-card{ background: rgba(0,0,0,0.45); border:1px solid var(--gold); padding:12px; border-radius:10px; }
+  .time-card header{ display:flex; justify-content:space-between; align-items:center; gap:8px; }
+  .poke-list{ display:flex; flex-direction:column; gap:8px; margin-top:6px; }
+  .move-list{ margin:6px 0 0; padding-left:18px; color:var(--muted); }
 
-    /* ---------- Feed ---------- */
-    .controls { display:flex; gap:12px; align-items:center; margin-bottom:12px; flex-wrap:wrap; }
-    #tierFilter {
-      padding:8px; border-radius:8px; border:1px solid var(--cor-dourado);
-      background: rgba(0,0,0,0.35); color: var(--cor-texto); min-width:140px;
-    }
+  .copy-btn{ background: transparent; border:1px dashed rgba(255,255,255,0.06); color:var(--muted); padding:6px 8px; border-radius:8px; cursor:pointer; }
 
-    #timesContainer { display:flex; flex-direction:column; gap:14px; }
-
-    .time-card {
-      border:1px solid var(--cor-dourado);
-      padding:12px;
-      border-radius:10px;
-      background: rgba(0,0,0,0.55);
-      width:100%;
-      display:flex;
-      flex-direction:column;
-      gap:8px;
-      word-wrap: break-word;
-    }
-
-    .time-card header { display:flex; justify-content:space-between; align-items:center; gap:8px; }
-    .time-card .poke-list { display:flex; flex-direction:column; gap:8px; }
-
-    .poke-slot {
-      margin:0;
-      padding:8px;
-      border-radius:6px;
-      background: rgba(0,0,0,0.35);
-    }
-    .poke-slot h4 { color:var(--cor-dourado); margin:0 0 6px; font-size:1rem; }
-
-    .like-btn {
-      background:none; border:none; cursor:pointer; color:var(--cor-dourado);
-      font-size:15px; display:inline-flex; align-items:center; gap:6px; padding:6px 8px; border-radius:6px;
-    }
-    .like-btn.liked { color:#ff6b6b; font-weight:700; background: rgba(255,255,255,0.02); }
-
-    .meta { font-size:0.85rem; color: #cfcfcf; }
-
-    /* ---------- Popup ---------- */
-    .popup {
-      display:none; position:fixed; top:0; left:0; right:0; bottom:0;
-      background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:2000;
-    }
-    .popup-content {
-      background:#fff; color:#000; padding:18px; border-radius:10px;
-      width:100%; max-width:420px; text-align:center;
-    }
-    .popup-content input { width:100%; padding:8px; margin:8px 0; border-radius:6px; border:1px solid #ccc; }
-
-    /* ---------- Responsive ---------- */
-    @media (max-width: 900px) {
-      .header-center { display:none; }
-      header h1 { font-size:1.1rem; }
-    }
-    @media (max-width: 700px) {
-      header { padding:10px 12px; }
-      .header-left { gap:8px; }
-      .auth-buttons button { padding:6px 8px; font-size:0.9rem; }
-      nav { right:8px; left:8px; min-width:unset; }
-      .popup-content { max-width: 92vw; }
-      main { padding: calc(64px + 12px) 12px 20px 12px; }
-      .time-card { padding:10px; }
-    }
+  /* small screens */
+  @media (max-width:960px){
+    .builder-grid{ grid-template-columns: 1fr; }
+    .builder-right{ order:2; }
+  }
+  @media (max-width:640px){
+    header{ padding:10px; }
+    .header-center{ display:none; }
+    nav#dropdownMenu{ right:8px; left:8px; }
+    .six-grid{ grid-template-columns: repeat(3,1fr); }
+  }
   </style>
 </head>
 <body>
-  <header>
-    <div class="header-left">
-      <a href="index.html" style="text-decoration:none"><h1><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">Humble</h1></a>
+
+<header>
+  <div class="header-left">
+    <a class="brand" href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">Humble</a>
+  </div>
+  <div class="header-center"></div>
+  <div class="header-right">
+    <div id="authArea" class="auth-buttons">
+      <button id="loginBtn">Login</button>
+      <button id="registerBtn">Cadastrar</button>
     </div>
-
-    <div class="header-center" aria-hidden="true">
-      <!-- espaço central (opcional) -->
-    </div>
-
-    <div class="header-right">
-      <div class="auth-buttons" id="authArea">
-        <button id="loginBtn">Login</button>
-        <button id="registerBtn">Cadastrar</button>
-      </div>
-
-      <div class="menu-toggle" id="menuBtn" aria-label="Abrir menu" title="Menu">
-        <span></span><span></span><span></span>
-      </div>
-    </div>
-  </header>
-
-  <nav id="dropdownMenu" aria-hidden="true">
-    <a href="index.html">🏠 Início</a>
-    <a href="https://www.humblepixelmon.com.br">🌐 Site Oficial</a>
-    <a href="Tiers_1.12.html">🗡️ Tiers 1.12</a>
-    <a href="Tiers_1.16.html">🛡️ Tiers 1.16</a>
-    <a href="notas.html">📝 Notas de Atualização</a>
-  </nav>
-
-  <main>
-    <section id="teamBuilder">
-      <h2>Criar Time</h2>
-      <form id="teamForm">
-        <div id="pokemonList"></div>
-
-        <div class="team-actions">
-          <button type="button" id="addPokemon">+ Adicionar Pokémon</button>
-          <button type="submit">Salvar Time</button>
-        </div>
-      </form>
-    </section>
-
-    <h2>Feed de Times</h2>
-    <div class="controls">
-      <select id="tierFilter"><option value="all">Todas as Tiers</option></select>
-    </div>
-    <div id="timesContainer"></div>
-  </main>
-
-  <!-- Popup Login/Register -->
-  <div class="popup" id="authPopup" role="dialog" aria-modal="true">
-    <div class="popup-content">
-      <h3 id="popupTitle">Login</h3>
-      <input type="text" id="nickInput" placeholder="Nickname (fixo após cadastro)" style="display:block;">
-      <input type="email" id="emailInput" placeholder="Email">
-      <input type="password" id="passInput" placeholder="Senha">
-      <button id="popupAction">Continuar</button>
-      <button id="googleLogin">Entrar com Google</button>
-      <button id="authCancel">Cancelar</button>
+    <div class="menu-toggle" id="menuBtn" title="Menu">
+      <span></span><span></span><span></span>
     </div>
   </div>
+</header>
 
-  <script type="module">
-    // Firebase imports
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import {
-      getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider,
-      createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import {
-      getDatabase, ref, set, push, onValue, query, orderByChild
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+<nav id="dropdownMenu" aria-hidden="true">
+  <a href="#teamBuilder">Criar Time</a>
+  <a href="#timesContainer">Times Postados</a>
+  <a href="Tiers_1.12.html">Tiers 1.12</a>
+  <a href="Tiers_1.16.html">Tiers 1.16</a>
+  <a href="notas.html">Notas</a>
+</nav>
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
-      authDomain: "sampleteans.firebaseapp.com",
-      databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
-      projectId: "sampleteans",
-      storageBucket: "sampleteans.firebasestorage.app",
-      messagingSenderId: "1069510029261",
-      appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
-    };
+<main>
+  <!-- Builder -->
+  <section class="card" id="teamBuilder">
+    <h2>Criar / Importar Time</h2>
+    <div class="builder-grid">
+      <div class="builder-left">
+        <div>
+          <label for="importArea">Importar do Showdown (cole aqui)</label>
+          <textarea id="importArea" placeholder="Cole o time no formato Showdown..."></textarea>
+          <div class="btn-row" style="margin-top:8px;">
+            <button id="btnImport" class="ghost-btn">Importar</button>
+            <button id="btnClearImport" class="ghost-btn">Limpar</button>
+          </div>
+          <div id="importMsg" class="warning" style="display:none;"></div>
+        </div>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
+        <form id="teamForm">
+          <div id="pokemonList"></div>
 
-    // Elements
-    const menuBtn = document.getElementById("menuBtn");
-    const dropdownMenu = document.getElementById("dropdownMenu");
-    const authArea = document.getElementById("authArea");
-    const teamBuilder = document.getElementById("teamBuilder");
-    const authPopup = document.getElementById("authPopup");
-    const popupTitle = document.getElementById("popupTitle");
-    const popupAction = document.getElementById("popupAction");
-    const emailInput = document.getElementById("emailInput");
-    const passInput = document.getElementById("passInput");
-    const nickInput = document.getElementById("nickInput");
-    const googleLogin = document.getElementById("googleLogin");
-    const tierFilter = document.getElementById("tierFilter");
-    const pokemonList = document.getElementById("pokemonList");
-    const addPokemonBtn = document.getElementById("addPokemon");
-    const timesContainer = document.getElementById("timesContainer");
-    const authCancelBtn = document.getElementById("authCancel");
+          <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap">
+            <button type="button" id="addPokemon">+ Adicionar Pokémon</button>
+            <button type="submit">Salvar Time</button>
+            <button type="button" id="exportShowdown" class="ghost-btn">Exportar (Showdown)</button>
+          </div>
 
-    let isRegister = false;
-    let pokeCount = 0;
+        </form>
+      </div>
 
-    const natures = ["Hardy","Lonely","Brave","Adamant","Naughty","Bold","Docile","Relaxed","Impish","Lax","Modest","Mild","Quiet","Bashful","Rash","Calm","Gentle","Sassy","Careful","Quirky","Timid","Hasty","Serious","Jolly","Naive"];
-    const tiers = ["LC","Monotype","NU","National Dex","National Dex Monotype","National Dex UU","OU","PU","RU","Ubers","UU","ZU","National Dex RU","Monomon","Starter League","Only Smeargle","National Dex Ubers","National Dex AG"];
+      <div class="builder-right">
+        <div>
+          <label for="teamName">Nome do Time (opcional)</label>
+          <input id="teamName" type="text" placeholder="Nome público do time">
+        </div>
 
-    // populate tier filter select
-    tiers.forEach(t => {
-      const opt = document.createElement("option");
-      opt.value = t;
-      opt.textContent = t;
-      tierFilter.appendChild(opt);
-    });
+        <div>
+          <label>Validação de EVs / IVs</label>
+          <div style="font-size:0.95rem; color:var(--muted)">EVs por stat: 0–252 • Total EVs ≤ 510 • IVs: 0–31</div>
+          <div id="evWarning" class="warning" style="display:none;"></div>
+        </div>
 
-    // Menu toggle behavior
-    menuBtn.addEventListener("click", (e) => {
-      e.stopPropagation();
-      menuBtn.classList.toggle("active");
-      dropdownMenu.classList.toggle("active");
-    });
+        <div>
+          <label>Import / Export rápido</label>
+          <div style="display:flex; gap:8px;">
+            <button id="btnCopyAll" class="ghost-btn">Copiar Time (Showdown)</button>
+            <button id="btnCopyTeamJSON" class="ghost-btn">Copiar JSON</button>
+          </div>
+        </div>
 
-    // Close menu when clicking outside
-    document.addEventListener("click", (e) => {
-      if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-        menuBtn.classList.remove("active");
-        dropdownMenu.classList.remove("active");
-      }
-    });
+        <div>
+          <label>Ajuda</label>
+          <div style="font-size:0.9rem; color:var(--muted)">
+            Cole um time no formato Showdown (cada Pokémon separado por linha em branco) e clique em <b>Importar</b>.
+          </div>
+        </div>
 
-    // ---------- Login / Register ----------
-    document.getElementById("loginBtn").onclick = () => {
-      isRegister = false;
-      popupTitle.textContent = "Login";
-      nickInput.style.display = "none";
-      authPopup.style.display = "flex";
-    };
-    document.getElementById("registerBtn").onclick = () => {
-      isRegister = true;
-      popupTitle.textContent = "Cadastrar";
-      nickInput.style.display = "block";
-      authPopup.style.display = "flex";
-    };
+      </div>
+    </div>
+  </section>
 
-    authCancelBtn.onclick = () => authPopup.style.display = "none";
+  <!-- Feed -->
+  <section class="card">
+    <h2>Feed de Times</h2>
+    <div class="controls">
+      <div style="display:flex; gap:8px;">
+        <select id="tierFilter">
+          <option value="all">Todas as Tiers</option>
+        </select>
+        <button id="refreshFeed" class="ghost-btn">Atualizar</button>
+      </div>
+      <div id="userActions"></div>
+    </div>
 
-    popupAction.onclick = async () => {
-      try {
-        if (isRegister) {
-          if (!emailInput.value || !passInput.value || !nickInput.value) return alert("Preencha todos os campos.");
-          const userCred = await createUserWithEmailAndPassword(auth, emailInput.value, passInput.value);
-          await updateProfile(userCred.user, { displayName: nickInput.value });
-          await set(ref(db, "users/" + userCred.user.uid), { displayName: nickInput.value, email: emailInput.value, createdAt: Date.now() });
-        } else {
-          if (!emailInput.value || !passInput.value) return alert("Preencha email e senha.");
-          await signInWithEmailAndPassword(auth, emailInput.value, passInput.value);
-        }
-        authPopup.style.display = "none";
-        emailInput.value = ""; passInput.value = ""; nickInput.value = "";
-      } catch (err) {
-        alert("Erro: " + err.message);
-      }
-    };
+    <div id="timesContainer"></div>
+  </section>
+</main>
 
-    googleLogin.onclick = async () => {
-      try {
-        const provider = new GoogleAuthProvider();
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-        if (!user.displayName) { alert("Defina nickname!"); return; }
-        await set(ref(db, "users/" + user.uid), { displayName: user.displayName, email: user.email, createdAt: Date.now() });
-        authPopup.style.display = "none";
-      } catch (err) {
-        alert("Erro Google: " + err.message);
-      }
-    };
+<!-- Popup Login/Register -->
+<div class="popup" id="authPopup" style="display:none;">
+  <div class="popup-content" role="dialog" aria-modal="true">
+    <h3 id="popupTitle">Login</h3>
+    <input id="nickInput" type="text" placeholder="Nickname (apenas para cadastro)">
+    <input id="emailInput" type="email" placeholder="Email">
+    <input id="passInput" type="password" placeholder="Senha">
+    <div style="display:flex; gap:8px; margin-top:8px;">
+      <button id="popupAction">Continuar</button>
+      <button id="googleLogin" class="ghost-btn">Entrar com Google</button>
+      <button id="authCancel" class="ghost-btn">Cancelar</button>
+    </div>
+  </div>
+</div>
 
-    // ---------- Auth state ----------
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        authArea.innerHTML = `<div class="user-info">
-          <img src="${user.photoURL || 'https://i.pravatar.cc/150'}" alt="Avatar">
-          <span style="font-weight:700">${user.displayName || user.email}</span>
-          <button id="logoutBtn" style="padding:6px 10px; border-radius:6px;">Sair</button>
-        </div>`;
-        document.getElementById("logoutBtn").onclick = async () => { await signOut(auth); };
-        teamBuilder.style.display = "block";
-      } else {
-        authArea.innerHTML = `<div class="auth-buttons"><button id="loginBtn">Login</button><button id="registerBtn">Cadastrar</button></div>`;
-        document.getElementById("loginBtn").onclick = () => { isRegister = false; popupTitle.textContent = "Login"; nickInput.style.display = "none"; authPopup.style.display = "flex"; };
-        document.getElementById("registerBtn").onclick = () => { isRegister = true; popupTitle.textContent = "Cadastrar"; nickInput.style.display = "block"; authPopup.style.display = "flex"; };
-        teamBuilder.style.display = "none";
-      }
-    });
+<script type="module">
+/* ============================
+   Firebase (Realtime DB) Setup
+   Replace config below with your project's config if different.
+   ============================ */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider,
+  createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+import {
+  getDatabase, ref, set, push, onValue, query, orderByChild
+} from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-    // ---------- Criar Time ----------
-    addPokemonBtn.onclick = () => {
-      if (pokeCount >= 6) return alert("Máximo 6 Pokémons!");
-      pokeCount++;
-      const div = document.createElement("div");
-      div.className = "pokemon-slot";
-      div.innerHTML = `<h3>Pokémon ${pokeCount}</h3>
-        <input placeholder="Nome" name="name" />
-        <select name="tier">${tiers.map(t=>`<option>${t}</option>`).join("")}</select>
-        <select name="nature">${natures.map(n=>`<option>${n}</option>`).join("")}</select>
-        <input placeholder="Habilidade" name="ability" />
-        <input placeholder="Moves (vírgula)" name="moves" />`;
-      pokemonList.appendChild(div);
-    };
+const firebaseConfig = {
+  apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
+  authDomain: "sampleteans.firebaseapp.com",
+  databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
+  projectId: "sampleteans",
+  storageBucket: "sampleteans.firebasestorage.app",
+  messagingSenderId: "1069510029261",
+  appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
 
-    document.getElementById("teamForm").onsubmit = async (e) => {
-      e.preventDefault();
-      const user = auth.currentUser; if (!user) { alert("Precisa logar!"); return; }
-      const teamRef = push(ref(db, "teams"));
-      let teamData = { owner: user.uid, ownerName: user.displayName || user.email, createdAt: Date.now(), pokemon: {}, likes: {} };
-      [...pokemonList.children].forEach((slot, idx) => {
-        const name = slot.querySelector("input[name=name]").value || "—";
-        const tier = slot.querySelector("select[name=tier]").value || "—";
-        const nature = slot.querySelector("select[name=nature]").value || "—";
-        const ability = slot.querySelector("input[name=ability]").value || "—";
-        const moves = (slot.querySelector("input[name=moves]").value || "").split(",").map(m=>m.trim()).filter(m=>m);
-        teamData.pokemon[idx] = { name, tier, nature, ability, moves };
-      });
-      await set(teamRef, teamData);
-      alert("Time salvo!");
-      pokemonList.innerHTML = "";
-      pokeCount = 0;
-    };
+/* ============================
+   Elements
+   ============================ */
+const menuBtn = document.getElementById('menuBtn');
+const dropdownMenu = document.getElementById('dropdownMenu');
+const authArea = document.getElementById('authArea');
+const authPopup = document.getElementById('authPopup');
+const popupTitle = document.getElementById('popupTitle');
+const popupAction = document.getElementById('popupAction');
+const googleLogin = document.getElementById('googleLogin');
+const authCancel = document.getElementById('authCancel');
+const nickInput = document.getElementById('nickInput');
+const emailInput = document.getElementById('emailInput');
+const passInput = document.getElementById('passInput');
 
-    // ---------- Feed ----------
-    let allTeams = [];
-    const teamsRef = query(ref(db, "teams"), orderByChild("createdAt"));
-    onValue(teamsRef, (snapshot) => {
-      allTeams = [];
-      snapshot.forEach(c => allTeams.push({ id: c.key, ...c.val() }));
-      allTeams.reverse();
-      renderFeed();
-    });
+const addPokemonBtn = document.getElementById('addPokemon');
+const pokemonList = document.getElementById('pokemonList');
+const teamForm = document.getElementById('teamForm');
+const teamNameInput = document.getElementById('teamName');
+const exportShowdownBtn = document.getElementById('exportShowdown');
+const btnImport = document.getElementById('btnImport');
+const importArea = document.getElementById('importArea');
+const btnClearImport = document.getElementById('btnClearImport');
+const importMsg = document.getElementById('importMsg');
+const evWarning = document.getElementById('evWarning');
 
-    tierFilter.onchange = () => renderFeed();
+const tierFilter = document.getElementById('tierFilter');
+const timesContainer = document.getElementById('timesContainer');
+const refreshFeedBtn = document.getElementById('refreshFeed');
+const btnCopyAll = document.getElementById('btnCopyAll');
+const btnCopyTeamJSON = document.getElementById('btnCopyTeamJSON');
 
-    async function toggleLike(teamId) {
-      const user = auth.currentUser;
-      if (!user) { alert("Precisa logar!"); return; }
-      const likeRef = ref(db, `teams/${teamId}/likes/${user.uid}`);
-      // Check current like state client-side using local allTeams copy:
-      const team = allTeams.find(t => t.id === teamId);
-      const isLiked = team && team.likes && team.likes[user.uid];
-      if (isLiked) {
-        await set(likeRef, null);
-      } else {
-        await set(likeRef, true);
-      }
+let isRegister=false;
+let pokeCount=0;
+let allTeams=[];
+
+/* options */
+const natures=["Hardy","Lonely","Brave","Adamant","Naughty","Bold","Docile","Relaxed","Impish","Lax","Modest","Mild","Quiet","Bashful","Rash","Calm","Gentle","Sassy","Careful","Quirky","Timid","Hasty","Serious","Jolly","Naive"];
+const tiers=["LC","Monotype","NU","National Dex","National Dex Monotype","National Dex UU","OU","PU","RU","Ubers","UU","ZU","National Dex RU","Monomon","Starter League","Only Smeargle","National Dex Ubers","National Dex AG"];
+
+tiers.forEach(t=>{
+  const o=document.createElement('option'); o.value=t; o.textContent=t; tierFilter.appendChild(o);
+});
+
+/* menu toggle */
+menuBtn.addEventListener('click', e=>{
+  e.stopPropagation();
+  menuBtn.classList.toggle('active');
+  dropdownMenu.classList.toggle('active');
+});
+document.addEventListener('click', e=>{
+  if(!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)){
+    menuBtn.classList.remove('active');
+    dropdownMenu.classList.remove('active');
+  }
+});
+
+/* ===== auth UI ===== */
+document.getElementById('loginBtn').onclick=()=>{
+  isRegister=false; popupTitle.textContent='Login'; nickInput.style.display='none'; authPopup.style.display='flex';
+};
+document.getElementById('registerBtn').onclick=()=>{
+  isRegister=true; popupTitle.textContent='Cadastrar'; nickInput.style.display='block'; authPopup.style.display='flex';
+};
+authCancel.onclick=()=>authPopup.style.display='none';
+
+/* auth actions */
+popupAction.onclick=async ()=>{
+  try{
+    if(isRegister){
+      if(!emailInput.value || !passInput.value || !nickInput.value){ alert("Preencha todos os campos."); return; }
+      const userCred = await createUserWithEmailAndPassword(auth, emailInput.value, passInput.value);
+      await updateProfile(userCred.user, { displayName: nickInput.value });
+      await set(ref(db, "users/" + userCred.user.uid), { displayName: nickInput.value, email: emailInput.value, createdAt: Date.now() });
+    }else{
+      if(!emailInput.value || !passInput.value){ alert("Preencha email e senha."); return; }
+      await signInWithEmailAndPassword(auth, emailInput.value, passInput.value);
     }
+    authPopup.style.display='none';
+    emailInput.value=''; passInput.value=''; nickInput.value='';
+  }catch(err){ alert("Erro: "+err.message); }
+};
 
-    function renderFeed() {
-      const filter = tierFilter.value;
-      timesContainer.innerHTML = "";
-      allTeams.forEach(team => {
-        // ignore malformed teams
-        if (!team || !team.pokemon) return;
-        if (filter !== "all" && !Object.values(team.pokemon).some(p => p.tier === filter)) return;
+googleLogin.onclick=async ()=>{
+  try{
+    const provider = new GoogleAuthProvider();
+    const res = await signInWithPopup(auth, provider);
+    const user = res.user;
+    if(!user.displayName){ alert("Defina um nickname no Google!"); return; }
+    await set(ref(db, "users/" + user.uid), { displayName: user.displayName, email: user.email, createdAt: Date.now() });
+    authPopup.style.display='none';
+  }catch(err){ alert("Erro Google: "+err.message); }
+};
 
-        const card = document.createElement("div");
-        card.className = "time-card";
+/* auth state */
+onAuthStateChanged(auth, user=>{
+  if(user){
+    authArea.innerHTML = `<div class="user-info">
+      <img src="${user.photoURL||'https://i.pravatar.cc/150'}" alt="avatar" />
+      <div style="display:flex;flex-direction:column;line-height:1;">
+        <strong style="color:var(--gold)">${user.displayName||user.email}</strong>
+        <small style="color:var(--muted);font-size:.85rem">${user.email||''}</small>
+      </div>
+      <button id="logoutBtn" class="ghost">Sair</button>
+    </div>`;
+    document.getElementById('logoutBtn').onclick=async ()=>{ await signOut(auth); };
+    document.getElementById('userActions')?.remove();
+    teamBuilder.style.display = 'block';
+  } else {
+    authArea.innerHTML = `<div class="auth-buttons"><button id="loginBtn">Login</button><button id="registerBtn">Cadastrar</button></div>`;
+    document.getElementById('loginBtn').onclick=()=>{
+      isRegister=false; popupTitle.textContent='Login'; nickInput.style.display='none'; authPopup.style.display='flex';
+    };
+    document.getElementById('registerBtn').onclick=()=>{
+      isRegister=true; popupTitle.textContent='Cadastrar'; nickInput.style.display='block'; authPopup.style.display='flex';
+    };
+    teamBuilder.style.display = 'none';
+  }
+});
 
-        const date = team.createdAt ? new Date(team.createdAt).toLocaleString() : "";
+/* ===== builder helpers ===== */
+function createPokemonSlot(prefill){
+  // prefill: { name, item, ability, tera, nature, evs:{HP,Atk,Def,SpA,SpD,Spe}, ivs:{...}, moves:[] }
+  pokeCount++;
+  const id = 'poke'+Date.now()+'_'+Math.floor(Math.random()*9999);
+  const wrapper = document.createElement('div');
+  wrapper.className='pokemon-slot';
+  wrapper.dataset.id = id;
 
-        // header
-        const headerEl = document.createElement("header");
-        const titleDiv = document.createElement("div");
-        titleDiv.innerHTML = `<strong>Time de ${team.ownerName || "Anônimo"}</strong><div class="meta">${date}</div>`;
-        headerEl.appendChild(titleDiv);
+  const name = prefill?.name || '';
+  const item = prefill?.item || '';
+  const ability = prefill?.ability || '';
+  const tera = prefill?.tera || '';
+  const nature = prefill?.nature || '';
+  const evs = Object.assign({HP:0,Atk:0,Def:0,SpA:0,SpD:0,Spe:0}, prefill?.evs || {});
+  const ivs = Object.assign({HP:31,Atk:31,Def:31,SpA:31,SpD:31,Spe:31}, prefill?.ivs || {});
+  const moves = prefill?.moves || ['','','',''];
 
-        // like button container
-        const likeWrapper = document.createElement("div");
-        const likesCount = team.likes ? Object.keys(team.likes).length : 0;
-        const userLiked = auth.currentUser && team.likes && team.likes[auth.currentUser.uid];
-        const likeBtn = document.createElement("button");
-        likeBtn.className = "like-btn" + (userLiked ? " liked" : "");
-        likeBtn.innerHTML = `❤️ ${likesCount}`;
-        likeBtn.onclick = async (ev) => {
-          ev.stopPropagation();
-          await toggleLike(team.id);
-        };
-        likeWrapper.appendChild(likeBtn);
-        headerEl.appendChild(likeWrapper);
+  wrapper.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <h3 style="margin:0;color:var(--gold)">Pokémon ${pokeCount}</h3>
+      <div style="display:flex;gap:8px;">
+        <button class="ghost-btn btn-remove">Remover</button>
+        <button class="ghost-btn btn-copy">Copiar Showdown</button>
+      </div>
+    </div>
 
-        card.appendChild(headerEl);
+    <div class="row">
+      <input type="text" name="name" placeholder="Nome (ex: Ninetales-Alola)" value="${escapeHtml(name)}" />
+      <input type="text" name="item" placeholder="Item (ex: Light Clay)" value="${escapeHtml(item)}" />
+    </div>
 
-        // pokemons list
-        const pokeListDiv = document.createElement("div");
-        pokeListDiv.className = "poke-list";
-        Object.values(team.pokemon).forEach((poke, idx) => {
-          const pokeDiv = document.createElement("div");
-          pokeDiv.className = "poke-slot";
-          pokeDiv.innerHTML = `<h4>${idx+1}. ${poke.name || "—"}</h4>
-            <p><strong>Tier:</strong> ${poke.tier || "N/A"}</p>
-            <p><strong>Nature:</strong> ${poke.nature || "N/A"}</p>
-            <p><strong>Ability:</strong> ${poke.ability || "N/A"}</p>
-            <p><strong>Moves:</strong> ${(poke.moves || []).join(", ")}</p>`;
-          pokeListDiv.appendChild(pokeDiv);
+    <div class="row">
+      <input type="text" name="ability" placeholder="Ability" value="${escapeHtml(ability)}" />
+      <input type="text" name="tera" placeholder="Tera Type" value="${escapeHtml(tera)}" />
+    </div>
+
+    <div>
+      <label>Nature</label>
+      <select name="nature">${natures.map(n=>`<option ${n===nature?'selected':''}>${n}</option>`).join('')}</select>
+    </div>
+
+    <div>
+      <label>EVs (HP / Atk / Def / SpA / SpD / Spe)</label>
+      <div class="six-grid">
+        ${['HP','Atk','Def','SpA','SpD','Spe'].map(stat=>`<input class="stat-input ev-input" data-stat="${stat}" type="number" min="0" max="252" value="${evs[stat]||0}" />`).join('')}
+      </div>
+    </div>
+
+    <div>
+      <label>IVs (HP / Atk / Def / SpA / SpD / Spe)</label>
+      <div class="six-grid">
+        ${['HP','Atk','Def','SpA','SpD','Spe'].map(stat=>`<input class="stat-input iv-input" data-stat="${stat}" type="number" min="0" max="31" value="${ivs[stat]||31}" />`).join('')}
+      </div>
+    </div>
+
+    <div>
+      <label>Moves (até 4)</label>
+      <div class="small-grid" style="grid-template-columns: repeat(1,1fr);">
+        ${[0,1,2,3].map(i=>`<input type="text" class="move-input" data-move-index="${i}" placeholder="Move ${i+1}" value="${escapeHtml(moves[i]||'')}" />`).join('')}
+      </div>
+    </div>
+  `;
+
+  // events
+  wrapper.querySelector('.btn-remove').onclick = ()=>{
+    wrapper.remove();
+    recalcPokeNumbers();
+  };
+  wrapper.querySelector('.btn-copy').onclick = ()=>{
+    const showdown = buildShowdownTextFromSlot(wrapper);
+    navigator.clipboard.writeText(showdown).then(()=>alert('Copied to clipboard'));
+  };
+
+  // EV / IV change validation
+  const evInputs = wrapper.querySelectorAll('.ev-input');
+  evInputs.forEach(inp=>{
+    inp.addEventListener('input', ()=>validateAllEVs());
+  });
+  const ivInputs = wrapper.querySelectorAll('.iv-input');
+  ivInputs.forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      let v = parseInt(inp.value) || 0;
+      if(v<0) inp.value = 0;
+      if(v>31) inp.value = 31;
+    });
+  });
+
+  pokemonList.appendChild(wrapper);
+  return wrapper;
+}
+
+function recalcPokeNumbers(){
+  const slots = Array.from(pokemonList.children);
+  pokeCount = slots.length;
+  slots.forEach((s,i)=>{
+    const h = s.querySelector('h3');
+    if(h) h.textContent = `Pokémon ${i+1}`;
+  });
+}
+
+/* escape for HTML attributes */
+function escapeHtml(s=''){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* build showdown text for one slot element */
+function buildShowdownTextFromSlot(slot){
+  const name = slot.querySelector('input[name=name]').value.trim() || '—';
+  const item = slot.querySelector('input[name=item]').value.trim();
+  const ability = slot.querySelector('input[name=ability]').value.trim();
+  const tera = slot.querySelector('input[name=tera]').value.trim();
+  const nature = slot.querySelector('select[name=nature]').value || '';
+  const evInputs = slot.querySelectorAll('.ev-input');
+  const ivInputs = slot.querySelectorAll('.iv-input');
+  const moves = Array.from(slot.querySelectorAll('.move-input')).map(m=>m.value.trim()).filter(Boolean);
+
+  const line1 = item ? `${name} @ ${item}` : `${name}`;
+  const abilityLine = ability ? `Ability: ${ability}` : '';
+  const teraLine = tera ? `Tera Type: ${tera}` : '';
+  const evParts = [];
+  evInputs.forEach(inp => {
+    const stat = inp.dataset.stat; const v=parseInt(inp.value)||0;
+    if(v>0) evParts.push(`${v} ${stat}`);
+  });
+  const evLine = evParts.length? `EVs: ${evParts.join(' / ')}` : '';
+  const ivParts = [];
+  ivInputs.forEach(inp => {
+    const stat = inp.dataset.stat; const v=parseInt(inp.value)||0;
+    if(v!==31) ivParts.push(`${v} ${stat}`);
+  });
+  const ivLine = ivParts.length? `IVs: ${ivParts.join(' / ')}` : '';
+  const natureLine = nature? `${nature} Nature` : '';
+
+  const moveLines = moves.map(m=>`- ${m}`).join('\n');
+
+  return [line1, abilityLine, teraLine, evLine, natureLine, ivLine, moveLines].filter(Boolean).join('\n') + '\n';
+}
+
+/* build full showdown text of current team (all slots) */
+function buildShowdownTextFromAll(){
+  const slots = Array.from(pokemonList.children);
+  return slots.map(s=>buildShowdownTextFromSlot(s)).join('\n');
+}
+
+/* export to showdown (and copy) */
+exportShowdownBtn.onclick = (e)=>{
+  const txt = buildShowdownTextFromAll();
+  if(!txt.trim()){ alert('Sem Pokémon no time'); return; }
+  navigator.clipboard.writeText(txt).then(()=>alert('Time copiado em formato Showdown'));
+};
+
+/* copy JSON */
+btnCopyTeamJSON?.addEventListener('click', ()=>{
+  const data = collectTeamData();
+  navigator.clipboard.writeText(JSON.stringify(data, null, 2)).then(()=>alert('JSON copiado'));
+});
+
+/* copy full showdown */
+btnCopyAll?.addEventListener('click', ()=>{
+  const txt = buildShowdownTextFromAll();
+  navigator.clipboard.writeText(txt).then(()=>alert('Time copiado em formato Showdown'));
+});
+
+/* collect team data object */
+function collectTeamData(){
+  const slots = Array.from(pokemonList.children);
+  const team = { name: teamNameInput.value.trim() || null, createdAt: Date.now(), pokemon: [] };
+  slots.forEach(slot=>{
+    const name = slot.querySelector('input[name=name]').value.trim() || '—';
+    const item = slot.querySelector('input[name=item]').value.trim() || '';
+    const ability = slot.querySelector('input[name=ability]').value.trim() || '';
+    const tera = slot.querySelector('input[name=tera]').value.trim() || '';
+    const nature = slot.querySelector('select[name=nature]').value || '';
+    const evs = {}; slot.querySelectorAll('.ev-input').forEach(i=>evs[i.dataset.stat]=parseInt(i.value)||0);
+    const ivs = {}; slot.querySelectorAll('.iv-input').forEach(i=>ivs[i.dataset.stat]=parseInt(i.value)||0);
+    const moves = Array.from(slot.querySelectorAll('.move-input')).map(i=>i.value.trim()).filter(Boolean);
+    team.pokemon.push({ name, item, ability, tera, nature, evs, ivs, moves });
+  });
+  return team;
+}
+
+/* Save to Firebase */
+teamForm.addEventListener('submit', async (e)=>{
+  e.preventDefault();
+  const user = auth.currentUser;
+  if(!user){ alert('Precisa fazer login para salvar'); return; }
+  // validate EVs total
+  const invalid = validateAllEVs(true);
+  if(invalid){ alert('Erros de EV/IV. Corrija antes de salvar.'); return; }
+  const teamRef = push(ref(db, 'teams'));
+  const data = collectTeamData();
+  data.owner = user.uid;
+  data.ownerName = user.displayName || user.email;
+  await set(teamRef, data);
+  alert('Time salvo!');
+  // clear builder
+  pokemonList.innerHTML=''; pokeCount=0; teamNameInput.value='';
+});
+
+/* add pokemon */
+addPokemonBtn.addEventListener('click', ()=>createPokemonSlot());
+
+/* import parsing */
+btnClearImport.addEventListener('click', ()=>{ importArea.value=''; importMsg.style.display='none'; });
+
+btnImport.addEventListener('click', ()=>{
+  const text = importArea.value.trim();
+  if(!text){ importMsg.style.display='block'; importMsg.textContent='Cole o texto do Showdown antes de importar.'; return; }
+  try{
+    const parsed = parseShowdownText(text);
+    // clear current and add parsed
+    pokemonList.innerHTML=''; pokeCount=0;
+    parsed.forEach(p=>createPokemonSlot(p));
+    importMsg.style.display='block';
+    importMsg.style.color='lightgreen';
+    importMsg.textContent = `Importado ${parsed.length} Pokémon(s). Revise e salve.`;
+    validateAllEVs();
+  }catch(err){
+    importMsg.style.display='block';
+    importMsg.style.color='#ffb86b';
+    importMsg.textContent = 'Erro no parse: ' + err.message;
+  }
+});
+
+/* parse showdown text into array of pokemon objects */
+function parseShowdownText(text){
+  // split into blocks by double newline
+  const blocks = text.split(/\n\s*\n/).map(b=>b.trim()).filter(Boolean);
+  const out = blocks.map(block=>{
+    const lines = block.split('\n').map(L=>L.trim()).filter(Boolean);
+    const p = { name:'', item:'', ability:'', tera:'', nature:'', evs:{}, ivs:{}, moves:[] };
+    // first line: "Name @ Item" or "Name"
+    const first = lines.shift();
+    const mItem = first.match(/^(.+?)\s+@\s+(.+)$/);
+    if(mItem){ p.name = mItem[1].trim(); p.item = mItem[2].trim(); }
+    else p.name = first.trim();
+
+    lines.forEach(line=>{
+      if(/^Ability:\s*/i.test(line)){ p.ability = line.replace(/^Ability:\s*/i,'').trim(); return; }
+      if(/^Tera Type:\s*/i.test(line)){ p.tera = line.replace(/^Tera Type:\s*/i,'').trim(); return; }
+      if(/^EVs:\s*/i.test(line)){
+        const evstr = line.replace(/^EVs:\s*/i,'').trim();
+        // parts like: 164 HP / 64 Def / 28 SpA / 252 Spe
+        evstr.split('/').map(s=>s.trim()).forEach(part=>{
+          const mm = part.match(/^(\d+)\s+([A-Za-z]+)$/);
+          if(mm){ const v=parseInt(mm[1]); const k = normalizeStatName(mm[2]); p.evs[k]=v; }
         });
-        card.appendChild(pokeListDiv);
-
-        timesContainer.appendChild(card);
-      });
-    }
-
-    // Close auth popup when clicking outside popup-content
-    authPopup.addEventListener("click", (e) => {
-      if (e.target === authPopup) authPopup.style.display = "none";
-    });
-
-    // Accessibility: close menu with Escape
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") {
-        dropdownMenu.classList.remove("active");
-        menuBtn.classList.remove("active");
-        authPopup.style.display = "none";
+        return;
       }
+      if(/^IVs:\s*/i.test(line)){
+        const ivstr = line.replace(/^IVs:\s*/i,'').trim();
+        ivstr.split('/').map(s=>s.trim()).forEach(part=>{
+          const mm = part.match(/^(\d+)\s+([A-Za-z]+)$/);
+          if(mm){ const v=parseInt(mm[1]); const k = normalizeStatName(mm[2]); p.ivs[k]=v; }
+        });
+        return;
+      }
+      // Nature: "Timid Nature" or "Timid"
+      if(/Nature$/i.test(line) || natures.includes(line.replace(' Nature','').trim())){
+        p.nature = line.replace(/Nature$/i,'').trim();
+        return;
+      }
+      // moves: "- Move"
+      if(/^\-\s*/.test(line)){ p.moves.push(line.replace(/^\-\s*/,'').trim()); return; }
+      // fallback: try detect "0 Atk" lines (if not prefixed by IVs/EVs)
+      const mm = line.match(/^(\d+)\s+([A-Za-z]+)$/);
+      if(mm){ const v=parseInt(mm[1]); const k = normalizeStatName(mm[2]); p.evs[k]=v; return; }
     });
+    return p;
+  });
 
-    // Prevent menu from covering page content on resize; ensure nav is within viewport
-    window.addEventListener("resize", () => {
-      dropdownMenu.style.right = "12px";
+  return out;
+}
+
+/* normalize stat names: HP, Atk, Def, SpA, SpD, Spe */
+function normalizeStatName(s){
+  s = s.replace(/\./g,'').replace(/[^A-Za-z]/g,'').toLowerCase();
+  if(/^hp/i.test(s)) return 'HP';
+  if(/^atk/i.test(s)) return 'Atk';
+  if(/^def$/i.test(s)) return 'Def';
+  if(/^spa/i.test(s) || /^spatk/i.test(s)) return 'SpA';
+  if(/^spd/i.test(s) || /^spdef/i.test(s)) return 'SpD';
+  if(/^spe/i.test(s) || /^spd?e/i.test(s)) return 'Spe';
+  // try common variations
+  if(s.toLowerCase().includes('spa')) return 'SpA';
+  if(s.toLowerCase().includes('spd')) return 'SpD';
+  if(s.toLowerCase().includes('atk')) return 'Atk';
+  if(s.toLowerCase().includes('def')) return 'Def';
+  if(s.toLowerCase().includes('spe')) return 'Spe';
+  return s;
+}
+
+/* validate EVs across all pokemon; if showAlert true, return true if invalid */
+function validateAllEVs(showAlert=false){
+  const slots = Array.from(pokemonList.children);
+  let invalid = false;
+  let messages = [];
+  slots.forEach((slot, idx)=>{
+    const evInputs = slot.querySelectorAll('.ev-input');
+    let total=0;
+    evInputs.forEach(i=>{
+      let v = parseInt(i.value) || 0;
+      if(v<0) { i.value = 0; v=0; }
+      if(v>252){ i.value = 252; v=252; }
+      total += v;
     });
-  </script>
+    if(total>510){ invalid = true; messages.push(`Pokémon ${idx+1}: total de EVs = ${total} (máx 510)`); }
+  });
+  if(invalid){
+    evWarning.style.display='block';
+    evWarning.textContent = messages.join(' • ');
+    if(showAlert) return true;
+    return true;
+  } else {
+    evWarning.style.display='none';
+    evWarning.textContent = '';
+    return false;
+  }
+}
+
+/* ===== Feed: read teams from Firebase ===== */
+const teamsRef = query(ref(db, 'teams'), orderByChild('createdAt'));
+onValue(teamsRef, snapshot=>{
+  allTeams=[];
+  snapshot.forEach(child=>{
+    allTeams.push({ id: child.key, ...child.val() });
+  });
+  allTeams.reverse();
+  renderFeed();
+});
+
+refreshFeedBtn.addEventListener('click', ()=> renderFeed());
+
+/* render feed */
+function renderFeed(){
+  timesContainer.innerHTML='';
+  const filter = tierFilter.value;
+  allTeams.forEach(team=>{
+    if(!team.pokemon || !Array.isArray(team.pokemon) || team.pokemon.length===0) return;
+    // filter by tier if requested (any pokemon tier match)
+    if(filter !== 'all' && !team.pokemon.some(p => (p.tier||'').toLowerCase() === filter.toLowerCase())) return;
+
+    const card = document.createElement('div'); card.className='time-card';
+    const header = document.createElement('header');
+    const left = document.createElement('div');
+    left.innerHTML = `<strong style="color:var(--gold)">${escapeHtml(team.ownerName||'Anônimo')}</strong><div class="meta">${team.teamName ? escapeHtml(team.teamName) : ''} ${team.createdAt ? ' • ' + new Date(team.createdAt).toLocaleString() : ''}</div>`;
+    header.appendChild(left);
+
+    const right = document.createElement('div');
+    const likeBtn = document.createElement('button'); likeBtn.className='ghost-btn';
+    const likesCount = team.likes ? Object.keys(team.likes).length : 0;
+    likeBtn.textContent = `❤️ ${likesCount}`;
+    likeBtn.onclick = async ()=>{
+      const user = auth.currentUser;
+      if(!user){ alert('Faça login para curtir'); return; }
+      const likeRef = ref(db, `teams/${team.id}/likes/${user.uid}`);
+      // toggle: if already liked -> set null, else set true
+      if(team.likes && team.likes[user.uid]) await set(likeRef, null);
+      else await set(likeRef, true);
+    };
+    right.appendChild(likeBtn);
+
+    const copyBtn = document.createElement('button'); copyBtn.className='copy-btn';
+    copyBtn.textContent='Copiar Showdown';
+    copyBtn.onclick = ()=>{
+      const showdown = teamToShowdownText(team);
+      navigator.clipboard.writeText(showdown).then(()=>alert('Copiado para área de transferência'));
+    };
+    right.appendChild(copyBtn);
+
+    header.appendChild(right);
+    card.appendChild(header);
+
+    // pokemon list
+    const list = document.createElement('div'); list.className='poke-list';
+    team.pokemon.forEach((p, idx)=>{
+      const pdiv = document.createElement('div'); pdiv.className='poke-slot';
+      pdiv.innerHTML = `<h4 style="margin:0;color:var(--gold)">${idx+1}. ${escapeHtml(p.name||'—')}</h4>
+        <div style="font-size:0.9rem;color:var(--muted)"><strong>Ability:</strong> ${escapeHtml(p.ability||'—')} ${p.tera ? ' • Tera: '+escapeHtml(p.tera) : ''}</div>
+        <div style="margin-top:6px;">EVs: ${formatStatMap(p.evs)} • IVs: ${formatStatMap(p.ivs)}</div>
+        <div class="move-list">${(p.moves||[]).map(m=>`<div>• ${escapeHtml(m)}</div>`).join('')}</div>`;
+      list.appendChild(pdiv);
+    });
+    card.appendChild(list);
+    timesContainer.appendChild(card);
+  });
+}
+
+/* helper to format stat maps */
+function formatStatMap(map){
+  if(!map) return '';
+  return ['HP','Atk','Def','SpA','SpD','Spe'].map(k=> (map[k]||0) + ' ' + k ).join(' / ');
+}
+function teamToShowdownText(team){
+  return (team.pokemon||[]).map(p=>{
+    const line1 = p.item ? `${p.name} @ ${p.item}` : `${p.name}`;
+    const ability = p.ability ? `Ability: ${p.ability}` : '';
+    const tera = p.tera ? `Tera Type: ${p.tera}` : '';
+    const evParts = []; (p.evs||{}); ['HP','Atk','Def','SpA','SpD','Spe'].forEach(stat=>{
+      const v = (p.evs && p.evs[stat]) || 0; if(v>0) evParts.push(`${v} ${stat}`);
+    });
+    const evLine = evParts.length? `EVs: ${evParts.join(' / ')}` : '';
+    const ivParts = []; ['HP','Atk','Def','SpA','SpD','Spe'].forEach(stat=>{
+      const v = (p.ivs && p.ivs[stat]) || 31; if(v!==31) ivParts.push(`${v} ${stat}`);
+    });
+    const ivLine = ivParts.length? `IVs: ${ivParts.join(' / ')}` : '';
+    const natureLine = p.nature ? `${p.nature} Nature` : '';
+    const moves = (p.moves||[]).map(m=>`- ${m}`).join('\n');
+
+    return [line1, ability, tera, evLine, natureLine, ivLine, moves].filter(Boolean).join('\n');
+  }).join('\n\n') + '\n';
+}
+
+/* ===== basic utilities ===== */
+function formatStatNameForShowdown(stat){
+  return stat;
+}
+
+/* ===== simple helper to build showdown text from one popped slot (already above) ===== */
+function buildShowdownTextFromSlotByIndex(i){
+  const slot = pokemonList.children[i];
+  if(!slot) return '';
+  return buildShowdownTextFromSlot(slot);
+}
+
+/* ===== parse finished ===== */
+
+/* initial UI: add one slot by default */
+createPokemonSlot();
+
+/* validate EVs on any input change globally (debounced) */
+let evDeb;
+document.addEventListener('input', ()=>{
+  clearTimeout(evDeb);
+  evDeb = setTimeout(()=>validateAllEVs(false), 250);
+});
+
+/* small utilities */
+function formatDate(ts){ return ts ? new Date(ts).toLocaleString() : ''; }
+
+/* ============================
+   END
+   ============================ */
+</script>
+
 </body>
 </html>
