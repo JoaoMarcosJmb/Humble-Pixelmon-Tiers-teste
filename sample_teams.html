@@ -2,45 +2,131 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Team Builder - Humble Pixelmon</title>
+  <title>Team Builder - Humble</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="img/mike_anotando2.png">
+
   <style>
     :root {
-      --cor-dourado: #d4af37;
-      --cor-preto: #121212;
+      --cor-dourado: #d1a720;
+      --cor-fundo: #1a1a1a;
+      --cor-texto: #f5f5f5;
     }
-    body { font-family: Arial, sans-serif; background: var(--cor-preto); color: #fff; margin:0; }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
+                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      color: var(--cor-texto);
+    }
+
     header {
-      background: var(--cor-dourado); color:#000; padding:10px 20px;
-      display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:1000;
+      position: fixed;
+      top: 0; left:0; right:0;
+      width: 100%;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(20,20,20,0.9);
+      border-bottom: 2px solid var(--cor-dourado);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+      z-index: 1000;
     }
-    .menu-toggle { cursor:pointer; }
-    .menu-toggle span { display:block; width:25px; height:3px; background:#000; margin:5px 0; }
-    nav { display:none; flex-direction:column; background:var(--cor-preto); padding:10px; position:absolute; top:60px; left:0; width:200px; }
-    nav a { color:var(--cor-dourado); margin:5px 0; text-decoration:none; }
-    nav.show { display:flex; }
-    .auth-buttons { display:flex; gap:10px; }
-    button {
-      background:var(--cor-dourado); color:#000; border:none;
-      padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold;
+
+    header h1 {
+      font-size: 1.6rem;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--cor-dourado);
     }
-    main { padding:20px; }
-    #teamBuilder { display:none; margin-bottom:20px; }
+
+    header h1 img { height: 40px; cursor:pointer; }
+
+    .menu-toggle {
+      display: flex; flex-direction: column; justify-content: space-between;
+      width: 30px; height: 22px; cursor:pointer; z-index:1100;
+    }
+    .menu-toggle span {
+      display: block; height:4px; background: var(--cor-texto); border-radius:4px; transition:0.3s;
+    }
+    .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px,5px);}
+    .menu-toggle.active span:nth-child(2) { opacity:0; }
+    .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px,-5px); }
+
+    nav {
+      position: absolute; top:65px; right:10px;
+      background: rgba(30,25,20,0.95);
+      border:1px solid var(--cor-dourado);
+      border-radius:12px;
+      box-shadow:0 4px 10px rgba(0,0,0,0.6);
+      display:none;
+      flex-direction: column; padding:15px; gap:12px;
+      z-index:1200;
+    }
+    nav.active { display:flex; }
+    nav a { color: var(--cor-dourado); text-decoration:none; font-size:1rem; transition:0.2s;}
+    nav a:hover { color: var(--cor-texto); }
+
+    main { padding:100px 20px 20px 20px; max-width:1200px; margin:auto; }
+
+    #teamBuilder {
+      display:none;
+      margin-bottom:30px;
+      border:1px solid var(--cor-dourado);
+      padding:20px;
+      border-radius:12px;
+      background: rgba(0,0,0,0.6);
+    }
+
     .pokemon-slot {
-      border:1px solid var(--cor-dourado); padding:10px; margin-bottom:15px;
-      border-radius:8px; background:rgba(0,0,0,0.4);
+      border:1px solid var(--cor-dourado);
+      padding:10px; margin-bottom:15px;
+      border-radius:8px; background: rgba(0,0,0,0.4);
     }
+
     #timesContainer .time-card {
-      border:1px solid var(--cor-dourado); padding:15px;
-      margin-bottom:20px; border-radius:10px; background:rgba(0,0,0,0.5);
+      border:1px solid var(--cor-dourado);
+      padding:15px;
+      margin-bottom:20px;
+      border-radius:10px;
+      background: rgba(0,0,0,0.5);
     }
-    .poke-slot { margin-bottom:12px; padding:8px; border-radius:6px; background:rgba(0,0,0,0.4); }
+
+    .poke-slot {
+      margin-bottom:12px;
+      padding:8px;
+      border-radius:6px;
+      background: rgba(0,0,0,0.4);
+    }
+
     .poke-slot h4 { color:var(--cor-dourado); margin:0 0 5px; }
+
     .like-btn {
       background:none; border:none; cursor:pointer; color:var(--cor-dourado);
       font-size:16px; margin-top:10px; display:flex; align-items:center; gap:5px;
     }
     .like-btn.liked { color:red; font-weight:bold; }
+
+    #tierFilter {
+      margin-bottom:20px;
+      padding:5px;
+      border-radius:6px;
+      border:1px solid var(--cor-dourado);
+      background: rgba(0,0,0,0.4);
+      color: var(--cor-texto);
+    }
+
+    .auth-buttons { display:flex; gap:10px; margin-bottom:10px; }
+    button { background:var(--cor-dourado); color:#000; border:none; padding:6px 12px; border-radius:6px; cursor:pointer; font-weight:bold; }
+
     .popup {
       display:none; position:fixed; top:0; left:0; right:0; bottom:0;
       background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:2000;
@@ -50,27 +136,31 @@
     }
     .user-info { display:flex; align-items:center; gap:10px; }
     .user-info img { width:32px; height:32px; border-radius:50%; }
-    #tierFilter { margin-bottom:20px; padding:5px; border-radius:6px; }
   </style>
 </head>
 <body>
   <header>
+    <h1>
+      <a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a>
+      Humble
+    </h1>
     <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
-    <h1>Humble Pixelmon</h1>
-    <nav id="dropdownMenu">
-      <a href="index.html">🏠 Início</a>
-      <a href="https://www.humblepixelmon.com.br">🌐 Site Oficial</a>
-      <a href="Tiers_1.12.html">🗡️ Tiers 1.12</a>
-      <a href="Tiers_1.16.html">🛡️ Tiers 1.16</a>
-      <a href="notas.html">📝 Notas de Atualização</a>
-    </nav>
+  </header>
+
+  <nav id="dropdownMenu">
+    <a href="index.html">🏠 Início</a>
+    <a href="https://www.humblepixelmon.com.br">🌐 Site Oficial</a>
+    <a href="Tiers_1.12.html">🗡️ Tiers 1.12</a>
+    <a href="Tiers_1.16.html">🛡️ Tiers 1.16</a>
+    <a href="notas.html">📝 Notas de Atualização</a>
+  </nav>
+
+  <main>
     <div class="auth-buttons" id="authArea">
       <button id="loginBtn">Login</button>
       <button id="registerBtn">Cadastrar</button>
     </div>
-  </header>
 
-  <main>
     <section id="teamBuilder">
       <h2>Criar Time</h2>
       <form id="teamForm">
@@ -81,9 +171,7 @@
     </section>
 
     <h2>Feed de Times</h2>
-    <select id="tierFilter">
-      <option value="all">Todas as Tiers</option>
-    </select>
+    <select id="tierFilter"><option value="all">Todas as Tiers</option></select>
     <div id="timesContainer"></div>
   </main>
 
@@ -102,7 +190,6 @@
   </div>
 
   <script type="module">
-    // Import Firebase
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider,
              createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile }
@@ -110,7 +197,6 @@
     import { getDatabase, ref, set, push, onValue, query, orderByChild }
              from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-    // Firebase config
     const firebaseConfig = {
       apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
       authDomain: "sampleteans.firebaseapp.com",
@@ -120,12 +206,17 @@
       messagingSenderId: "1069510029261",
       appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
     };
-
-    // Initialize Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
 
+    // Menu toggle
+    const menuBtn = document.getElementById("menuBtn");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    menuBtn.addEventListener("click", ()=>{menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active");});
+    document.addEventListener("click",(e)=>{ if(!dropdownMenu.contains(e.target)&&!menuBtn.contains(e.target)){menuBtn.classList.remove("active"); dropdownMenu.classList.remove("active");}});
+
+    // ---------- Variáveis ----------
     const authArea = document.getElementById("authArea");
     const teamBuilder = document.getElementById("teamBuilder");
     const authPopup = document.getElementById("authPopup");
@@ -136,74 +227,63 @@
     const nickInput = document.getElementById("nickInput");
     const googleLogin = document.getElementById("googleLogin");
     const tierFilter = document.getElementById("tierFilter");
+    const pokemonList = document.getElementById("pokemonList");
+    const addPokemonBtn = document.getElementById("addPokemon");
+    const timesContainer = document.getElementById("timesContainer");
 
     let isRegister = false;
+    let pokeCount = 0;
+    const natures=["Hardy","Lonely","Brave","Adamant","Naughty","Bold","Docile","Relaxed","Impish","Lax","Modest","Mild","Quiet","Bashful","Rash","Calm","Gentle","Sassy","Careful","Quirky","Timid","Hasty","Serious","Jolly","Naive"];
+    const tiers=["LC","Monotype","NU","National Dex","National Dex Monotype","National Dex UU","OU","PU","RU","Ubers","UU","ZU","National Dex RU","Monomon","Starter League","Only Smeargle","National Dex Ubers","National Dex AG"];
 
-    // menu toggle
-    document.getElementById("menuBtn").addEventListener("click", () => {
-      document.getElementById("dropdownMenu").classList.toggle("show");
-    });
+    tiers.forEach(t=>{ const opt=document.createElement("option"); opt.value=t; opt.textContent=t; tierFilter.appendChild(opt); });
 
-    // login / cadastro
-    document.getElementById("loginBtn").onclick = () => {
-      isRegister = false; popupTitle.textContent = "Login";
-      nickInput.style.display="none"; authPopup.style.display="flex";
-    };
-    document.getElementById("registerBtn").onclick = () => {
-      isRegister = true; popupTitle.textContent = "Cadastrar";
-      nickInput.style.display="block"; authPopup.style.display="flex";
-    };
-    popupAction.onclick = async () => {
-      try {
-        if (isRegister) {
-          const userCred = await createUserWithEmailAndPassword(auth,emailInput.value,passInput.value);
-          await updateProfile(userCred.user,{ displayName:nickInput.value });
-          await set(ref(db,"users/"+userCred.user.uid),{ displayName:nickInput.value, email:emailInput.value, createdAt:Date.now() });
+    // ---------- Autenticação ----------
+    document.getElementById("loginBtn").onclick=()=>{ isRegister=false; popupTitle.textContent="Login"; nickInput.style.display="none"; authPopup.style.display="flex";};
+    document.getElementById("registerBtn").onclick=()=>{ isRegister=true; popupTitle.textContent="Cadastrar"; nickInput.style.display="block"; authPopup.style.display="flex";};
+
+    popupAction.onclick=async()=>{
+      try{
+        if(isRegister){
+          const userCred=await createUserWithEmailAndPassword(auth,emailInput.value,passInput.value);
+          await updateProfile(userCred.user,{displayName:nickInput.value});
+          await set(ref(db,"users/"+userCred.user.uid),{displayName:nickInput.value,email:emailInput.value,createdAt:Date.now()});
         } else {
           await signInWithEmailAndPassword(auth,emailInput.value,passInput.value);
         }
         authPopup.style.display="none";
-      } catch(err){ alert("Erro: "+err.message); }
+      } catch(err){ alert("Erro: "+err.message);}
     };
-    googleLogin.onclick = async () => {
-      try {
+
+    googleLogin.onclick=async()=>{
+      try{
         const provider = new GoogleAuthProvider();
         const result = await signInWithPopup(auth,provider);
         const user = result.user;
         if(!user.displayName){ alert("Defina nickname no cadastro via Email!"); return; }
-        await set(ref(db,"users/"+user.uid),{ displayName:user.displayName,email:user.email,createdAt:Date.now() });
+        await set(ref(db,"users/"+user.uid),{displayName:user.displayName,email:user.email,createdAt:Date.now()});
         authPopup.style.display="none";
-      } catch(err){ alert("Erro Google: "+err.message); }
+      } catch(err){ alert("Erro Google: "+err.message);}
     };
 
-    // auth state
+    // ---------- Auth State ----------
     onAuthStateChanged(auth,(user)=>{
       if(user){
-        authArea.innerHTML = `
-          <div class="user-info">
-            <img src="${user.photoURL || 'https://i.pravatar.cc/150'}">
-            <span>${user.displayName||user.email}</span>
-            <button onclick="import('https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js').then(m=>m.getAuth().signOut())">Sair</button>
-          </div>`;
+        authArea.innerHTML = `<div class="user-info">
+          <img src="${user.photoURL||'https://i.pravatar.cc/150'}">
+          <span>${user.displayName||user.email}</span>
+          <button onclick="import('https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js').then(m=>m.getAuth().signOut())">Sair</button>
+        </div>`;
         teamBuilder.style.display="block";
       } else {
-        authArea.innerHTML = `
-          <button id="loginBtn">Login</button>
-          <button id="registerBtn">Cadastrar</button>`;
+        authArea.innerHTML=`<button id="loginBtn">Login</button><button id="registerBtn">Cadastrar</button>`;
         teamBuilder.style.display="none";
-        document.getElementById("loginBtn").onclick=()=>{isRegister=false;popupTitle.textContent="Login";nickInput.style.display="none";authPopup.style.display="flex";}
-        document.getElementById("registerBtn").onclick=()=>{isRegister=true;popupTitle.textContent="Cadastrar";nickInput.style.display="block";authPopup.style.display="flex";}
+        document.getElementById("loginBtn").onclick=()=>{ isRegister=false; popupTitle.textContent="Login"; nickInput.style.display="none"; authPopup.style.display="flex";};
+        document.getElementById("registerBtn").onclick=()=>{ isRegister=true; popupTitle.textContent="Cadastrar"; nickInput.style.display="block"; authPopup.style.display="flex";};
       }
     });
 
-    // criar time
-    const pokemonList = document.getElementById("pokemonList");
-    const addPokemonBtn = document.getElementById("addPokemon");
-    let pokeCount=0;
-    const natures=["Hardy","Lonely","Brave","Adamant","Naughty","Bold","Docile","Relaxed","Impish","Lax","Modest","Mild","Quiet","Bashful","Rash","Calm","Gentle","Sassy","Careful","Quirky","Timid","Hasty","Serious","Jolly","Naive"];
-    const tiers=["LC","Monotype","NU","National Dex","National Dex Monotype","National Dex UU","OU","PU","RU","Ubers","UU","ZU","National Dex RU","Monomon","Starter League","Only Smeargle","National Dex Ubers","National Dex AG"];
-    tiers.forEach(t=>{ const opt=document.createElement("option"); opt.value=t; opt.textContent=t; tierFilter.appendChild(opt); });
-
+    // ---------- Criação de Time ----------
     addPokemonBtn.onclick=()=>{
       if(pokeCount>=6) return alert("Máximo 6 Pokémons!");
       pokeCount++;
@@ -224,7 +304,7 @@
       const user=auth.currentUser;
       if(!user) return alert("Precisa logar!");
       const teamRef=push(ref(db,"teams"));
-      let teamData={ owner:user.uid, ownerName:user.displayName||user.email, createdAt:Date.now(), pokemon:{}, likes:{} };
+      let teamData={owner:user.uid, ownerName:user.displayName||user.email, createdAt:Date.now(), pokemon:{}, likes:{}};
       [...pokemonList.children].forEach((slot,idx)=>{
         const name=slot.querySelector("input[name=name]").value;
         const tier=slot.querySelector("select[name=tier]").value;
@@ -239,10 +319,9 @@
       }catch(err){console.error("Erro salvar:",err);}
     };
 
-    // feed
-    const timesContainer=document.getElementById("timesContainer");
-    const teamsRef=query(ref(db,"teams"),orderByChild("createdAt"));
+    // ---------- Feed ----------
     let allTeams=[];
+    const teamsRef=query(ref(db,"teams"),orderByChild("createdAt"));
     onValue(teamsRef,(snapshot)=>{
       allTeams=[]; snapshot.forEach(c=>allTeams.push({id:c.key,...c.val()}));
       allTeams.reverse(); renderFeed();
@@ -273,18 +352,15 @@
           <h3>Time de ${team.ownerName}</h3>
           <small>${date}</small>
           <div>${pokemonsHTML}</div>
-          <button class="like-btn ${userLiked?"liked":""}" data-id="${team.id}">👍 ${likesCount}</button>`;
-        timesContainer.appendChild(card);
-      });
-      document.querySelectorAll(".like-btn").forEach(btn=>{
-        btn.onclick=async()=>{
-          const user=auth.currentUser;
-          if(!user) return alert("Precisa logar!");
-          const teamId=btn.getAttribute("data-id");
-          const teamPath="teams/"+teamId+"/likes/"+user.uid;
-          const liked=btn.classList.contains("liked");
-          await set(ref(db,teamPath), liked?null:true);
+          <button class="like-btn ${userLiked?"liked":""}">❤️ ${likesCount}</button>`;
+        const likeBtn=card.querySelector(".like-btn");
+        likeBtn.onclick=async()=>{
+          const user=auth.currentUser; if(!user){ alert("Precisa logar!"); return; }
+          const likeRef=ref(db,`teams/${team.id}/likes/${user.uid}`);
+          if(userLiked) await set(likeRef,null);
+          else await set(likeRef,true);
         };
+        timesContainer.appendChild(card);
       });
     }
   </script>
