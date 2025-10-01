@@ -218,8 +218,8 @@ option {
 
         <div>
           <label for="teamTier">Tier do Time (opcional)</label>
-          <select id="teamTier">
-            <option value="">Nenhuma</option>
+          <select id="teamTier" required>
+            <option value="">-- Selecione a Tier --</option>
           </select>
         </div>
 
@@ -608,9 +608,9 @@ btnCopyAll?.addEventListener('click', ()=>{
 function collectTeamData(){
   const slots = Array.from(pokemonList.children);
   const team = { name: teamNameInput.value.trim() || null, createdAt: Date.now(), pokemon: [] };
-  // include team tier if selected
-  const teamTierElem = document.getElementById('teamTier');
-  if(teamTierElem) team.tier = teamTierElem.value || null;
+  // include team tier (obrigatória agora)
+    const teamTierElem = document.getElementById('teamTier');
+    team.tier = teamTierElem ? (teamTierElem.value || null) : null;
   slots.forEach(slot=>{
     const name = slot.querySelector('input[name=name]').value.trim() || '—';
     const item = slot.querySelector('input[name=item]').value.trim() || '';
@@ -630,9 +630,18 @@ teamForm.addEventListener('submit', async (e)=>{
   e.preventDefault();
   const user = auth.currentUser;
   if(!user){ alert('Precisa fazer login para salvar'); return; }
+
+  // validar Tier obrigatória
+  const teamTierElem = document.getElementById('teamTier');
+  if(!teamTierElem || !teamTierElem.value){
+    alert('Selecione uma Tier antes de salvar o time.');
+    return;
+  }
+
   // validate EVs total
   const invalid = validateAllEVs(true);
   if(invalid){ alert('Erros de EV/IV. Corrija antes de salvar.'); return; }
+
   const teamRef = push(ref(db, 'teams'));
   const data = collectTeamData();
   data.owner = user.uid;
@@ -789,7 +798,7 @@ function renderFeed(){
     const card = document.createElement('div'); card.className='time-card';
     const header = document.createElement('header');
     const left = document.createElement('div');
-    left.innerHTML = `<strong style="color:var(--gold)">${escapeHtml(team.ownerName||'Anônimo')}</strong><div class="meta">${team.teamName ? escapeHtml(team.teamName) : ''} ${team.createdAt ? ' • ' + new Date(team.createdAt).toLocaleString() : ''}</div>`;
+    left.innerHTML = `<strong style="color:var(--gold)">${escapeHtml(team.ownerName||'Anônimo')}</strong><div class="meta">${team.name ? escapeHtml(team.name) : ''}${team.tier ? ' • ' + escapeHtml(team.tier) : ''}${team.createdAt ? ' • ' + new Date(team.createdAt).toLocaleString() : ''}</div>`;
     header.appendChild(left);
 
     const right = document.createElement('div');
@@ -917,6 +926,43 @@ if(authPopupEl){
 
 
 
+
+
+// Menu hambúrguer toggle robusto
+const menuBtn = document.getElementById('menuBtn');
+const dropdownMenu = document.getElementById('dropdownMenu');
+if(menuBtn && dropdownMenu){
+  menuBtn.addEventListener('click', ()=>{
+    menuBtn.classList.toggle('active');
+    dropdownMenu.classList.toggle('active');
+  });
+  document.addEventListener('click', (e)=>{
+    if(!menuBtn.contains(e.target) && !dropdownMenu.contains(e.target)){
+      menuBtn.classList.remove('active');
+      dropdownMenu.classList.remove('active');
+    }
+  });
+}
+
+
+
+// Toggle Team Builder
+const toggleBtn = document.getElementById('toggleTeamBuilder');
+const teamBuilder = document.getElementById('teamBuilder');
+if(toggleBtn && teamBuilder){
+  teamBuilder.style.display = 'none'; // initial hidden
+  toggleBtn.textContent = '+ Criar Time';
+  toggleBtn.addEventListener('click', ()=>{
+    if(teamBuilder.style.display === 'none' || teamBuilder.style.display === ''){
+      teamBuilder.style.display = 'block';
+      toggleBtn.textContent = 'Fechar Team Builder';
+      teamBuilder.scrollIntoView({behavior:'smooth', block:'center'});
+    } else {
+      teamBuilder.style.display = 'none';
+      toggleBtn.textContent = '+ Criar Time';
+    }
+  });
+}
 
 
 /* ============================
