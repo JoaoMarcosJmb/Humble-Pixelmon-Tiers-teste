@@ -1,193 +1,392 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8" />
   <title>Times dos Jogadores - Humble</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root {
       --cor-dourado: #d1a720;
-      --cor-fundo: #1a1a1a; 
+      --cor-fundo: #1a1a1a;
       --cor-texto: #f5f5f5;
     }
-
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: #2c2417;
-      margin: 0;
-      padding: 0;
-      color: var(--cor-texto);
-    }
-
-    header {
-      padding: 15px 20px;
-      background: rgba(20,20,20,0.9);
-      border-bottom: 2px solid var(--cor-dourado);
-      color: var(--cor-dourado);
-    }
-
-    main {
-      padding: 20px;
-      max-width: 1200px;
-      margin: auto;
-    }
-
-    h2 {
-      color: var(--cor-dourado);
-      margin-bottom: 10px;
-    }
-
-    textarea {
-      width: 100%;
-      height: 180px;
-      border-radius: 8px;
-      border: 1px solid var(--cor-dourado);
-      background: rgba(0,0,0,0.6);
-      color: var(--cor-texto);
-      padding: 10px;
-      resize: vertical;
-    }
-
-    .btn {
-      background: var(--cor-dourado);
-      border: none;
-      color: #000;
-      padding: 10px 16px;
-      margin: 10px 5px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    .btn:hover { opacity: 0.8; }
-
-    .times-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 16px;
-      margin-top: 20px;
-    }
-
-    .time-card {
-      background: #2d241a;
-      border-radius: 12px;
-      padding: 16px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.5);
-      flex: 1 1 300px;
-    }
-
-    .pokemon-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-    }
-
-    .pokemon-card {
-      background: #1f1a14;
-      border-radius: 12px;
-      padding: 10px;
-      flex: 1 1 140px;
-      text-align: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-    }
-
-    .pokemon-card img {
-      width: 80px;
-      height: 80px;
-      display: block;
-      margin: auto;
-    }
-
-    .pokemon-card h3 {
-      font-size: 1rem;
-      margin: 8px 0 0;
-      color: var(--cor-dourado);
-    }
+    body{font-family:"Segoe UI",Arial,sans-serif;background:#2c2417;margin:0;color:var(--cor-texto);}
+    header{padding:15px 20px;background:rgba(20,20,20,0.9);border-bottom:2px solid var(--cor-dourado);display:flex;align-items:center;justify-content:space-between}
+    header h1{color:var(--cor-dourado);margin:0;display:flex;gap:12px;align-items:center}
+    header img{height:40px}
+    main{max-width:1200px;margin:24px auto;padding:0 16px}
+    h2{color:var(--cor-dourado)}
+    textarea{width:100%;height:160px;border-radius:8px;border:1px solid var(--cor-dourado);background:rgba(0,0,0,0.6);color:var(--cor-texto);padding:10px;resize:vertical}
+    .btn{background:var(--cor-dourado);border:none;color:#000;padding:10px 14px;margin-right:8px;border-radius:6px;cursor:pointer;font-weight:700}
+    .times-container{display:flex;flex-wrap:wrap;gap:16px;margin-top:18px}
+    .time-card{background:#2d241a;border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,0.6);flex:1 1 320px;position:relative}
+    .pokemon-list{display:flex;flex-wrap:wrap;gap:12px}
+    .pokemon-card{background:#1f1a14;border-radius:12px;padding:10px;flex:1 1 120px;text-align:center;box-shadow:0 4px 8px rgba(0,0,0,0.35)}
+    .pokemon-card img{width:72px;height:72px;display:block;margin:0 auto}
+    .pokemon-card h3{font-size:0.95rem;margin:8px 0 0;color:var(--cor-dourado)}
+    .copy-btn{position:absolute;right:12px;top:12px;background:var(--cor-dourado);border:none;border-radius:6px;padding:6px 10px;cursor:pointer;font-weight:700}
+    .meta{font-size:0.85rem;color:#ddd;margin-bottom:8px}
   </style>
 </head>
 <body>
   <header>
-    <h1>Times dos Jogadores</h1>
+    <h1>
+      <a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a>
+      Humble - Times
+    </h1>
   </header>
 
   <main>
-    <h2>Importar Time</h2>
-    <textarea id="importText" placeholder="Cole aqui seu time no formato Showdown..."></textarea><br>
-    <button class="btn" onclick="importarTime()">📥 Importar</button>
-    <button class="btn" onclick="exportarTimes()">📤 Exportar Todos</button>
+    <h2>Enviar Time (formato Showdown)</h2>
+    <textarea id="importText" placeholder="Cole aqui seu time no formato Showdown (ex: Primarina @ Choice Specs ... )"></textarea>
+    <div style="margin-top:10px">
+      <button class="btn" id="btnSend">✅ Enviar</button>
+      <button class="btn" id="btnCancel">❌ Cancelar</button>
+    </div>
 
-    <h2>Times Cadastrados</h2>
+    <h2 style="margin-top:22px">Times Postados</h2>
     <div class="times-container" id="timesContainer"></div>
   </main>
 
-  <script>
-    let times = [];
+  <!-- Firebase + app -->
+  <script type="module">
+    // IMPORTS (CDN modular SDK)
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js';
+    import {
+      getFirestore, collection, addDoc, serverTimestamp,
+      query, orderBy, onSnapshot
+    } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
 
-    function importarTime() {
-      const texto = document.getElementById("importText").value.trim();
-      if (!texto) return;
-
-      const pokemons = [];
-      const linhas = texto.split("\n");
-      linhas.forEach(l => {
-        if (l && !l.startsWith("EVs") && !l.startsWith("IVs") && !l.startsWith("-") && !l.startsWith("Ability") && !l.startsWith("Nature")) {
-          const nome = l.split("@")[0].trim();
-          if (nome) pokemons.push(nome);
-        }
-      });
-
-      times.push(pokemons);
-      atualizarLista();
-      document.getElementById("importText").value = "";
+    // ====== COLE AQUI O SEU firebaseConfig (pegar no Firebase Console: Project Settings -> SDK snippet -> Config) ======
+    const firebaseConfig = 
+      <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <title>Times dos Jogadores - Humble</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    :root {
+      --cor-dourado: #d1a720;
+      --cor-fundo: #1a1a1a;
+      --cor-texto: #f5f5f5;
     }
+    body{font-family:"Segoe UI",Arial,sans-serif;background:#2c2417;margin:0;color:var(--cor-texto);}
+    header{padding:15px 20px;background:rgba(20,20,20,0.9);border-bottom:2px solid var(--cor-dourado);display:flex;align-items:center;justify-content:space-between}
+    header h1{color:var(--cor-dourado);margin:0;display:flex;gap:12px;align-items:center}
+    header img{height:40px}
+    main{max-width:1200px;margin:24px auto;padding:0 16px}
+    h2{color:var(--cor-dourado)}
+    textarea{width:100%;height:160px;border-radius:8px;border:1px solid var(--cor-dourado);background:rgba(0,0,0,0.6);color:var(--cor-texto);padding:10px;resize:vertical}
+    .btn{background:var(--cor-dourado);border:none;color:#000;padding:10px 14px;margin-right:8px;border-radius:6px;cursor:pointer;font-weight:700}
+    .times-container{display:flex;flex-wrap:wrap;gap:16px;margin-top:18px}
+    .time-card{background:#2d241a;border-radius:12px;padding:14px;box-shadow:0 6px 18px rgba(0,0,0,0.6);flex:1 1 320px;position:relative}
+    .pokemon-list{display:flex;flex-wrap:wrap;gap:12px}
+    .pokemon-card{background:#1f1a14;border-radius:12px;padding:10px;flex:1 1 120px;text-align:center;box-shadow:0 4px 8px rgba(0,0,0,0.35)}
+    .pokemon-card img{width:72px;height:72px;display:block;margin:0 auto}
+    .pokemon-card h3{font-size:0.95rem;margin:8px 0 0;color:var(--cor-dourado)}
+    .copy-btn{position:absolute;right:12px;top:12px;background:var(--cor-dourado);border:none;border-radius:6px;padding:6px 10px;cursor:pointer;font-weight:700}
+    .meta{font-size:0.85rem;color:#ddd;margin-bottom:8px}
+  </style>
+</head>
+<body>
+  <header>
+    <h1>
+      <a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a>
+      Humble - Times
+    </h1>
+  </header>
 
-    function atualizarLista() {
-      const container = document.getElementById("timesContainer");
-      container.innerHTML = "";
+  <main>
+    <h2>Enviar Time (formato Showdown)</h2>
+    <textarea id="importText" placeholder="Cole aqui seu time no formato Showdown (ex: Primarina @ Choice Specs ... )"></textarea>
+    <div style="margin-top:10px">
+      <button class="btn" id="btnSend">✅ Enviar</button>
+      <button class="btn" id="btnCancel">❌ Cancelar</button>
+    </div>
 
-      times.forEach(time => {
-        const timeCard = document.createElement("div");
-        timeCard.className = "time-card";
+    <h2 style="margin-top:22px">Times Postados</h2>
+    <div class="times-container" id="timesContainer"></div>
+  </main>
 
-        const pokemonList = document.createElement("div");
-        pokemonList.className = "pokemon-list";
+  <!-- Firebase + app -->
+  <script type="module">
+    // IMPORTS (CDN modular SDK)
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-app.js';
+    import {
+      getFirestore, collection, addDoc, serverTimestamp,
+      query, orderBy, onSnapshot
+    } from 'https://www.gstatic.com/firebasejs/12.3.0/firebase-firestore.js';
 
-        time.forEach(p => {
-          const pokeDiv = document.createElement("div");
-          pokeDiv.className = "pokemon-card";
+    // ====== COLE AQUI O SEU firebaseConfig (pegar no Firebase Console: Project Settings -> SDK snippet -> Config) ======
+    const firebaseConfig = /* COLE AQUI SEU firebaseConfig */ {
+      // apiKey: "...",
+      // authDomain: "...",
+      // projectId: "...",
+      // appId: "..."
+    };
 
-          // pega nome "limpo" sem mega, (M), etc.
-          const nomeLimpo = p.split("(")[0].trim().replace("Mega", "").trim();
-          const nomeApi = nomeLimpo.toLowerCase().replace(" ", "-");
+    // Inicializa Firebase / Firestore
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const timesCol = collection(db, 'times');
+    const timesQuery = query(timesCol, orderBy('createdAt', 'desc'));
 
-          const img = document.createElement("img");
-          img.src = `https://img.pokemondb.net/sprites/home/normal/${nomeApi}.png`;
-          img.onerror = () => img.src = "https://img.pokemondb.net/sprites/home/normal/missingno.png";
+    // Elementos DOM
+    const importText = document.getElementById('importText');
+    const btnSend = document.getElementById('btnSend');
+    const btnCancel = document.getElementById('btnCancel');
+    const timesContainer = document.getElementById('timesContainer');
 
-          const nome = document.createElement("h3");
-          nome.textContent = p;
-
-          pokeDiv.appendChild(img);
-          pokeDiv.appendChild(nome);
-          pokemonList.appendChild(pokeDiv);
+    // Enviar (cria documento no Firestore)
+    btnSend.addEventListener('click', async () => {
+      const texto = importText.value.trim();
+      if (!texto) { alert('Cole um time antes de enviar.'); return; }
+      try {
+        await addDoc(timesCol, {
+          texto,
+          createdAt: serverTimestamp()
         });
+        importText.value = '';
+      } catch (err) {
+        console.error('Erro ao enviar:', err);
+        alert('Erro ao enviar o time. Veja console.');
+      }
+    });
 
-        timeCard.appendChild(pokemonList);
-        container.appendChild(timeCard);
-      });
-    }
+    btnCancel.addEventListener('click', () => importText.value = '');
 
-    function exportarTimes() {
-      if (times.length === 0) {
-        alert("Nenhum time para exportar!");
+    // Listener em tempo real: atualiza quando qualquer usuário postar/editar
+    onSnapshot(timesQuery, snapshot => {
+      const docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderTimes(docs);
+    }, err => {
+      console.error('Erro no snapshot:', err);
+    });
+
+    // Renderiza cards a partir de documentos
+    function renderTimes(docs) {
+      timesContainer.innerHTML = '';
+      if (!docs.length) {
+        timesContainer.innerHTML = '<p style="color:#ddd">Nenhum time postado ainda.</p>';
         return;
       }
-      const blob = new Blob(times.map(t => t.join("\n")).join("\n\n"), { type: "text/plain" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "times_showdown.txt";
-      a.click();
-      URL.revokeObjectURL(url);
+
+      docs.forEach(doc => {
+        const card = document.createElement('div');
+        card.className = 'time-card';
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.textContent = '📋 Copiar';
+        copyBtn.onclick = async () => {
+          try {
+            await navigator.clipboard.writeText(doc.texto);
+            alert('Time copiado para a área de transferência!');
+          } catch (e) {
+            alert('Não foi possível copiar.'); console.error(e);
+          }
+        };
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        const date = doc.createdAt && doc.createdAt.toDate ? doc.createdAt.toDate().toLocaleString() : '';
+        meta.textContent = `Postado em: ${date}`;
+
+        const pokemonList = document.createElement('div');
+        pokemonList.className = 'pokemon-list';
+
+        const pokes = parsePokemons(doc.texto);
+        pokes.forEach(p => {
+          const pDiv = document.createElement('div');
+          pDiv.className = 'pokemon-card';
+
+          // limpa formas para montar URL da sprite (não é perfeito pra todos os casos)
+          const nomeLimpo = p.split('(')[0].replace(/Mega/gi, '').trim();
+          const apiName = nomeLimpo.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/\s+/g, '-');
+
+          const img = document.createElement('img');
+          img.src = `https://img.pokemondb.net/sprites/home/normal/${apiName}.png`;
+          img.onerror = () => img.src = 'https://img.pokemondb.net/sprites/home/normal/missingno.png';
+
+          const h = document.createElement('h3');
+          h.textContent = p;
+
+          pDiv.appendChild(img);
+          pDiv.appendChild(h);
+          pokemonList.appendChild(pDiv);
+        });
+
+        card.appendChild(copyBtn);
+        card.appendChild(meta);
+        card.appendChild(pokemonList);
+        timesContainer.appendChild(card);
+      });
+    }
+
+    // Extrai nomes de pokémon do texto em formato Showdown
+    function parsePokemons(text) {
+      const linhas = text.split(/\r?\n/);
+      const pokes = [];
+      for (let i = 0; i < linhas.length; i++) {
+        let l = linhas[i].trim();
+        if (!l) continue;
+        // ignora linhas de moves e detalhes
+        if (l.startsWith('-')) continue;
+        if (/^Ability:/i.test(l)) continue;
+        if (/^EVs:/i.test(l)) continue;
+        if (/^IVs:/i.test(l)) continue;
+        if (/Nature/i.test(l)) continue;
+        // se tem @ é a linha do Pokémon
+        if (l.includes('@')) {
+          const nome = l.split('@')[0].trim();
+          if (nome) pokes.push(nome);
+          continue;
+        }
+        // alguns times começam com nome sem @ (menos comum)
+        // assumir que linha válida com palavra inicial maiúscula e não "Ability"
+        if (/^[A-ZÍÉÁÀÇ].+/.test(l) && !l.includes(':')) {
+          // evita pegar "Moves:" etc.
+          pokes.push(l.split('@')[0].trim());
+        }
+      }
+      return pokes.slice(0,6); // limitar a 6 por segurança
+    }
+  </script>
+</body>
+</html>
+{
+      // apiKey: "...",
+      // authDomain: "...",
+      // projectId: "...",
+      // appId: "..."
+    };
+
+    // Inicializa Firebase / Firestore
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const timesCol = collection(db, 'times');
+    const timesQuery = query(timesCol, orderBy('createdAt', 'desc'));
+
+    // Elementos DOM
+    const importText = document.getElementById('importText');
+    const btnSend = document.getElementById('btnSend');
+    const btnCancel = document.getElementById('btnCancel');
+    const timesContainer = document.getElementById('timesContainer');
+
+    // Enviar (cria documento no Firestore)
+    btnSend.addEventListener('click', async () => {
+      const texto = importText.value.trim();
+      if (!texto) { alert('Cole um time antes de enviar.'); return; }
+      try {
+        await addDoc(timesCol, {
+          texto,
+          createdAt: serverTimestamp()
+        });
+        importText.value = '';
+      } catch (err) {
+        console.error('Erro ao enviar:', err);
+        alert('Erro ao enviar o time. Veja console.');
+      }
+    });
+
+    btnCancel.addEventListener('click', () => importText.value = '');
+
+    // Listener em tempo real: atualiza quando qualquer usuário postar/editar
+    onSnapshot(timesQuery, snapshot => {
+      const docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderTimes(docs);
+    }, err => {
+      console.error('Erro no snapshot:', err);
+    });
+
+    // Renderiza cards a partir de documentos
+    function renderTimes(docs) {
+      timesContainer.innerHTML = '';
+      if (!docs.length) {
+        timesContainer.innerHTML = '<p style="color:#ddd">Nenhum time postado ainda.</p>';
+        return;
+      }
+
+      docs.forEach(doc => {
+        const card = document.createElement('div');
+        card.className = 'time-card';
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.textContent = '📋 Copiar';
+        copyBtn.onclick = async () => {
+          try {
+            await navigator.clipboard.writeText(doc.texto);
+            alert('Time copiado para a área de transferência!');
+          } catch (e) {
+            alert('Não foi possível copiar.'); console.error(e);
+          }
+        };
+
+        const meta = document.createElement('div');
+        meta.className = 'meta';
+        const date = doc.createdAt && doc.createdAt.toDate ? doc.createdAt.toDate().toLocaleString() : '';
+        meta.textContent = `Postado em: ${date}`;
+
+        const pokemonList = document.createElement('div');
+        pokemonList.className = 'pokemon-list';
+
+        const pokes = parsePokemons(doc.texto);
+        pokes.forEach(p => {
+          const pDiv = document.createElement('div');
+          pDiv.className = 'pokemon-card';
+
+          // limpa formas para montar URL da sprite (não é perfeito pra todos os casos)
+          const nomeLimpo = p.split('(')[0].replace(/Mega/gi, '').trim();
+          const apiName = nomeLimpo.toLowerCase().replace(/[^a-z0-9-]/g, '-').replace(/\s+/g, '-');
+
+          const img = document.createElement('img');
+          img.src = `https://img.pokemondb.net/sprites/home/normal/${apiName}.png`;
+          img.onerror = () => img.src = 'https://img.pokemondb.net/sprites/home/normal/missingno.png';
+
+          const h = document.createElement('h3');
+          h.textContent = p;
+
+          pDiv.appendChild(img);
+          pDiv.appendChild(h);
+          pokemonList.appendChild(pDiv);
+        });
+
+        card.appendChild(copyBtn);
+        card.appendChild(meta);
+        card.appendChild(pokemonList);
+        timesContainer.appendChild(card);
+      });
+    }
+
+    // Extrai nomes de pokémon do texto em formato Showdown
+    function parsePokemons(text) {
+      const linhas = text.split(/\r?\n/);
+      const pokes = [];
+      for (let i = 0; i < linhas.length; i++) {
+        let l = linhas[i].trim();
+        if (!l) continue;
+        // ignora linhas de moves e detalhes
+        if (l.startsWith('-')) continue;
+        if (/^Ability:/i.test(l)) continue;
+        if (/^EVs:/i.test(l)) continue;
+        if (/^IVs:/i.test(l)) continue;
+        if (/Nature/i.test(l)) continue;
+        // se tem @ é a linha do Pokémon
+        if (l.includes('@')) {
+          const nome = l.split('@')[0].trim();
+          if (nome) pokes.push(nome);
+          continue;
+        }
+        // alguns times começam com nome sem @ (menos comum)
+        // assumir que linha válida com palavra inicial maiúscula e não "Ability"
+        if (/^[A-ZÍÉÁÀÇ].+/.test(l) && !l.includes(':')) {
+          // evita pegar "Moves:" etc.
+          pokes.push(l.split('@')[0].trim());
+        }
+      }
+      return pokes.slice(0,6); // limitar a 6 por segurança
     }
   </script>
 </body>
