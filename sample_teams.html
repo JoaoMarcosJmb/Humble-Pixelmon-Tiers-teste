@@ -123,6 +123,27 @@
   object-fit:cover;
 }
 
+
+/* Popup modal styling */
+.popup {
+  position: fixed;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0,0,0,0.6);
+  z-index: 1400;
+}
+.popup .popup-content {
+  background: var(--panel);
+  border:1px solid var(--gold);
+  padding:16px;
+  border-radius:10px;
+  min-width:320px;
+  color:var(--text);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6);
+}
+
 </style>
 </head>
 <body>
@@ -184,6 +205,14 @@
           <label for="teamName">Nome do Time (opcional)</label>
           <input id="teamName" type="text" placeholder="Nome público do time">
         </div>
+
+        <div>
+          <label for="teamTier">Tier do Time (opcional)</label>
+          <select id="teamTier">
+            <option value="">Nenhuma</option>
+          </select>
+        </div>
+
 
         <div>
           <label>Validação de EVs / IVs</label>
@@ -319,6 +348,14 @@ tiers.forEach(t=>{
   const o=document.createElement('option'); o.value=t; o.textContent=t; tierFilter.appendChild(o);
 });
 
+// populate teamTier select as well (if present)
+const teamTierSelect = document.getElementById('teamTier');
+if(teamTierSelect){
+  tiers.forEach(t=>{
+    const o2 = document.createElement('option'); o2.value = t; o2.textContent = t; teamTierSelect.appendChild(o2);
+  });
+}
+
 /* menu toggle */
 menuBtn.addEventListener('click', e=>{
   e.stopPropagation();
@@ -382,7 +419,7 @@ onAuthStateChanged(auth, user=>{
     </div>`;
     document.getElementById('logoutBtn').onclick=async ()=>{ await signOut(auth); };
     document.getElementById('userActions')?.remove();
-    teamBuilder.style.display = 'block';
+    // teamBuilder display controlled by toggle (removed auto-open)
   } else {
     authArea.innerHTML = `<div class="auth-buttons"><button id="loginBtn">Login</button><button id="registerBtn">Cadastrar</button></div>`;
     document.getElementById('loginBtn').onclick=()=>{
@@ -391,7 +428,7 @@ onAuthStateChanged(auth, user=>{
     document.getElementById('registerBtn').onclick=()=>{
       isRegister=true; popupTitle.textContent='Cadastrar'; nickInput.style.display='block'; authPopup.style.display='flex';
     };
-    teamBuilder.style.display = 'none';
+    // teamBuilder display controlled by toggle (removed auto-close)
   }
 });
 
@@ -561,6 +598,9 @@ btnCopyAll?.addEventListener('click', ()=>{
 function collectTeamData(){
   const slots = Array.from(pokemonList.children);
   const team = { name: teamNameInput.value.trim() || null, createdAt: Date.now(), pokemon: [] };
+  // include team tier if selected
+  const teamTierElem = document.getElementById('teamTier');
+  if(teamTierElem) team.tier = teamTierElem.value || null;
   slots.forEach(slot=>{
     const name = slot.querySelector('input[name=name]').value.trim() || '—';
     const item = slot.querySelector('input[name=item]').value.trim() || '';
@@ -734,7 +774,7 @@ function renderFeed(){
   allTeams.forEach(team=>{
     if(!team.pokemon || !Array.isArray(team.pokemon) || team.pokemon.length===0) return;
     // filter by tier if requested (any pokemon tier match)
-    if(filter !== 'all' && !team.pokemon.some(p => (p.tier||'').toLowerCase() === filter.toLowerCase())) return;
+    if(filter !== 'all' && ((team.tier||'').toLowerCase() !== filter.toLowerCase())) return;
 
     const card = document.createElement('div'); card.className='time-card';
     const header = document.createElement('header');
@@ -849,6 +889,69 @@ if(toggleTeamBuilderBtn){
     }
   });
 }
+
+
+
+// Ensure dropdown menu links close the menu and trigger actions (open team builder for the Criar Time link)
+document.querySelectorAll('#dropdownMenu a').forEach(a=>{
+  a.addEventListener('click', (ev)=>{
+    // close dropdown
+    menuBtn.classList.remove('active');
+    dropdownMenu.classList.remove('active');
+    // if link points to teamBuilder, show the builder
+    try{
+      const href = a.getAttribute('href') || '';
+      if(href.indexOf('#teamBuilder') !== -1){
+        if(teamBuilder.style.display === 'none' || teamBuilder.style.display === '') {
+          teamBuilder.style.display = 'block';
+          const toggleBtn = document.getElementById('toggleTeamBuilder');
+          if(toggleBtn) toggleBtn.textContent = 'Fechar Team Builder';
+        }
+        ev.preventDefault();
+        // scroll into view smoothly
+        document.getElementById('teamBuilder')?.scrollIntoView({behavior:'smooth', block:'center'});
+      } else if(href.indexOf('#timesContainer') !== -1){
+        ev.preventDefault();
+        document.getElementById('timesContainer')?.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+    }catch(e){}
+  });
+});
+
+
+
+// authPopup: close when clicking outside popup content or pressing Escape
+const authPopupEl = document.getElementById('authPopup');
+if(authPopupEl){
+  authPopupEl.addEventListener('click', (ev)=>{
+    if(ev.target === authPopupEl){ authPopupEl.style.display = 'none'; }
+  });
+  document.addEventListener('keydown', (ev)=>{
+    if(ev.key === 'Escape' && authPopupEl.style.display === 'flex') authPopupEl.style.display = 'none';
+  });
+}
+
+
+
+// safer toggle for team builder (idempotent)
+(function(){
+  const toggleBtn = document.getElementById('toggleTeamBuilder');
+  const teamBuilder = document.getElementById('teamBuilder');
+  if(!toggleBtn) return;
+  // ensure initial state
+  if(!teamBuilder.style.display) teamBuilder.style.display = 'none';
+  toggleBtn.textContent = teamBuilder.style.display === 'none' ? '+ Criar Time' : 'Fechar Team Builder';
+  toggleBtn.addEventListener('click', ()=>{
+    if(teamBuilder.style.display === 'none' || teamBuilder.style.display === ''){
+      teamBuilder.style.display = 'block';
+      toggleBtn.textContent = 'Fechar Team Builder';
+      teamBuilder.scrollIntoView({behavior:'smooth', block:'center'});
+    }else{
+      teamBuilder.style.display = 'none';
+      toggleBtn.textContent = '+ Criar Time';
+    }
+  });
+})();
 
 
 /* ============================
