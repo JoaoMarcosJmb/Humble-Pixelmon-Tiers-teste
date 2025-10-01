@@ -1,150 +1,117 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Humble — Team Builder</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Humble — Team Builder</title>
 
-<!-- =======================
-     STYLES (visual completo)
-     ======================= -->
-<style>
-  :root{
-    --bg-0: #0f0f0f;
-    --bg-1: #151515;
-    --card: rgba(30,25,20,0.95);
-    --gold: #d1a720;
-    --muted: #bdbdbd;
-    --accent: #f1c53b;
-  }
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    font-family: "Segoe UI", Roboto, Arial, sans-serif;
-    background:
+  <!-- =======================
+       CSS (visual completo)
+       ======================= -->
+  <style>
+    :root{
+      --bg-0:#0f0f0f; --card:#1b1713; --gold:#d1a720; --accent:#f1c53b; --muted:#bdbdbd;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;font-family:"Segoe UI",Arial,Helvetica,sans-serif;background:
       linear-gradient(135deg, rgba(8,8,8,0.85), rgba(26,22,16,0.85)),
       url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
-    background-size: cover;
-    color: #eee;
-    -webkit-font-smoothing:antialiased;
-  }
+      background-size:cover;color:#eee;min-height:100vh;
+    }
 
-  /* Header */
-  header {
-    position: fixed; top:0; left:0; right:0;
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 20px; gap:12px;
-    background: rgba(12,12,12,0.94);
-    border-bottom: 2px solid var(--gold);
-    z-index: 1100;
-    box-shadow: 0 2px 14px rgba(0,0,0,0.6);
-  }
-  header h1{ display:flex; align-items:center; gap:12px; margin:0; color:var(--gold); font-size:1.4rem; }
-  header h1 img{ height:40px; cursor:pointer; }
+    header{
+      position:fixed;top:0;left:0;right:0;height:72px;
+      display:flex;align-items:center;justify-content:space-between;padding:12px 18px;
+      background:rgba(12,12,12,0.94);border-bottom:2px solid var(--gold);z-index:1200;
+      box-shadow:0 6px 20px rgba(0,0,0,0.6);
+    }
+    header h1{display:flex;align-items:center;gap:12px;margin:0;color:var(--gold);font-size:1.35rem}
+    header h1 img{height:36px;cursor:pointer}
+    .header-right{display:flex;gap:10px;align-items:center}
 
-  .header-right{ display:flex; gap:10px; align-items:center; }
-  .btn {
-    background:transparent; border:1px solid var(--gold); color:var(--gold);
-    padding:7px 10px; border-radius:8px; cursor:pointer;
-  }
-  .btn:hover{ background:var(--gold); color:#121212; }
+    .btn { background:transparent;border:1px solid var(--gold);color:var(--gold);padding:8px 10px;border-radius:8px;cursor:pointer }
+    .btn:hover{background:var(--gold);color:#111}
 
-  /* Hamburger (exact format requested) */
-  .menu-toggle{ display:flex; flex-direction:column; justify-content:space-between; width:30px; height:22px; cursor:pointer; }
-  .menu-toggle span{ height:4px; background:#eee; border-radius:4px; display:block; transition:0.25s; }
-  .menu-toggle.active span:nth-child(1){ transform: rotate(45deg) translate(5px,5px); }
-  .menu-toggle.active span:nth-child(2){ opacity:0; }
-  .menu-toggle.active span:nth-child(3){ transform: rotate(-45deg) translate(5px,-5px); }
+    /* hamburger exactly as asked */
+    .menu-toggle{display:flex;flex-direction:column;justify-content:space-between;width:30px;height:22px;cursor:pointer}
+    .menu-toggle span{height:4px;background:#eee;border-radius:4px;display:block;transition:0.25s}
+    .menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
+    .menu-toggle.active span:nth-child(2){opacity:0}
+    .menu-toggle.active span:nth-child(3){transform:rotate(-45deg) translate(5px,-5px)}
 
-  nav#dropdownMenu{
-    position:absolute; top:68px; right:10px; display:none; flex-direction:column;
-    background: rgba(26,20,16,0.98); border:1px solid var(--gold); border-radius:12px;
-    padding:12px; gap:8px; min-width:220px; box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-  }
-  nav#dropdownMenu.active{ display:flex; }
-  nav#dropdownMenu a{ color:var(--gold); text-decoration:none; padding:6px 8px; border-radius:8px; display:block; }
-  nav#dropdownMenu a:hover{ color:#fff; background: rgba(255,215,0,0.06); }
+    nav#dropdownMenu{
+      position:absolute;top:74px;right:10px;display:none;flex-direction:column;
+      background:rgba(26,20,16,0.98);border:1px solid var(--gold);border-radius:12px;padding:12px;gap:8px;min-width:220px;
+    }
+    nav#dropdownMenu.active{display:flex}
+    nav#dropdownMenu a{color:var(--gold);text-decoration:none;padding:6px 8px;border-radius:8px}
+    nav#dropdownMenu a:hover{background:rgba(255,215,0,0.06);color:#fff}
 
-  /* Main layout */
-  main{ padding:110px 20px 40px; max-width:1200px; margin:0 auto; }
-  #criarTimeBtn{
-    display:block; margin:8px auto 18px; background:var(--gold); color:#111; border:none;
-    padding:12px 18px; border-radius:10px; font-weight:700; box-shadow: 0 6px 20px rgba(209,167,32,0.12);
-  }
-  #criarTimeBtn:hover{ background:var(--accent); }
+    main{padding:110px 18px 40px;max-width:1200px;margin:0 auto}
 
-  /* Cards for teams listing */
-  .time-card{
-    background: rgba(18,16,14,0.85); border:1px solid var(--gold);
-    padding:14px; border-radius:12px; margin-bottom:14px; box-shadow: 0 6px 18px rgba(0,0,0,0.5);
-  }
+    /* CREATE button fixed to right (user requested) */
+    #criarTimeBtn{
+      position:fixed; top:86px; right:20px;
+      background:var(--gold); color:#111; border:none; padding:10px 16px; border-radius:10px;
+      box-shadow:0 6px 18px rgba(209,167,32,0.12); z-index:1150; cursor:pointer;
+    }
+    #criarTimeBtn:hover{background:var(--accent)}
 
-  /* Modal base */
-  .modal{ display:none; position:fixed; inset:0; background: rgba(0,0,0,0.7);
-    justify-content:center; align-items:center; z-index:2000; padding:20px; }
-  .modal.open{ display:flex; }
-  .modal-panel{ width:100%; max-width:980px; background:var(--card);
-    border-radius:12px; padding:18px; border:2px solid var(--gold); color:#eee; max-height:92vh; overflow:auto;
-  }
+    .time-card{background:rgba(20,18,16,0.85);border:1px solid var(--gold);padding:12px;border-radius:10px;margin-bottom:12px}
 
-  /* AUTH modal layout */
-  .auth-tabs{ display:flex; gap:8px; margin-bottom:12px; }
-  .auth-tabs button{ flex:1; padding:10px; border-radius:8px; border:1px solid transparent; background:#222; color:#ddd; cursor:pointer; }
-  .auth-tabs button.active{ background:var(--gold); color:#111; border-color:var(--gold); }
-  .auth-row{ display:flex; gap:10px; margin-bottom:10px; }
-  .auth-row input{ flex:1; padding:8px; border-radius:8px; background:#111; border:1px solid #333; color:#eee; }
-  .auth-actions{ display:flex; gap:8px; margin-top:8px; }
+    /* modal base */
+    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.72);justify-content:center;align-items:center;z-index:2000;padding:18px}
+    .modal.open{display:flex}
+    .modal-panel{width:100%;max-width:980px;background:var(--card);border-radius:12px;padding:18px;border:2px solid var(--gold);color:#eee;max-height:92vh;overflow:auto}
 
-  .error{ color:#ff8b8b; font-size:0.95rem; min-height:1.1em; }
+    /* auth */
+    .auth-tabs{display:flex;gap:8px;margin-bottom:12px}
+    .auth-tabs button{flex:1;padding:10px;border-radius:8px;background:#242424;border:1px solid transparent;color:#ddd}
+    .auth-tabs button.active{background:var(--gold);color:#111;border-color:var(--gold)}
+    .auth-row{display:flex;gap:8px;margin-bottom:8px}
+    .auth-row input{flex:1;padding:10px;border-radius:8px;border:1px solid #333;background:#111;color:#eee}
+    .auth-actions{display:flex;gap:8px;margin-top:6px}
+    .error{color:#ff8b8b;font-size:0.95rem;min-height:1.1em}
 
-  /* Team builder */
-  .builder-controls{ display:flex; gap:12px; align-items:center; margin-top:10px; flex-wrap:wrap; }
-  #pokemonList{ display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:12px; margin-top:12px; }
+    /* builder layout */
+    .builder-controls{display:flex;gap:12px;align-items:center;margin-top:10px;flex-wrap:wrap}
+    #pokemonList{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:12px}
 
-  .poke-card{
-    background: linear-gradient(180deg, rgba(12,12,12,0.8), rgba(18,18,18,0.85));
-    border:1px solid var(--gold); padding:12px; border-radius:10px; box-shadow: 0 8px 20px rgba(0,0,0,0.5);
-    display:flex; flex-direction:column; gap:8px;
-  }
-  .poke-header{ display:flex; justify-content:space-between; align-items:center; }
-  .poke-header h4{ margin:0; color:var(--gold); }
-  .btn-small{ padding:6px 8px; border-radius:8px; border:1px solid var(--gold); background:transparent; color:var(--gold); cursor:pointer; }
-  .btn-small:hover{ background:var(--gold); color:#111; }
+    .poke-card{background:linear-gradient(180deg,rgba(12,12,12,0.86),rgba(20,20,20,0.9));border:1px solid var(--gold);padding:12px;border-radius:10px;display:flex;flex-direction:column;gap:8px}
+    .poke-header{display:flex;justify-content:space-between;align-items:center}
+    .btn-small{padding:6px 8px;border-radius:8px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer}
+    .btn-small:hover{background:var(--gold);color:#111}
 
-  .row{ display:flex; gap:8px; align-items:center; }
-  .label{ width:100px; color:var(--muted); }
-  input[type="text"], select { padding:8px; border-radius:8px; border:1px solid #333; background:#111; color:#eee; width:100%; }
-  .stat{ display:flex; gap:8px; align-items:center; }
-  .stat label{ width:48px; color:var(--muted); }
-  .stat input[type="range"]{ flex:1; }
-  /* fix the value width so layout doesn't jump */
-  .val{ display:inline-block; width:44px; text-align:right; color:var(--gold); font-weight:700; }
+    .row{display:flex;gap:8px;align-items:center}
+    .label{width:110px;color:var(--muted)}
+    input[type="text"], select{flex:1;padding:8px;border-radius:8px;border:1px solid #333;background:#111;color:#eee}
+    .stat{display:flex;gap:8px;align-items:center}
+    .stat label{width:48px;color:var(--muted)}
+    .stat input[type="range"]{flex:1}
+    /* fix numeric width so it doesn't jump */
+    .val{display:inline-block;width:44px;text-align:right;color:var(--gold);font-weight:700}
 
-  .progress { height:10px; background:rgba(255,255,255,0.06); border-radius:8px; overflow:hidden; }
-  .progress > .bar { height:100%; background:var(--gold); width:0%; transition:0.18s ease; }
+    .progress{height:10px;background:rgba(255,255,255,0.06);border-radius:8px;overflow:hidden;margin-top:8px}
+    .progress .bar{height:100%;background:var(--gold);width:0%;transition:0.18s ease}
 
-  .ev-warning{ color:#ff9999; font-size:0.9rem; min-height:1.1em; }
+    .ev-warning{color:#ff9999;font-size:0.9rem;min-height:1.1em}
 
-  /* responsive */
-  @media (max-width:760px){
-    .label{ width:95px; }
-    .auth-row{ flex-direction:column; }
-    header{ padding:12px; }
-  }
-</style>
+    @media (max-width:760px){
+      .label{width:95px}
+      header h1{font-size:1.05rem}
+    }
+  </style>
 </head>
 <body>
 
   <!-- HEADER -->
   <header>
-    <h1>
-      <a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a>
-      Humble
-    </h1>
+    <h1><a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a>Humble</h1>
 
     <div class="header-right">
-      <button id="loginBtn" class="btn">Login</button>
-      <button id="signupBtn" class="btn">Cadastrar</button>
+      <button id="loginBtn" class="btn" type="button">Login</button>
+      <button id="signupBtn" class="btn" type="button">Cadastrar</button>
 
       <div class="menu-toggle" id="menuBtn" aria-label="menu">
         <span></span><span></span><span></span>
@@ -160,49 +127,48 @@
     </nav>
   </header>
 
+  <!-- CREATE button placed to the right -->
+  <button id="criarTimeBtn" type="button">+ Criar Time</button>
+
   <!-- MAIN -->
   <main>
-    <button id="criarTimeBtn">+ Criar Time</button>
-
-    <section id="timesContainer">
-      <!-- Times carregados do Firebase aparecem aqui -->
-    </section>
+    <section id="timesContainer"><!-- Teams list --></section>
   </main>
 
   <!-- AUTH MODAL -->
-  <div class="modal" id="authModal" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="modal-panel" role="document">
+  <div class="modal" id="authModal" aria-hidden="true">
+    <div class="modal-panel" role="dialog" aria-modal="true">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <h2 style="margin:0;color:var(--gold)">Entrar / Cadastrar</h2>
-        <button id="authClose" class="btn" title="Fechar">Fechar</button>
+        <button id="authClose" class="btn" type="button">Fechar</button>
       </div>
 
       <div class="auth-tabs">
-        <button id="tabEntrar" class="active">Entrar</button>
-        <button id="tabCadastrar">Cadastrar</button>
+        <button id="tabEntrar" class="active" type="button">Entrar</button>
+        <button id="tabCadastrar" type="button">Cadastrar</button>
       </div>
 
       <!-- Entrar -->
-      <form id="entrarForm" class="auth-form" style="display:flex;flex-direction:column;gap:8px;">
-        <div class="auth-row"><input id="entrarEmail" type="email" placeholder="Email" required /></div>
-        <div class="auth-row"><input id="entrarSenha" type="password" placeholder="Senha" required /></div>
+      <form id="entrarForm" style="display:flex;flex-direction:column;gap:8px">
+        <div class="auth-row"><input id="entrarEmail" type="email" placeholder="Email" autocomplete="username"></div>
+        <div class="auth-row"><input id="entrarSenha" type="password" placeholder="Senha" autocomplete="current-password"></div>
         <div id="entrarError" class="error"></div>
         <div class="auth-actions">
-          <button id="entrarBtn" type="submit" class="btn">Entrar</button>
-          <button id="entrarGoogle" type="button" class="btn">Entrar com Google</button>
+          <button id="entrarBtn" class="btn" type="submit">Entrar</button>
+          <button id="entrarGoogle" class="btn" type="button">Entrar com Google</button>
         </div>
       </form>
 
       <!-- Cadastrar -->
-      <form id="cadastrarForm" class="auth-form" style="display:none;flex-direction:column;gap:8px;">
-        <div class="auth-row"><input id="cadNick" type="text" placeholder="Nick no jogo (único)" maxlength="20" required /></div>
+      <form id="cadastrarForm" style="display:none;flex-direction:column;gap:8px">
+        <div class="auth-row"><input id="cadNick" type="text" placeholder="Nick no jogo (único)" maxlength="20" required></div>
         <small style="color:#ffcc77">⚠️ O nick não poderá ser alterado depois do cadastro.</small>
-        <div class="auth-row"><input id="cadEmail" type="email" placeholder="Email" required /></div>
-        <div class="auth-row"><input id="cadSenha" type="password" placeholder="Senha" required /></div>
+        <div class="auth-row"><input id="cadEmail" type="email" placeholder="Email" autocomplete="email"></div>
+        <div class="auth-row"><input id="cadSenha" type="password" placeholder="Senha" autocomplete="new-password"></div>
         <div id="cadError" class="error"></div>
         <div class="auth-actions">
-          <button id="cadastrarBtn" type="submit" class="btn">Cadastrar (Email)</button>
-          <button id="cadastrarGoogle" type="button" class="btn">Cadastrar com Google</button>
+          <button id="cadastrarBtn" class="btn" type="submit">Cadastrar (Email)</button>
+          <button id="cadastrarGoogle" class="btn" type="button">Cadastrar com Google</button>
         </div>
       </form>
     </div>
@@ -213,510 +179,488 @@
     <div class="modal-panel">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
         <h2 style="margin:0;color:var(--gold)">Criador de Time</h2>
-        <div>
-          <button id="timeClose" class="btn">Fechar</button>
-        </div>
+        <div><button id="timeClose" class="btn" type="button">Fechar</button></div>
       </div>
 
-      <p class="small" style="margin:0 0 10px 0">Adicione os pokémons um por vez. Você pode adicionar até 6 pokémons por time.</p>
+      <p class="small" style="margin:0 0 10px 0">Adicione seus pokémons um por vez (até 6). IVs/EVs validados.</p>
 
       <div class="builder-controls">
-        <button id="addPokemonBtn" class="btn">➕ Adicionar Pokémon</button>
+        <button id="addPokemonBtn" class="btn" type="button">➕ Adicionar Pokémon</button>
         <div class="small" style="margin-left:8px">(<span id="pokemonCount">0</span>/6)</div>
       </div>
 
       <div id="pokemonList"></div>
 
       <div style="display:flex;gap:8px;margin-top:12px">
-        <button id="cancelTimeBtn" class="btn">Cancelar</button>
-        <button id="submitTimeBtn" class="btn" style="background:var(--gold); color:#111">Salvar Time</button>
+        <button id="cancelTimeBtn" class="btn" type="button">Cancelar</button>
+        <button id="submitTimeBtn" class="btn" type="button" style="background:var(--gold);color:#111">Salvar Time</button>
       </div>
     </div>
   </div>
 
-  <!-- ===========================
-       JAVASCRIPT : UI + Firebase
-       =========================== -->
-  <script type="module">
-  // ---------------------------
-  // Firebase imports and init
-  // ---------------------------
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import {
-    getAuth, GoogleAuthProvider, signInWithPopup, signOut,
-    createUserWithEmailAndPassword, signInWithEmailAndPassword,
-    onAuthStateChanged, updateProfile
-  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  import {
-    getDatabase, ref, set, push, onValue, get, child, runTransaction
-  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+  <!-- ==========================
+       UI SCRIPT (non-module)
+       - attaches handlers robustly
+       - UI works even if Firebase fails
+       ========================== -->
+  <script>
+    (function(){
+      // Safe query helpers
+      const $ = (s, root=document) => root.querySelector(s);
+      const $$ = (s, root=document) => Array.from(root.querySelectorAll(s));
 
-  // Your Firebase config (you provided)
-  const firebaseConfig = {
-    apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
-    authDomain: "sampleteans.firebaseapp.com",
-    databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
-    projectId: "sampleteans",
-    storageBucket: "sampleteans.firebasestorage.app",
-    messagingSenderId: "1069510029261",
-    appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
-  };
+      // Element refs
+      const menuBtn = $('#menuBtn');
+      const dropdownMenu = $('#dropdownMenu');
+      const loginBtn = $('#loginBtn');
+      const signupBtn = $('#signupBtn');
+      const criarTimeBtn = $('#criarTimeBtn');
 
-  // Initialize Firebase safely
-  let app, auth, db, provider;
-  try {
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getDatabase(app);
-    provider = new GoogleAuthProvider();
-  } catch (err) {
-    console.error("Firebase init error:", err);
-    // keep going; UI still functional but auth/database will throw if used
-  }
+      const authModal = $('#authModal');
+      const authClose = $('#authClose');
+      const tabEntrar = $('#tabEntrar');
+      const tabCadastrar = $('#tabCadastrar');
+      const entrarForm = $('#entrarForm');
+      const cadastrarForm = $('#cadastrarForm');
 
-  // ---------------------------
-  // Helper selectors
-  // ---------------------------
-  const $ = (sel, root = document) => root.querySelector(sel);
-  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+      const entrarError = $('#entrarError');
+      const cadError = $('#cadError');
 
-  // ---------------------------
-  // UI Elements
-  // ---------------------------
-  const menuBtn = $('#menuBtn');
-  const dropdownMenu = $('#dropdownMenu');
+      // auth inputs
+      const entrarEmail = $('#entrarEmail');
+      const entrarSenha = $('#entrarSenha');
+      const entrarBtn = $('#entrarBtn');
+      const entrarGoogle = $('#entrarGoogle');
 
-  const loginBtn = $('#loginBtn');
-  const signupBtn = $('#signupBtn');
+      const cadNick = $('#cadNick');
+      const cadEmail = $('#cadEmail');
+      const cadSenha = $('#cadSenha');
+      const cadastrarBtn = $('#cadastrarBtn');
+      const cadastrarGoogle = $('#cadastrarGoogle');
 
-  const authModal = $('#authModal');
-  const authClose = $('#authClose');
-  const tabEntrar = $('#tabEntrar');
-  const tabCadastrar = $('#tabCadastrar');
-  const entrarForm = $('#entrarForm');
-  const cadastrarForm = $('#cadastrarForm');
-  const entrarError = $('#entrarError');
-  const cadError = $('#cadError');
+      // team builder refs
+      const timeModal = $('#timeModal');
+      const timeClose = $('#timeClose');
+      const addPokemonBtn = $('#addPokemonBtn');
+      const pokemonList = $('#pokemonList');
+      const pokemonCountSpan = $('#pokemonCount');
+      const cancelTimeBtn = $('#cancelTimeBtn');
+      const submitTimeBtn = $('#submitTimeBtn');
 
-  const criarTimeBtn = $('#criarTimeBtn');
-  const timeModal = $('#timeModal');
-  const addPokemonBtn = $('#addPokemonBtn');
-  const pokemonList = $('#pokemonList');
-  const pokemonCountSpan = $('#pokemonCount');
-  const cancelTimeBtn = $('#cancelTimeBtn');
-  const submitTimeBtn = $('#submitTimeBtn');
+      // Avoid failures: wrap all non-critical code in try/catch
+      try {
+        // Menu hamburger
+        menuBtn.addEventListener('click', e => { e.stopPropagation(); menuBtn.classList.toggle('active'); dropdownMenu.classList.toggle('active'); });
+        document.addEventListener('click', e => { if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) { menuBtn.classList.remove('active'); dropdownMenu.classList.remove('active'); } });
 
-  // auth inputs
-  const entrarEmail = $('#entrarEmail');
-  const entrarSenha = $('#entrarSenha');
-  const entrarBtn = $('#entrarBtn');
-  const entrarGoogle = $('#entrarGoogle');
+        // Auth modal openers - do not assume firebase: if firebase exposes signOut, the module will patch window.firebaseSignOut
+        loginBtn.addEventListener('click', () => {
+          // if window.firebaseSignOut exists and user is logged, call it; otherwise open modal
+          if (window.firebase && typeof window.firebaseSignOut === 'function' && window.firebaseIsLogged) {
+            // try sign out, module will update UI
+            try { window.firebaseSignOut(); } catch(e){ console.warn('SignOut failed (UI fallback)', e); openAuth('entrar'); }
+          } else openAuth('entrar');
+        });
+        signupBtn.addEventListener('click', () => openAuth('cadastrar'));
+        authClose.addEventListener('click', closeAuth);
 
-  const cadNick = $('#cadNick');
-  const cadEmail = $('#cadEmail');
-  const cadSenha = $('#cadSenha');
-  const cadastrarBtn = $('#cadastrarBtn');
-  const cadastrarGoogle = $('#cadastrarGoogle');
+        tabEntrar.addEventListener('click', showEntrar);
+        tabCadastrar.addEventListener('click', showCadastrar);
 
-  // Team builder constants
-  const STATS = ["HP","Atk","Def","SpA","SpD","Spe"];
-  const ALL_NATURES = [
-    'Hardy','Lonely','Brave','Adamant','Naughty','Bold','Docile','Relaxed','Impish','Lax','Modest','Mild',
-    'Quiet','Bashful','Rash','Calm','Gentle','Sassy','Careful','Quirky','Timid','Hasty','Serious','Jolly','Naive'
-  ];
-  const ALL_TIERS = [
-    'LC','Monotype','NU','National Dex','National Dex Monotype','National Dex UU','OU','PU','RU','Ubers',
-    'UU','ZU','National Dex RU','Monomon','Starter League','Only Smeargle','National Dex Ubers','National Dex AG'
-  ];
+        // Prevent default form submit (we handle via JS)
+        entrarForm.addEventListener('submit', (e) => e.preventDefault());
+        cadastrarForm.addEventListener('submit', (e) => e.preventDefault());
 
-  // ---------------------------
-  // Menu hamburger behavior
-  // ---------------------------
-  menuBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    menuBtn.classList.toggle('active');
-    dropdownMenu.classList.toggle('active');
-  });
-  document.addEventListener('click', (e) => {
-    if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-      menuBtn.classList.remove('active');
-      dropdownMenu.classList.remove('active');
-    }
-  });
+        // clicking outside closes modals
+        window.addEventListener('click', (e) => {
+          if (e.target === authModal) closeAuth();
+          if (e.target === timeModal) closeTimeModal();
+        });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeAuth(); closeTimeModal(); } });
 
-  // UI helpers for modals & tabs
-  function openAuth(tab='entrar'){
-    if (tab==='entrar') { showEntrar(); }
-    else { showCadastrar(); }
-    authModal.classList.add('open');
-    authModal.style.display = 'flex';
-  }
-  function closeAuth(){
-    authModal.classList.remove('open');
-    authModal.style.display = 'none';
-    entrarError.textContent = ''; cadError.textContent = '';
-  }
-
-  function showEntrar(){
-    tabEntrar.classList.add('active'); tabCadastrar.classList.remove('active');
-    entrarForm.style.display = 'flex'; cadastrarForm.style.display = 'none';
-  }
-  function showCadastrar(){
-    tabCadastrar.classList.add('active'); tabEntrar.classList.remove('active');
-    cadastrarForm.style.display = 'flex'; entrarForm.style.display = 'none';
-  }
-
-  // attach openers
-  loginBtn.addEventListener('click', ()=> {
-    if (auth && auth.currentUser) {
-      // if logged in, log out
-      signOut(auth).catch(err=>console.error(err));
-    } else openAuth('entrar');
-  });
-  signupBtn.addEventListener('click', ()=> openAuth('cadastrar'));
-  authClose.addEventListener('click', closeAuth);
-  document.addEventListener('keydown', (e)=>{ if (e.key==='Escape') { closeAuth(); closeTimeModal(); } });
-
-  // ---------------------------
-  // AUTH functionality (with Firebase)
-  // ---------------------------
-  async function claimNickAtomic(nick, uid) {
-    if (!db) throw new Error('Database não configurado');
-    const nickRef = ref(db, `nicks/${nick}`);
-    try {
-      const res = await runTransaction(nickRef, current => {
-        if (current === null) return uid;
-        return; // abort
-      });
-      return res.committed === true;
-    } catch (err) {
-      console.error('claimNickAtomic error', err);
-      return false;
-    }
-  }
-
-  // Entrar (email)
-  entrarForm.addEventListener('submit', async (ev) => {
-    ev.preventDefault();
-    entrarError.textContent = '';
-    const email = entrarEmail.value.trim();
-    const senha = entrarSenha.value;
-    if (!email || !senha) { entrarError.textContent = 'Preencha email e senha.'; return; }
-    if (!auth) { entrarError.textContent = 'Firebase não configurado.'; return; }
-    try {
-      await signInWithEmailAndPassword(auth, email, senha);
-      closeAuth();
-    } catch (err) {
-      console.error(err);
-      entrarError.textContent = err.message || 'Erro ao entrar.';
-    }
-  });
-
-  // Cadastrar (email)
-  cadastrarForm.addEventListener('submit', async (ev) => {
-    ev.preventDefault();
-    cadError.textContent = '';
-    const nick = (cadNick.value || '').trim();
-    const email = (cadEmail.value || '').trim();
-    const senha = cadSenha.value;
-    if (!nick || !email || !senha) { cadError.textContent = 'Preencha nick, email e senha.'; return; }
-    if (!/^[A-Za-z0-9_]{3,20}$/.test(nick)) { cadError.textContent = 'Nick inválido (3-20, alfanum/_).'; return; }
-    if (!auth || !db) { cadError.textContent = 'Firebase não configurado.'; return; }
-    try {
-      // create user
-      const cred = await createUserWithEmailAndPassword(auth, email, senha);
-      const uid = cred.user.uid;
-      // try to claim nick atomically
-      const ok = await claimNickAtomic(nick, uid);
-      if (!ok) {
-        // rollback sign in
-        try { await signOut(auth); } catch(e){}
-        cadError.textContent = 'Nick já em uso. Escolha outro nick.';
-        return;
+      } catch (err) {
+        console.error('UI init error (non-fatal):', err);
       }
-      // save user profile
-      await set(ref(db, `users/${uid}`), { uid, email, provider: 'email', nick });
-      try { await updateProfile(cred.user, { displayName: nick }); } catch(e){/*non-fatal*/ }
-      closeAuth();
-    } catch (err) {
-      console.error(err);
-      cadError.textContent = err.message || 'Erro ao cadastrar';
-    }
-  });
 
-  // Google sign-in flow (for both login and signup)
-  async function handleGoogleSignIn(){
-    if (!auth) { alert('Firebase não configurado'); return; }
-    try {
-      const res = await signInWithPopup(auth, provider);
-      const user = res.user;
-      // check if user already has profile in DB
-      const snap = await get(child(ref(db), `users/${user.uid}`));
-      if (!snap.exists()) {
-        // need to choose nick — show auth modal on 'cadastrar' and notify
-        openAuth('cadastrar');
-        cadError.textContent = 'Escolha um nick único para concluir o cadastro (após escolher, clique em Cadastrar).';
-        // prefill email?
-        cadEmail.value = user.email || '';
-        // Keep user signed in; when they submit the cadastrarForm, we will claim nick using current auth user id
-      } else {
-        // nothing else
-        closeAuth();
-      }
-    } catch (err) {
-      console.error(err);
-      entrarError.textContent = err.message || 'Erro no login com Google.';
-    }
-  }
-  entrarGoogle.addEventListener('click', handleGoogleSignIn);
-  cadastrarGoogle.addEventListener('click', handleGoogleSignIn);
+      // modal helpers
+      function openAuth(tab='entrar'){ if (tab==='entrar') showEntrar(); else showCadastrar(); authModal.classList.add('open'); authModal.style.display='flex'; }
+      function closeAuth(){ authModal.classList.remove('open'); authModal.style.display='none'; entrarError.textContent=''; cadError.textContent=''; }
+      function showEntrar(){ tabEntrar.classList.add('active'); tabCadastrar.classList.remove('active'); entrarForm.style.display='flex'; cadastrarForm.style.display='none'; }
+      function showCadastrar(){ tabCadastrar.classList.add('active'); tabEntrar.classList.remove('active'); cadastrarForm.style.display='flex'; entrarForm.style.display='none'; }
 
-  // Keep auth state and update Login button display
-  function updateLoginDisplay(userDisplay){
-    if (userDisplay) loginBtn.textContent = `Sair (${userDisplay})`;
-    else loginBtn.textContent = 'Login';
-  }
+      // Team builder state & constants
+      const STATS = ["HP","Atk","Def","SpA","SpD","Spe"];
+      const ALL_NATURES = [
+        'Hardy','Lonely','Brave','Adamant','Naughty','Bold','Docile','Relaxed','Impish','Lax','Modest','Mild',
+        'Quiet','Bashful','Rash','Calm','Gentle','Sassy','Careful','Quirky','Timid','Hasty','Serious','Jolly','Naive'
+      ];
+      const ALL_TIERS = [
+        'LC','Monotype','NU','National Dex','National Dex Monotype','National Dex UU','OU','PU','RU','Ubers',
+        'UU','ZU','National Dex RU','Monomon','Starter League','Only Smeargle','National Dex Ubers','National Dex AG'
+      ];
 
-  if (auth) {
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        // prefer nick from DB
-        let display = user.displayName || user.email;
-        try {
-          const uSnap = await get(child(ref(db), `users/${user.uid}`));
-          if (uSnap.exists() && uSnap.val().nick) display = uSnap.val().nick;
-        } catch(e){}
-        updateLoginDisplay(display);
-      } else {
-        updateLoginDisplay(null);
-      }
-    });
-  } else {
-    // no firebase configured: show default
-    updateLoginDisplay(null);
-  }
+      function updatePokemonCount(){ pokemonCountSpan.textContent = String(pokemonList.children.length); addPokemonBtn.disabled = pokemonList.children.length >= 6; }
 
-  // ---------------------------
-  // Team Builder UI & logic
-  // ---------------------------
-  function updatePokemonCounter(){
-    pokemonCountSpan.textContent = String(pokemonList.children.length);
-    addPokemonBtn.disabled = pokemonList.children.length >= 6;
-  }
+      function createPokemonCard(index){
+        const wrap = document.createElement('div');
+        wrap.className = 'poke-card-wrapper';
 
-  // create a new pokemon card
-  function createPokemonCard(index){
-    const wrapper = document.createElement('div');
-    wrapper.className = 'poke-card-wrapper';
+        const card = document.createElement('div');
+        card.className = 'poke-card';
 
-    const card = document.createElement('div');
-    card.className = 'poke-card';
+        const tierOptions = ALL_TIERS.map(t => `<option>${t}</option>`).join('');
+        const natureOptions = ALL_NATURES.map(n => `<option>${n}</option>`).join('');
 
-    // build tier options
-    const tierOptions = ALL_TIERS.map(t => `<option>${t}</option>`).join('');
+        card.innerHTML = `
+          <div class="poke-header">
+            <h4>Pokémon ${index}</h4>
+            <div><button type="button" class="btn-small btn-remove">Remover</button></div>
+          </div>
 
-    // build nature options
-    const natureOptions = ALL_NATURES.map(n => `<option>${n}</option>`).join('');
+          <div class="row"><div class="label">Tier:</div><select class="tier">${tierOptions}</select></div>
+          <div class="row"><div class="label">Nome:</div><input class="pokemonName" type="text" placeholder="Charizard"></div>
+          <div class="row"><div class="label">Nature:</div><select class="nature">${natureOptions}</select></div>
+          <div class="row"><div class="label">Ability:</div><input class="ability" type="text" placeholder="Ability"></div>
 
-    card.innerHTML = `
-      <div class="poke-header">
-        <h4>Pokémon ${index}</h4>
-        <div><button class="btn-small btn-remove">Remover</button></div>
-      </div>
+          <div class="row" style="align-items:flex-start"><div class="label">Moves:</div>
+            <div style="flex:1">
+              <input class="move" type="text" placeholder="Move 1"><br>
+              <input class="move" type="text" placeholder="Move 2"><br>
+              <input class="move" type="text" placeholder="Move 3"><br>
+              <input class="move" type="text" placeholder="Move 4"><br>
+            </div>
+          </div>
 
-      <div class="row"><div class="label">Tier:</div><select class="tier">${tierOptions}</select></div>
-      <div class="row"><div class="label">Nome:</div><input class="pokemonName" type="text" placeholder="Charizard" /></div>
-      <div class="row"><div class="label">Nature:</div><select class="nature">${natureOptions}</select></div>
-      <div class="row"><div class="label">Ability:</div><input class="ability" type="text" placeholder="Ability" /></div>
+          <div style="margin-top:6px"><strong>IVs</strong></div>
+          ${STATS.map(s => `<div class="stat"><label>${s}</label><input type="range" min="0" max="31" value="31" class="iv"><div class="val iv-val">31</div></div>`).join('')}
 
-      <div class="row" style="align-items:flex-start"><div class="label">Moves:</div>
-        <div style="flex:1">
-          <input class="move" type="text" placeholder="Move 1"><br>
-          <input class="move" type="text" placeholder="Move 2"><br>
-          <input class="move" type="text" placeholder="Move 3"><br>
-          <input class="move" type="text" placeholder="Move 4"><br>
-        </div>
-      </div>
+          <div style="margin-top:6px"><strong>EVs</strong></div>
+          ${STATS.map(s => `<div class="stat"><label>${s}</label><input type="range" min="0" max="252" step="4" value="0" class="ev"><div class="val ev-val">0</div></div>`).join('')}
 
-      <div style="margin-top:8px"><strong>IVs</strong></div>
-      ${STATS.map(s => `<div class="stat"><label>${s}</label><input type="range" min="0" max="31" value="31" class="iv" /><div class="val iv-val">31</div></div>`).join('')}
+          <div class="progress"><div class="bar"></div></div>
+          <div class="ev-warning"></div>
+        `;
 
-      <div style="margin-top:8px"><strong>EVs</strong></div>
-      ${STATS.map(s => `<div class="stat"><label>${s}</label><input type="range" min="0" max="252" step="4" value="0" class="ev" /><div class="val ev-val">0</div></div>`).join('')}
+        wrap.appendChild(card);
 
-      <div class="progress" style="margin-top:8px"><div class="bar"></div></div>
-      <div class="ev-warning"></div>
-    `;
+        // remove
+        card.querySelector('.btn-remove').addEventListener('click', () => { wrap.remove(); updatePokemonCount(); });
 
-    wrapper.appendChild(card);
+        // IV listeners
+        card.querySelectorAll('.iv').forEach((el, idx) => {
+          el.addEventListener('input', (e) => { card.querySelectorAll('.iv-val')[idx].textContent = e.target.value; });
+        });
 
-    // remove handler
-    card.querySelector('.btn-remove').addEventListener('click', () => {
-      wrapper.remove();
-      updatePokemonCounter();
-    });
+        // EV listeners & constraints
+        const evEls = Array.from(card.querySelectorAll('.ev'));
+        evEls.forEach((el, idx) => {
+          el.addEventListener('input', (e) => {
+            // sanitize multiple of 4
+            let want = Math.round((parseInt(e.target.value || 0))/4)*4;
+            if (want < 0) want = 0;
+            if (want > 252) want = 252;
+            const others = evEls.reduce((acc, el2, i2) => i2 === idx ? acc : acc + parseInt(el2.value || 0), 0);
+            const remaining = 508 - others;
+            if (want > remaining) want = Math.floor(remaining/4)*4;
+            if (want < 0) want = 0;
+            const count252 = evEls.filter((el2, i2) => i2 !== idx && parseInt(el2.value || 0) === 252).length;
+            if (want === 252 && count252 >= 2) {
+              want = Math.min(248, Math.floor(remaining/4)*4);
+              if (want < 0) want = 0;
+            }
+            e.target.value = want;
+            card.querySelectorAll('.ev-val')[idx].textContent = String(want);
+            validateEVsAndBar(card);
+          });
+        });
 
-    // IV handlers
-    card.querySelectorAll('.iv').forEach((el, idx) => {
-      el.addEventListener('input', (e) => {
-        card.querySelectorAll('.iv-val')[idx].textContent = e.target.value;
-      });
-    });
-
-    // EV handlers with constraints
-    const evEls = Array.from(card.querySelectorAll('.ev'));
-    evEls.forEach((el, idx) => {
-      el.addEventListener('input', (e) => {
-        // sanitize value to multiple of 4 and bounds
-        let wanted = Math.round((parseInt(e.target.value || 0)) / 4) * 4;
-        if (wanted < 0) wanted = 0;
-        if (wanted > 252) wanted = 252;
-
-        // compute sum of others
-        const others = evEls.reduce((acc, el2, i2) => i2 === idx ? acc : acc + parseInt(el2.value || 0), 0);
-        const remaining = 508 - others;
-        if (wanted > remaining) wanted = Math.floor(remaining / 4) * 4;
-        if (wanted < 0) wanted = 0;
-
-        // enforce at most 2 stats with 252
-        const count252 = evEls.filter((el2, i2) => i2 !== idx && parseInt(el2.value || 0) === 252).length;
-        if (wanted === 252 && count252 >= 2) {
-          // reduce by 4 or set to remaining if smaller
-          let candidate = Math.min(248, Math.floor(remaining / 4) * 4);
-          if (candidate < 0) candidate = 0;
-          wanted = candidate;
+        function validateEVsAndBar(cardEl){
+          const evVals = Array.from(cardEl.querySelectorAll('.ev')).map(x => parseInt(x.value || 0));
+          const total = evVals.reduce((a,b)=>a+b,0);
+          const cnt252 = evVals.filter(v=>v===252).length;
+          const warn = cardEl.querySelector('.ev-warning');
+          const bar = cardEl.querySelector('.progress .bar');
+          const pct = Math.min(100, (total/508)*100);
+          bar.style.width = pct + '%';
+          if (total > 508) warn.textContent = `⚠ Máx total 508 EVs (atual ${total})`;
+          else if (cnt252 > 2) warn.textContent = `⚠ Máx 2 stats com 252 EVs`;
+          else warn.textContent = '';
         }
 
-        e.target.value = wanted;
-        card.querySelectorAll('.ev-val')[idx].textContent = String(wanted);
-        validateAndUpdateEV(card);
-      });
-    });
-
-    function validateAndUpdateEV(cardEl){
-      const evVals = Array.from(cardEl.querySelectorAll('.ev')).map(x => parseInt(x.value || 0));
-      const total = evVals.reduce((a,b)=>a+b,0);
-      const cnt252 = evVals.filter(v => v===252).length;
-      const warn = cardEl.querySelector('.ev-warning');
-      const bar = cardEl.querySelector('.progress > .bar');
-      const pct = Math.min(100, (total / 508) * 100);
-      bar.style.width = pct + '%';
-      if (total > 508) warn.textContent = `⚠ Máx total 508 EVs (atual ${total})`;
-      else if (cnt252 > 2) warn.textContent = `⚠ Máx 2 stats com 252 EVs`;
-      else warn.textContent = '';
-    }
-
-    // init
-    validateAndUpdateEV(card);
-
-    return wrapper;
-  }
-
-  addPokemonBtn.addEventListener('click', () => {
-    if (pokemonList.children.length >= 6) { alert('Máximo de 6 pokémons por time.'); return; }
-    const node = createPokemonCard(pokemonList.children.length + 1);
-    pokemonList.appendChild(node);
-    updatePokemonCounter();
-  });
-
-  function updatePokemonCounter(){ pokemonCountSpan.textContent = String(pokemonList.children.length); addPokemonBtn.disabled = pokemonList.children.length >= 6; }
-
-  // open/close time modal
-  criarTimeBtn.addEventListener('click', () => {
-    // require login to open? we allow opening; saving will require auth
-    timeModal.classList.add('open'); timeModal.style.display = 'flex';
-  });
-  $('#timeClose').addEventListener('click', () => { closeTimeModal(); });
-  cancelTimeBtn.addEventListener('click', () => { closeTimeModal(); });
-  function closeTimeModal(){ timeModal.classList.remove('open'); timeModal.style.display = 'none'; }
-
-  // Collect team from UI
-  function collectTeam(){
-    const wrappers = Array.from(pokemonList.children);
-    const teams = [];
-    wrappers.forEach(w => {
-      const c = w.querySelector('.poke-card');
-      if (!c) return;
-      const name = (c.querySelector('.pokemonName')?.value || '').trim();
-      if (!name) return; // skip empty
-      const tier = c.querySelector('.tier').value;
-      const nature = c.querySelector('.nature').value;
-      const ability = (c.querySelector('.ability')?.value || '').trim();
-      const moves = Array.from(c.querySelectorAll('.move')).map(m => m.value.trim()).filter(Boolean);
-      const ivs = Object.fromEntries(Array.from(c.querySelectorAll('.iv')).map((el,i)=>[STATS[i], el.value]));
-      const evs = Object.fromEntries(Array.from(c.querySelectorAll('.ev')).map((el,i)=>[STATS[i], el.value]));
-      teams.push({ tier, name, nature, ability, moves, ivs, evs });
-    });
-    return teams;
-  }
-
-  // Submit time -> uses Firebase push (requires auth)
-  submitTimeBtn.addEventListener('click', async () => {
-    try {
-      if (!auth || !db) { alert('Salvar time requer Firebase configurado.'); return; }
-      if (!auth.currentUser) { alert('Você precisa estar logado para salvar um time.'); return; }
-      const team = collectTeam();
-      if (!team || team.length === 0) { alert('Adicione pelo menos 1 Pokémon antes de salvar.'); return; }
-
-      // server-side validations (again)
-      for (const p of team) {
-        const evVals = Object.values(p.evs).map(v => parseInt(v || 0));
-        const total = evVals.reduce((a,b)=>a+b, 0);
-        const cnt252 = evVals.filter(v=>v===252).length;
-        if (total > 508) throw new Error(`Pokémon ${p.name} tem mais de 508 EVs.`);
-        if (cnt252 > 2) throw new Error(`Pokémon ${p.name} tem mais de 2 stats com 252 EVs.`);
+        validateEVsAndBar(card);
+        return wrap;
       }
 
+      addPokemonBtn.addEventListener('click', () => {
+        if (pokemonList.children.length >= 6) { alert('Máximo 6 pokémons por time.'); return; }
+        const node = createPokemonCard(pokemonList.children.length + 1);
+        pokemonList.appendChild(node);
+        updatePokemonCount();
+      });
+
+      updatePokemonCount();
+
+      // open/close team modal
+      criarTimeBtn.addEventListener('click', () => { timeModal.classList.add('open'); timeModal.style.display = 'flex'; });
+      timeClose.addEventListener('click', () => closeTimeModal());
+      cancelTimeBtn.addEventListener('click', () => closeTimeModal());
+      function closeTimeModal(){ timeModal.classList.remove('open'); timeModal.style.display = 'none'; }
+
+      // collect team helper
+      window.collectTeam = function(){
+        const wrappers = Array.from(pokemonList.children);
+        const arr = [];
+        wrappers.forEach(w => {
+          const c = w.querySelector('.poke-card');
+          if (!c) return;
+          const name = (c.querySelector('.pokemonName')?.value || '').trim();
+          if (!name) return;
+          const tier = c.querySelector('.tier').value;
+          const nature = c.querySelector('.nature').value;
+          const ability = (c.querySelector('.ability')?.value || '').trim();
+          const moves = Array.from(c.querySelectorAll('.move')).map(m => m.value.trim()).filter(Boolean);
+          const ivs = Object.fromEntries(Array.from(c.querySelectorAll('.iv')).map((el,i)=>[STATS[i], el.value]));
+          const evs = Object.fromEntries(Array.from(c.querySelectorAll('.ev')).map((el,i)=>[STATS[i], el.value]));
+          arr.push({ tier, name, nature, ability, moves, ivs, evs });
+        });
+        return arr;
+      };
+
+      // Save time UI handler (calls Firebase function if exposed)
+      submitTimeBtn.addEventListener('click', async () => {
+        try {
+          if (typeof window.firebaseSaveTeam === 'function') {
+            await window.firebaseSaveTeam(window.collectTeam());
+            alert('Time salvo com sucesso!');
+            // clear UI
+            pokemonList.innerHTML = '';
+            updatePokemonCount();
+            closeTimeModal();
+          } else {
+            alert('Salvar está desabilitado: Firebase não configurado ou ainda inicializando.');
+          }
+        } catch (err) {
+          console.error('Salvar time erro', err);
+          alert('Erro ao salvar time: ' + (err && err.message ? err.message : String(err)));
+        }
+      });
+
+      // Small defensive log
+      console.log('UI initialized (buttons attached). If some behavior is missing, check console for firebase module errors.');
+    })();
+  </script>
+
+  <!-- ==========================
+       Firebase module (ES module)
+       - isolates firebase errors so UI doesn't break
+       ========================== -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import {
+      getAuth, GoogleAuthProvider, signInWithPopup, signOut,
+      createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import {
+      getDatabase, ref, set, push, onValue, get, child, runTransaction
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+
+    // your firebase config (you gave earlier)
+    const firebaseConfig = {
+      apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
+      authDomain: "sampleteans.firebaseapp.com",
+      databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
+      projectId: "sampleteans",
+      storageBucket: "sampleteans.firebasestorage.app",
+      messagingSenderId: "1069510029261",
+      appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
+    };
+
+    let app, auth, db, provider;
+    try {
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getDatabase(app);
+      provider = new GoogleAuthProvider();
+      window.firebase = true; // indicate firebase is present
+    } catch (err) {
+      console.error('Firebase init error:', err);
+      window.firebase = false;
+    }
+
+    // expose a flag to UI
+    window.firebaseIsLogged = false;
+
+    // atomic nick claim helper
+    async function claimNickAtomic(nick, uid){
+      if (!db) throw new Error('DB não inicializado');
+      const nickRef = ref(db, `nicks/${nick}`);
+      try {
+        const res = await runTransaction(nickRef, current => {
+          if (current === null) return uid;
+          return; // abort
+        });
+        return res.committed === true;
+      } catch (err) {
+        console.error('claimNickAtomic error', err);
+        return false;
+      }
+    }
+
+    // Expose firebase methods to UI script (used as graceful hooks)
+    window.firebaseSignOut = async function(){
+      if (!auth) throw new Error('Firebase não configurado');
+      await signOut(auth);
+    };
+
+    window.firebaseSaveTeam = async function(teamArr){
+      if (!auth || !db) throw new Error('Firebase não configurado');
+      if (!auth.currentUser) throw new Error('Usuário não autenticado');
+      if (!Array.isArray(teamArr) || teamArr.length === 0) throw new Error('Adicione pelo menos 1 Pokémon');
+      // validate EVs server-side
+      for (const p of teamArr){
+        const evVals = Object.values(p.evs).map(v => parseInt(v || 0));
+        const total = evVals.reduce((a,b)=>a+b,0);
+        const cnt252 = evVals.filter(v=>v===252).length;
+        if (total > 508) throw new Error(`Pokémon ${p.name} tem > 508 EVs`);
+        if (cnt252 > 2) throw new Error(`Pokémon ${p.name} tem > 2 stats com 252 EVs`);
+      }
       await push(ref(db, 'teams'), {
         ownerUid: auth.currentUser.uid,
         ownerEmail: auth.currentUser.email || null,
-        pokemons: team,
+        pokemons: teamArr,
         createdAt: Date.now()
       });
-      alert('Time salvo com sucesso!');
-      // clear UI
-      pokemonList.innerHTML = '';
-      updatePokemonCounter();
-      closeTimeModal();
-    } catch (err) {
-      console.error(err);
-      alert('Erro ao salvar time: ' + (err.message || err));
-    }
-  });
+    };
 
-  // ---------------------------
-  // Load and show teams list (performance: simple listener)
-  // ---------------------------
-  try {
-    if (db) {
-      const timesContainer = $('#timesContainer');
-      onValue(ref(db, 'teams'), snap => {
-        timesContainer.innerHTML = '';
-        snap.forEach(childSnap => {
-          const time = childSnap.val();
-          const div = document.createElement('div');
-          div.className = 'time-card';
-          // try to display owner's nick
-          get(child(ref(db), `users/${time.ownerUid}`)).then(uSnap=>{
-            const owner = (uSnap.exists() && uSnap.val().nick) ? uSnap.val().nick : (time.ownerEmail || 'Usuário');
-            div.innerHTML = `<h3>Time de ${owner}</h3><pre style="white-space:pre-wrap;word-break:break-word">${JSON.stringify(time.pokemons, null, 2)}</pre>`;
-          }).catch(()=>{
-            div.innerHTML = `<h3>Time</h3><pre style="white-space:pre-wrap;word-break:break-word">${JSON.stringify(time.pokemons, null, 2)}</pre>`;
-          });
-          timesContainer.appendChild(div);
-        });
+    // Auth UI wiring (attach actual submit behavior)
+    try {
+      // Entrar (email)
+      const entrarForm = document.getElementById('entrarForm');
+      entrarForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = (document.getElementById('entrarEmail').value||'').trim();
+        const pass = document.getElementById('entrarSenha').value;
+        const entErr = document.getElementById('entrarError');
+        entErr.textContent = '';
+        try {
+          await signInWithEmailAndPassword(auth, email, pass);
+          // close modal
+          document.getElementById('authModal').classList.remove('open');
+          document.getElementById('authModal').style.display = 'none';
+        } catch (err) {
+          console.error(err);
+          entErr.textContent = err.message || 'Erro ao entrar';
+        }
       });
+
+      // Cadastrar (email)
+      const cadastrarForm = document.getElementById('cadastrarForm');
+      cadastrarForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const nick = (document.getElementById('cadNick').value||'').trim();
+        const email = (document.getElementById('cadEmail').value||'').trim();
+        const pass = document.getElementById('cadSenha').value;
+        const cadErr = document.getElementById('cadError');
+        cadErr.textContent = '';
+        if (!nick || !email || !pass) { cadErr.textContent = 'Preencha nick, email e senha.'; return; }
+        if (!/^[A-Za-z0-9_]{3,20}$/.test(nick)) { cadErr.textContent = 'Nick inválido (3-20, alfanum/_).'; return; }
+        try {
+          const cred = await createUserWithEmailAndPassword(auth, email, pass);
+          const uid = cred.user.uid;
+          // claim nick atomically
+          const ok = await claimNickAtomic(nick, uid);
+          if (!ok) {
+            try { await signOut(auth); } catch(e){}
+            cadErr.textContent = 'Nick já em uso.';
+            return;
+          }
+          await set(ref(db, `users/${uid}`), { uid, email, provider:'email', nick });
+          try { await updateProfile(cred.user, { displayName: nick }); } catch(e){}
+          // success
+          document.getElementById('authModal').classList.remove('open');
+          document.getElementById('authModal').style.display = 'none';
+        } catch (err) {
+          console.error(err);
+          cadErr.textContent = err.message || 'Erro ao cadastrar';
+        }
+      });
+
+      // Google sign-in (both login & signup flows)
+      document.getElementById('entrarGoogle').addEventListener('click', async () => {
+        try {
+          const res = await signInWithPopup(auth, provider);
+          const user = res.user;
+          const uSnap = await get(child(ref(db), `users/${user.uid}`));
+          if (!uSnap.exists()) {
+            // Need nick: open cadastrar tab and prefill email
+            document.getElementById('cadEmail').value = user.email || '';
+            document.getElementById('tabCadastrar').click();
+            document.getElementById('cadError').textContent = 'Escolha um nick único para completar o cadastro e clique em Cadastrar.';
+            // leave user signed in — when they click cadastrar, claimNickAtomic will use current auth uid
+          } else {
+            // close modal
+            document.getElementById('authModal').classList.remove('open');
+            document.getElementById('authModal').style.display = 'none';
+          }
+        } catch (err) {
+          console.error('Google sign-in error', err);
+          document.getElementById('entrarError').textContent = err.message || 'Erro Google';
+        }
+      });
+
+      document.getElementById('cadastrarGoogle').addEventListener('click', async () => {
+        // same flow
+        document.getElementById('entrarGoogle').click();
+      });
+
+      // signOut exposure
+      window.firebaseSignOut = async function(){ if (!auth) throw new Error('Firebase não configurado'); await signOut(auth); };
+
+      // keep UI informed about auth state
+      onAuthStateChanged(auth, async (user) => {
+        window.firebaseIsLogged = !!user;
+        if (user) {
+          let display = user.displayName || user.email;
+          try {
+            const snap = await get(child(ref(db), `users/${user.uid}`));
+            if (snap.exists() && snap.val().nick) display = snap.val().nick;
+          } catch(e){}
+          // update login button text but do not replace its click handler (we used safe pattern)
+          const loginBtn = document.getElementById('loginBtn');
+          if (loginBtn) loginBtn.textContent = `Sair (${display})`;
+        } else {
+          const loginBtn = document.getElementById('loginBtn');
+          if (loginBtn) loginBtn.textContent = 'Login';
+        }
+      });
+
+    } catch (err) {
+      console.error('Firebase wiring error:', err);
     }
-  } catch (err) {
-    console.warn('Could not attach teams listener (firebase missing/config):', err);
-  }
 
-  // ---------------------------
-  // Utilities: ensure numeric input widths stable (already covered by CSS .val)
-  // ---------------------------
-
-  // Done
-  console.log('UI module loaded. Firebase init: ', !!(auth && db));
+    // Load teams list (non-blocking)
+    try {
+      if (db) {
+        const timesContainer = document.getElementById('timesContainer');
+        onValue(ref(db, 'teams'), snap => {
+          timesContainer.innerHTML = '';
+          snap.forEach(childSnap => {
+            const time = childSnap.val();
+            const el = document.createElement('div'); el.className = 'time-card';
+            // try to show owner's nick
+            get(child(ref(db), `users/${time.ownerUid}`)).then(usnap => {
+              const owner = (usnap.exists() && usnap.val().nick) ? usnap.val().nick : (time.ownerEmail || 'Usuário');
+              el.innerHTML = `<h3>Time de ${owner}</h3><pre style="white-space:pre-wrap;word-break:break-word">${JSON.stringify(time.pokemons,null,2)}</pre>`;
+            }).catch(()=> {
+              el.innerHTML = `<h3>Time</h3><pre style="white-space:pre-wrap;word-break:break-word">${JSON.stringify(time.pokemons,null,2)}</pre>`;
+            });
+            timesContainer.appendChild(el);
+          });
+        });
+      }
+    } catch (err) {
+      console.warn('Could not attach teams listener:', err);
+    }
   </script>
 </body>
 </html>
