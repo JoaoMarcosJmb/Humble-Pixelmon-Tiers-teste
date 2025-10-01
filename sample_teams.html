@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Humble - Times (Plug & Play)</title>
+  <title>Humble - Times (Debugged)</title>
   <style>
     :root{
       --cor-dourado:#d1a720;
@@ -12,9 +12,9 @@
     }
     *{box-sizing:border-box}
     body{
-      margin:0;font-family:"Segoe UI",Arial,sans-serif;background:
-      linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
-      url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
+      margin:0;font-family:"Segoe UI",Arial,sans-serif;
+      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
+                url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
       background-size:cover;color:var(--cor-texto);min-height:100vh;
     }
 
@@ -30,7 +30,7 @@
       padding:6px 10px;border-radius:6px;cursor:pointer}
     .btn:hover{background:var(--cor-dourado);color:var(--cor-fundo)}
 
-    /* hamburger (exact) */
+    /* hamburger (exactly as requested) */
     .menu-toggle{display:flex;flex-direction:column;justify-content:space-between;width:30px;height:22px;cursor:pointer}
     .menu-toggle span{display:block;height:4px;background:var(--cor-texto);border-radius:4px;transition:0.25s}
     .menu-toggle.active span:nth-child(1){transform:rotate(45deg) translate(5px,5px)}
@@ -43,7 +43,7 @@
     nav#dropdownMenu a{color:var(--cor-dourado);text-decoration:none}
     nav#dropdownMenu a:hover{color:var(--cor-texto)}
 
-    /* main & create button */
+    /* main */
     main{padding:100px 20px 40px;max-width:1100px;margin:0 auto}
     #criarTimeBtn{display:block;margin:0 auto 16px auto;margin-top:64px;background:var(--cor-dourado);color:var(--cor-fundo);
       border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-weight:700}
@@ -66,6 +66,7 @@
 
     /* pokemon builder */
     #pokemonList{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+    .poke-card-wrapper{display:block}
     .poke-card{background:rgba(20,20,20,0.9);border:1px solid var(--cor-dourado);padding:12px;border-radius:10px}
     .poke-card h4{margin:0 0 8px 0;color:var(--cor-dourado)}
     .stat{display:flex;gap:8px;align-items:center;margin-bottom:6px}
@@ -87,8 +88,12 @@
   </style>
 </head>
 <body>
+
   <header>
-    <h1><a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a>Humble</h1>
+    <h1>
+      <a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a>Humble
+    </h1>
+
     <div class="header-right">
       <button id="loginBtn" class="btn">Login</button>
       <button id="signupBtn" class="btn">Cadastrar</button>
@@ -110,7 +115,7 @@
   <button id="criarTimeBtn">+ Criar Time</button>
 
   <main id="timesContainer">
-    <!-- times list -->
+    <!-- saved teams appear here -->
   </main>
 
   <!-- AUTH Modal -->
@@ -166,7 +171,7 @@
   <div id="timeModal" class="modal" aria-hidden="true">
     <div class="modal-panel">
       <h2>Criador de Time</h2>
-      <div class="small" style="margin-bottom:10px">Adicione pokémons **um por vez** (até 6). IVs/EVs validados.</div>
+      <div class="small" style="margin-bottom:10px">Adicione pokémons um por vez (até 6). IVs/EVs validados.</div>
 
       <div id="pokemonList"></div>
 
@@ -182,7 +187,234 @@
     </div>
   </div>
 
-  <!-- Firebase + Logic -->
+  <!-- ========== UI SCRIPT (non-module): menu, modals, builder, sliders ========== -->
+  <script>
+    (function(){
+      // Basic UI (works even if Firebase fails)
+      const menuBtn = document.getElementById("menuBtn");
+      const dropdownMenu = document.getElementById("dropdownMenu");
+      const loginBtn = document.getElementById("loginBtn");
+      const signupBtn = document.getElementById("signupBtn");
+      const authModal = document.getElementById("authModal");
+      const entrarView = document.getElementById("entrarView");
+      const cadastrarView = document.getElementById("cadastrarView");
+      const chooseNickView = document.getElementById("chooseNickView");
+      const tabEntrar = document.getElementById("tabEntrar");
+      const tabCadastrar = document.getElementById("tabCadastrar");
+      const criarTimeBtn = document.getElementById("criarTimeBtn");
+      const timeModal = document.getElementById("timeModal");
+      const pokemonList = document.getElementById("pokemonList");
+      const addPokemonBtn = document.getElementById("addPokemonBtn");
+      const pokemonCountSpan = document.getElementById("pokemonCount");
+      const cancelTimeBtn = document.getElementById("cancelTimeBtn");
+      const submitTimeBtn = document.getElementById("submitTimeBtn");
+      // auth inputs (UI only)
+      window.UI = window.UI || {};
+      UI.pendingGoogle = null;
+
+      // STATS
+      const STATS = ["HP","Atk","Def","SpA","SpD","Spe"];
+
+      // Hamburger
+      menuBtn.addEventListener("click", ()=>{
+        menuBtn.classList.toggle("active");
+        dropdownMenu.classList.toggle("active");
+      });
+      document.addEventListener("click", (e)=>{
+        if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+          menuBtn.classList.remove("active");
+          dropdownMenu.classList.remove("active");
+        }
+      });
+
+      // auth tabs
+      tabEntrar.addEventListener("click", ()=>{ entrarView.style.display="block"; cadastrarView.style.display="none"; chooseNickView.style.display="none"; });
+      tabCadastrar.addEventListener("click", ()=>{ entrarView.style.display="none"; cadastrarView.style.display="block"; chooseNickView.style.display="none"; });
+
+      function openAuth(tab="entrar"){
+        authModal.classList.add("open");
+        if(tab==="entrar") tabEntrar.click(); else tabCadastrar.click();
+      }
+      function closeAuth(){
+        authModal.classList.remove("open");
+        chooseNickView.style.display = "none";
+      }
+      // Expose for firebase script
+      window.openAuth = openAuth;
+      window.closeAuth = closeAuth;
+
+      // Login/signup buttons just open modal (actual auth done by module)
+      loginBtn.addEventListener("click", ()=>{
+        // module will handle signout if logged; UI just opens modal
+        openAuth("entrar");
+      });
+      signupBtn.addEventListener("click", ()=> openAuth("cadastrar"));
+
+      // POKEMON builder UI
+      function updatePokemonCount(){
+        const c = pokemonList.children.length;
+        pokemonCountSpan.textContent = String(c);
+        addPokemonBtn.disabled = c >= 6;
+      }
+
+      function createPokemonCard(){
+        const wrapper = document.createElement("div");
+        wrapper.className = "poke-card-wrapper";
+        const card = document.createElement("div");
+        card.className = "poke-card";
+
+        // build inner HTML
+        card.innerHTML = `
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h4>Pokémon</h4>
+            <div><button class="btn remove-poke">Remover</button></div>
+          </div>
+
+          <div class="row"><div style="width:110px">Tier:</div>
+            <select class="tier"><option>OU</option><option>UU</option><option>NU</option><option>Uber</option></select>
+          </div>
+
+          <div class="row"><div style="width:110px">Nome:</div><input class="pokemonName" type="text" placeholder="Charizard"></div>
+
+          <div class="row"><div style="width:110px">Nature:</div>
+            <select class="nature"><option>Adamant</option><option>Modest</option><option>Jolly</option><option>Timid</option><option>Bold</option></select>
+          </div>
+
+          <div class="row"><div style="width:110px">Ability:</div><input class="ability" type="text" placeholder="Ability"></div>
+
+          <div style="margin-top:8px"><div style="width:110px; display:inline-block">Moves:</div>
+            <div style="display:inline-block; width:calc(100% - 120px)">
+              <input class="move" type="text" placeholder="Move 1"><br>
+              <input class="move" type="text" placeholder="Move 2"><br>
+              <input class="move" type="text" placeholder="Move 3"><br>
+              <input class="move" type="text" placeholder="Move 4"><br>
+            </div>
+          </div>
+
+          <div style="margin-top:8px"><strong>IVs</strong></div>
+          ${STATS.map(s=>`<div class="stat"><label>${s}</label><input type="range" min="0" max="31" value="31" class="iv"><div class="val iv-val">31</div></div>`).join("")}
+
+          <div style="margin-top:8px"><strong>EVs</strong></div>
+          ${STATS.map(s=>`<div class="stat"><label>${s}</label><input type="range" min="0" max="252" step="4" value="0" class="ev"><div class="val ev-val">0</div></div>`).join("")}
+
+          <div class="progress"><div class="progress-bar"></div></div>
+          <div class="ev-warning small"></div>
+        `;
+
+        wrapper.appendChild(card);
+
+        // Remove button
+        card.querySelector(".remove-poke").addEventListener("click", ()=>{
+          wrapper.remove();
+          updatePokemonCount();
+        });
+
+        // IV handlers
+        const ivEls = card.querySelectorAll(".iv");
+        ivEls.forEach((el, idx) => {
+          el.addEventListener("input", (e)=>{
+            const val = e.target.value;
+            card.querySelectorAll(".iv-val")[idx].textContent = val;
+          });
+        });
+
+        // EV handlers with constraints
+        const evEls = Array.from(card.querySelectorAll(".ev"));
+        evEls.forEach((el, idx) => {
+          el.addEventListener("input", (e)=>{
+            // sanitize: multiple of 4
+            let want = Math.round((parseInt(e.target.value || 0))/4)*4;
+            if (want < 0) want = 0;
+            if (want > 252) want = 252;
+
+            // sum others
+            const others = evEls.reduce((acc, el2, i2) => i2 === idx ? acc : acc + parseInt(el2.value || 0), 0);
+            const remaining = 508 - others;
+            if (want > remaining) want = Math.floor(remaining/4)*4;
+            if (want < 0) want = 0;
+
+            // enforce at most 2 stats with 252
+            const count252 = evEls.filter((el2, i2) => i2 !== idx && parseInt(el2.value || 0) === 252).length;
+            if (want === 252 && count252 >= 2) {
+              // reduce by 4 (or to remaining)
+              want = Math.min(248, Math.floor(remaining/4)*4);
+              if (want < 0) want = 0;
+            }
+
+            e.target.value = want;
+            card.querySelectorAll(".ev-val")[idx].textContent = String(want);
+            validateAndUpdate(card);
+          });
+        });
+
+        function validateAndUpdate(cardEl){
+          const evVals = Array.from(cardEl.querySelectorAll(".ev")).map(x => parseInt(x.value || 0));
+          const total = evVals.reduce((a,b)=>a+b,0);
+          const cnt252 = evVals.filter(v=>v===252).length;
+          const warn = cardEl.querySelector(".ev-warning");
+          const bar = cardEl.querySelector(".progress-bar");
+          bar.style.width = `${Math.min(100, (total/508)*100)}%`;
+          if (total > 508) warn.textContent = `⚠ Máx total 508 EVs (atual ${total})`;
+          else if (cnt252 > 2) warn.textContent = `⚠ Máx 2 stats com 252 EVs`;
+          else warn.textContent = "";
+        }
+
+        // initialize visuals
+        validateAndUpdate(card);
+
+        return wrapper;
+      }
+
+      addPokemonBtn.addEventListener("click", ()=>{
+        if (pokemonList.children.length >= 6) { alert("Máximo 6 pokémons por time."); return; }
+        const node = createPokemonCard();
+        pokemonList.appendChild(node);
+        updatePokemonCount();
+      });
+
+      updatePokemonCount();
+
+      // open/close time modal
+      criarTimeBtn.addEventListener("click", ()=>{
+        // module will check auth before allowing submit; for now just open
+        timeModal.classList.add("open");
+      });
+      cancelTimeBtn.addEventListener("click", ()=> timeModal.classList.remove("open"));
+      window.addEventListener("click", (e)=> {
+        if (e.target.classList && e.target.classList.contains("modal")) e.target.classList.remove("open");
+      });
+      document.addEventListener("keydown", (e)=> { if (e.key === "Escape") document.querySelectorAll(".modal.open").forEach(m => m.classList.remove("open")); });
+
+      // Expose a collector for the module script to retrieve team data
+      window.collectTeam = function(){
+        const ST = STATS;
+        const wrappers = Array.from(pokemonList.children);
+        const pokes = [];
+        for (const w of wrappers){
+          const c = w.querySelector(".poke-card");
+          const name = (c.querySelector(".pokemonName")?.value || "").trim();
+          if (!name) continue;
+          const tier = c.querySelector(".tier").value;
+          const nature = c.querySelector(".nature").value;
+          const ability = (c.querySelector(".ability")?.value || "").trim();
+          const moves = Array.from(c.querySelectorAll(".move")).map(m => m.value.trim()).filter(Boolean);
+          const ivs = Object.fromEntries(Array.from(c.querySelectorAll(".iv")).map((el,i)=>[ST[i], el.value]));
+          const evs = Object.fromEntries(Array.from(c.querySelectorAll(".ev")).map((el,i)=>[ST[i], el.value]));
+          pokes.push({ tier, name, nature, ability, moves, ivs, evs });
+        }
+        return pokes;
+      };
+
+      // allow module to open/close auth modal
+      window.UI = window.UI || {};
+      window.UI.openAuth = openAuth;
+      window.UI.closeAuth = closeAuth;
+      window.UI.setPendingGoogle = function(obj){ UI.pendingGoogle = obj; };
+
+    })();
+  </script>
+
+  <!-- ========== Firebase + logic (module) ========== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
     import {
@@ -193,7 +425,7 @@
       getDatabase, ref, set, push, onValue, get, child, runTransaction
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-    // ------------- CONFIG -------------
+    // ---- REPLACE WITH YOUR FIREBASE CONFIG ----
     const firebaseConfig = {
       apiKey: "FIREBASE_API_KEY",
       authDomain: "FIREBASE_AUTH_DOMAIN",
@@ -203,23 +435,20 @@
       messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID",
       appId: "FIREBASE_APP_ID"
     };
+    // -------------------------------------------
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
     const provider = new GoogleAuthProvider();
 
-    // ------------- UI refs -------------
-    const menuBtn = document.getElementById("menuBtn");
-    const dropdownMenu = document.getElementById("dropdownMenu");
+    // UI refs (module)
     const loginBtn = document.getElementById("loginBtn");
     const signupBtn = document.getElementById("signupBtn");
-
     const authModal = document.getElementById("authModal");
     const entrarView = document.getElementById("entrarView");
     const cadastrarView = document.getElementById("cadastrarView");
     const chooseNickView = document.getElementById("chooseNickView");
-    const tabEntrar = document.getElementById("tabEntrar");
-    const tabCadastrar = document.getElementById("tabCadastrar");
 
     const loginEmail = document.getElementById("loginEmail");
     const loginSenha = document.getElementById("loginSenha");
@@ -236,39 +465,12 @@
     const chooseNickBtn = document.getElementById("chooseNickBtn");
     const chooseNickMsg = document.getElementById("chooseNickMsg");
 
-    const criarTimeBtn = document.getElementById("criarTimeBtn");
     const timeModal = document.getElementById("timeModal");
-    const pokemonList = document.getElementById("pokemonList");
-    const addPokemonBtn = document.getElementById("addPokemonBtn");
-    const pokemonCountSpan = document.getElementById("pokemonCount");
-    const cancelTimeBtn = document.getElementById("cancelTimeBtn");
     const submitTimeBtn = document.getElementById("submitTimeBtn");
-
+    const pokemonList = document.getElementById("pokemonList");
     const timesContainer = document.getElementById("timesContainer");
 
-    // ------------- Hamburger ----------
-    menuBtn.addEventListener("click", ()=>{
-      menuBtn.classList.toggle("active");
-      dropdownMenu.classList.toggle("active");
-    });
-    document.addEventListener("click", (e)=>{
-      if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-        menuBtn.classList.remove("active");
-        dropdownMenu.classList.remove("active");
-      }
-    });
-
-    // ------------- Auth tabs -------------
-    tabEntrar.addEventListener("click", ()=>{ entrarView.style.display="block"; cadastrarView.style.display="none"; chooseNickView.style.display="none"; });
-    tabCadastrar.addEventListener("click", ()=>{ entrarView.style.display="none"; cadastrarView.style.display="block"; chooseNickView.style.display="none"; });
-
-    function openAuth(tab="entrar"){
-      authModal.classList.add("open");
-      if(tab==="entrar") tabEntrar.click(); else tabCadastrar.click();
-    }
-    function closeAuth(){ authModal.classList.remove("open"); chooseNickView.style.display="none"; }
-
-    // ------------- Nick atomic claim -------------
+    // helper: atomic claim of nick
     async function claimNickAtomic(nick, uid){
       const nickRef = ref(db, `nicks/${nick}`);
       try {
@@ -277,16 +479,16 @@
           return; // abort
         });
         return res.committed === true;
-      } catch (err) { console.error("runTransaction err", err); return false; }
+      } catch (err){ console.error("runTransaction", err); return false; }
     }
 
-    // ------------- Signup email -------------
+    // Signup with email
     signupEmailBtn.addEventListener("click", async ()=>{
       const email = (signupEmail.value||"").trim();
       const senha = signupSenha.value;
       const nick = (signupNick.value||"").trim();
       if (!email || !senha || !nick) return alert("Preencha email, senha e nick.");
-      if (!/^[A-Za-z0-9_]{3,20}$/.test(nick)) return alert("Nick inválido (3-20 chars alfanum/_).");
+      if (!/^[A-Za-z0-9_]{3,20}$/.test(nick)) return alert("Nick inválido (3-20, alfanum/_).");
       try {
         const cred = await createUserWithEmailAndPassword(auth, email, senha);
         const uid = cred.user.uid;
@@ -294,35 +496,41 @@
         if (!ok) { await signOut(auth); return alert("Nick já em uso. Escolha outro."); }
         await set(ref(db, `users/${uid}`), { uid, email, provider:"email", nick });
         alert("Conta criada com sucesso!");
-        closeAuth();
-      } catch (err) { console.error(err); alert(err.message || "Erro ao criar conta."); }
+        window.closeAuth();
+      } catch (err) {
+        console.error(err);
+        alert(err.message || "Erro ao criar conta.");
+      }
     });
 
-    // ------------- Login email -------------
+    // Login with email
     loginEmailBtn.addEventListener("click", async ()=>{
       const email = (loginEmail.value||"").trim();
       const senha = loginSenha.value;
       if (!email || !senha) return alert("Preencha email e senha.");
       try {
         await signInWithEmailAndPassword(auth, email, senha);
-        closeAuth();
+        window.closeAuth();
       } catch (err) { console.error(err); alert(err.message || "Erro ao entrar."); }
     });
 
-    // ------------- Google flow -------------
+    // Google flow (login or signup)
     let pendingGoogle = null;
     async function handleGoogleSignIn(){
       try {
         const result = await signInWithPopup(auth, provider);
         const user = result.user;
         const uid = user.uid;
-        // check profile existence
         const userSnap = await get(child(ref(db), `users/${uid}`));
-        if (userSnap.exists()) { closeAuth(); return; }
-        // user is new -> ask for nick
+        if (userSnap.exists()){ window.closeAuth(); return; }
+        // need nick
         pendingGoogle = { uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL };
-        entrarView.style.display="none"; cadastrarView.style.display="none"; chooseNickView.style.display="block";
-        chooseNickInput.value=""; chooseNickMsg.textContent="";
+        // show choose nick UI (UI script manages views)
+        entrarView.style.display = "none";
+        cadastrarView.style.display = "none";
+        chooseNickView.style.display = "block";
+        chooseNickInput.value = "";
+        chooseNickMsg.textContent = "";
       } catch (err) { console.error(err); alert(err.message || "Erro no Google sign-in."); }
     }
     signupGoogleBtn.addEventListener("click", ()=> handleGoogleSignIn());
@@ -345,222 +553,81 @@
       });
       pendingGoogle = null;
       alert("Nick registrado com sucesso!");
-      closeAuth();
+      window.closeAuth();
     });
 
-    // ------------- login button / state -------------
-    loginBtn.addEventListener("click", ()=> {
-      if (auth.currentUser) signOut(auth);
-      else openAuth("entrar");
+    // login button: signout if logged, otherwise open modal
+    loginBtn.addEventListener("click", async ()=>{
+      const user = auth.currentUser;
+      if (user) { await signOut(auth); alert("Desconectado"); }
+      else { window.openAuth("entrar"); }
     });
-    signupBtn.addEventListener("click", ()=> openAuth("cadastrar"));
+    signupBtn.addEventListener("click", ()=> window.openAuth("cadastrar"));
 
+    // reflect auth state
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         try {
           const uSnap = await get(child(ref(db), `users/${user.uid}`));
-          const display = (uSnap.exists() && uSnap.val().nick) ? uSnap.val().nick : (user.displayName || user.email);
+          const display = (uSnap.exists() && uSnap.val().nick) ? uSnap.val().nick : (user.displayName || user.email || "Usuário");
           loginBtn.textContent = `Sair (${display})`;
         } catch {
           loginBtn.textContent = `Sair (${user.email||"Usuário"})`;
         }
-        authModal.classList.remove("open");
+        window.closeAuth();
       } else {
         loginBtn.textContent = "Login";
       }
     });
 
-    // ------------- Team builder (one-by-one) -------------
-    const STATS = ["HP","Atk","Def","SpA","SpD","Spe"];
-    function updatePokemonCount(){ const c = pokemonList.children.length; document.getElementById("pokemonCount").textContent = String(c); addPokemonBtn.disabled = c >= 6; }
-
-    function createPokemonCard(){
-      const wrapper = document.createElement("div");
-      wrapper.className = "poke-card-wrapper";
-      const card = document.createElement("div");
-      card.className = "poke-card";
-      card.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <h4>Pokémon</h4>
-          <div><button class="btn remove-poke">Remover</button></div>
-        </div>
-
-        <div class="row"><div style="width:110px">Tier:</div>
-          <select class="tier"><option>OU</option><option>UU</option><option>NU</option><option>Uber</option></select>
-        </div>
-
-        <div class="row"><div style="width:110px">Nome:</div><input class="pokemonName" type="text" placeholder="Charizard"></div>
-
-        <div class="row"><div style="width:110px">Nature:</div>
-          <select class="nature"><option>Adamant</option><option>Modest</option><option>Jolly</option><option>Timid</option><option>Bold</option></select>
-        </div>
-
-        <div class="row"><div style="width:110px">Ability:</div><input class="ability" type="text" placeholder="Ability"></div>
-
-        <div style="margin-top:8px"><div style="width:110px; display:inline-block">Moves:</div>
-          <div style="display:inline-block; width:calc(100% - 120px)">
-            <input class="move" type="text" placeholder="Move 1"><br>
-            <input class="move" type="text" placeholder="Move 2"><br>
-            <input class="move" type="text" placeholder="Move 3"><br>
-            <input class="move" type="text" placeholder="Move 4"><br>
-          </div>
-        </div>
-
-        <div style="margin-top:8px"><strong>IVs</strong></div>
-        ${STATS.map(s=>`<div class="stat"><label>${s}</label><input type="range" min="0" max="31" value="31" class="iv"><div class="val iv-val">31</div></div>`).join("")}
-
-        <div style="margin-top:8px"><strong>EVs</strong></div>
-        ${STATS.map(s=>`<div class="stat"><label>${s}</label><input type="range" min="0" max="252" step="4" value="0" class="ev"><div class="val ev-val">0</div></div>`).join("")}
-
-        <div class="progress"><div class="progress-bar"></div></div>
-        <div class="ev-warning small"></div>
-      `;
-      wrapper.appendChild(card);
-
-      // remove
-      card.querySelector(".remove-poke").addEventListener("click", ()=>{
-        wrapper.remove();
-        updatePokemonCount();
-      });
-
-      // IV handlers
-      const ivEls = card.querySelectorAll(".iv");
-      ivEls.forEach((el, idx) => {
-        el.addEventListener("input", (e) => {
-          card.querySelectorAll(".iv-val")[idx].textContent = e.target.value;
-        });
-      });
-
-      // EV handlers with constraints
-      const evEls = card.querySelectorAll(".ev");
-      evEls.forEach((el, idx) => {
-        el.addEventListener("input", (e) => {
-          // ensure multiple of 4 and within 0-252 (step=4 helps but sanitize)
-          let want = Math.round(parseInt(e.target.value || 0) / 4) * 4;
-          if (want < 0) want = 0;
-          if (want > 252) want = 252;
-
-          // compute sum of others
-          const others = Array.from(evEls).reduce((acc, el2, i2) => i2 === idx ? acc : acc + parseInt(el2.value || 0), 0);
-          const remaining = 508 - others;
-          if (want > remaining) {
-            want = Math.floor(remaining / 4) * 4;
-            if (want < 0) want = 0;
-          }
-
-          // enforce max two stats at 252
-          const count252 = Array.from(evEls).filter((el2, i2) => i2 !== idx && parseInt(el2.value || 0) === 252).length;
-          if (want === 252 && count252 >= 2) {
-            // cannot set to 252, reduce
-            want = Math.min(248, want - 4);
-            if (want < 0) want = 0;
-          }
-
-          e.target.value = want;
-          card.querySelectorAll(".ev-val")[idx].textContent = String(want);
-          // update bar and warnings
-          validateAndUpdate(card);
-        });
-      });
-
-      function validateAndUpdate(cardEl){
-        const evVals = Array.from(cardEl.querySelectorAll(".ev")).map(x => parseInt(x.value || 0));
-        const total = evVals.reduce((a,b)=>a+b,0);
-        const cnt252 = evVals.filter(v=>v===252).length;
-        const warn = cardEl.querySelector(".ev-warning");
-        const bar = cardEl.querySelector(".progress-bar");
-        bar.style.width = `${Math.min(100, (total/508)*100)}%`;
-        if (total > 508) warn.textContent = `⚠ Máx total 508 EVs (atual ${total})`;
-        else if (cnt252 > 2) warn.textContent = `⚠ Máx 2 stats com 252 EVs`;
-        else warn.textContent = "";
-      }
-
-      // init display
-      validateAndUpdate(card);
-
-      return wrapper;
-    }
-
-    addPokemonBtn.addEventListener("click", ()=>{
-      if (pokemonList.children.length >= 6) return alert("Máximo 6 pokémons por time.");
-      const node = createPokemonCard();
-      pokemonList.appendChild(node);
-      updatePokemonCount();
-    });
-
-    function updatePokemonCount(){ document.getElementById("pokemonCount").textContent = String(pokemonList.children.length); addPokemonBtn.disabled = pokemonList.children.length >= 6; }
-
-    // open/close time modal
-    criarTimeBtn.addEventListener("click", ()=>{
-      if (!auth.currentUser) { openAuth("entrar"); return; }
-      timeModal.classList.add("open");
-    });
-    cancelTimeBtn.addEventListener("click", ()=> {
-      timeModal.classList.remove("open");
-    });
-    window.addEventListener("click", (e)=>{
-      if (e.target.classList && e.target.classList.contains("modal")) e.target.classList.remove("open");
-    });
-
-    // submit time (save)
+    // Save team -> uses UI.collectTeam()
     submitTimeBtn.addEventListener("click", async ()=>{
-      if (!auth.currentUser) return alert("Você precisa estar logado para salvar um time.");
-      const ownerUid = auth.currentUser.uid;
-      const ownerEmail = auth.currentUser.email || null;
-      const pokes = [];
-      const wrappers = Array.from(pokemonList.children);
-      for (const w of wrappers){
-        const c = w.querySelector(".poke-card");
-        const name = (c.querySelector(".pokemonName")?.value || "").trim();
-        if (!name) continue;
-        const tier = c.querySelector(".tier").value;
-        const nature = c.querySelector(".nature").value;
-        const ability = (c.querySelector(".ability")?.value || "").trim();
-        const moves = Array.from(c.querySelectorAll(".move")).map(m => m.value.trim()).filter(Boolean);
-        const ivs = Object.fromEntries(Array.from(c.querySelectorAll(".iv")).map((el,i)=>[STATS[i] || STATS[i], el.value]));
-        const evs = Object.fromEntries(Array.from(c.querySelectorAll(".ev")).map((el,i)=>[STATS[i] || STATS[i], el.value]));
-        // validate EV totals
-        const evVals = Object.values(evs).map(v => parseInt(v || 0));
+      if (!auth.currentUser) { alert("Você precisa estar logado para salvar um time."); return; }
+      // collect team from UI
+      const pokes = window.collectTeam();
+      if (!pokes || pokes.length === 0) return alert("Adicione pelo menos 1 Pokémon antes de salvar.");
+      // validate EVs on each pokemon
+      for (const p of pokes){
+        const evVals = Object.values(p.evs).map(v => parseInt(v || 0));
         const total = evVals.reduce((a,b)=>a+b,0);
         const over252 = evVals.filter(v=>v===252).length;
-        if (total > 508) return alert(`Pokémon ${name} possui mais de 508 EVs.`);
-        if (over252 > 2) return alert(`Pokémon ${name} possui mais de 2 stats com 252 EVs.`);
-        pokes.push({ tier, name, nature, ability, moves, ivs, evs });
+        if (total > 508) return alert(`Pokémon ${p.name} tem mais de 508 EVs (corrija antes).`);
+        if (over252 > 2) return alert(`Pokémon ${p.name} tem mais de 2 stats com 252 EVs.`);
       }
-      if (pokes.length === 0) return alert("Adicione pelo menos 1 Pokémon antes de salvar.");
       try {
-        await push(ref(db, "teams"), { ownerUid, ownerEmail, pokemons: pokes, createdAt: Date.now() });
+        await push(ref(db, "teams"), { ownerUid: auth.currentUser.uid, ownerEmail: auth.currentUser.email || null, pokemons: pokes, createdAt: Date.now() });
         alert("Time salvo com sucesso!");
         timeModal.classList.remove("open");
-        // clear list
+        // clear UI list
         pokemonList.innerHTML = "";
-        updatePokemonCount();
+        document.getElementById("pokemonCount").textContent = "0";
       } catch (err) {
         console.error(err);
-        alert("Erro ao salvar time.");
+        alert("Erro ao salvar time. Veja console.");
       }
     });
 
-    // ------------- list teams -------------
+    // list teams
     onValue(ref(db, "teams"), snap => {
+      const timesContainer = document.getElementById("timesContainer");
       timesContainer.innerHTML = "";
       snap.forEach(childSnap => {
         const time = childSnap.val();
         const el = document.createElement("div");
         el.className = "time-card";
-        // attempt to fetch user's nick
-        get(child(ref(db), `users/${time.ownerUid}`)).then(usnap => {
+        // show owner nick if available
+        get(child(ref(db), `users/${time.ownerUid}`)).then(usnap=>{
           const owner = (usnap.exists() && usnap.val().nick) ? usnap.val().nick : (time.ownerEmail || "Usuário");
           el.innerHTML = `<h3>Time de ${owner}</h3><pre style="white-space:pre-wrap;word-break:break-word">${JSON.stringify(time.pokemons, null, 2)}</pre>`;
-        }).catch(()=> {
+        }).catch(()=>{
           el.innerHTML = `<h3>Time</h3><pre style="white-space:pre-wrap;word-break:break-word">${JSON.stringify(time.pokemons, null, 2)}</pre>`;
         });
         timesContainer.appendChild(el);
       });
     });
 
-    // ------------- keyboard esc to close modals -------------
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") document.querySelectorAll(".modal.open").forEach(m => m.classList.remove("open")); });
+    // Debug: show console message when module loads
+    console.log("Firebase module loaded. If Firebase config is placeholder, auth/save will fail but UI will still work.");
   </script>
 </body>
 </html>
