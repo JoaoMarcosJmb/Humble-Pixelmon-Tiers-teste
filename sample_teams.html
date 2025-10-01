@@ -144,6 +144,16 @@
   box-shadow: 0 6px 18px rgba(0,0,0,0.6);
 }
 
+
+select {
+  background: rgba(0,0,0,0.6);
+  color: var(--text);
+}
+option {
+  background: #111;
+  color: var(--text);
+}
+
 </style>
 </head>
 <body>
@@ -892,34 +902,6 @@ if(toggleTeamBuilderBtn){
 
 
 
-// Ensure dropdown menu links close the menu and trigger actions (open team builder for the Criar Time link)
-document.querySelectorAll('#dropdownMenu a').forEach(a=>{
-  a.addEventListener('click', (ev)=>{
-    // close dropdown
-    menuBtn.classList.remove('active');
-    dropdownMenu.classList.remove('active');
-    // if link points to teamBuilder, show the builder
-    try{
-      const href = a.getAttribute('href') || '';
-      if(href.indexOf('#teamBuilder') !== -1){
-        if(teamBuilder.style.display === 'none' || teamBuilder.style.display === '') {
-          teamBuilder.style.display = 'block';
-          const toggleBtn = document.getElementById('toggleTeamBuilder');
-          if(toggleBtn) toggleBtn.textContent = 'Fechar Team Builder';
-        }
-        ev.preventDefault();
-        // scroll into view smoothly
-        document.getElementById('teamBuilder')?.scrollIntoView({behavior:'smooth', block:'center'});
-      } else if(href.indexOf('#timesContainer') !== -1){
-        ev.preventDefault();
-        document.getElementById('timesContainer')?.scrollIntoView({behavior:'smooth', block:'start'});
-      }
-    }catch(e){}
-  });
-});
-
-
-
 // authPopup: close when clicking outside popup content or pressing Escape
 const authPopupEl = document.getElementById('authPopup');
 if(authPopupEl){
@@ -933,25 +915,45 @@ if(authPopupEl){
 
 
 
-// safer toggle for team builder (idempotent)
-(function(){
-  const toggleBtn = document.getElementById('toggleTeamBuilder');
-  const teamBuilder = document.getElementById('teamBuilder');
-  if(!toggleBtn) return;
-  // ensure initial state
-  if(!teamBuilder.style.display) teamBuilder.style.display = 'none';
-  toggleBtn.textContent = teamBuilder.style.display === 'none' ? '+ Criar Time' : 'Fechar Team Builder';
+
+
+
+
+// Menu hambúrguer toggle robusto
+const menuBtn = document.getElementById('menuBtn');
+const dropdownMenu = document.getElementById('dropdownMenu');
+if(menuBtn && dropdownMenu){
+  menuBtn.addEventListener('click', ()=>{
+    menuBtn.classList.toggle('active');
+    dropdownMenu.classList.toggle('active');
+  });
+  document.addEventListener('click', (e)=>{
+    if(!menuBtn.contains(e.target) && !dropdownMenu.contains(e.target)){
+      menuBtn.classList.remove('active');
+      dropdownMenu.classList.remove('active');
+    }
+  });
+}
+
+
+
+// Toggle Team Builder
+const toggleBtn = document.getElementById('toggleTeamBuilder');
+const teamBuilder = document.getElementById('teamBuilder');
+if(toggleBtn && teamBuilder){
+  teamBuilder.style.display = 'none'; // initial hidden
+  toggleBtn.textContent = '+ Criar Time';
   toggleBtn.addEventListener('click', ()=>{
     if(teamBuilder.style.display === 'none' || teamBuilder.style.display === ''){
       teamBuilder.style.display = 'block';
       toggleBtn.textContent = 'Fechar Team Builder';
       teamBuilder.scrollIntoView({behavior:'smooth', block:'center'});
-    }else{
+    } else {
       teamBuilder.style.display = 'none';
       toggleBtn.textContent = '+ Criar Time';
     }
   });
-})();
+}
 
 
 /* ============================
