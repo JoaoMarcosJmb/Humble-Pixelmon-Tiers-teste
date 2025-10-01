@@ -1,287 +1,241 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <title>Humble - Criar Times</title>
-  <style>
-    :root {
-      --cor-dourado: #d1a720;
-      --cor-fundo: #1a1a1a;
-      --cor-card: rgba(30, 25, 20, 0.95);
-      --cor-texto: #f5f5f5;
-    }
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background: #111;
-      color: var(--cor-texto);
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background: var(--cor-fundo);
-      padding: 10px 20px;
-      border-bottom: 2px solid var(--cor-dourado);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    header h1 { color: var(--cor-dourado); margin: 0; }
-    #loginBtn, #signupBtn {
-      background: none;
-      border: 1px solid var(--cor-dourado);
-      color: var(--cor-dourado);
-      padding: 5px 12px;
-      margin-left: 8px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    #loginBtn:hover, #signupBtn:hover {
-      background: var(--cor-dourado);
-      color: var(--cor-fundo);
-    }
-    #criarTimeBtn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--cor-dourado);
-      color: var(--cor-fundo);
-      border: none;
-      padding: 12px 18px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    #criarTimeBtn:hover { background: #f1c53b; }
+<!-- Botão Criar Time -->
+<button id="criarTimeBtn">+ Criar Time</button>
 
-    /* Modal */
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.7);
-      justify-content: center;
-      align-items: center;
-      z-index: 2000;
-    }
-    .modal-content {
-      background: var(--cor-card);
-      border: 2px solid var(--cor-dourado);
-      border-radius: 12px;
-      padding: 20px;
-      max-width: 800px;
-      width: 95%;
-      max-height: 90vh;
-      overflow-y: auto;
-    }
-    .pokemon-card {
-      background: rgba(255,255,255,0.05);
-      border: 1px solid var(--cor-dourado);
-      border-radius: 8px;
-      margin-bottom: 12px;
-      padding: 12px;
-    }
-    .pokemon-card h3 {
-      margin: 0 0 10px;
-      cursor: pointer;
-      color: var(--cor-dourado);
-    }
-    .pokemon-body { display: none; margin-top: 10px; }
-    .pokemon-card.active .pokemon-body { display: block; }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 100px 1fr auto;
-      gap: 5px;
-      align-items: center;
-      margin-bottom: 5px;
-    }
-    input, select {
-      background: #222;
-      color: var(--cor-texto);
-      border: 1px solid #444;
-      padding: 5px;
-      border-radius: 6px;
-    }
-    input[type=range] { width: 100%; }
-    .progress {
-      height: 8px;
-      background: #444;
-      border-radius: 4px;
-      margin: 5px 0 10px;
-      overflow: hidden;
-    }
-    .progress-bar {
-      height: 100%;
-      background: var(--cor-dourado);
-      width: 0%;
-      transition: 0.3s;
-    }
-    button.save {
-      background: var(--cor-dourado);
-      border: none;
-      color: var(--cor-fundo);
-      padding: 10px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    .ev-warning { color: red; font-size: 0.9rem; }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Humble</h1>
-    <div>
-      <button id="loginBtn">Login</button>
-      <button id="signupBtn">Cadastro</button>
-    </div>
-  </header>
-
-  <button id="criarTimeBtn">+ Criar Time</button>
-
-  <!-- Modal Criador de Times -->
-  <div class="modal" id="timeModal">
-    <div class="modal-content">
-      <h2>Criar Time</h2>
-      <div id="pokemonSlots"></div>
-      <button class="save" id="salvarTimeBtn">Salvar Time</button>
-    </div>
+<!-- Modal Criar Time -->
+<div class="modal" id="timeModal">
+  <div class="modal-content">
+    <h2>Criar Novo Time</h2>
+    <div id="pokemonSlots"></div>
+    <button id="salvarTimeBtn">Salvar Time</button>
   </div>
+</div>
 
-  <!-- Firebase -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut,
-             createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+<style>
+  /* ===== Modal ===== */
+  .modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+  }
+  .modal-content {
+    background: rgba(30, 25, 20, 0.95);
+    border: 2px solid var(--cor-dourado);
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 750px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    color: var(--cor-texto);
+  }
+  .pokemon-card {
+    border: 1px solid var(--cor-dourado);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 15px;
+    background: rgba(20,20,20,0.9);
+  }
+  .pokemon-card h3 {
+    margin: 0 0 10px;
+    color: var(--cor-dourado);
+    font-size: 1.2rem;
+  }
+  .stat {
+    margin: 6px 0;
+  }
+  .stat label {
+    display: inline-block;
+    width: 50px;
+  }
+  .stat input[type=range] {
+    width: 200px;
+  }
+  .iv-value, .ev-value {
+    margin-left: 8px;
+    font-weight: bold;
+    color: var(--cor-dourado);
+  }
+  .progress {
+    background: #333;
+    height: 8px;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 8px 0;
+  }
+  .progress-bar {
+    background: var(--cor-dourado);
+    height: 100%;
+    width: 0%;
+    transition: 0.3s;
+  }
+  .ev-warning {
+    color: red;
+    font-size: 0.9rem;
+  }
+  #salvarTimeBtn {
+    background: var(--cor-dourado);
+    border: none;
+    padding: 10px 16px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  #salvarTimeBtn:hover {
+    background: #f1c53b;
+  }
+</style>
 
-    const firebaseConfig = {
-      apiKey: "SUA_APIKEY",
-      authDomain: "SUA_AUTHDOMAIN",
-      databaseURL: "SUA_DATABASE_URL",
-      projectId: "SUA_PROJECTID",
-      storageBucket: "SUA_BUCKET",
-      messagingSenderId: "SENDER_ID",
-      appId: "APP_ID"
-    };
+<script type="module">
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut,
+           createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+           from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+  import { getDatabase, ref, push } 
+           from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
-    const provider = new GoogleAuthProvider();
+  const auth = getAuth();
+  const db = getDatabase();
+  const provider = new GoogleAuthProvider();
 
-    const loginBtn = document.getElementById("loginBtn");
-    const signupBtn = document.getElementById("signupBtn");
-    const timeModal = document.getElementById("timeModal");
-    const criarTimeBtn = document.getElementById("criarTimeBtn");
-    const salvarTimeBtn = document.getElementById("salvarTimeBtn");
-    const pokemonSlots = document.getElementById("pokemonSlots");
+  const criarTimeBtn = document.getElementById("criarTimeBtn");
+  const timeModal = document.getElementById("timeModal");
+  const salvarTimeBtn = document.getElementById("salvarTimeBtn");
+  const pokemonSlots = document.getElementById("pokemonSlots");
 
-    const stats = ["HP","Atk","Def","SpA","SpD","Spe"];
+  const stats = ["HP","Atk","Def","SpA","SpD","Spe"];
 
-    // Criar slots para 6 Pokémon
-    for (let i=0;i<6;i++) {
-      const div=document.createElement("div");
-      div.className="pokemon-card";
-      div.innerHTML=`
-        <h3>Pokémon ${i+1}</h3>
-        <div class="pokemon-body">
-          <label>Tier:</label>
-          <select class="tier">
-            <option value="OU">OU</option><option value="UU">UU</option><option value="NU">NU</option><option value="Uber">Uber</option>
-          </select><br><br>
-          <label>Nome:</label>
-          <input type="text" class="pokemonName"><br><br>
-          <label>Nature:</label>
-          <select class="nature"><option>Adamant</option><option>Modest</option><option>Jolly</option><option>Timid</option><option>Bold</option></select><br><br>
-          <label>Ability:</label>
-          <input type="text" class="ability"><br><br>
-          <label>Moves:</label><br>
-          <input type="text" class="move"><input type="text" class="move"><input type="text" class="move"><input type="text" class="move"><br><br>
-          <strong>IVs</strong>
-          ${stats.map(s=>`<div class="grid"><span>${s}</span><input type="range" min="0" max="31" value="31" class="iv"><span class="iv-value">31</span></div>`).join("")}
-          <br><strong>EVs</strong>
-          ${stats.map(s=>`<div class="grid"><span>${s}</span><input type="range" min="0" max="252" step="4" value="0" class="ev"><span class="ev-value">0</span></div>`).join("")}
-          <div class="progress"><div class="progress-bar"></div></div>
-          <div class="ev-warning"></div>
-        </div>`;
-      pokemonSlots.appendChild(div);
-      div.querySelector("h3").onclick=()=>div.classList.toggle("active");
+  // Criar 6 slots
+  for (let i=0;i<6;i++) {
+    const div=document.createElement("div");
+    div.className="pokemon-card";
+    div.innerHTML=`
+      <h3>Pokémon ${i+1}</h3>
+      <label>Tier:</label>
+      <select class="tier">
+        <option value="OU">OU</option>
+        <option value="UU">UU</option>
+        <option value="NU">NU</option>
+        <option value="Uber">Uber</option>
+      </select><br><br>
+      <label>Nome:</label>
+      <input type="text" class="pokemonName" placeholder="Ex: Charizard"><br><br>
+      <label>Nature:</label>
+      <select class="nature">
+        <option>Adamant</option>
+        <option>Modest</option>
+        <option>Jolly</option>
+        <option>Timid</option>
+        <option>Bold</option>
+      </select><br><br>
+      <label>Ability:</label>
+      <input type="text" class="ability" placeholder="Ex: Blaze"><br><br>
+      <label>Moves:</label><br>
+      <input type="text" class="move" placeholder="Move 1"><br>
+      <input type="text" class="move" placeholder="Move 2"><br>
+      <input type="text" class="move" placeholder="Move 3"><br>
+      <input type="text" class="move" placeholder="Move 4"><br><br>
+      <strong>IVs</strong><br>
+      ${stats.map(stat=>`
+        <div class="stat">
+          <label>${stat}</label>
+          <input type="range" min="0" max="31" value="31" class="iv">
+          <span class="iv-value">31</span>
+        </div>`).join("")}
+      <br><strong>EVs</strong><br>
+      ${stats.map(stat=>`
+        <div class="stat">
+          <label>${stat}</label>
+          <input type="range" min="0" max="252" step="4" value="0" class="ev">
+          <span class="ev-value">0</span>
+        </div>`).join("")}
+      <div class="progress"><div class="progress-bar"></div></div>
+      <div class="ev-warning"></div>
+    `;
+    pokemonSlots.appendChild(div);
+  }
+
+  // Atualizar sliders
+  pokemonSlots.addEventListener("input", e=>{
+    if(e.target.classList.contains("iv")) {
+      e.target.nextElementSibling.textContent=e.target.value;
     }
-
-    // Atualizar sliders
-    pokemonSlots.addEventListener("input", e=>{
-      if(e.target.classList.contains("iv")) e.target.nextElementSibling.textContent=e.target.value;
-      if(e.target.classList.contains("ev")) {
-        e.target.nextElementSibling.textContent=e.target.value;
-        validateEVs(e.target.closest(".pokemon-card"));
-      }
-    });
-
-    function validateEVs(card){
-      let evs=[...card.querySelectorAll(".ev")].map(ev=>parseInt(ev.value));
-      let total=evs.reduce((a,b)=>a+b,0);
-      let over252=evs.filter(v=>v===252).length;
-      let warning=card.querySelector(".ev-warning");
-      let bar=card.querySelector(".progress-bar");
-      bar.style.width=(total/508*100)+"%";
-      if(total>508) warning.textContent="⚠️ Máximo total de 508 EVs.";
-      else if(over252>2) warning.textContent="⚠️ Máximo 2 stats com 252 EVs.";
-      else warning.textContent="";
+    if(e.target.classList.contains("ev")) {
+      e.target.nextElementSibling.textContent=e.target.value;
+      validateEVs(e.target.closest(".pokemon-card"));
     }
+  });
 
-    // Abrir/fechar modal
-    criarTimeBtn.onclick=()=>timeModal.style.display="flex";
-    timeModal.onclick=e=>{if(e.target===timeModal) timeModal.style.display="none";};
+  function validateEVs(card){
+    let evs=[...card.querySelectorAll(".ev")].map(ev=>parseInt(ev.value));
+    let total=evs.reduce((a,b)=>a+b,0);
+    let over252=evs.filter(v=>v===252).length;
+    let warning=card.querySelector(".ev-warning");
+    let bar=card.querySelector(".progress-bar");
+    bar.style.width=(total/508*100)+"%";
+    if(total>508) warning.textContent="⚠️ Máximo total de 508 EVs.";
+    else if(over252>2) warning.textContent="⚠️ Máximo 2 stats com 252 EVs.";
+    else warning.textContent="";
+  }
 
-    // Salvar time
-    salvarTimeBtn.onclick=()=>{
-      if(!auth.currentUser) return alert("Precisa estar logado!");
-      let team=[];
-      pokemonSlots.querySelectorAll(".pokemon-card").forEach(card=>{
-        let pokemon={
-          tier:card.querySelector(".tier").value,
-          name:card.querySelector(".pokemonName").value,
-          nature:card.querySelector(".nature").value,
-          ability:card.querySelector(".ability").value,
-          moves:[...card.querySelectorAll(".move")].map(m=>m.value).filter(Boolean),
-          ivs:Object.fromEntries(stats.map((s,i)=>[s,card.querySelectorAll(".iv")[i].value])),
-          evs:Object.fromEntries(stats.map((s,i)=>[s,card.querySelectorAll(".ev")[i].value]))
-        };
-        if(pokemon.name) team.push(pokemon);
-      });
-      push(ref(db,"teams"),{ownerName:auth.currentUser.email||auth.currentUser.displayName,ownerUid:auth.currentUser.uid,pokemons:team});
-      timeModal.style.display="none";
-      alert("Time salvo!");
-    };
+  // Modal abrir/fechar
+  criarTimeBtn.onclick=()=>timeModal.style.display="flex";
+  timeModal.onclick=e=>{if(e.target===timeModal) timeModal.style.display="none";};
 
-    // LOGIN GOOGLE
-    loginBtn.onclick=async()=>{
-      if(auth.currentUser){await signOut(auth);}
-      else{
-        let email=prompt("Digite seu email ou deixe em branco para Google:");
-        if(email){
-          let senha=prompt("Digite sua senha:");
-          try{await signInWithEmailAndPassword(auth,email,senha);}catch(err){alert("Erro: "+err.message);}
-        }else{
-          await signInWithPopup(auth,provider);
-        }
-      }
-    };
-
-    // CADASTRO EMAIL
-    signupBtn.onclick=async()=>{
-      let email=prompt("Digite um email:");
-      let senha=prompt("Digite uma senha:");
-      try{await createUserWithEmailAndPassword(auth,email,senha); alert("Conta criada!");}
-      catch(err){alert("Erro: "+err.message);}
-    };
-
-    auth.onAuthStateChanged(user=>{
-      if(user) loginBtn.textContent="Sair ("+(user.displayName||user.email)+")";
-      else loginBtn.textContent="Login";
+  // Salvar time
+  salvarTimeBtn.onclick=()=>{
+    if(!auth.currentUser) return alert("Precisa estar logado!");
+    let team=[];
+    pokemonSlots.querySelectorAll(".pokemon-card").forEach(card=>{
+      let pokemon={
+        tier:card.querySelector(".tier").value,
+        name:card.querySelector(".pokemonName").value,
+        nature:card.querySelector(".nature").value,
+        ability:card.querySelector(".ability").value,
+        moves:[...card.querySelectorAll(".move")].map(m=>m.value).filter(Boolean),
+        ivs:Object.fromEntries(stats.map((s,i)=>[s,card.querySelectorAll(".iv")[i].value])),
+        evs:Object.fromEntries(stats.map((s,i)=>[s,card.querySelectorAll(".ev")[i].value]))
+      };
+      if(pokemon.name) team.push(pokemon);
     });
-  </script>
-</body>
-</html>
+    push(ref(db,"teams"),{
+      ownerName:auth.currentUser.email||auth.currentUser.displayName,
+      ownerUid:auth.currentUser.uid,
+      pokemons:team
+    });
+    timeModal.style.display="none";
+    alert("Time salvo!");
+  };
+
+  // LOGIN GOOGLE OU EMAIL
+  const loginBtn=document.getElementById("loginBtn");
+  const signupBtn=document.getElementById("signupBtn");
+
+  loginBtn.onclick=async()=>{
+    if(auth.currentUser){await signOut(auth);}
+    else{
+      let email=prompt("Digite seu email ou deixe em branco para Google:");
+      if(email){
+        let senha=prompt("Digite sua senha:");
+        try{await signInWithEmailAndPassword(auth,email,senha);}catch(err){alert("Erro: "+err.message);}
+      }else{
+        await signInWithPopup(auth,provider);
+      }
+    }
+  };
+
+  signupBtn.onclick=async()=>{
+    let email=prompt("Digite um email:");
+    let senha=prompt("Digite uma senha:");
+    try{await createUserWithEmailAndPassword(auth,email,senha);alert("Conta criada!");}
+    catch(err){alert("Erro: "+err.message);}
+  };
+
+  auth.onAuthStateChanged(user=>{
+    if(user) loginBtn.textContent="Sair ("+(user.displayName||user.email)+")";
+    else loginBtn.textContent="Login";
+  });
+</script>
