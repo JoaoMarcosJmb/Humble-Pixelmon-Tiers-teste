@@ -115,7 +115,15 @@
     nav#dropdownMenu{ right:8px; left:8px; }
     .six-grid{ grid-template-columns: repeat(3,1fr); }
   }
-  </style>
+  
+.user-info img {
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  object-fit:cover;
+}
+
+</style>
 </head>
 <body>
 
@@ -145,7 +153,7 @@
 
 <main>
   <!-- Builder -->
-  <section class="card" id="teamBuilder">
+  <section class="card" id="teamBuilder" style="display:none;">
     <h2>Criar / Importar Time</h2>
     <div class="builder-grid">
       <div class="builder-left">
@@ -201,6 +209,12 @@
       </div>
     </div>
   </section>
+
+  
+  <!-- Botão Criar Time -->
+  <div style="text-align:right; margin:12px 0;">
+    <button id="toggleTeamBuilder">+ Criar Time</button>
+  </div>
 
   <!-- Feed -->
   <section class="card">
@@ -819,6 +833,23 @@ document.addEventListener('input', ()=>{
 
 /* small utilities */
 function formatDate(ts){ return ts ? new Date(ts).toLocaleString() : ''; }
+
+
+// toggle Team Builder
+const toggleTeamBuilderBtn = document.getElementById('toggleTeamBuilder');
+const teamBuilderSection = document.getElementById('teamBuilder');
+if(toggleTeamBuilderBtn){
+  toggleTeamBuilderBtn.addEventListener('click', ()=>{
+    if(teamBuilderSection.style.display === 'none' || teamBuilderSection.style.display === ''){
+      teamBuilderSection.style.display = 'block';
+      toggleTeamBuilderBtn.textContent = 'Fechar Team Builder';
+    }else{
+      teamBuilderSection.style.display = 'none';
+      toggleTeamBuilderBtn.textContent = '+ Criar Time';
+    }
+  });
+}
+
 
 /* ============================
    END
