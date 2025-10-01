@@ -2,177 +2,168 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Times - Humble</title>
+  <title>Humble - Criar Times</title>
   <style>
     :root {
       --cor-dourado: #d1a720;
       --cor-fundo: #1a1a1a;
+      --cor-card: rgba(30, 25, 20, 0.95);
       --cor-texto: #f5f5f5;
     }
-
     body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
-                  url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
-      background-size: cover;
+      font-family: "Segoe UI", sans-serif;
+      background: #111;
+      color: var(--cor-texto);
       margin: 0;
       padding: 0;
-      min-height: 100vh;
-      color: var(--cor-texto);
     }
-
     header {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      padding: 15px 20px;
+      background: var(--cor-fundo);
+      padding: 10px 20px;
+      border-bottom: 2px solid var(--cor-dourado);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: rgba(20, 20, 20, 0.9);
-      border-bottom: 2px solid var(--cor-dourado);
-      z-index: 1000;
     }
-
-    header h1 {
-      font-size: 1.6rem;
-      margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--cor-dourado);
-    }
-
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-
-    #userInfo {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.9rem;
-      color: var(--cor-dourado);
-    }
-    #userInfo img {
-      width: 28px; height: 28px;
-      border-radius: 50%;
-    }
-
-    #loginBtn {
+    header h1 { color: var(--cor-dourado); margin: 0; }
+    #loginBtn, #signupBtn {
       background: none;
       border: 1px solid var(--cor-dourado);
       color: var(--cor-dourado);
-      padding: 5px 10px;
+      padding: 5px 12px;
+      margin-left: 8px;
       border-radius: 6px;
       cursor: pointer;
+      transition: 0.2s;
     }
-    #loginBtn:hover { background: var(--cor-dourado); color: var(--cor-fundo); }
-
-    #criarTimeBtn {
-      position: fixed;
-      top: 80px; right: 20px;
+    #loginBtn:hover, #signupBtn:hover {
       background: var(--cor-dourado);
       color: var(--cor-fundo);
-      font-size: 1rem;
-      font-weight: bold;
+    }
+    #criarTimeBtn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: var(--cor-dourado);
+      color: var(--cor-fundo);
       border: none;
-      padding: 10px 16px;
+      padding: 12px 18px;
       border-radius: 8px;
       cursor: pointer;
-      z-index: 900;
+      font-weight: bold;
     }
+    #criarTimeBtn:hover { background: #f1c53b; }
 
-    main { margin-top: 120px; padding: 20px; }
-    .time-card {
-      background: rgba(30,25,20,0.9);
-      border: 1px solid var(--cor-dourado);
-      border-radius: 12px;
-      padding: 15px;
-      margin-bottom: 20px;
-    }
-
-    #searchBar {
-      width: 100%; max-width: 400px;
-      margin: 0 auto 20px;
-      display: block;
-      padding: 10px;
-      border: 1px solid var(--cor-dourado);
-      border-radius: 8px;
-      background: #222;
-      color: var(--cor-texto);
-    }
-
-    /* MODAL */
+    /* Modal */
     .modal {
       display: none;
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.6);
-      justify-content: center; align-items: center;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
       z-index: 2000;
     }
     .modal-content {
-      background: var(--cor-fundo);
-      padding: 20px;
+      background: var(--cor-card);
+      border: 2px solid var(--cor-dourado);
       border-radius: 12px;
-      width: 90%; max-width: 800px;
-      max-height: 90vh; overflow-y: auto;
+      padding: 20px;
+      max-width: 800px;
+      width: 95%;
+      max-height: 90vh;
+      overflow-y: auto;
     }
-
     .pokemon-card {
+      background: rgba(255,255,255,0.05);
       border: 1px solid var(--cor-dourado);
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 15px;
-      background: rgba(40,40,40,0.9);
+      border-radius: 8px;
+      margin-bottom: 12px;
+      padding: 12px;
     }
-    .pokemon-card h3 { margin-top: 0; color: var(--cor-dourado); }
-    .stat { margin: 6px 0; }
-    .stat label { display: inline-block; width: 60px; }
-    .stat input[type=range] { width: 200px; }
+    .pokemon-card h3 {
+      margin: 0 0 10px;
+      cursor: pointer;
+      color: var(--cor-dourado);
+    }
+    .pokemon-body { display: none; margin-top: 10px; }
+    .pokemon-card.active .pokemon-body { display: block; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 100px 1fr auto;
+      gap: 5px;
+      align-items: center;
+      margin-bottom: 5px;
+    }
+    input, select {
+      background: #222;
+      color: var(--cor-texto);
+      border: 1px solid #444;
+      padding: 5px;
+      border-radius: 6px;
+    }
+    input[type=range] { width: 100%; }
+    .progress {
+      height: 8px;
+      background: #444;
+      border-radius: 4px;
+      margin: 5px 0 10px;
+      overflow: hidden;
+    }
+    .progress-bar {
+      height: 100%;
+      background: var(--cor-dourado);
+      width: 0%;
+      transition: 0.3s;
+    }
+    button.save {
+      background: var(--cor-dourado);
+      border: none;
+      color: var(--cor-fundo);
+      padding: 10px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
     .ev-warning { color: red; font-size: 0.9rem; }
   </style>
 </head>
 <body>
   <header>
     <h1>Humble</h1>
-    <div class="header-right">
-      <div id="userInfo"></div>
+    <div>
       <button id="loginBtn">Login</button>
+      <button id="signupBtn">Cadastro</button>
     </div>
   </header>
 
   <button id="criarTimeBtn">+ Criar Time</button>
 
-  <main>
-    <input type="text" id="searchBar" placeholder="🔎 Pesquisar por tier...">
-    <div id="timesContainer"></div>
-    <button id="loadMoreBtn" style="display:none;">Carregar mais</button>
-  </main>
-
-  <!-- Modal Criar Time -->
+  <!-- Modal Criador de Times -->
   <div class="modal" id="timeModal">
     <div class="modal-content">
-      <h2>Criar Novo Time</h2>
+      <h2>Criar Time</h2>
       <div id="pokemonSlots"></div>
-      <button id="salvarTimeBtn">Salvar Time</button>
+      <button class="save" id="salvarTimeBtn">Salvar Time</button>
     </div>
   </div>
 
+  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut,
+             createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getDatabase, ref, push } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
     const firebaseConfig = {
-      apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
-      authDomain: "sampleteans.firebaseapp.com",
-      databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
-      projectId: "sampleteans",
-      storageBucket: "sampleteans.firebasestorage.app",
-      messagingSenderId: "1069510029261",
-      appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
+      apiKey: "SUA_APIKEY",
+      authDomain: "SUA_AUTHDOMAIN",
+      databaseURL: "SUA_DATABASE_URL",
+      projectId: "SUA_PROJECTID",
+      storageBucket: "SUA_BUCKET",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -181,129 +172,115 @@
     const provider = new GoogleAuthProvider();
 
     const loginBtn = document.getElementById("loginBtn");
-    const userInfo = document.getElementById("userInfo");
-    const criarTimeBtn = document.getElementById("criarTimeBtn");
+    const signupBtn = document.getElementById("signupBtn");
     const timeModal = document.getElementById("timeModal");
+    const criarTimeBtn = document.getElementById("criarTimeBtn");
     const salvarTimeBtn = document.getElementById("salvarTimeBtn");
-    const timesContainer = document.getElementById("timesContainer");
-    const searchBar = document.getElementById("searchBar");
-    const loadMoreBtn = document.getElementById("loadMoreBtn");
     const pokemonSlots = document.getElementById("pokemonSlots");
 
-    // LOGIN
-    loginBtn.addEventListener("click", async () => {
-      if (auth.currentUser) { await signOut(auth); } 
-      else { await signInWithPopup(auth, provider); }
-    });
-    onAuthStateChanged(auth, user => {
-      if (user) {
-        loginBtn.textContent = "Sair";
-        userInfo.innerHTML = `<img src="${user.photoURL}" alt="user"><span>${user.displayName.split(" ")[0]}</span>`;
-      } else {
-        loginBtn.textContent = "Login";
-        userInfo.innerHTML = "";
-      }
-    });
-
-    // SLOTS DE POKEMON
     const stats = ["HP","Atk","Def","SpA","SpD","Spe"];
+
+    // Criar slots para 6 Pokémon
     for (let i=0;i<6;i++) {
-      const div = document.createElement("div");
+      const div=document.createElement("div");
       div.className="pokemon-card";
       div.innerHTML=`
         <h3>Pokémon ${i+1}</h3>
-        <label>Tier:</label>
-        <select class="tier"><option>OU</option><option>UU</option><option>NU</option><option>Uber</option></select><br><br>
-        <label>Pokémon:</label><input type="text" class="pokemonName"><br><br>
-        <label>Nature:</label>
-        <select class="nature"><option>Adamant</option><option>Modest</option><option>Jolly</option><option>Timid</option><option>Bold</option></select><br><br>
-        <label>Ability:</label><input type="text" class="ability"><br><br>
-        <label>Moves:</label><br>
-        <input type="text" class="move" placeholder="Move 1"><br>
-        <input type="text" class="move" placeholder="Move 2"><br>
-        <input type="text" class="move" placeholder="Move 3"><br>
-        <input type="text" class="move" placeholder="Move 4"><br><br>
-        <strong>IVs</strong><br>
-        ${stats.map(stat=>`<div class="stat"><label>${stat}</label><input type="range" min="0" max="31" value="31" class="iv"><span class="iv-value">31</span></div>`).join("")}
-        <br><strong>EVs</strong><br>
-        ${stats.map(stat=>`<div class="stat"><label>${stat}</label><input type="range" min="0" max="252" step="4" value="0" class="ev"><span class="ev-value">0</span></div>`).join("")}
-        <div class="ev-warning"></div>
-      `;
+        <div class="pokemon-body">
+          <label>Tier:</label>
+          <select class="tier">
+            <option value="OU">OU</option><option value="UU">UU</option><option value="NU">NU</option><option value="Uber">Uber</option>
+          </select><br><br>
+          <label>Nome:</label>
+          <input type="text" class="pokemonName"><br><br>
+          <label>Nature:</label>
+          <select class="nature"><option>Adamant</option><option>Modest</option><option>Jolly</option><option>Timid</option><option>Bold</option></select><br><br>
+          <label>Ability:</label>
+          <input type="text" class="ability"><br><br>
+          <label>Moves:</label><br>
+          <input type="text" class="move"><input type="text" class="move"><input type="text" class="move"><input type="text" class="move"><br><br>
+          <strong>IVs</strong>
+          ${stats.map(s=>`<div class="grid"><span>${s}</span><input type="range" min="0" max="31" value="31" class="iv"><span class="iv-value">31</span></div>`).join("")}
+          <br><strong>EVs</strong>
+          ${stats.map(s=>`<div class="grid"><span>${s}</span><input type="range" min="0" max="252" step="4" value="0" class="ev"><span class="ev-value">0</span></div>`).join("")}
+          <div class="progress"><div class="progress-bar"></div></div>
+          <div class="ev-warning"></div>
+        </div>`;
       pokemonSlots.appendChild(div);
+      div.querySelector("h3").onclick=()=>div.classList.toggle("active");
     }
 
     // Atualizar sliders
     pokemonSlots.addEventListener("input", e=>{
-      if (e.target.classList.contains("iv")) e.target.nextElementSibling.textContent=e.target.value;
-      if (e.target.classList.contains("ev")) {
+      if(e.target.classList.contains("iv")) e.target.nextElementSibling.textContent=e.target.value;
+      if(e.target.classList.contains("ev")) {
         e.target.nextElementSibling.textContent=e.target.value;
         validateEVs(e.target.closest(".pokemon-card"));
       }
     });
 
-    function validateEVs(card) {
+    function validateEVs(card){
       let evs=[...card.querySelectorAll(".ev")].map(ev=>parseInt(ev.value));
       let total=evs.reduce((a,b)=>a+b,0);
       let over252=evs.filter(v=>v===252).length;
       let warning=card.querySelector(".ev-warning");
-      if (total>508) warning.textContent=`⚠️ Máx 508 EVs. Atual: ${total}`;
-      else if (over252>2) warning.textContent=`⚠️ Só 2 stats podem ter 252 EVs`;
+      let bar=card.querySelector(".progress-bar");
+      bar.style.width=(total/508*100)+"%";
+      if(total>508) warning.textContent="⚠️ Máximo total de 508 EVs.";
+      else if(over252>2) warning.textContent="⚠️ Máximo 2 stats com 252 EVs.";
       else warning.textContent="";
     }
 
-    // Criar time
-    criarTimeBtn.addEventListener("click",()=>{
-      if (!auth.currentUser) { alert("Faça login!"); return; }
-      timeModal.style.display="flex";
-    });
-    window.addEventListener("click",e=>{ if(e.target===timeModal) timeModal.style.display="none"; });
+    // Abrir/fechar modal
+    criarTimeBtn.onclick=()=>timeModal.style.display="flex";
+    timeModal.onclick=e=>{if(e.target===timeModal) timeModal.style.display="none";};
 
-    salvarTimeBtn.addEventListener("click",()=>{
-      if (!auth.currentUser) return alert("Login necessário!");
+    // Salvar time
+    salvarTimeBtn.onclick=()=>{
+      if(!auth.currentUser) return alert("Precisa estar logado!");
       let team=[];
       pokemonSlots.querySelectorAll(".pokemon-card").forEach(card=>{
-        const pokemon={
-          tier: card.querySelector(".tier").value,
-          name: card.querySelector(".pokemonName").value,
-          nature: card.querySelector(".nature").value,
-          ability: card.querySelector(".ability").value,
-          moves: [...card.querySelectorAll(".move")].map(m=>m.value).filter(m=>m),
-          ivs: stats.reduce((acc,s,idx)=>{acc[s]=card.querySelectorAll(".iv")[idx].value;return acc;},{}),
-          evs: stats.reduce((acc,s,idx)=>{acc[s]=card.querySelectorAll(".ev")[idx].value;return acc;},{})
+        let pokemon={
+          tier:card.querySelector(".tier").value,
+          name:card.querySelector(".pokemonName").value,
+          nature:card.querySelector(".nature").value,
+          ability:card.querySelector(".ability").value,
+          moves:[...card.querySelectorAll(".move")].map(m=>m.value).filter(Boolean),
+          ivs:Object.fromEntries(stats.map((s,i)=>[s,card.querySelectorAll(".iv")[i].value])),
+          evs:Object.fromEntries(stats.map((s,i)=>[s,card.querySelectorAll(".ev")[i].value]))
         };
         if(pokemon.name) team.push(pokemon);
       });
-      const novoTime={ ownerName: auth.currentUser.displayName, ownerUid: auth.currentUser.uid, pokemons: team };
-      push(ref(db,"teams"),novoTime);
-      alert("Time salvo!");
+      push(ref(db,"teams"),{ownerName:auth.currentUser.email||auth.currentUser.displayName,ownerUid:auth.currentUser.uid,pokemons:team});
       timeModal.style.display="none";
-    });
+      alert("Time salvo!");
+    };
 
-    // Listagem de times com busca/paginação
-    let allTimes=[]; let loaded=0; let itemsPerPage=5;
-    function renderTimes(filter=""){
-      timesContainer.innerHTML="";
-      let filtered=allTimes.filter(t=>t.pokemons.some(p=>p.tier.toLowerCase().includes(filter.toLowerCase())));
-      let toShow=filtered.slice(0,loaded);
-      toShow.forEach(time=>{
-        const div=document.createElement("div");
-        div.className="time-card";
-        div.innerHTML=`<h3>Time de ${time.ownerName}</h3>
-          ${time.pokemons.map(p=>`<div><b>${p.name}</b> (${p.tier}) - ${p.nature} | ${p.ability}<br>
-          Moves: ${p.moves.join(", ")}<br>
-          IVs: ${JSON.stringify(p.ivs)}<br>
-          EVs: ${JSON.stringify(p.evs)}</div><hr>`).join("")}`;
-        timesContainer.appendChild(div);
-      });
-      loadMoreBtn.style.display=filtered.length>loaded?"block":"none";
-    }
-    loadMoreBtn.addEventListener("click",()=>{loaded+=itemsPerPage;renderTimes(searchBar.value);});
-    searchBar.addEventListener("input",e=>{loaded=itemsPerPage;renderTimes(e.target.value);});
+    // LOGIN GOOGLE
+    loginBtn.onclick=async()=>{
+      if(auth.currentUser){await signOut(auth);}
+      else{
+        let email=prompt("Digite seu email ou deixe em branco para Google:");
+        if(email){
+          let senha=prompt("Digite sua senha:");
+          try{await signInWithEmailAndPassword(auth,email,senha);}catch(err){alert("Erro: "+err.message);}
+        }else{
+          await signInWithPopup(auth,provider);
+        }
+      }
+    };
 
-    const timesRef=ref(db,"teams");
-    onValue(timesRef,snapshot=>{
-      allTimes=[]; snapshot.forEach(snap=>allTimes.push(snap.val()));
-      allTimes.reverse(); loaded=itemsPerPage; renderTimes(searchBar.value);
+    // CADASTRO EMAIL
+    signupBtn.onclick=async()=>{
+      let email=prompt("Digite um email:");
+      let senha=prompt("Digite uma senha:");
+      try{await createUserWithEmailAndPassword(auth,email,senha); alert("Conta criada!");}
+      catch(err){alert("Erro: "+err.message);}
+    };
+
+    auth.onAuthStateChanged(user=>{
+      if(user) loginBtn.textContent="Sair ("+(user.displayName||user.email)+")";
+      else loginBtn.textContent="Login";
     });
   </script>
 </body>
