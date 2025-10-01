@@ -1,599 +1,292 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <title>Humble - Times</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8">
+  <title>Times - Humble</title>
   <style>
     :root {
       --cor-dourado: #d1a720;
       --cor-fundo: #1a1a1a;
       --cor-texto: #f5f5f5;
     }
-    *{box-sizing:border-box}
-    body{
-      margin:0;font-family:"Segoe UI",Arial,sans-serif;
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
       background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
                   url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
-      background-size:cover; color:var(--cor-texto); min-height:100vh;
+      background-size: cover;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+      color: var(--cor-texto);
     }
 
-    /* Header */
-    header{
-      position:fixed; top:0; left:0; right:0;
-      padding:15px 20px; display:flex; justify-content:space-between; align-items:center;
-      background: rgba(20,20,20,0.9); border-bottom:2px solid var(--cor-dourado); z-index:1000;
+    /* HEADER */
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      padding: 15px 20px;
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(20,20,20,0.9);
+      border-bottom: 2px solid var(--cor-dourado);
+      z-index: 1000;
     }
-    header h1{font-size:1.6rem; margin:0; display:flex; align-items:center; gap:12px; color:var(--cor-dourado);}
-    header h1 img{height:40px; cursor:pointer}
-
-    .header-right{display:flex; align-items:center; gap:10px}
-
-    .btn{
-      background:none; border:1px solid var(--cor-dourado); color:var(--cor-dourado);
-      padding:6px 10px; border-radius:6px; cursor:pointer;
+    header h1 {
+      font-size: 1.6rem;
+      margin: 0;
+      display: flex; align-items: center; gap: 12px;
+      color: var(--cor-dourado);
     }
-    .btn:hover{ background:var(--cor-dourado); color:var(--cor-fundo) }
+    header h1 img { height: 40px; }
 
-    /* Menu hamburguer (exatamente como você pediu) */
-    .menu-toggle { position: relative; display:flex; flex-direction:column; justify-content:space-between; width:30px; height:22px; cursor:pointer; }
-    .menu-toggle span { display:block; height:4px; background:var(--cor-texto); border-radius:4px; transition:0.3s; }
-    .menu-toggle.active span:nth-child(1){ transform:rotate(45deg) translate(5px,5px); }
-    .menu-toggle.active span:nth-child(2){ opacity:0; }
-    .menu-toggle.active span:nth-child(3){ transform:rotate(-45deg) translate(5px,-5px); }
-
-    nav#dropdownMenu{
-      position:absolute; top:65px; right:10px; background:rgba(30,25,20,0.95);
-      border:1px solid var(--cor-dourado); border-radius:12px; padding:15px; gap:12px; display:none;
-      flex-direction:column; z-index:1200; max-width:calc(100% - 20px);
+    .header-right { display: flex; gap: 15px; align-items: center; }
+    #loginBtn, #signupBtn {
+      background: none; border: 1px solid var(--cor-dourado);
+      color: var(--cor-dourado); padding: 5px 10px;
+      border-radius: 6px; cursor: pointer; transition: .2s;
     }
-    nav#dropdownMenu.active{ display:flex; }
-    nav#dropdownMenu a{ color:var(--cor-dourado); text-decoration:none; }
-    nav#dropdownMenu a:hover{ color:var(--cor-texto); }
-
-    /* Main */
-    main{ padding:120px 20px 60px; max-width:1100px; margin:0 auto; }
-    #criarTimeBtn{ position:fixed; top:80px; right:20px; background:var(--cor-dourado); color:var(--cor-fundo); border:none; padding:10px 16px; border-radius:8px; cursor:pointer; z-index:900; }
-    #criarTimeBtn:hover{ background:#f1c53b }
-
-    .time-card{
-      background:rgba(30,25,20,0.9); border:1px solid var(--cor-dourado); border-radius:12px; padding:15px; margin-bottom:20px;
+    #loginBtn:hover, #signupBtn:hover {
+      background: var(--cor-dourado); color: var(--cor-fundo);
     }
 
-    /* Modal */
-    .modal{ display:none; position:fixed; inset:0; background:rgba(0,0,0,0.7); justify-content:center; align-items:center; z-index:2000; padding:20px; }
-    .modal.open{ display:flex; }
-    .modal-content{ width:100%; max-width:820px; background:rgba(30,25,20,0.95); border:2px solid var(--cor-dourado); border-radius:12px; padding:18px; color:var(--cor-texto); max-height:90vh; overflow:auto; }
-
-    /* auth */
-    .row{ display:flex; gap:8px; align-items:center; margin-bottom:10px; }
-    .col{ flex:1; }
-    input[type="text"], input[type="email"], input[type="password"], select{ width:100%; padding:8px; border-radius:6px; background:#111; color:var(--cor-texto); border:1px solid #333; }
-
-    /* pokemon builder */
-    #pokemonList { display:flex; flex-direction:column; gap:10px; margin-bottom:12px; }
-    .poke-card { background: rgba(20,20,20,0.9); border:1px solid var(--cor-dourado); padding:12px; border-radius:10px; }
-    .poke-card h4{ margin:0 0 8px 0; color:var(--cor-dourado) }
-    .stat{ display:flex; gap:8px; align-items:center; margin-bottom:6px; }
-    .stat label{ width:50px; }
-    .stat input[type="range"]{ flex:1 }
-    .stat .val{ width:36px; text-align:right; color:var(--cor-dourado); font-weight:700 }
-
-    .progress{ height:8px; background:#333; border-radius:6px; overflow:hidden; margin-top:8px }
-    .progress-bar{ height:100%; background:var(--cor-dourado); width:0%; transition:0.2s }
-
-    .small{ font-size:0.9rem; color:#ccc }
-
-    .danger{ color:#ff8b8b }
-
-    @media (max-width:700px){
-      .row{ flex-direction:column; }
+    /* MENU HAMBURGUER */
+    .menu-toggle {
+      display: flex; flex-direction: column; justify-content: space-between;
+      width: 30px; height: 22px; cursor: pointer;
     }
+    .menu-toggle span {
+      display: block; height: 4px;
+      background: var(--cor-texto);
+      border-radius: 4px; transition: 0.3s;
+    }
+    .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .menu-toggle.active span:nth-child(2) { opacity: 0; }
+    .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    nav {
+      position: absolute; top: 65px; right: 10px;
+      background: rgba(30,25,20,0.95);
+      border: 1px solid var(--cor-dourado);
+      border-radius: 12px; padding: 15px; gap: 12px;
+      display: none; flex-direction: column;
+    }
+    nav.active { display: flex; }
+    nav a { color: var(--cor-dourado); text-decoration: none; }
+    nav a:hover { color: var(--cor-texto); }
+
+    /* BOTÃO CRIAR TIME */
+    #criarTimeBtn {
+      display: block; margin: 120px auto 20px auto;
+      background: var(--cor-dourado); color: var(--cor-fundo);
+      font-weight: bold; border: none;
+      padding: 10px 16px; border-radius: 8px;
+      cursor: pointer; box-shadow: 0 2px 6px rgba(0,0,0,.5);
+    }
+    #criarTimeBtn:hover { background: #f1c53b; }
+
+    main { padding: 20px; }
+
+    .time-card {
+      background: rgba(30,25,20,0.9);
+      border: 1px solid var(--cor-dourado);
+      border-radius: 12px; padding: 15px; margin-bottom: 20px;
+    }
+
+    /* MODAL */
+    .modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      justify-content: center; align-items: center;
+      z-index: 2000;
+    }
+    .modal-content {
+      background: rgba(30,25,20,0.95);
+      border: 2px solid var(--cor-dourado);
+      border-radius: 12px;
+      padding: 20px;
+      max-width: 750px; width: 95%;
+      max-height: 90vh; overflow-y: auto;
+    }
+
+    .pokemon-card {
+      border: 1px solid var(--cor-dourado);
+      border-radius: 10px;
+      padding: 12px; margin-bottom: 15px;
+      background: rgba(20,20,20,0.9);
+    }
+    .pokemon-card h3 { color: var(--cor-dourado); margin: 0 0 10px; }
+
+    .stat { margin: 6px 0; }
+    .stat label { display: inline-block; width: 50px; }
+    .stat input[type=range] { width: 200px; }
+    .iv-value, .ev-value { margin-left: 8px; color: var(--cor-dourado); font-weight: bold; }
+    .progress { background: #333; height: 8px; border-radius: 6px; overflow: hidden; margin: 8px 0; }
+    .progress-bar { background: var(--cor-dourado); height: 100%; width: 0%; transition: .3s; }
+    .ev-warning { color: red; font-size: 0.9rem; }
   </style>
 </head>
 <body>
-
   <header>
     <h1>
       <a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a>
       Humble
     </h1>
-
     <div class="header-right">
-      <button class="btn" id="loginBtn">Login</button>
-      <button class="btn" id="signupBtn">Cadastrar</button>
-
-      <div class="menu-toggle" id="menuBtn">
-        <span></span><span></span><span></span>
-      </div>
-
-      <nav id="dropdownMenu">
-        <a href="index.html">🏠 Início</a>
-        <a href="https://www.humblepixelmon.com.br" target="_blank">🌐 Site Oficial</a>
-        <a href="Tiers_1.12.html">🗡️ Tiers 1.12</a>
-        <a href="Tiers_1.16.html">🛡️ Tiers 1.16</a>
-        <a href="notas.html">📝 Notas de Atualização</a>
-      </nav>
+      <button id="loginBtn">Login</button>
+      <button id="signupBtn">Cadastrar</button>
+      <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
     </div>
+    <nav id="dropdownMenu">
+      <a href="index.html">🏠 Início</a>
+      <a href="https://www.humblepixelmon.com.br">🌐 Site Oficial</a>
+      <a href="Tiers_1.12.html">🗡️ Tiers 1.12</a>
+      <a href="Tiers_1.16.html">🛡️ Tiers 1.16</a>
+      <a href="notas.html">📝 Notas de Atualização</a>
+    </nav>
   </header>
 
   <button id="criarTimeBtn">+ Criar Time</button>
+  <main id="timesContainer"></main>
 
-  <main id="timesContainer">
-    <!-- Lista de times -->
-  </main>
-
-  <!-- AUTH Modal (login/signup + nick) -->
-  <div id="authModal" class="modal" aria-hidden="true">
+  <!-- Modal Criar Time -->
+  <div class="modal" id="timeModal">
     <div class="modal-content">
-      <h2>Entrar / Cadastrar</h2>
-      <div style="display:flex;gap:8px;margin-bottom:12px">
-        <button class="btn" id="tabEntrar">Entrar</button>
-        <button class="btn" id="tabCadastrar">Cadastrar</button>
-      </div>
-
-      <div id="entrarView">
-        <div class="row">
-          <input id="loginEmail" type="email" placeholder="Email" class="col">
-          <input id="loginSenha" type="password" placeholder="Senha" class="col">
-          <button class="btn" id="loginEmailBtn">Entrar</button>
-        </div>
-        <div style="margin:8px 0">
-          <div class="small">ou</div>
-          <button class="btn" id="loginGoogleBtn">Entrar com Google</button>
-        </div>
-      </div>
-
-      <div id="cadastrarView" style="display:none">
-        <div class="row">
-          <input id="signupEmail" type="email" placeholder="Email" class="col">
-          <input id="signupSenha" type="password" placeholder="Senha" class="col">
-        </div>
-        <div style="margin-bottom:8px">
-          <label class="small">Nick no jogo (único)</label>
-          <input id="signupNick" type="text" maxlength="20" placeholder="SeuNickAqui">
-          <div class="small" style="color:#ffb86b;margin-top:6px">⚠️ O nick não poderá ser alterado depois. Apenas um usuário por nick.</div>
-        </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn" id="signupEmailBtn">Criar conta</button>
-          <button class="btn" id="signupGoogleBtn">Criar com Google</button>
-        </div>
-      </div>
-
-      <!-- choose nick after Google -->
-      <div id="chooseNickView" style="display:none;margin-top:12px">
-        <h3>Escolha um Nick</h3>
-        <input id="chooseNickInput" type="text" maxlength="20" placeholder="Escolha um nick único">
-        <div class="small" style="color:#ffb86b;margin-top:6px">⚠️ Não será possível alterar depois.</div>
-        <div style="margin-top:8px">
-          <button class="btn" id="chooseNickBtn">Confirmar Nick</button>
-          <div id="chooseNickMsg" class="small danger" style="margin-top:8px"></div>
-        </div>
-      </div>
+      <h2>Criar Novo Time</h2>
+      <div id="pokemonSlots"></div>
+      <button id="addPokemonBtn">+ Adicionar Pokémon</button>
+      <button id="salvarTimeBtn">Salvar Time</button>
     </div>
   </div>
 
-  <!-- TIME modal -->
-  <div id="timeModal" class="modal" aria-hidden="true">
-    <div class="modal-content">
-      <h2>Criar Time</h2>
-      <div class="small" style="margin-bottom:10px">Adicione pokémons um por vez. Você pode adicionar até 6 pokémons.</div>
-
-      <!-- Contêiner onde serão adicionados cards individuais -->
-      <div id="pokemonList"></div>
-
-      <div style="display:flex; gap:8px; align-items:center; margin-top:10px">
-        <button id="addPokemonBtn" class="btn">➕ Adicionar Pokémon</button>
-        <div class="small" style="margin-left:8px">(<span id="pokemonCount">0</span>/6)</div>
-      </div>
-
-      <div style="display:flex; gap:8px; margin-top:14px">
-        <button class="btn" id="cancelTimeBtn">Cancelar</button>
-        <button id="submitTimeBtn" class="btn" style="background:var(--cor-dourado); color:var(--cor-fundo)">Salvar Time</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- FIREBASE + LOGIC -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import {
-      getAuth, GoogleAuthProvider, signInWithPopup, signOut,
-      createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import {
-      getDatabase, ref, set, push, onValue, get, child, runTransaction
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signOut,
+             createUserWithEmailAndPassword, signInWithEmailAndPassword } 
+             from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getDatabase, ref, push, set, get, child } 
+             from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
 
-    // ====== FIREBASE CONFIG - substitua pelas suas credenciais ======
     const firebaseConfig = {
-      apiKey: "FIREBASE_API_KEY",
-      authDomain: "FIREBASE_AUTH_DOMAIN",
-      databaseURL: "FIREBASE_DATABASE_URL",
-      projectId: "FIREBASE_PROJECT_ID",
-      storageBucket: "FIREBASE_STORAGE_BUCKET",
-      messagingSenderId: "FIREBASE_MESSAGING_SENDER_ID",
-      appId: "FIREBASE_APP_ID"
+      apiKey: "SUA_API_KEY",
+      authDomain: "sampleteans.firebaseapp.com",
+      databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
+      projectId: "sampleteans",
+      storageBucket: "sampleteans.firebasestorage.app",
+      messagingSenderId: "1069510029261",
+      appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
     };
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
     const provider = new GoogleAuthProvider();
 
-    // UI refs
-    const menuBtn = document.getElementById("menuBtn");
-    const dropdownMenu = document.getElementById("dropdownMenu");
-    const loginBtn = document.getElementById("loginBtn");
-    const signupBtn = document.getElementById("signupBtn");
-    const authModal = document.getElementById("authModal");
-    const entrarView = document.getElementById("entrarView");
-    const cadastrarView = document.getElementById("cadastrarView");
-    const chooseNickView = document.getElementById("chooseNickView");
-
-    const tabEntrar = document.getElementById("tabEntrar");
-    const tabCadastrar = document.getElementById("tabCadastrar");
-
-    // auth inputs
-    const loginEmail = document.getElementById("loginEmail");
-    const loginSenha = document.getElementById("loginSenha");
-    const loginEmailBtn = document.getElementById("loginEmailBtn");
-    const loginGoogleBtn = document.getElementById("loginGoogleBtn");
-
-    const signupEmail = document.getElementById("signupEmail");
-    const signupSenha = document.getElementById("signupSenha");
-    const signupNick = document.getElementById("signupNick");
-    const signupEmailBtn = document.getElementById("signupEmailBtn");
-    const signupGoogleBtn = document.getElementById("signupGoogleBtn");
-
-    const chooseNickInput = document.getElementById("chooseNickInput");
-    const chooseNickBtn = document.getElementById("chooseNickBtn");
-    const chooseNickMsg = document.getElementById("chooseNickMsg");
-
-    // time UI
     const criarTimeBtn = document.getElementById("criarTimeBtn");
     const timeModal = document.getElementById("timeModal");
-    const pokemonList = document.getElementById("pokemonList");
+    const salvarTimeBtn = document.getElementById("salvarTimeBtn");
     const addPokemonBtn = document.getElementById("addPokemonBtn");
-    const pokemonCountSpan = document.getElementById("pokemonCount");
-    const cancelTimeBtn = document.getElementById("cancelTimeBtn");
-    const submitTimeBtn = document.getElementById("submitTimeBtn");
+    const pokemonSlots = document.getElementById("pokemonSlots");
 
-    const timesContainer = document.getElementById("timesContainer");
+    const stats = ["HP","Atk","Def","SpA","SpD","Spe"];
+    let pokemonCount = 0;
 
-    // hamburger behavior (exacto)
-    menuBtn.addEventListener("click", () => {
-      menuBtn.classList.toggle("active");
-      dropdownMenu.classList.toggle("active");
-    });
-    document.addEventListener("click", (e) => {
-      if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-        menuBtn.classList.remove("active");
-        dropdownMenu.classList.remove("active");
-      }
-    });
-
-    // auth tabs
-    tabEntrar.addEventListener("click", ()=> {
-      entrarView.style.display = "block";
-      cadastrarView.style.display = "none";
-      chooseNickView.style.display = "none";
-    });
-    tabCadastrar.addEventListener("click", ()=> {
-      entrarView.style.display = "none";
-      cadastrarView.style.display = "block";
-      chooseNickView.style.display = "none";
-    });
-
-    function openAuth(tab="entrar"){
-      authModal.classList.add("open");
-      if(tab==="entrar") tabEntrar.click(); else tabCadastrar.click();
-    }
-    function closeAuth(){ authModal.classList.remove("open"); chooseNickView.style.display="none"; }
-
-    // atomic nick claim
-    async function claimNickAtomic(nick, uid){
-      const nickRef = ref(db, `nicks/${nick}`);
-      try {
-        const res = await runTransaction(nickRef, current => {
-          if (current === null) return uid;
-          return; // abort
-        });
-        return res.committed === true;
-      } catch (err) { console.error(err); return false; }
-    }
-
-    // SIGNUP with email
-    signupEmailBtn.addEventListener("click", async ()=>{
-      const email = signupEmail.value.trim();
-      const senha = signupSenha.value;
-      const nick = (signupNick.value || "").trim();
-      if(!email || !senha || !nick) return alert("Preencha email, senha e nick.");
-      if(!/^[A-Za-z0-9_]{3,20}$/.test(nick)) return alert("Nick inválido (3-20, alfanum/_).");
-      try {
-        const cred = await createUserWithEmailAndPassword(auth, email, senha);
-        const uid = cred.user.uid;
-        const ok = await claimNickAtomic(nick, uid);
-        if(!ok) {
-          await signOut(auth);
-          return alert("Nick já em uso. Escolha outro nick.");
-        }
-        await set(ref(db, `users/${uid}`), { uid, email, provider: "email", nick });
-        alert("Conta criada com sucesso!");
-        closeAuth();
-      } catch (err) { console.error(err); alert(err.message || "Erro ao criar conta."); }
-    });
-
-    // LOGIN with email
-    loginEmailBtn.addEventListener("click", async ()=>{
-      const email = loginEmail.value.trim();
-      const senha = loginSenha.value;
-      if(!email || !senha) return alert("Preencha email e senha.");
-      try {
-        await signInWithEmailAndPassword(auth, email, senha);
-        closeAuth();
-      } catch (err) { console.error(err); alert(err.message || "Erro ao entrar."); }
-    });
-
-    // LOGIN / SIGNUP with Google
-    let pendingGoogle = null;
-    async function handleGoogleFlow(){
-      try {
-        const result = await signInWithPopup(auth, provider);
-        const user = result.user;
-        const uid = user.uid;
-        // check if user already has profile
-        const userSnap = await get(child(ref(db), `users/${uid}`));
-        if (userSnap.exists()){
-          closeAuth();
-          return;
-        }
-        // need to pick nick
-        pendingGoogle = { uid, email: user.email, displayName: user.displayName, photoURL: user.photoURL };
-        // show choose nick UI
-        entrarView.style.display = "none";
-        cadastrarView.style.display = "none";
-        chooseNickView.style.display = "block";
-        chooseNickInput.value = "";
-        chooseNickMsg.textContent = "";
-      } catch (err) {
-        console.error(err); alert(err.message || "Erro no login com Google.");
-      }
-    }
-    signupGoogleBtn.addEventListener("click", ()=> handleGoogleFlow());
-    loginGoogleBtn.addEventListener("click", ()=> handleGoogleFlow());
-
-    chooseNickBtn.addEventListener("click", async ()=>{
-      const nick = (chooseNickInput.value || "").trim();
-      if (!nick) return chooseNickMsg.textContent = "Digite um nick.";
-      if (!/^[A-Za-z0-9_]{3,20}$/.test(nick)) return chooseNickMsg.textContent = "Nick inválido.";
-      if (!pendingGoogle) return chooseNickMsg.textContent = "Erro, tente novamente.";
-      const ok = await claimNickAtomic(nick, pendingGoogle.uid);
-      if (!ok) return chooseNickMsg.textContent = "Nick já em uso.";
-      await set(ref(db, `users/${pendingGoogle.uid}`), {
-        uid: pendingGoogle.uid,
-        email: pendingGoogle.email,
-        provider: "google",
-        nick,
-        displayName: pendingGoogle.displayName || null,
-        photoURL: pendingGoogle.photoURL || null
-      });
-      pendingGoogle = null;
-      alert("Nick registrado com sucesso!");
-      closeAuth();
-    });
-
-    // login/logout button
-    loginBtn.addEventListener("click", ()=>{
-      if (auth.currentUser) signOut(auth);
-      else openAuth("entrar");
-    });
-    signupBtn.addEventListener("click", ()=> openAuth("cadastrar"));
-
-    // reflect auth status + show nick if available
-    onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        // try to fetch nick
-        try {
-          const uSnap = await get(child(ref(db), `users/${user.uid}`));
-          const display = (uSnap.exists() && uSnap.val().nick) ? uSnap.val().nick : (user.displayName || user.email);
-          loginBtn.textContent = `Sair (${display})`;
-        } catch {
-          loginBtn.textContent = `Sair (${user.email || "Usuário"})`;
-        }
-        authModal.classList.remove("open");
-      } else {
-        loginBtn.textContent = "Login";
-      }
-    });
-
-    // ---------------- TEAM BUILDER: one-by-one cards ----------------
-    const STATS = ["HP","Atk","Def","SpA","SpD","Spe"];
-
-    function updatePokemonCount(){
-      const count = pokemonList.children.length;
-      pokemonCountSpan.textContent = String(count);
-      addPokemonBtn.disabled = count >= 6;
-    }
-
-    function createPokemonCard(){
-      const card = document.createElement("div");
-      card.className = "poke-card poke-card-wrapper";
-      card.innerHTML = `
-        <div class="poke-card">
-          <div style="display:flex; justify-content:space-between; align-items:center">
-            <h4>Pokémon</h4>
-            <button class="btn remove-poke">Remover</button>
-          </div>
-
-          <div class="row"><div style="width:110px">Tier:</div>
-            <select class="tier"><option>OU</option><option>UU</option><option>NU</option><option>Uber</option></select>
-          </div>
-
-          <div class="row"><div style="width:110px">Nome:</div><input class="pokemonName" type="text" placeholder="Charizard"></div>
-
-          <div class="row"><div style="width:110px">Nature:</div>
-            <select class="nature"><option>Adamant</option><option>Modest</option><option>Jolly</option><option>Timid</option><option>Bold</option></select>
-          </div>
-
-          <div class="row"><div style="width:110px">Ability:</div><input class="ability" type="text" placeholder="Ability"></div>
-
-          <div style="margin-top:8px"><div style="width:110px; display:inline-block">Moves:</div>
-            <div style="display:inline-block; width:calc(100% - 120px)"><input class="move" type="text" placeholder="Move 1"><br><input class="move" type="text" placeholder="Move 2"><br><input class="move" type="text" placeholder="Move 3"><br><input class="move" type="text" placeholder="Move 4"></div>
-          </div>
-
-          <div style="margin-top:8px"><strong>IVs</strong></div>
-          ${STATS.map(s=>`<div class="stat"><label>${s}</label><input type="range" min="0" max="31" value="31" class="iv"><div class="val iv-val">31</div></div>`).join("")}
-
-          <div style="margin-top:8px"><strong>EVs</strong></div>
-          ${STATS.map(s=>`<div class="stat"><label>${s}</label><input type="range" min="0" max="252" step="4" value="0" class="ev"><div class="val ev-val">0</div></div>`).join("")}
-
-          <div class="progress"><div class="progress-bar"></div></div>
-          <div class="ev-warning small"></div>
-        </div>
+    // FUNÇÃO CRIAR CARD DE POKEMON
+    function createPokemonCard(i){
+      const div=document.createElement("div");
+      div.className="pokemon-card";
+      div.innerHTML=`
+        <h3>Pokémon ${i}</h3>
+        <label>Tier:</label>
+        <select class="tier"><option>OU</option><option>UU</option><option>NU</option><option>Uber</option></select><br><br>
+        <label>Nome:</label><input type="text" class="pokemonName"><br><br>
+        <label>Nature:</label><select class="nature"><option>Adamant</option><option>Modest</option><option>Jolly</option></select><br><br>
+        <label>Ability:</label><input type="text" class="ability"><br><br>
+        <label>Moves:</label><br>
+        <input type="text" class="move" placeholder="Move 1"><br>
+        <input type="text" class="move" placeholder="Move 2"><br>
+        <input type="text" class="move" placeholder="Move 3"><br>
+        <input type="text" class="move" placeholder="Move 4"><br><br>
+        <strong>IVs</strong><br>
+        ${stats.map(stat=>`
+          <div class="stat"><label>${stat}</label>
+            <input type="range" min="0" max="31" value="31" class="iv">
+            <span class="iv-value">31</span>
+          </div>`).join("")}
+        <br><strong>EVs</strong><br>
+        ${stats.map(stat=>`
+          <div class="stat"><label>${stat}</label>
+            <input type="range" min="0" max="252" step="4" value="0" class="ev">
+            <span class="ev-value">0</span>
+          </div>`).join("")}
+        <div class="progress"><div class="progress-bar"></div></div>
+        <div class="ev-warning"></div>
       `;
-      // remove handler
-      card.querySelector(".remove-poke").addEventListener("click", ()=>{
-        card.remove();
-        updatePokemonCount();
-      });
-      // attach input handlers for IV/EV changes
-      card.querySelectorAll(".iv").forEach((el, idx) => {
-        el.addEventListener("input", (e)=>{
-          const v = e.target.value;
-          card.querySelectorAll(".iv-val")[idx].textContent = v;
-        });
-      });
-      card.querySelectorAll(".ev").forEach((el, idx) => {
-        el.addEventListener("input", (e)=>{
-          // fix value to multiple of 4 just in case (but step=4 should ensure it)
-          let wanted = parseInt(e.target.value,10);
-          wanted = Math.round(wanted / 4) * 4;
-          if (wanted < 0) wanted = 0;
-          if (wanted > 252) wanted = 252;
-          // compute sum of other evs
-          const evEls = Array.from(card.querySelectorAll(".ev"));
-          const others = evEls.reduce((acc, el2, i2) => i2===idx ? acc : acc + parseInt(el2.value||0), 0);
-          const remaining = 508 - others;
-          let final = wanted;
-          if (final > remaining) {
-            // cap to remaining to keep total <=508
-            // round down to nearest multiple of 4
-            final = Math.floor(remaining / 4) * 4;
-            if (final < 0) final = 0;
-          }
-          // enforce max two stats at 252
-          const count252 = evEls.filter((el2, i2)=> i2!==idx && parseInt(el2.value||0)===252).length;
-          if (final === 252 && count252 >= 2) {
-            // cannot set to 252; reduce to 248 or remaining whichever smaller
-            final = Math.min(final - 4, Math.floor(remaining / 4) * 4);
-            if (final < 0) final = 0;
-          }
-          e.target.value = final;
-          card.querySelectorAll(".ev-val")[idx].textContent = String(final);
-          // update progress and warnings
-          validateAndUpdateCardEVs(card);
-        });
-      });
-      return card;
+      pokemonSlots.appendChild(div);
     }
 
-    function validateAndUpdateCardEVs(card){
-      const evEls = Array.from(card.querySelectorAll(".ev"));
-      const evs = evEls.map(el=>parseInt(el.value||0));
-      const total = evs.reduce((a,b)=>a+b,0);
-      const count252 = evs.filter(v=>v===252).length;
-      const warnDiv = card.querySelector(".ev-warning");
-      const bar = card.querySelector(".progress-bar");
-      bar.style.width = `${Math.min(100, (total/508)*100)}%`;
-      if (total > 508) warnDiv.textContent = `⚠ Máx total 508 EVs (atual ${total})`;
-      else if (count252 > 2) warnDiv.textContent = `⚠ Máx 2 stats com 252 EVs`;
-      else warnDiv.textContent = "";
-    }
-
-    addPokemonBtn.addEventListener("click", ()=>{
-      if (pokemonList.children.length >= 6) return;
-      const card = createPokemonCard();
-      pokemonList.appendChild(card);
-      updatePokemonCount();
-    });
-
-    // initialize with 0 pokemon (user adds one by one)
-    updatePokemonCount();
-
-    // open/close time modal
-    criarTimeBtn.addEventListener("click", ()=>{
-      if (!auth.currentUser) { openAuth("entrar"); return; }
-      timeModal.classList.add("open");
-    });
-    cancelTimeBtn.addEventListener("click", ()=> timeModal.classList.remove("open"));
-    window.addEventListener("click", (e)=> {
-      if (e.target.classList && e.target.classList.contains("modal")) e.target.classList.remove("open");
-    });
-
-    // submit time
-    submitTimeBtn.addEventListener("click", async ()=>{
-      if (!auth.currentUser) return alert("Você precisa estar logado para salvar um time.");
-      const ownerUid = auth.currentUser.uid;
-      const ownerEmail = auth.currentUser.email;
-      const pokes = [];
-      const cards = Array.from(document.querySelectorAll(".poke-card"));
-      for (const c of cards){
-        const name = (c.querySelector(".pokemonName")?.value || "").trim();
-        if(!name) continue; // skip empty slots
-        const tier = c.querySelector(".tier").value;
-        const nature = c.querySelector(".nature").value;
-        const ability = (c.querySelector(".ability")?.value || "").trim();
-        const moves = Array.from(c.querySelectorAll(".move")).map(m=>m.value.trim()).filter(Boolean);
-        const ivEls = Array.from(c.querySelectorAll(".iv"));
-        const evEls = Array.from(c.querySelectorAll(".ev"));
-        const ivs = Object.fromEntries(ivEls.map((el,i)=>[STATS[i], el.value]));
-        const evs = Object.fromEntries(evEls.map((el,i)=>[STATS[i], el.value]));
-        // validate EV totals
-        const evVals = Object.values(evs).map(v=>parseInt(v||0));
-        const total = evVals.reduce((a,b)=>a+b,0);
-        const over252 = evVals.filter(v=>v===252).length;
-        if (total > 508) return alert(`Pokémon ${name} tem mais de 508 EVs (corrija antes).`);
-        if (over252 > 2) return alert(`Pokémon ${name} tem mais de 2 stats com 252 EVs.`);
-        pokes.push({ tier, name, nature, ability, moves, ivs, evs });
+    addPokemonBtn.onclick=()=>{
+      if(pokemonCount<6){
+        pokemonCount++;
+        createPokemonCard(pokemonCount);
+      } else {
+        alert("Máximo de 6 Pokémon por time.");
       }
-      if (pokes.length === 0) return alert("Adicione pelo menos 1 Pokémon antes de salvar.");
-      try {
-        await push(ref(db, "teams"), { ownerUid, ownerEmail, pokemons: pokes, createdAt: Date.now() });
-        alert("Time salvo com sucesso!");
-        timeModal.classList.remove("open");
-        // clear list
-        pokemonList.innerHTML = "";
-        updatePokemonCount();
-      } catch (err) {
-        console.error(err);
-        alert("Erro ao salvar time.");
+    };
+
+    pokemonSlots.addEventListener("input", e=>{
+      if(e.target.classList.contains("iv")){
+        e.target.nextElementSibling.textContent=e.target.value;
+      }
+      if(e.target.classList.contains("ev")){
+        e.target.nextElementSibling.textContent=e.target.value;
+        validateEVs(e.target.closest(".pokemon-card"));
       }
     });
 
-    // LIST teams
-    onValue(ref(db, "teams"), snap => {
-      timesContainer.innerHTML = "";
-      snap.forEach(childSnap => {
-        const time = childSnap.val();
-        const div = document.createElement("div");
-        div.className = "time-card";
-        // try to display owner's nick if available
-        get(child(ref(db), `users/${time.ownerUid}`)).then(usnap=>{
-          const owner = (usnap.exists() && usnap.val().nick) ? usnap.val().nick : (time.ownerEmail||"Usuário");
-          div.innerHTML = `<h3>Time de ${owner}</h3><pre style="white-space:pre-wrap;word-break:break-word">${JSON.stringify(time.pokemons, null, 2)}</pre>`;
-        }).catch(()=>{
-          div.innerHTML = `<h3>Time</h3><pre style="white-space:pre-wrap;word-break:break-word">${JSON.stringify(time.pokemons, null, 2)}</pre>`;
-        });
-        timesContainer.appendChild(div);
+    function validateEVs(card){
+      let evs=[...card.querySelectorAll(".ev")].map(ev=>parseInt(ev.value));
+      let total=evs.reduce((a,b)=>a+b,0);
+      let over252=evs.filter(v=>v===252).length;
+      let warning=card.querySelector(".ev-warning");
+      let bar=card.querySelector(".progress-bar");
+      bar.style.width=(total/508*100)+"%";
+      if(total>508) warning.textContent="⚠️ Máximo total 508 EVs.";
+      else if(over252>2) warning.textContent="⚠️ Máximo 2 stats com 252 EVs.";
+      else warning.textContent="";
+    }
+
+    criarTimeBtn.onclick=()=>{timeModal.style.display="flex";}
+    timeModal.onclick=(e)=>{if(e.target===timeModal) timeModal.style.display="none";};
+
+    salvarTimeBtn.onclick=()=>{
+      if(!auth.currentUser) return alert("Precisa estar logado!");
+      let team=[];
+      pokemonSlots.querySelectorAll(".pokemon-card").forEach(card=>{
+        let pokemon={
+          tier:card.querySelector(".tier").value,
+          name:card.querySelector(".pokemonName").value,
+          nature:card.querySelector(".nature").value,
+          ability:card.querySelector(".ability").value,
+          moves:[...card.querySelectorAll(".move")].map(m=>m.value).filter(Boolean),
+          ivs:Object.fromEntries(stats.map((s,i)=>[s,card.querySelectorAll(".iv")[i].value])),
+          evs:Object.fromEntries(stats.map((s,i)=>[s,card.querySelectorAll(".ev")[i].value]))
+        };
+        if(pokemon.name) team.push(pokemon);
       });
-    });
+      push(ref(db,"teams"),{
+        ownerName:auth.currentUser.displayName||auth.currentUser.email,
+        ownerUid:auth.currentUser.uid,
+        pokemons:team
+      });
+      timeModal.style.display="none";
+      alert("Time salvo!");
+    };
 
-    // close modals on ESC
-    document.addEventListener("keydown", e => { if (e.key === "Escape") document.querySelectorAll(".modal.open").forEach(m => m.classList.remove("open")); });
-
-    // helper: openAuth reused from above
-    function openAuth(tab="entrar"){ authModal.classList.add("open"); if(tab==="entrar") tabEntrar.click(); else tabCadastrar.click(); }
-    function closeAuth(){ authModal.classList.remove("open"); chooseNickView.style.display="none"; }
+    /* MENU HAMBURGUER */
+    const menuBtn=document.getElementById("menuBtn");
+    const dropdownMenu=document.getElementById("dropdownMenu");
+    menuBtn.addEventListener("click",()=>{menuBtn.classList.toggle("active");dropdownMenu.classList.toggle("active");});
+    document.addEventListener("click",(e)=>{if(!dropdownMenu.contains(e.target)&&!menuBtn.contains(e.target)){menuBtn.classList.remove("active");dropdownMenu.classList.remove("active");}});
   </script>
 </body>
 </html>
