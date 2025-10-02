@@ -2,106 +2,169 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Meus Times</title>
+  <title>Humble Teams</title>
   <style>
-    :root {
-      --panel: rgba(20,20,28,0.85);
-      --gold: #d4af37;
-      --muted: #aaa;
+    :root{
+      --bg-dark:#0a0a0f;
+      --panel:rgba(20,20,28,0.85);
+      --gold:#d4af37;
+      --muted:#aaa;
     }
-    body {
-      margin: 0;
+    body{
+      margin:0;
       font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
       background: linear-gradient(135deg, rgba(5,6,10,0.92), rgba(12,10,18,0.88)),
         url("https://i.imgur.com/vATNRmF.png") center/cover fixed no-repeat;
-      color: #f3f3f3;
-      padding: 32px;
-      min-height: 100vh;
+      color:#f3f3f3;
+      padding:32px;
+      display:flex;
+      justify-content:center;
+      min-height:100vh;
+      box-sizing:border-box;
     }
-    h1 {
-      color: var(--gold);
-      margin-top: 0;
+    .wrap{
+      width:100%;
+      max-width:1200px;
     }
-    .team-card {
-      background: var(--panel);
-      border: 1px solid var(--gold);
-      border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    .card{
+      background:var(--panel);
+      border:1px solid var(--gold);
+      border-radius:12px;
+      padding:20px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.4);
+      margin-bottom:20px;
     }
-    .meta {
-      font-size: 0.9rem;
-      color: var(--muted);
-      margin-bottom: 8px;
+    /* header */
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:24px;
     }
-    button {
-      background: var(--gold);
-      color: #000;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      border-radius: 6px;
-      padding: 6px 10px;
-      margin-right: 8px;
+    .header-left{
+      display:flex;
+      align-items:center;
+      gap:12px;
     }
-    button:hover { filter: brightness(1.1); }
-    .like-btn {
-      background: transparent;
-      color: var(--gold);
-      border: 1px solid var(--gold);
-      padding: 6px 12px;
+    .mascote{width:56px; height:56px;}
+    .title-box h1{
+      margin:0;
+      color:var(--gold);
+      font-size:1.8rem;
+      line-height:1.2;
     }
-    .poke {
-      font-size: 0.95rem;
-      margin: 2px 0;
+    .title-box h2{
+      margin:0;
+      color:#fff;
+      font-size:1rem;
+      font-weight:400;
+      line-height:1.2;
+    }
+    #userBox{color:var(--muted); margin-right:10px;}
+    /* teams */
+    .team-card h2{margin:0 0 8px 0;color:var(--gold);}
+    .meta{font-size:0.9rem;color:var(--muted);margin-bottom:8px;}
+    .poke{font-size:0.95rem;margin:2px 0;}
+    button{
+      background:var(--gold);
+      color:#000;
+      font-weight:bold;
+      cursor:pointer;
+      border:none;
+      border-radius:6px;
+      padding:6px 10px;
+      margin-right:8px;
+    }
+    button:hover{filter:brightness(1.1);}
+    .like-btn{
+      background:transparent;
+      color:var(--gold);
+      border:1px solid var(--gold);
+      padding:6px 12px;
     }
   </style>
 </head>
 <body>
-  <h1>Meus Times</h1>
-  <div id="teamsContainer">Carregando times...</div>
+  <div class="wrap">
+    <div class="header">
+      <div class="header-left">
+        <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote" class="mascote">
+        <div class="title-box">
+          <h1>Humble</h1>
+          <h2>Teams</h2>
+        </div>
+      </div>
+      <div class="header-right">
+        <span id="userBox"></span>
+        <button id="loginBtn">Entrar</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Times da Comunidade</h2>
+      <div id="teamsContainer">Carregando times...</div>
+    </div>
+  </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
   import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
-  authDomain: "sampleteans.firebaseapp.com",
-  databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
-  projectId: "sampleteans",
-  storageBucket: "sampleteans.firebasestorage.app",
-  messagingSenderId: "1069510029261",
-  appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
-};
+  const firebaseConfig = {
+    apiKey: "SUA_APIKEY",
+    authDomain: "SEU_PROJECT.firebaseapp.com",
+    databaseURL: "https://SEU_PROJECT.firebaseio.com",
+    projectId: "SEU_PROJECT",
+    storageBucket: "SEU_PROJECT.appspot.com",
+    messagingSenderId: "0000000000",
+    appId: "1:0000000000:web:xxxxxxxx"
+  };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getDatabase(app);
+  const provider = new GoogleAuthProvider();
 
-  const teamsContainer = document.getElementById('teamsContainer');
+  const loginBtn = document.getElementById("loginBtn");
+  const userBox = document.getElementById("userBox");
   let currentUser = null;
 
-  onAuthStateChanged(auth, user => {
+  onAuthStateChanged(auth, user=>{
     currentUser = user;
+    if(user){
+      userBox.textContent = user.displayName || user.email;
+      loginBtn.textContent = "Sair";
+    } else {
+      userBox.textContent = "";
+      loginBtn.textContent = "Entrar";
+    }
   });
+
+  loginBtn.onclick = ()=>{
+    if(auth.currentUser){
+      signOut(auth);
+    } else {
+      signInWithPopup(auth, provider).catch(err=>alert("Erro: "+err.message));
+    }
+  };
 
   function teamToShowdown(team) {
     let txt = "";
     (team.pokemon || []).forEach(p => {
-      txt += (p.name || "???") + (p.item ? " @ " + p.item : "") + "\\n";
-      if (p.ability) txt += "Ability: " + p.ability + "\\n";
-      if (p.nature) txt += p.nature + " Nature\\n";
-      if (p.evs) txt += "EVs: " + p.evs + "\\n";
-      (p.moves || []).forEach(m => txt += "- " + m + "\\n");
-      txt += "\\n";
+      txt += (p.name || "???") + (p.item ? " @ " + p.item : "") + "\n";
+      if (p.ability) txt += "Ability: " + p.ability + "\n";
+      if (p.nature) txt += p.nature + " Nature\n";
+      if (p.tera) txt += "Tera Type: " + p.tera + "\n";
+      if (p.evs) txt += "EVs: " + p.evs + "\n";
+      (p.moves || []).forEach(m => txt += "- " + m + "\n");
+      txt += "\n";
     });
     return txt;
   }
 
   function renderTeams(teams) {
+    const teamsContainer = document.getElementById('teamsContainer');
     teamsContainer.innerHTML = "";
     if (teams.length === 0) {
       teamsContainer.innerHTML = "<p>Nenhum time encontrado.</p>";
@@ -112,7 +175,6 @@ const firebaseConfig = {
       card.className = "team-card";
 
       const title = document.createElement("h2");
-      title.style.margin = "0 0 8px 0";
       title.textContent = team.name || "Sem nome";
 
       const meta = document.createElement("div");
@@ -124,12 +186,11 @@ const firebaseConfig = {
         const line = document.createElement("div");
         line.className = "poke";
         line.textContent = p.name || "???";
+        if (p.tera) line.textContent += ` (Tera: ${p.tera})`;
         list.appendChild(line);
       });
 
-      // Botões
       const btns = document.createElement("div");
-
       const copyBtn = document.createElement("button");
       copyBtn.textContent = "Copiar Showdown";
       copyBtn.onclick = () => {
