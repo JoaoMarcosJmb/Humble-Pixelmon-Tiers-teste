@@ -128,6 +128,8 @@
       line-height:1.2;
     }
     #userBox{color:var(--muted); margin-right:10px;}
+    .bottom-actions { display:flex; gap:10px; align-items:center; justify-content:flex-start; flex-wrap:wrap; margin-top:16px;}
+    .bottom-actions .spacer { flex:1; }
   </style>
 </head>
 <body>
@@ -178,11 +180,15 @@
               <option>National Dex AG</option>
             </select>
           </div>
+
           <div id="pokemonList"></div>
-          <button type="button" id="addPokemon" class="btn btn-add">+ Adicionar Pokémon</button>
-          <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+
+          <button type="button" id="addPokemon" class="btn btn-add" disabled>+ Adicionar Pokémon</button>
+
+          <div class="bottom-actions">
             <button type="button" id="importBtn" class="btn btn-secondary">Importar</button>
             <button type="button" id="exportBtn" class="btn btn-secondary">Exportar</button>
+            <div class="spacer"></div>
             <button type="submit" class="btn btn-primary">Salvar Time</button>
           </div>
         </form>
@@ -209,6 +215,9 @@
       </div>
     </aside>
   </div>
+
+  <!-- datalist para autocomplete de Pokémon -->
+  <datalist id="pokemonListData"></datalist>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
@@ -245,98 +254,263 @@
 
   loginBtn.onclick = ()=>{
     if(auth.currentUser){
-      signOut(auth);
+      signOut(auth).catch(err=>console.error(err));
     } else {
       signInWithPopup(auth, provider).catch(err=>alert("Erro: "+err.message));
     }
   };
 
-  // carregar lista de pokémons para selects
-  let pokemonData = [];
+  // ---------- dados dos pokemons ----------
+  let pokemonNames = []; // array de strings
+  const addPokemonBtn = document.getElementById('addPokemon');
+  const pokemonList = document.getElementById('pokemonList');
+  let pokeCount = 0;
+
+  // carrega pokemon.json e popula datalist
   fetch("pokemon.json")
     .then(res => res.json())
-    .then(data => pokemonData = data);
+    .then(data => {
+      // suporta dois formatos: ["bulbasaur", ...] ou [{name:"Bulbasaur"}, ...]
+      if (!Array.isArray(data)) data = [];
+      pokemonNames = data.map(item => {
+        if (typeof item === "string") return item;
+        if (item && typeof item === "object" && item.name) return item.name;
+        return String(item);
+      }).filter(Boolean);
+      pokemonNames.sort((a,b)=>a.localeCompare(b, undefined, {sensitivity:'base'}));
+      const datalist = document.getElementById('pokemonListData');
+      pokemonNames.forEach(name=>{
+        const opt = document.createElement('option');
+        opt.value = name;
+        datalist.appendChild(opt);
+      });
+      addPokemonBtn.disabled = false; // habilita só quando carregou
+    })
+    .catch(err=>{
+      console.error("Erro ao carregar pokemon.json:", err);
+      alert("Erro ao carregar pokemon.json. Veja console.");
+    });
 
-  const pokemonList = document.getElementById('pokemonList');
-  const addPokemonBtn = document.getElementById('addPokemon');
-  let pokeCount=0;
+  // util: busca nome exato (case-insensitive) no pokemonNames
+  function findExactPokemon(name){
+    if(!name) return null;
+    const lower = name.trim().toLowerCase();
+    return pokemonNames.find(n => n.toLowerCase() === lower) || null;
+  }
 
-  addPokemonBtn.onclick=()=>{
-    if(pokeCount>=6){alert("Máximo de 6 Pokémon.");return;}
+  // util: escapa texto para innerHTML (simples)
+  function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+  // atualiza imagem usando PokéAPI (oficial-artwork ou front_default)
+  async function fetchPokemonSprite(name){
+    try{
+      const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(name.toLowerCase())}`);
+      if(!res.ok) throw new Error("not found");
+      const j = await res.json();
+      return j.sprites?.other?.['official-artwork']?.front_default || j.sprites?.front_default || "";
+    }catch(e){
+      console.warn("PokeAPI fetch failed for", name, e);
+      return "";
+    }
+  }
+
+  // cria um slot de pokemon (p: objeto opcional com fields)
+  async function addPokemonSlot(p = null){
+    if (pokeCount >= 6) { alert("Máximo de 6 Pokémon."); return; }
     pokeCount++;
+    const slot = document.createElement('div');
+    slot.className = "poke-slot";
 
-    const div=document.createElement('div');
-    div.className="poke-slot";
-    div.innerHTML=`
-      <img class="poke-img" alt="">
+    slot.innerHTML = `
+      <img class="poke-img" src="" alt="">
       <div class="fields">
         <h4>Pokémon ${pokeCount}</h4>
         <label>Nome 
-          <select class="pname">
-            <option value="">-- Selecione --</option>
-            ${pokemonData.map(p=>`<option>${p}</option>`).join("")}
-          </select>
+          <input class="pname" list="pokemonListData" placeholder="Comece a digitar...">
         </label><br><br>
         <label>Item <input class="pitem"></label><br><br>
         <label>Ability <input class="pability"></label><br><br>
         <label>Nature 
           <select class="pnature">
             <option value="">-- Selecione --</option>
-            <option>Adamant</option><option>Bold</option><option>Brave</option>
-            <option>Calm</option><option>Careful</option><option>Gentle</option>
-            <option>Jolly</option><option>Modest</option><option>Timid</option>
+            <option>Adamant</option><option>Bashful</option><option>Bold</option><option>Brave</option>
+            <option>Calm</option><option>Careful</option><option>Docile</option><option>Gentle</option>
+            <option>Hardy</option><option>Hasty</option><option>Impish</option><option>Jolly</option>
+            <option>Lax</option><option>Lonely</option><option>Mild</option><option>Modest</option>
+            <option>Naive</option><option>Naughty</option><option>Quiet</option><option>Quirky</option>
+            <option>Rash</option><option>Relaxed</option><option>Sassy</option><option>Serious</option><option>Timid</option>
           </select>
         </label><br><br>
+        <label>Tera <input class="ptera" placeholder="Opcional"></label><br><br>
+        <label>EVs <input class="pevs" placeholder="hp/atk/def/spa/spd/spe"></label><br><br>
+        <label>IVs <input class="pivs" placeholder="hp/atk/def/spa/spd/spe"></label><br><br>
         <label>Moves <textarea class="pmoves" placeholder="1 por linha"></textarea></label>
-      </div>`;
+      </div>
+    `;
 
-    const select = div.querySelector(".pname");
-    const img = div.querySelector(".poke-img");
-    select.addEventListener("change", async e=>{
-      const nome = e.target.value;
-      if(!nome){img.src="";return;}
-      try {
-        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${nome.toLowerCase()}`);
-        const poke = await res.json();
-        img.src = poke.sprites.front_default;
-      } catch {
-        img.src="";
+    // anexar ao DOM antes de preencher valores para evitar reflows inesperados
+    pokemonList.appendChild(slot);
+
+    const inputName = slot.querySelector('.pname');
+    const img = slot.querySelector('.poke-img');
+
+    // se p foi passado (do import), preencher campos
+    if (p){
+      inputName.value = p.name || "";
+      slot.querySelector('.pitem').value = p.item || "";
+      slot.querySelector('.pability').value = p.ability || "";
+      slot.querySelector('.pnature').value = p.nature || "";
+      slot.querySelector('.ptera').value = p.tera || "";
+      slot.querySelector('.pevs').value = p.evs || "";
+      slot.querySelector('.pivs').value = p.ivs || "";
+      slot.querySelector('.pmoves').value = (p.moves && p.moves.join("\n")) || "";
+      // tentar preencher imagem se nome válido
+      const matched = findExactPokemon(p.name);
+      if (matched){
+        fetchPokemonSprite(matched).then(src=>{
+          if(src) img.src = src;
+        });
       }
+    }
+
+    // quando o usuário digitar/selecionar nome, só buscar imagem se houver correspondência exata
+    let lastNameChecked = "";
+    inputName.addEventListener('input', async (e)=>{
+      const val = e.target.value.trim();
+      if (!val) { img.src=""; lastNameChecked=""; return; }
+      // só consulta se diferente do último verificado
+      if (val.toLowerCase() === lastNameChecked.toLowerCase()) return;
+      const matched = findExactPokemon(val);
+      lastNameChecked = val;
+      if (!matched) { img.src=""; return; }
+      const sprite = await fetchPokemonSprite(matched);
+      if (sprite) img.src = sprite;
     });
 
-    pokemonList.appendChild(div);
-  };
+    return slot;
+  }
 
+  addPokemonBtn.addEventListener('click', ()=> addPokemonSlot());
+
+  // ---------- EXPORT / IMPORT ----------
   function collectTeamData(){
-    const team={};
-    team.name=document.getElementById('teamName').value.trim();
-    team.tier=document.getElementById('teamTier').value;
-    team.pokemon=[];
+    const team = {};
+    team.name = document.getElementById('teamName').value.trim();
+    team.tier = document.getElementById('teamTier').value;
+    team.pokemon = [];
     pokemonList.querySelectorAll('.poke-slot').forEach(slot=>{
-      const p={};
-      p.name=slot.querySelector('.pname').value;
-      p.item=slot.querySelector('.pitem').value;
-      p.ability=slot.querySelector('.pability').value;
-      p.nature=slot.querySelector('.pnature').value;
-      p.moves=slot.querySelector('.pmoves').value.split("\n").filter(x=>x);
+      const name = slot.querySelector('.pname').value.trim();
+      if(!name) return; // ignora slots vazios
+      // só permitir nomes que existam no pokemon.json
+      const matched = findExactPokemon(name);
+      if(!matched) return;
+      const p = {
+        name: matched,
+        item: slot.querySelector('.pitem').value.trim(),
+        ability: slot.querySelector('.pability').value.trim(),
+        nature: slot.querySelector('.pnature').value,
+        tera: slot.querySelector('.ptera').value.trim() || null,
+        evs: slot.querySelector('.pevs').value.trim(),
+        ivs: slot.querySelector('.pivs').value.trim(),
+        moves: slot.querySelector('.pmoves').value.split("\n").map(s=>s.trim()).filter(Boolean)
+      };
       team.pokemon.push(p);
     });
-    team.createdAt=Date.now();
+    team.createdAt = Date.now();
     return team;
   }
 
+  function exportTeamToShowdown(team){
+    // cria um texto no estilo Showdown simples
+    return team.pokemon.map(p=>{
+      let out = `${p.name}${p.item?` @ ${p.item}`:""}\n`;
+      if(p.ability) out += `Ability: ${p.ability}\n`;
+      if(p.nature) out += `${p.nature} Nature\n`;
+      if(p.evs) out += `EVs: ${p.evs}\n`;
+      if(p.ivs) out += `IVs: ${p.ivs}\n`;
+      if(p.tera) out += `Tera Type: ${p.tera}\n`;
+      p.moves.forEach(m=> out += `- ${m}\n`);
+      return out.trim();
+    }).join("\n\n");
+  }
+
+  document.getElementById('exportBtn').addEventListener('click', ()=>{
+    const team = collectTeamData();
+    if(!team.pokemon.length){ alert("Escolha pelo menos 1 Pokémon para exportar."); return; }
+    const txt = exportTeamToShowdown(team);
+    const blob = new Blob([txt], {type:"text/plain;charset=utf-8"});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `${team.name || "team"}.txt`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+  });
+
+  document.getElementById('importBtn').addEventListener('click', ()=>{
+    const txt = prompt("Cole aqui o time em formato Showdown:");
+    if(!txt) return;
+    // limpar slots atuais
+    pokemonList.innerHTML = "";
+    pokeCount = 0;
+
+    const blocks = txt.split(/\n\s*\n/).map(b=>b.trim()).filter(Boolean);
+    const invalidNames = [];
+    blocks.forEach(block=>{
+      const lines = block.split("\n").map(l=>l.trim()).filter(Boolean);
+      if(!lines.length) return;
+      const first = lines[0];
+      // primeira linha pode ser "Name @ Item" ou só "Name"
+      let name = "";
+      let item = "";
+      if(first.includes("@")){
+        const parts = first.split("@");
+        name = parts[0].trim();
+        item = parts[1].trim();
+      } else {
+        name = first.trim();
+      }
+      // só aceitar se estiver no pokemon.json
+      const matched = findExactPokemon(name);
+      if(!matched){
+        invalidNames.push(name);
+        return;
+      }
+      const p = { name: matched, item: item, moves: [] };
+      lines.slice(1).forEach(l=>{
+        if(l.startsWith("Ability:")) p.ability = l.replace("Ability:","").trim();
+        else if(l.endsWith("Nature")) p.nature = l.replace("Nature","").trim();
+        else if(l.startsWith("EVs:")) p.evs = l.replace("EVs:","").trim();
+        else if(l.startsWith("IVs:")) p.ivs = l.replace("IVs:","").trim();
+        else if(l.startsWith("Tera Type:")) p.tera = l.replace("Tera Type:","").trim();
+        else if(l.startsWith("-")) p.moves.push(l.replace(/^-/, "").trim());
+      });
+      addPokemonSlot(p);
+    });
+
+    if(invalidNames.length){
+      alert("Os seguintes nomes NÃO foram encontrados no pokemon.json e foram ignorados:\n" + invalidNames.join(", "));
+    }
+  });
+
+  // ---------- SUBMIT / SALVAR TIME ----------
   document.getElementById('teamForm').addEventListener('submit', async e=>{
     e.preventDefault();
-    const user=auth.currentUser;
-    if(!user){alert("É preciso estar logado."); return;}
-    const team=collectTeamData();
-    team.owner=user.uid;
-    team.ownerName=user.displayName||user.email;
-    const teamRef=push(ref(db,'teams'));
-    await set(teamRef,team);
+    const user = auth.currentUser;
+    if(!user){ alert("É preciso estar logado."); return; }
+    const team = collectTeamData();
+    if(!team.pokemon.length){ alert("Selecione pelo menos 1 Pokémon antes de salvar."); return; }
+    team.owner = user.uid;
+    team.ownerName = user.displayName || user.email || null;
+    const teamRef = push(ref(db, 'teams'));
+    await set(teamRef, team);
     alert("Time salvo com sucesso!");
-    window.location.href="simple_teams.html";
+    // optional: redirecionar
+    // window.location.href = "simple_teams.html";
   });
+
+  // função para debug / teste: se quiser criar slots vazios iniciais, descomente
+  // addPokemonSlot(); addPokemonSlot();
+
 </script>
 </body>
 </html>
