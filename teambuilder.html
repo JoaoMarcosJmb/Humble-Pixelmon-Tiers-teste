@@ -86,22 +86,53 @@
     }
     .hint{color:var(--muted); font-size:0.9rem}
     .tier-badge{background:var(--gold); color:#000; padding:2px 6px; border-radius:6px; font-size:0.85em}
+    
+    /* header */
     .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:24px;
+    }
+    .header-left{
       display:flex;
       align-items:center;
       gap:12px;
-      margin-bottom:24px;
     }
-    .mascote{width:48px; height:48px;}
+    .mascote{width:56px; height:56px;}
+    .title-box h1{
+      margin:0;
+      color:var(--gold);
+      font-size:1.8rem;
+      line-height:1.2;
+    }
+    .title-box h2{
+      margin:0;
+      color:#fff;
+      font-size:1rem;
+      font-weight:400;
+      line-height:1.2;
+    }
+    #userBox{color:var(--muted); margin-right:10px;}
   </style>
 </head>
 <body>
   <div class="wrap">
     <main>
       <div class="header">
-        <img src="https://play.pokemonshowdown.com/sprites/gen5/charizard.png" alt="Mascote" class="mascote">
-        <h1>Humble Team Builder</h1>
+        <div class="header-left">
+          <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote" class="mascote">
+          <div class="title-box">
+            <h1>Humble</h1>
+            <h2>Team Builder</h2>
+          </div>
+        </div>
+        <div class="header-right">
+          <span id="userBox"></span>
+          <button id="loginBtn" class="btn btn-secondary">Entrar</button>
+        </div>
       </div>
+      
       <div class="card">
         <h2>Criar Time</h2>
         <form id="teamForm">
@@ -131,6 +162,7 @@
         </form>
       </div>
     </main>
+    
     <aside class="right-col">
       <div class="card">
         <h3>Como usar o Team Builder</h3>
@@ -152,20 +184,12 @@
           <li>Máx. <strong>6 Pokémon</strong> no time</li>
         </ul>
       </div>
-      <div style="height:14px"></div>
-      <div class="card">
-        <h3>Autenticação</h3>
-        <p class="hint" style="line-height:1.5;">
-          Para <strong>salvar seus times</strong> você precisa estar logado.<br>
-          Entre com <strong>Google</strong> ou crie conta com <strong>e-mail</strong>.
-        </p>
-      </div>
     </aside>
   </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-  import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
   import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
   const firebaseConfig = {
@@ -181,7 +205,30 @@
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getDatabase(app);
+  const provider = new GoogleAuthProvider();
 
+  const loginBtn = document.getElementById("loginBtn");
+  const userBox = document.getElementById("userBox");
+
+  onAuthStateChanged(auth, user=>{
+    if(user){
+      userBox.textContent = "Olá, " + (user.displayName || user.email);
+      loginBtn.textContent = "Sair";
+    } else {
+      userBox.textContent = "";
+      loginBtn.textContent = "Entrar";
+    }
+  });
+
+  loginBtn.onclick = ()=>{
+    if(auth.currentUser){
+      signOut(auth);
+    } else {
+      signInWithPopup(auth, provider).catch(err=>alert("Erro: "+err.message));
+    }
+  };
+
+  // resto do builder igual antes (addPokemon, collectTeamData, salvar time etc)
   const pokemonList = document.getElementById('pokemonList');
   const addPokemonBtn = document.getElementById('addPokemon');
   let pokeCount=0;
@@ -217,7 +264,7 @@
       p.tera=slot.querySelector('.ptera').value;
       p.evs=slot.querySelector('.pevs').value;
       p.ivs=slot.querySelector('.pivs').value;
-      p.moves=slot.querySelector('.pmoves').value.split("\\n").filter(x=>x);
+      p.moves=slot.querySelector('.pmoves').value.split("\n").filter(x=>x);
       team.pokemon.push(p);
     });
     team.createdAt=Date.now();
@@ -236,58 +283,6 @@
     alert("Time salvo com sucesso!");
     window.location.href="simple_teams.html";
   });
-
-  document.getElementById('exportBtn').onclick=()=>{
-    const team=collectTeamData();
-    let txt="";
-    team.pokemon.forEach(p=>{
-      txt+=p.name+" @ "+p.item+"\\n";
-      if(p.ability) txt+="Ability: "+p.ability+"\\n";
-      if(p.nature) txt+=p.nature+" Nature\\n";
-      if(p.evs) txt+="EVs: "+p.evs+"\\n";
-      (p.moves||[]).forEach(m=>txt+="- "+m+"\\n");
-      txt+="\\n";
-    });
-    const w=window.open();
-    w.document.write("<pre>"+txt+"</pre>");
-  };
-
-  document.getElementById('copyBtn').onclick=()=>{
-    const team=collectTeamData();
-    let txt="";
-    team.pokemon.forEach(p=>{
-      txt+=p.name+" @ "+p.item+"\\n";
-      if(p.ability) txt+="Ability: "+p.ability+"\\n";
-      if(p.nature) txt+=p.nature+" Nature\\n";
-      if(p.evs) txt+="EVs: "+p.evs+"\\n";
-      (p.moves||[]).forEach(m=>txt+="- "+m+"\\n");
-      txt+="\\n";
-    });
-    navigator.clipboard.writeText(txt);
-    alert("Copiado!");
-  };
-
-  document.getElementById('importBtn').onclick=()=>{
-    const txt=prompt("Cole o texto do Showdown aqui:");
-    if(!txt) return;
-    pokemonList.innerHTML=""; pokeCount=0;
-    const blocks=txt.split(/\\n\\n+/);
-    blocks.forEach(b=>{
-      if(!b.trim()) return;
-      addPokemonBtn.onclick();
-      const slot=pokemonList.lastChild;
-      const lines=b.split(/\\n/);
-      let first=lines[0].split(" @ ");
-      slot.querySelector('.pname').value=first[0].trim();
-      if(first[1]) slot.querySelector('.pitem').value=first[1].trim();
-      lines.slice(1).forEach(l=>{
-        if(l.startsWith("Ability:")) slot.querySelector('.pability').value=l.replace("Ability:","").trim();
-        else if(l.endsWith("Nature")) slot.querySelector('.pnature').value=l.replace("Nature","").trim();
-        else if(l.startsWith("EVs:")) slot.querySelector('.pevs').value=l.replace("EVs:","").trim();
-        else if(l.startsWith("-")) slot.querySelector('.pmoves').value+=(l.replace("-","").trim()+"\\n");
-      });
-    });
-  };
 </script>
 </body>
 </html>
