@@ -661,6 +661,7 @@ function parseShowdownTeam(text){
     if (!team.pokemon.length){ alert("Selecione pelo menos 1 Pokémon antes de salvar."); return; }
     team.owner = user.uid;
     team.ownerName = user.displayName || user.email || null;
+    team.createdAt = Date.now(); // 🔥 adicionada aqui para compatibilidade com as rules
     const teamRef = push(ref(db, 'teams'));
     try {
       await set(teamRef, team);
