@@ -144,11 +144,24 @@
             <label>Tier</label>
             <select id="teamTier" required>
               <option value="">-- Selecione --</option>
-              <option>OU</option>
-              <option>UU</option>
-              <option>RU</option>
+              <option>LC</option>
+              <option>Monotype</option>
               <option>NU</option>
+              <option>National Dex</option>
+              <option>National Dex Monotype</option>
+              <option>National Dex UU</option>
+              <option>OU</option>
               <option>PU</option>
+              <option>RU</option>
+              <option>Ubers</option>
+              <option>UU</option>
+              <option>ZU</option>
+              <option>National Dex RU</option>
+              <option>Monomon</option>
+              <option>Starter League</option>
+              <option>Only Smeargle</option>
+              <option>National Dex Ubers</option>
+              <option>National Dex AG</option>
             </select>
           </div>
           <div id="pokemonList"></div>
@@ -187,20 +200,23 @@
     </aside>
   </div>
 
+  <!-- datalist para autocomplete de Pokémon -->
+  <datalist id="pokemonListData"></datalist>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
   import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
-  authDomain: "sampleteans.firebaseapp.com",
-  databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
-  projectId: "sampleteans",
-  storageBucket: "sampleteans.firebasestorage.app",
-  messagingSenderId: "1069510029261",
-  appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
-};
+  const firebaseConfig = {
+    apiKey: "SUA_APIKEY",
+    authDomain: "SEU_PROJECT.firebaseapp.com",
+    databaseURL: "https://SEU_PROJECT.firebaseio.com",
+    projectId: "SEU_PROJECT",
+    storageBucket: "SEU_PROJECT.appspot.com",
+    messagingSenderId: "0000000000",
+    appId: "1:0000000000:web:xxxxxxxx"
+  };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -212,7 +228,7 @@ const firebaseConfig = {
 
   onAuthStateChanged(auth, user=>{
     if(user){
-      userBox.textContent = "Olá, " + (user.displayName || user.email);
+      userBox.textContent = user.displayName || user.email;
       loginBtn.textContent = "Sair";
     } else {
       userBox.textContent = "";
@@ -228,7 +244,18 @@ const firebaseConfig = {
     }
   };
 
-  // resto do builder igual antes (addPokemon, collectTeamData, salvar time etc)
+  // carregar lista de pokémons para autocomplete
+  fetch("pokemon.json")
+    .then(res => res.json())
+    .then(data => {
+      const list = document.getElementById("pokemonListData");
+      data.forEach(p => {
+        const opt = document.createElement("option");
+        opt.value = p.name;
+        list.appendChild(opt);
+      });
+    });
+
   const pokemonList = document.getElementById('pokemonList');
   const addPokemonBtn = document.getElementById('addPokemon');
   let pokeCount=0;
@@ -239,11 +266,21 @@ const firebaseConfig = {
     const div=document.createElement('div');
     div.className="poke-slot";
     div.innerHTML=`<h4>Pokémon ${pokeCount}</h4>
-      <label>Nome <input class="pname"></label><br><br>
+      <label>Nome <input class="pname" list="pokemonListData"></label><br><br>
       <label>Item <input class="pitem"></label><br><br>
       <label>Ability <input class="pability"></label><br><br>
-      <label>Nature <input class="pnature"></label><br><br>
-      <label>Tera <input class="ptera"></label><br><br>
+      <label>Nature 
+        <select class="pnature">
+          <option value="">-- Selecione --</option>
+          <option>Adamant</option><option>Bashful</option><option>Bold</option><option>Brave</option>
+          <option>Calm</option><option>Careful</option><option>Docile</option><option>Gentle</option>
+          <option>Hardy</option><option>Hasty</option><option>Impish</option><option>Jolly</option>
+          <option>Lax</option><option>Lonely</option><option>Mild</option><option>Modest</option>
+          <option>Naive</option><option>Naughty</option><option>Quiet</option><option>Quirky</option>
+          <option>Rash</option><option>Relaxed</option><option>Sassy</option><option>Serious</option><option>Timid</option>
+        </select>
+      </label><br><br>
+      <label>Tera <input class="ptera" placeholder="Opcional"></label><br><br>
       <label>EVs <input class="pevs" placeholder="hp/atk/def/spa/spd/spe"></label><br><br>
       <label>IVs <input class="pivs" placeholder="hp/atk/def/spa/spd/spe"></label><br><br>
       <label>Moves <textarea class="pmoves" placeholder="1 por linha"></textarea></label>`;
@@ -261,7 +298,7 @@ const firebaseConfig = {
       p.item=slot.querySelector('.pitem').value;
       p.ability=slot.querySelector('.pability').value;
       p.nature=slot.querySelector('.pnature').value;
-      p.tera=slot.querySelector('.ptera').value;
+      p.tera=slot.querySelector('.ptera').value || null; // opcional
       p.evs=slot.querySelector('.pevs').value;
       p.ivs=slot.querySelector('.pivs').value;
       p.moves=slot.querySelector('.pmoves').value.split("\n").filter(x=>x);
