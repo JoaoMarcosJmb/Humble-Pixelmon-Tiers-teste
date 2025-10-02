@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Team Builder</title>
+  <title>Humble Team Builder</title>
   <style>
     :root{
       --bg-dark:#0a0a0f;
@@ -36,8 +36,8 @@
       padding:20px;
       box-shadow:0 4px 20px rgba(0,0,0,0.4);
     }
-    h2,h3{margin-top:0;color:var(--gold)}
-    input,select,textarea,button{
+    h1,h2,h3{margin-top:0;color:var(--gold)}
+    input,select,textarea{
       font:inherit;
       padding:6px 8px;
       border-radius:6px;
@@ -47,24 +47,61 @@
       width:100%;
       box-sizing:border-box;
     }
-    button{
-      background:var(--gold);
-      color:#000;
-      font-weight:bold;
+    textarea{resize:vertical;}
+    .btn{
+      padding:8px 14px;
+      border-radius:8px;
       cursor:pointer;
-      border:none;
+      font-weight:bold;
       transition:0.2s;
     }
-    button:hover{filter:brightness(1.1)}
-    .poke-slot{margin-bottom:16px; padding:10px; border:1px dashed var(--muted); border-radius:8px}
-    .poke-slot h4{margin:0 0 6px 0; color:var(--gold)}
+    .btn-primary{
+      background:var(--gold);
+      color:#000;
+      border:none;
+    }
+    .btn-secondary{
+      background:transparent;
+      color:var(--gold);
+      border:1px solid var(--gold);
+    }
+    .btn-add{
+      background:#222;
+      border:1px dashed var(--gold);
+      color:var(--gold);
+      width:100%;
+    }
+    .btn:hover{filter:brightness(1.1);}
+    .poke-slot{
+      margin-bottom:16px;
+      padding:14px;
+      border:1px solid var(--gold);
+      border-radius:12px;
+      background:rgba(0,0,0,0.3);
+    }
+    .poke-slot h4{
+      margin:0 0 8px 0;
+      font-size:1.1rem;
+      color:var(--gold);
+    }
     .hint{color:var(--muted); font-size:0.9rem}
     .tier-badge{background:var(--gold); color:#000; padding:2px 6px; border-radius:6px; font-size:0.85em}
+    .header{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      margin-bottom:24px;
+    }
+    .mascote{width:48px; height:48px;}
   </style>
 </head>
 <body>
   <div class="wrap">
     <main>
+      <div class="header">
+        <img src="https://play.pokemonshowdown.com/sprites/gen5/charizard.png" alt="Mascote" class="mascote">
+        <h1>Humble Team Builder</h1>
+      </div>
       <div class="card">
         <h2>Criar Time</h2>
         <form id="teamForm">
@@ -84,12 +121,12 @@
             </select>
           </div>
           <div id="pokemonList"></div>
-          <button type="button" id="addPokemon">+ Adicionar Pokémon</button>
+          <button type="button" id="addPokemon" class="btn btn-add">+ Adicionar Pokémon</button>
           <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
-            <button type="button" id="importBtn">Importar Showdown</button>
-            <button type="button" id="exportBtn">Exportar Showdown</button>
-            <button type="button" id="copyBtn">Copiar</button>
-            <button type="submit">Salvar Time</button>
+            <button type="button" id="importBtn" class="btn btn-secondary">Importar</button>
+            <button type="button" id="exportBtn" class="btn btn-secondary">Exportar</button>
+            <button type="button" id="copyBtn" class="btn btn-secondary">Copiar</button>
+            <button type="submit" class="btn btn-primary">Salvar Time</button>
           </div>
         </form>
       </div>
@@ -98,10 +135,10 @@
       <div class="card">
         <h3>Como usar o Team Builder</h3>
         <ol class="hint" style="padding-left:18px; line-height:1.5;">
-          <li><strong>Nomeie seu time</strong> e escolha uma <span class="tier-badge">Tier</span> obrigatória.</li>
-          <li><strong>Adicione Pokémon</strong> (até 6) preenchendo Nome, Item, Ability, Nature, EVs/IVs e Moves.</li>
-          <li>Use <strong>Importar Showdown</strong> para colar times ou <strong>Exportar Showdown</strong> para levar pro Showdown.</li>
-          <li><strong>Salve</strong> seu time no Firebase (apenas estando logado).</li>
+          <li><strong>Nomeie seu time</strong> e escolha uma <span class="tier-badge">Tier</span>.</li>
+          <li><strong>Adicione Pokémon</strong> (até 6) com Nome, Item, Ability, Nature, EVs/IVs e Moves.</li>
+          <li>Use <strong>Importar</strong> ou <strong>Exportar</strong> em formato Showdown.</li>
+          <li><strong>Salve</strong> seu time no Firebase (precisa estar logado).</li>
         </ol>
       </div>
       <div style="height:14px"></div>
@@ -120,7 +157,7 @@
         <h3>Autenticação</h3>
         <p class="hint" style="line-height:1.5;">
           Para <strong>salvar seus times</strong> você precisa estar logado.<br>
-          Você pode entrar com sua conta <strong>Google</strong> ou criar uma conta com <strong>e-mail</strong>.
+          Entre com <strong>Google</strong> ou crie conta com <strong>e-mail</strong>.
         </p>
       </div>
     </aside>
@@ -132,13 +169,13 @@
   import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
   const firebaseConfig = {
-    apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
-    authDomain: "sampleteans.firebaseapp.com",
-    databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
-    projectId: "sampleteans",
-    storageBucket: "sampleteans.firebasestorage.app",
-    messagingSenderId: "1069510029261",
-    appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
+    apiKey: "SUA_APIKEY",
+    authDomain: "SEU_PROJECT.firebaseapp.com",
+    databaseURL: "https://SEU_PROJECT.firebaseio.com",
+    projectId: "SEU_PROJECT",
+    storageBucket: "SEU_PROJECT.appspot.com",
+    messagingSenderId: "0000000000",
+    appId: "1:0000000000:web:xxxxxxxx"
   };
 
   const app = initializeApp(firebaseConfig);
@@ -155,13 +192,13 @@
     const div=document.createElement('div');
     div.className="poke-slot";
     div.innerHTML=`<h4>Pokémon ${pokeCount}</h4>
-      <label>Nome <input class="pname"></label><br>
-      <label>Item <input class="pitem"></label><br>
-      <label>Ability <input class="pability"></label><br>
-      <label>Nature <input class="pnature"></label><br>
-      <label>Tera <input class="ptera"></label><br>
-      <label>EVs <input class="pevs" placeholder="hp/atk/def/spa/spd/spe"></label><br>
-      <label>IVs <input class="pivs" placeholder="hp/atk/def/spa/spd/spe"></label><br>
+      <label>Nome <input class="pname"></label><br><br>
+      <label>Item <input class="pitem"></label><br><br>
+      <label>Ability <input class="pability"></label><br><br>
+      <label>Nature <input class="pnature"></label><br><br>
+      <label>Tera <input class="ptera"></label><br><br>
+      <label>EVs <input class="pevs" placeholder="hp/atk/def/spa/spd/spe"></label><br><br>
+      <label>IVs <input class="pivs" placeholder="hp/atk/def/spa/spd/spe"></label><br><br>
       <label>Moves <textarea class="pmoves" placeholder="1 por linha"></textarea></label>`;
     pokemonList.appendChild(div);
   };
@@ -200,7 +237,6 @@
     window.location.href="simple_teams.html";
   });
 
-  // Import/Export simples
   document.getElementById('exportBtn').onclick=()=>{
     const team=collectTeamData();
     let txt="";
