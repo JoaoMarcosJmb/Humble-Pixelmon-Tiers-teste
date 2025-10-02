@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Humble Team Builder - Editado</title>
+  <title>Humble Team Builder - Import Only</title>
   <style>
     :root{
       --bg-dark:#0a0a0f;
@@ -102,6 +102,8 @@
     .controls-row{display:flex;gap:8px;align-items:center;}
     .controls-row > *{flex:1;}
     .meta-note{font-size:0.9rem;color:var(--muted);margin-top:8px}
+    .showdown-area textarea{font-family:monospace;min-height:160px}
+    .small-note{font-size:0.85rem;color:var(--muted);margin-top:6px}
     /* responsive */
     @media (max-width:980px){
       .wrap{grid-template-columns:1fr;}
@@ -115,7 +117,7 @@
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
           <div>
             <h1>Humble Team Builder</h1>
-            <div class="meta-note">Editor com EVs/IVs individuais, import/export Showdown e remoção de slots</div>
+            <div class="meta-note">Importe times pelo Showdown — edite EVs/IVs individualmente e salve com login.</div>
           </div>
           <div style="text-align:right">
             <span id="userBox" style="display:block;color:var(--muted);margin-bottom:6px"></span>
@@ -124,6 +126,20 @@
         </div>
 
         <form id="teamForm">
+
+          <!-- NEW: Showdown paste area -->
+          <div style="margin-bottom:14px;" class="showdown-area">
+            <label for="showdownInput" style="display:block;margin-bottom:6px;color:var(--gold);font-weight:bold;">
+              Importar Time (Showdown)
+            </label>
+            <textarea id="showdownInput" rows="8" placeholder="Cole aqui o time no formato do Showdown (ex: &#10;Primarina @ Choice Specs&#10;Ability: Torrent&#10;Modest Nature&#10;EVs: 252 SpA / 4 Spe&#10;- Moonblast&#10;- Hydro Pump)"></textarea>
+            <div style="display:flex;gap:10px;margin-top:8px;">
+              <button type="button" id="importBtn" class="btn btn-primary" style="flex:1">Importar Time</button>
+              <button type="button" id="clearImported" class="btn btn-secondary" style="flex:1">Limpar</button>
+            </div>
+            <div class="small-note">Dica: cole o time completo (até 6 Pokémon). O import preencherá slots automaticamente. Nomes não encontrados serão ignorados.</div>
+          </div>
+
           <div style="margin-bottom:10px;">
             <label>Nome do Time <input id="teamName" placeholder="Ex: Time de Teste"></label>
           </div>
@@ -138,13 +154,8 @@
 
           <div id="pokemonList" style="margin-bottom:10px;"></div>
 
-          <div style="margin-bottom:8px;">
-            <button type="button" id="addPokemon" class="btn btn-add" disabled>+ Adicionar Pokémon</button>
-          </div>
-
           <div class="bottom-actions">
             <div class="controls-row" style="flex:0 0 360px;">
-              <button type="button" id="importBtn" class="btn btn-secondary">Importar (Showdown)</button>
               <button type="button" id="exportBtn" class="btn btn-secondary">Exportar (Showdown)</button>
             </div>
             <div class="spacer"></div>
@@ -155,31 +166,33 @@
     </main>
 
     <aside class="card">
-      <h3>Como usar</h3>
+      <h3>Como usar (novo fluxo)</h3>
       <ol class="hint" style="padding-left:18px;line-height:1.45;">
-        <li>Carregue o <code>pokemon.json</code> (padrão na mesma pasta) — a lista aceita arrays <em>ou</em> objetos (keys ou valores com campo name).</li>
-        <li>Adicione Pokémon (máx 6). Cada slot tem EVs/IVs individuais e botão <strong>Remover</strong>.</li>
-        <li>Importe e exporte no formato Showdown com EVs/IVs corretamente mapeados.</li>
+        <li>Abra o arquivo e aguarde o carregamento do <code>pokemon.json</code> (a lista aceita arrays ou objetos).</li>
+        <li>Cole **o texto do time no formato do Showdown** no campo <strong>Importar Time (Showdown)</strong>.</li>
+        <li>Clique em <strong>Importar Time</strong>. Cada Pokémon válido vira um slot com EVs/IVs individuais e moves.</li>
+        <li>Remova slots indesejados clicando em <strong>Remover</strong> no slot correspondente.</li>
+        <li>Preencha o nome do time e a tier se desejar e clique em <strong>Salvar Time</strong> (requer login Google).</li>
       </ol>
+
       <div style="height:10px;"></div>
       <div>
         <h3>Regras de validação</h3>
         <ul class="hint" style="padding-left:18px;line-height:1.45;">
-          <li>Máx. <strong>6</strong> Pokémon</li>
-          <li>Máx. <strong>4</strong> moves por Pokémon (ao salvar/exportar serão considerados apenas 4)</li>
+          <li>Máx. <strong>6</strong> Pokémon por time.</li>
+          <li>Máx. <strong>4</strong> moves por Pokémon (ao exportar serão considerados apenas 4).</li>
+          <li>EVs/IVs são preenchidos a partir do import quando presentes; valores ausentes ficam em 0 (EV) / 31 (IV).</li>
         </ul>
       </div>
     </aside>
   </div>
-
-  <datalist id="pokemonListData"></datalist>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
   import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-  //config firebase 
+  // firebase config (mantive seu exemplo, troque se for preciso)
   const firebaseConfig = {
     apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
     authDomain: "sampleteans.firebaseapp.com",
@@ -216,8 +229,7 @@
   };
 
   // helpers 
-  let pokemonNames = []; // array of strings
-  const addPokemonBtn = document.getElementById('addPokemon');
+  let pokemonNames = []; // array de strings
   const pokemonList = document.getElementById('pokemonList');
   let pokeCount = 0;
 
@@ -226,8 +238,7 @@
     return String(n).trim();
   }
 
-  // parse pokemon.json flexibly: accept array of strings, array of objects with name,
-  // or object where keys are names or values contain .name
+  // parse pokemon.json flexível
   fetch("pokemon.json")
     .then(res => {
       if(!res.ok) throw new Error("HTTP " + res.status);
@@ -238,17 +249,14 @@
       if (Array.isArray(raw)) {
         arr = raw;
       } else if (raw && typeof raw === "object") {
-        // if values look like {name: "Bulbasaur"} use them, otherwise use keys
         const vals = Object.values(raw);
         const allHaveName = vals.length && vals.every(v => v && typeof v === "object" && ("name" in v || "species" in v));
         if (allHaveName) {
           arr = vals.map(v => v.name || v.species || "");
         } else {
-          // fallback to keys (common when json is {"bulbasaur": {...}, ...})
           arr = Object.keys(raw);
         }
       }
-      // map to strings
       pokemonNames = arr.map(item => {
         if (typeof item === "string") return item;
         if (item && typeof item === "object" && item.name) return item.name;
@@ -261,7 +269,7 @@
         opt.value = name;
         datalist.appendChild(opt);
       });
-      addPokemonBtn.disabled = false;
+      // botão de adicionar manual removido: import-only flow
     })
     .catch(err=>{
       console.error("Erro ao carregar pokemon.json:", err);
@@ -312,10 +320,10 @@
 
         <div style="display:flex;gap:10px;margin-top:8px;">
           <div style="flex:1;">
-            <label>Item <input class="pitem" placeholder=\"Ex: Choice Specs\"></label>
+            <label>Item <input class="pitem" placeholder="Ex: Choice Specs"></label>
           </div>
           <div style="flex:1;">
-            <label>Ability <input class="pability" placeholder=\"Ex: Torrent\"></label>
+            <label>Ability <input class="pability" placeholder="Ex: Torrent"></label>
           </div>
         </div>
 
@@ -357,7 +365,10 @@
 
         <div style="margin-top:6px;">
           <label>Moves <small>1 por linha (máx 4)</small>
-            <textarea class="pmoves" rows="4" placeholder="Shadow Ball\nIce Beam\nHydro Pump\nMoonblast"></textarea>
+            <textarea class="pmoves" rows="4" placeholder="Shadow Ball
+Ice Beam
+Hydro Pump
+Moonblast"></textarea>
           </label>
         </div>
 
@@ -387,7 +398,6 @@
           if (el) el.value = p.evs[k];
         });
       } else if (typeof p.evs === 'string') {
-        // fallback if EVs stored as string like "252 HP / 252 SpA"
         parseAndFillEVIVFromString(slot, 'evs', p.evs);
       }
       if (p.ivs && typeof p.ivs === 'object') {
@@ -398,7 +408,7 @@
       } else if (typeof p.ivs === 'string') {
         parseAndFillEVIVFromString(slot, 'ivs', p.ivs);
       }
-      slot.querySelector('.pmoves').value = (p.moves && p.moves.join("\\n")) || "";
+      slot.querySelector('.pmoves').value = (p.moves && p.moves.join("\n")) || "";
       const matched = findExactPokemon(p.name);
       if (matched) {
         fetchPokemonSprite(matched).then(src => { if (src) img.src = src; });
@@ -428,7 +438,6 @@
   }
 
   function parseAndFillEVIVFromString(slot, which, str){
-    // which: 'evs' or 'ivs'
     if (!str || !slot) return;
     const mapping = {
       'hp': 'hp', 'HP': 'hp',
@@ -440,7 +449,6 @@
     };
     const parts = str.split('/').map(s=>s.trim()).filter(Boolean);
     parts.forEach(seg=>{
-      // example seg: "252 HP" or "4 SpD"
       const m = seg.match(/^(\d+)\s+([A-Za-z]+)$/);
       if(!m) return;
       const val = m[1];
@@ -452,8 +460,6 @@
       if (el) el.value = val;
     });
   }
-
-  addPokemonBtn.addEventListener('click', ()=> addPokemonSlot());
 
   // ---------- collect and export ----------
   function collectTeamData(){
@@ -507,7 +513,6 @@
       let out = `${p.name}${p.item?` @ ${p.item}`:""}\n`;
       if (p.ability) out += `Ability: ${p.ability}\n`;
       if (p.nature) out += `${p.nature} Nature\n`;
-      // EVs: join only non-zero
       const evParts = [];
       Object.keys(p.evs||{}).forEach(k=>{
         const v = (p.evs[k]||"").toString().trim();
@@ -516,7 +521,6 @@
         }
       });
       if (evParts.length) out += `EVs: ${evParts.join(" / ")}\n`;
-      // IVs: join only values different from 31 (default)
       const ivParts = [];
       Object.keys(p.ivs||{}).forEach(k=>{
         const v = (p.ivs[k]||"").toString().trim();
@@ -547,7 +551,7 @@
     URL.revokeObjectURL(a.href);
   });
 
-  // ---------- IMPORT SHOWDOWN ----------
+  // ---------- IMPORT SHOWDOWN (from textarea) ----------
   function parseShowdownTeam(text){
     const blocks = text.split(/\n\s*\n/).map(b=>b.trim()).filter(Boolean);
     const parsed = [];
@@ -556,7 +560,6 @@
       const lines = block.split("\n").map(l=>l.trim()).filter(Boolean);
       if (!lines.length) return;
       const first = lines[0];
-      // Name may be "Primarina @ Choice Specs" or just "Primarina"
       let name = "";
       let item = "";
       if (first.includes("@")) {
@@ -576,11 +579,9 @@
         if (/^Ability:\s*/i.test(l)) {
           p.ability = l.replace(/^Ability:\s*/i,"").trim();
         } else if (/Nature$/i.test(l)) {
-          // "Modest Nature" or just "Modest"
           p.nature = l.replace(/Nature$/i,"").trim();
         } else if (/^EVs:\s*/i.test(l)) {
           const s = l.replace(/^EVs:\s*/i,"").trim();
-          // parts like "252 HP", "4 SpD"
           s.split("/").map(x=>x.trim()).filter(Boolean).forEach(seg=>{
             const m = seg.match(/^(\d+)\s+([A-Za-z]+)$/);
             if(!m) return;
@@ -616,8 +617,8 @@
   }
 
   document.getElementById('importBtn').addEventListener('click', ()=>{
-    const txt = prompt("Cole aqui o time em formato Showdown:");
-    if (!txt) return;
+    const txt = document.getElementById('showdownInput').value.trim();
+    if (!txt) { alert("Cole um time no campo acima antes de importar."); return; }
     const {parsed, invalid} = parseShowdownTeam(txt);
     // clear current slots
     pokemonList.innerHTML = "";
@@ -629,6 +630,11 @@
     if (!parsed.length && !invalid.length) {
       alert("Nenhum Pokémon foi encontrado no texto importado.");
     }
+    updateSlotNumbers();
+  });
+
+  document.getElementById('clearImported').addEventListener('click', ()=>{
+    document.getElementById('showdownInput').value = "";
   });
 
   // ---------- SUBMIT / SALVAR TIME ----------
@@ -654,9 +660,8 @@
     }
   });
 
-  // quick demo helpers (uncomment to create test slots)
-  // addPokemonSlot(); addPokemonSlot();
-
 </script>
+
+<datalist id="pokemonListData"></datalist>
 </body>
 </html>
