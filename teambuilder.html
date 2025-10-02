@@ -1,71 +1,65 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Humble Team Builder</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <style>
     :root{
       --bg-dark:#0a0a0f;
-      --panel:rgba(20,20,28,0.95);
+      --panel:rgba(20,20,28,0.85);
       --gold:#d4af37;
       --muted:#aaa;
-      --danger:#e04b4b;
-      --glass: rgba(255,255,255,0.03);
     }
-    *{box-sizing:border-box}
     body{
       margin:0;
       font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
       background: linear-gradient(135deg, rgba(5,6,10,0.92), rgba(12,10,18,0.88)),
         url("https://i.imgur.com/vATNRmF.png") center/cover fixed no-repeat;
       color:#f3f3f3;
-      padding:24px;
+      padding:32px;
       display:flex;
       justify-content:center;
       min-height:100vh;
+      box-sizing:border-box;
     }
     .wrap{
       display:grid;
       grid-template-columns:2fr 1fr;
-      gap:20px;
+      gap:24px;
       width:100%;
       max-width:1200px;
     }
     .card{
       background:var(--panel);
       border:1px solid var(--gold);
-      border-radius:10px;
-      padding:18px;
-      box-shadow:0 6px 24px rgba(0,0,0,0.5);
+      border-radius:12px;
+      padding:20px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.4);
     }
     h1,h2,h3{margin-top:0;color:var(--gold)}
-    label{display:block; font-size:0.95rem; margin-bottom:6px}
-    input[type="text"], select, textarea{
+    input,select,textarea{
       font:inherit;
-      padding:8px 10px;
-      border-radius:8px;
+      padding:6px 8px;
+      border-radius:6px;
       border:1px solid #333;
-      background:#0f0f12;
+      background:#111;
       color:#eee;
       width:100%;
       box-sizing:border-box;
     }
-    textarea{min-height:72px; resize:vertical;}
+    textarea{resize:vertical;}
     .btn{
       padding:8px 14px;
       border-radius:8px;
       cursor:pointer;
-      font-weight:700;
-      transition:0.12s;
-      border: none;
-      display:inline-flex;
-      align-items:center;
-      gap:8px;
+      font-weight:bold;
+      transition:0.2s;
     }
     .btn-primary{
       background:var(--gold);
       color:#000;
+      border:none;
     }
     .btn-secondary{
       background:transparent;
@@ -73,76 +67,96 @@
       border:1px solid var(--gold);
     }
     .btn-add{
-      background:transparent;
-      color:var(--gold);
+      background:#222;
       border:1px dashed var(--gold);
+      color:var(--gold);
       width:100%;
-      justify-content:center;
     }
-    .btn:hover{filter:brightness(1.05)}
+    .btn:hover{filter:brightness(1.1);}
     .poke-slot{
-      margin-bottom:14px;
-      padding:12px;
-      border-radius:10px;
-      background:var(--glass);
-      display:grid;
-      grid-template-columns:64px 1fr 120px;
+      margin-bottom:16px;
+      padding:14px;
+      border:1px solid var(--gold);
+      border-radius:12px;
+      background:rgba(0,0,0,0.3);
+      display:flex;
+      align-items:flex-start;
       gap:12px;
-      border:1px solid rgba(255,255,255,0.04);
-      align-items:start;
     }
     .poke-slot img{
-      width:64px;
-      height:64px;
+      width:56px;
+      height:56px;
       object-fit:contain;
-      background:#0b0b0b;
+      background:#111;
       border-radius:8px;
-      border:1px solid #222;
+      border:1px solid #333;
     }
-    .fields{display:block}
-    .slot-actions{display:flex; flex-direction:column; gap:8px; align-items:flex-end;}
-    .small{font-size:0.85rem; color:var(--muted)}
-    .ev-row, .iv-row{display:flex; gap:8px; align-items:center; margin:6px 0}
-    .ev-row input[type="range"], .iv-row input[type="range"]{flex:1}
-    .ev-total{font-weight:700}
-    .danger{color:var(--danger)}
-    .bottom-actions { display:flex; gap:10px; align-items:center; justify-content:flex-start; flex-wrap:wrap; margin-top:12px;}
+    .poke-slot .fields{
+      flex:1;
+    }
+    .poke-slot h4{
+      margin:0 0 8px 0;
+      font-size:1.1rem;
+      color:var(--gold);
+    }
+    .hint{color:var(--muted); font-size:0.9rem}
+    .tier-badge{background:var(--gold); color:#000; padding:2px 6px; border-radius:6px; font-size:0.85em}
+    
+    /* header */
+    .header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      margin-bottom:24px;
+    }
+    .header-left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .mascote{width:56px; height:56px;}
+    .title-box h1{
+      margin:0;
+      color:var(--gold);
+      font-size:1.8rem;
+      line-height:1.2;
+    }
+    .title-box h2{
+      margin:0;
+      color:#fff;
+      font-size:1rem;
+      font-weight:400;
+      line-height:1.2;
+    }
+    #userBox{color:var(--muted); margin-right:10px;}
+    .bottom-actions { display:flex; gap:10px; align-items:center; justify-content:flex-start; flex-wrap:wrap; margin-top:16px;}
     .bottom-actions .spacer { flex:1; }
-    /* modal */
-    .modal-backdrop{position:fixed; inset:0; background:rgba(0,0,0,0.6); display:none; align-items:center; justify-content:center; z-index:2000}
-    .modal{background:#0b0b0b; padding:16px; border-radius:10px; width:90%; max-width:760px; border:1px solid #222}
-    .modal textarea{min-height:220px; background:#070708}
-    .flex{display:flex; gap:8px; align-items:center}
-    .stat-label{width:42px; text-align:right; font-size:0.85rem}
-    .remove-btn{background:transparent; color:var(--danger); border:1px solid rgba(255,0,0,0.08); padding:6px 10px; border-radius:8px}
-    .stat-value{min-width:44px; text-align:center}
-    @media (max-width:880px){
-      .wrap{grid-template-columns:1fr}
-      .poke-slot{grid-template-columns:56px 1fr 100px}
-    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <main>
-      <div class="card">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px">
-          <div>
+      <div class="header">
+        <div class="header-left">
+          <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote" class="mascote">
+          <div class="title-box">
             <h1>Humble</h1>
-            <h2 style="margin-top:6px; font-size:16px">Team Builder</h2>
-          </div>
-          <div style="display:flex; align-items:center; gap:12px">
-            <span id="userBox" class="small"></span>
-            <button id="loginBtn" class="btn btn-secondary">Entrar</button>
+            <h2>Team Builder</h2>
           </div>
         </div>
-
+        <div class="header-right">
+          <span id="userBox"></span>
+          <button id="loginBtn" class="btn btn-secondary">Entrar</button>
+        </div>
+      </div>
+      
+      <div class="card">
+        <h2>Criar Time</h2>
         <form id="teamForm">
           <div style="margin-bottom:12px;">
             <label>Nome do Time</label>
-            <input id="teamName" placeholder="Ex.: Time OU" required />
+            <input id="teamName" required>
           </div>
-
           <div style="margin-bottom:12px;">
             <label>Tier</label>
             <select id="teamTier" required>
@@ -176,45 +190,41 @@
             <button type="button" id="importBtn" class="btn btn-secondary">Importar</button>
             <button type="button" id="exportBtn" class="btn btn-secondary">Exportar</button>
             <div class="spacer"></div>
-            <button type="submit" id="saveTeam" class="btn btn-primary">Salvar Time</button>
+            <button type="submit" class="btn btn-primary">Salvar Time</button>
           </div>
         </form>
       </div>
     </main>
-
-    <aside class="card">
-      <h3>Como usar</h3>
-      <ol class="small" style="padding-left:16px; line-height:1.5">
-        <li>Escolha um nome e tier.</li>
-        <li>Adicione até 6 Pokémon usando o campo com autocomplete (apenas nomes em <code>pokemon.json</code>).</li>
-        <li>A imagem aparece automaticamente ao selecionar um nome válido.</li>
-        <li>Ajuste EVs (0–252 por stat, total ≤ 510) e IVs (0–31 por stat) com os sliders.</li>
-        <li>Importe/exporte em formato Showdown. Salve o time no Firebase (precisa entrar).</li>
-      </ol>
+    
+    <aside class="right-col">
+      <div class="card">
+        <h3>Como usar o Team Builder</h3>
+        <ol class="hint" style="padding-left:18px; line-height:1.5;">
+          <li><strong>Nomeie seu time</strong> e escolha uma <span class="tier-badge">Tier</span>.</li>
+          <li><strong>Adicione Pokémon</strong> (até 6) escolhendo pelo nome. A imagem aparece automaticamente.</li>
+          <li>Use <strong>Importar</strong> ou <strong>Exportar</strong> em formato Showdown.</li>
+          <li><strong>Salve</strong> seu time no Firebase (precisa estar logado).</li>
+        </ol>
+      </div>
+      <div style="height:14px"></div>
+      <div class="card">
+        <h3>Regras de validação</h3>
+        <ul class="hint" style="padding-left:18px; line-height:1.5;">
+          <li>Máx. <strong>6 Pokémon</strong> no time</li>
+          <li>Máx. <strong>4 moves</strong> por Pokémon</li>
+        </ul>
+      </div>
     </aside>
   </div>
 
-  <!-- datalist para autocomplete -->
+  <!-- datalist para autocomplete de Pokémon -->
   <datalist id="pokemonListData"></datalist>
-
-  <!-- modal de import -->
-  <div id="modal" class="modal-backdrop">
-    <div class="modal" role="dialog" aria-modal="true">
-      <h3>Importar (cole o texto Showdown abaixo)</h3>
-      <textarea id="importTextarea" placeholder="Cole o texto Showdown aqui..."></textarea>
-      <div style="display:flex; justify-content:flex-end; gap:8px; margin-top:10px">
-        <button id="cancelImport" class="btn btn-secondary">Cancelar</button>
-        <button id="doImport" class="btn btn-primary">Importar</button>
-      </div>
-    </div>
-  </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
   import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-  // ---------- firebase ----------
   const firebaseConfig = {
     apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
     authDomain: "sampleteans.firebaseapp.com",
@@ -224,6 +234,7 @@
     messagingSenderId: "1069510029261",
     appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
   };
+
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getDatabase(app);
@@ -244,495 +255,262 @@
 
   loginBtn.onclick = ()=>{
     if(auth.currentUser){
-      signOut(auth).catch(e=>console.error(e));
+      signOut(auth).catch(err=>console.error(err));
     } else {
       signInWithPopup(auth, provider).catch(err=>alert("Erro: "+err.message));
     }
   };
 
-  // ---------- pokemon data ----------
-  let pokemonNames = []; // array of strings
-  const addBtn = document.getElementById('addPokemon');
+  // ---------- dados dos pokemons ----------
+  let pokemonNames = []; // array de strings
+  const addPokemonBtn = document.getElementById('addPokemon');
   const pokemonList = document.getElementById('pokemonList');
   let pokeCount = 0;
-  const MAX_SLOTS = 6;
 
-  // load pokemon.json (supports ["name", ...] or [{name:"Name"}, ...])
-  fetch('pokemon.json')
-    .then(r => r.json())
-    .then(data=>{
-      if(!Array.isArray(data)) data = [];
-      pokemonNames = data.map(x=>{
-        if(typeof x === 'string') return x;
-        if(x && typeof x === 'object' && x.name) return x.name;
-        return String(x);
+  // carrega pokemon.json e popula datalist
+  fetch("pokemon.json")
+    .then(res => res.json())
+    .then(data => {
+      // suporta dois formatos: ["bulbasaur", ...] ou [{name:"Bulbasaur"}, ...]
+      if (!Array.isArray(data)) data = [];
+      pokemonNames = data.map(item => {
+        if (typeof item === "string") return item;
+        if (item && typeof item === "object" && item.name) return item.name;
+        return String(item);
       }).filter(Boolean);
       pokemonNames.sort((a,b)=>a.localeCompare(b, undefined, {sensitivity:'base'}));
       const datalist = document.getElementById('pokemonListData');
-      pokemonNames.forEach(n=>{
-        const o = document.createElement('option');
-        o.value = n;
-        datalist.appendChild(o);
+      pokemonNames.forEach(name=>{
+        const opt = document.createElement('option');
+        opt.value = name;
+        datalist.appendChild(opt);
       });
-      addBtn.disabled = false;
+      addPokemonBtn.disabled = false; // habilita só quando carregou
     })
     .catch(err=>{
-      console.error("Erro carregando pokemon.json", err);
-      alert("Erro ao carregar pokemon.json — veja console.");
+      console.error("Erro ao carregar pokemon.json:", err);
+      alert("Erro ao carregar pokemon.json. Veja console.");
     });
 
+  // util: busca nome exato (case-insensitive) no pokemonNames
   function findExactPokemon(name){
     if(!name) return null;
     const lower = name.trim().toLowerCase();
-    return pokemonNames.find(n=>n.toLowerCase() === lower) || null;
+    return pokemonNames.find(n => n.toLowerCase() === lower) || null;
   }
 
-  // small escape
-  function esc(s){ return String(s||""); }
+  // util: escapa texto para innerHTML (simples)
+  function esc(s){ return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
 
-  // fetch sprite (official-artwork preferred)
-  async function fetchSprite(name){
+  // atualiza imagem usando PokéAPI (oficial-artwork ou front_default)
+  async function fetchPokemonSprite(name){
     try{
       const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(name.toLowerCase())}`);
       if(!res.ok) throw new Error("not found");
       const j = await res.json();
       return j.sprites?.other?.['official-artwork']?.front_default || j.sprites?.front_default || "";
     }catch(e){
-      console.warn("PokeAPI fail", name, e);
+      console.warn("PokeAPI fetch failed for", name, e);
       return "";
     }
   }
 
-  // create slot
-  async function addSlot(p=null){
-    if(pokeCount >= MAX_SLOTS){ alert("Máximo de 6 Pokémon."); return; }
+  // cria um slot de pokemon (p: objeto opcional com fields)
+  async function addPokemonSlot(p = null){
+    if (pokeCount >= 6) { alert("Máximo de 6 Pokémon."); return; }
     pokeCount++;
     const slot = document.createElement('div');
-    slot.className = 'poke-slot';
+    slot.className = "poke-slot";
 
     slot.innerHTML = `
       <img class="poke-img" src="" alt="">
       <div class="fields">
         <h4>Pokémon ${pokeCount}</h4>
-        <label>Nome
-          <input class="pname" list="pokemonListData" placeholder="Digite exato (autocomplete)">
-        </label>
-
-        <div style="display:flex; gap:10px; margin-top:8px">
-          <div style="flex:1">
-            <label>Item <input class="pitem" placeholder="Ex.: Leftovers"></label>
-          </div>
-          <div style="width:140px">
-            <label>Nature
-              <select class="pnature">
-                <option value="">-- Selecione --</option>
-                <option>Adamant</option><option>Bashful</option><option>Bold</option><option>Brave</option>
-                <option>Calm</option><option>Careful</option><option>Docile</option><option>Gentle</option>
-                <option>Hardy</option><option>Hasty</option><option>Impish</option><option>Jolly</option>
-                <option>Lax</option><option>Lonely</option><option>Mild</option><option>Modest</option>
-                <option>Naive</option><option>Naughty</option><option>Quiet</option><option>Quirky</option>
-                <option>Rash</option><option>Relaxed</option><option>Sassy</option><option>Serious</option><option>Timid</option>
-              </select>
-            </label>
-          </div>
-        </div>
-
-        <div style="display:flex; gap:10px; margin-top:8px">
-          <div style="flex:1">
-            <label>Ability <input class="pability" placeholder="Ex.: Intimidate"></label>
-          </div>
-          <div style="width:140px">
-            <label>Tera <input class="ptera" placeholder="Opcional"></label>
-          </div>
-        </div>
-
-        <div style="margin-top:10px">
-          <div style="display:flex; justify-content:space-between; align-items:center">
-            <div class="small">EVs (total ≤ 510)</div>
-            <div class="ev-total small">Total: <span class="ev-sum">0</span>/510</div>
-          </div>
-
-          <!-- EV sliders -->
-          <div class="ev-sliders" style="margin-top:6px">
-            ${['HP','Atk','Def','SpA','SpD','Spe'].map(stat => `
-              <div class="ev-row">
-                <div class="stat-label small">${stat}</div>
-                <input type="range" min="0" max="252" step="4" value="0" class="ev-${stat}">
-                <div class="stat-value small"><span class="ev-val-${stat}">0</span></div>
-              </div>
-            `).join('')}
-          </div>
-
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:8px">
-            <div class="small">IVs</div>
-            <div class="small">0–31</div>
-          </div>
-
-          <!-- IV sliders -->
-          <div class="iv-sliders" style="margin-top:6px">
-            ${['HP','Atk','Def','SpA','SpD','Spe'].map(stat => `
-              <div class="iv-row">
-                <div class="stat-label small">${stat}</div>
-                <input type="range" min="0" max="31" step="1" value="31" class="iv-${stat}">
-                <div class="stat-value small"><span class="iv-val-${stat}">31</span></div>
-              </div>
-            `).join('')}
-          </div>
-
-          <div style="margin-top:10px">
-            <label>Moves (4 linhas)</label>
-            <textarea class="pmoves" placeholder="1 por linha"></textarea>
-          </div>
-        </div>
-      </div>
-
-      <div class="slot-actions">
-        <button class="remove-btn">Remover</button>
+        <label>Nome 
+          <input class="pname" list="pokemonListData" placeholder="Comece a digitar...">
+        </label><br><br>
+        <label>Item <input class="pitem"></label><br><br>
+        <label>Ability <input class="pability"></label><br><br>
+        <label>Nature 
+          <select class="pnature">
+            <option value="">-- Selecione --</option>
+            <option>Adamant</option><option>Bashful</option><option>Bold</option><option>Brave</option>
+            <option>Calm</option><option>Careful</option><option>Docile</option><option>Gentle</option>
+            <option>Hardy</option><option>Hasty</option><option>Impish</option><option>Jolly</option>
+            <option>Lax</option><option>Lonely</option><option>Mild</option><option>Modest</option>
+            <option>Naive</option><option>Naughty</option><option>Quiet</option><option>Quirky</option>
+            <option>Rash</option><option>Relaxed</option><option>Sassy</option><option>Serious</option><option>Timid</option>
+          </select>
+        </label><br><br>
+        <label>Tera <input class="ptera" placeholder="Opcional"></label><br><br>
+        <label>EVs <input class="pevs" placeholder="hp/atk/def/spa/spd/spe"></label><br><br>
+        <label>IVs <input class="pivs" placeholder="hp/atk/def/spa/spd/spe"></label><br><br>
+        <label>Moves <textarea class="pmoves" placeholder="1 por linha"></textarea></label>
       </div>
     `;
 
+    // anexar ao DOM antes de preencher valores para evitar reflows inesperados
     pokemonList.appendChild(slot);
 
     const inputName = slot.querySelector('.pname');
     const img = slot.querySelector('.poke-img');
-    const removeBtn = slot.querySelector('.remove-btn');
-    const evSumEl = slot.querySelector('.ev-sum');
 
-    // helpers for evs/ivs
-    const evElements = {
-      HP: slot.querySelector('.ev-HP'),
-      Atk: slot.querySelector('.ev-Atk'),
-      Def: slot.querySelector('.ev-Def'),
-      SpA: slot.querySelector('.ev-SpA'),
-      SpD: slot.querySelector('.ev-SpD'),
-      Spe: slot.querySelector('.ev-Spe')
-    };
-    const ivElements = {
-      HP: slot.querySelector('.iv-HP'),
-      Atk: slot.querySelector('.iv-Atk'),
-      Def: slot.querySelector('.iv-Def'),
-      SpA: slot.querySelector('.iv-SpA'),
-      SpD: slot.querySelector('.iv-SpD'),
-      Spe: slot.querySelector('.iv-Spe')
-    };
-    const evValEls = {
-      HP: slot.querySelector('.ev-val-HP'),
-      Atk: slot.querySelector('.ev-val-Atk'),
-      Def: slot.querySelector('.ev-val-Def'),
-      SpA: slot.querySelector('.ev-val-SpA'),
-      SpD: slot.querySelector('.ev-val-SpD'),
-      Spe: slot.querySelector('.ev-val-Spe')
-    };
-    const ivValEls = {
-      HP: slot.querySelector('.iv-val-HP'),
-      Atk: slot.querySelector('.iv-val-Atk'),
-      Def: slot.querySelector('.iv-val-Def'),
-      SpA: slot.querySelector('.iv-val-SpA'),
-      SpD: slot.querySelector('.iv-val-SpD'),
-      Spe: slot.querySelector('.iv-val-Spe')
-    };
-
-    function updateEvSum(){
-      const sum = Object.values(evElements).reduce((s,el)=>s + Number(el.value||0),0);
-      evSumEl.textContent = sum;
-      if(sum > 510) {
-        evSumEl.classList.add('danger');
-      } else {
-        evSumEl.classList.remove('danger');
-      }
-    }
-
-    // sync sliders and displays
-    Object.entries(evElements).forEach(([stat, el])=>{
-      el.addEventListener('input', ()=>{
-        // enforce step 4 already by step attribute, but ensure within [0,252]
-        let v = Math.max(0, Math.min(252, Math.round(Number(el.value))));
-        // enforce multiple of 4 for EVs (commonly used)
-        v = Math.round(v/4)*4;
-        el.value = v;
-        evValEls[stat].textContent = v;
-        updateEvSum();
-      });
-      // init text
-      evValEls[stat].textContent = el.value;
-    });
-
-    Object.entries(ivElements).forEach(([stat, el])=>{
-      el.addEventListener('input', ()=>{
-        let v = Math.max(0, Math.min(31, Math.round(Number(el.value))));
-        el.value = v;
-        ivValEls[stat].textContent = v;
-      });
-      ivValEls[stat].textContent = el.value;
-    });
-
-    // when typing name — only fetch image when exact match exists
-    let lastChecked = '';
-    inputName.addEventListener('input', async (e)=>{
-      const v = e.target.value.trim();
-      if(!v){ img.src = ''; lastChecked = ''; return; }
-      if(v.toLowerCase() === lastChecked.toLowerCase()) return;
-      const matched = findExactPokemon(v);
-      lastChecked = v;
-      if(!matched){ img.src = ''; return; }
-      const src = await fetchSprite(matched);
-      if(src) img.src = src;
-    });
-
-    // remove
-    removeBtn.addEventListener('click', ()=>{
-      slot.remove();
-      pokeCount--;
-      // re-number headers
-      Array.from(pokemonList.querySelectorAll('.poke-slot')).forEach((s, idx)=>{
-        s.querySelector('h4').textContent = `Pokémon ${idx+1}`;
-      });
-    });
-
-    // if p provided (import), fill fields and fetch image & EV/IV values
-    if(p){
-      if(p.name) inputName.value = p.name;
-      if(p.item) slot.querySelector('.pitem').value = p.item;
-      if(p.ability) slot.querySelector('.pability').value = p.ability;
-      if(p.nature) slot.querySelector('.pnature').value = p.nature;
-      if(p.tera) slot.querySelector('.ptera').value = p.tera;
-      if(Array.isArray(p.moves)) slot.querySelector('.pmoves').value = p.moves.slice(0,4).join("\n");
-      // set evs if present (object with stats)
-      if(p.evs && typeof p.evs === 'object'){
-        Object.entries(p.evs).forEach(([k,v])=>{
-          if(evElements[k]) {
-            evElements[k].value = v;
-            evValEls[k].textContent = v;
-          }
-        });
-      }
-      // set ivs
-      if(p.ivs && typeof p.ivs === 'object'){
-        Object.entries(p.ivs).forEach(([k,v])=>{
-          if(ivElements[k]) {
-            ivElements[k].value = v;
-            ivValEls[k].textContent = v;
-          }
-        });
-      }
-      // update ev sum
-      updateEvSum();
-      // image
+    // se p foi passado (do import), preencher campos
+    if (p){
+      inputName.value = p.name || "";
+      slot.querySelector('.pitem').value = p.item || "";
+      slot.querySelector('.pability').value = p.ability || "";
+      slot.querySelector('.pnature').value = p.nature || "";
+      slot.querySelector('.ptera').value = p.tera || "";
+      slot.querySelector('.pevs').value = p.evs || "";
+      slot.querySelector('.pivs').value = p.ivs || "";
+      slot.querySelector('.pmoves').value = (p.moves && p.moves.join("\n")) || "";
+      // tentar preencher imagem se nome válido
       const matched = findExactPokemon(p.name);
-      if(matched){
-        fetchSprite(matched).then(src=>{ if(src) img.src = src; });
+      if (matched){
+        fetchPokemonSprite(matched).then(src=>{
+          if(src) img.src = src;
+        });
       }
     }
+
+    // quando o usuário digitar/selecionar nome, só buscar imagem se houver correspondência exata
+    let lastNameChecked = "";
+    inputName.addEventListener('input', async (e)=>{
+      const val = e.target.value.trim();
+      if (!val) { img.src=""; lastNameChecked=""; return; }
+      // só consulta se diferente do último verificado
+      if (val.toLowerCase() === lastNameChecked.toLowerCase()) return;
+      const matched = findExactPokemon(val);
+      lastNameChecked = val;
+      if (!matched) { img.src=""; return; }
+      const sprite = await fetchPokemonSprite(matched);
+      if (sprite) img.src = sprite;
+    });
 
     return slot;
   }
 
-  addBtn.addEventListener('click', ()=> addSlot());
+  addPokemonBtn.addEventListener('click', ()=> addPokemonSlot());
 
-  // ---------- collect / export / import ----------
+  // ---------- EXPORT / IMPORT ----------
   function collectTeamData(){
     const team = {};
     team.name = document.getElementById('teamName').value.trim();
     team.tier = document.getElementById('teamTier').value;
     team.pokemon = [];
-
-    Array.from(pokemonList.querySelectorAll('.poke-slot')).forEach(slot=>{
+    pokemonList.querySelectorAll('.poke-slot').forEach(slot=>{
       const name = slot.querySelector('.pname').value.trim();
-      if(!name) return;
+      if(!name) return; // ignora slots vazios
+      // só permitir nomes que existam no pokemon.json
       const matched = findExactPokemon(name);
-      if(!matched) return; // skip invalid
-      // gather evs & ivs
-      const evs = {};
-      const ivs = {};
-      ['HP','Atk','Def','SpA','SpD','Spe'].forEach(s=>{
-        const ev = Number(slot.querySelector(`.ev-${s}`).value || 0);
-        const iv = Number(slot.querySelector(`.iv-${s}`).value || 31);
-        evs[s] = ev;
-        ivs[s] = iv;
-      });
+      if(!matched) return;
       const p = {
         name: matched,
-        item: slot.querySelector('.pitem').value.trim() || null,
-        ability: slot.querySelector('.pability').value.trim() || null,
-        nature: slot.querySelector('.pnature').value || null,
+        item: slot.querySelector('.pitem').value.trim(),
+        ability: slot.querySelector('.pability').value.trim(),
+        nature: slot.querySelector('.pnature').value,
         tera: slot.querySelector('.ptera').value.trim() || null,
-        evs,
-        ivs,
-        moves: slot.querySelector('.pmoves').value.split('\n').map(s=>s.trim()).filter(Boolean).slice(0,4)
+        evs: slot.querySelector('.pevs').value.trim(),
+        ivs: slot.querySelector('.pivs').value.trim(),
+        moves: slot.querySelector('.pmoves').value.split("\n").map(s=>s.trim()).filter(Boolean)
       };
       team.pokemon.push(p);
     });
-
     team.createdAt = Date.now();
     return team;
   }
 
-  // convert team -> showdown text
-  function teamToShowdown(team){
+  function exportTeamToShowdown(team){
+    // cria um texto no estilo Showdown simples
     return team.pokemon.map(p=>{
-      let lines = [];
-      const first = `${p.name}${p.item?` @ ${p.item}`:''}`;
-      lines.push(first);
-      if(p.ability) lines.push(`Ability: ${p.ability}`);
-      if(p.tera) lines.push(`Tera Type: ${p.tera}`);
-      // EVs: format "164 HP / 64 Def / 28 SpA / 252 Spe"
-      const evParts = [];
-      Object.entries(p.evs||{}).forEach(([k,v])=>{
-        if(v && Number(v)>0) evParts.push(`${v} ${k}`);
-      });
-      if(evParts.length) lines.push(`EVs: ${evParts.join(' / ')}`);
-      // Nature line
-      if(p.nature) lines.push(`${p.nature} Nature`);
-      // IVs (only include if some IV not 31 or explicitly set)
-      const ivParts = [];
-      Object.entries(p.ivs||{}).forEach(([k,v])=>{
-        if(typeof v !== 'undefined' && Number(v) !== 31) ivParts.push(`${v} ${k}`);
-      });
-      if(ivParts.length) lines.push(`IVs: ${ivParts.join(' / ')}`);
-      // moves
-      (p.moves||[]).forEach(m=> lines.push(`- ${m}`));
-      return lines.join('\n');
-    }).join('\n\n');
+      let out = `${p.name}${p.item?` @ ${p.item}`:""}\n`;
+      if(p.ability) out += `Ability: ${p.ability}\n`;
+      if(p.nature) out += `${p.nature} Nature\n`;
+      if(p.evs) out += `EVs: ${p.evs}\n`;
+      if(p.ivs) out += `IVs: ${p.ivs}\n`;
+      if(p.tera) out += `Tera Type: ${p.tera}\n`;
+      p.moves.forEach(m=> out += `- ${m}\n`);
+      return out.trim();
+    }).join("\n\n");
   }
 
   document.getElementById('exportBtn').addEventListener('click', ()=>{
     const team = collectTeamData();
-    if(!team.pokemon.length){ alert("Escolha pelo menos 1 Pokémon antes de exportar."); return; }
-    const txt = teamToShowdown(team);
-    const blob = new Blob([txt], {type:'text/plain;charset=utf-8'});
+    if(!team.pokemon.length){ alert("Escolha pelo menos 1 Pokémon para exportar."); return; }
+    const txt = exportTeamToShowdown(team);
+    const blob = new Blob([txt], {type:"text/plain;charset=utf-8"});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `${team.name || 'team'}.txt`;
+    a.download = `${team.name || "team"}.txt`;
     a.click();
     URL.revokeObjectURL(a.href);
   });
 
-  // import modal handlers
-  const modal = document.getElementById('modal');
-  const importBtn = document.getElementById('importBtn');
-  const cancelImport = document.getElementById('cancelImport');
-  const doImport = document.getElementById('doImport');
-  const importTextarea = document.getElementById('importTextarea');
+  document.getElementById('importBtn').addEventListener('click', ()=>{
+    const txt = prompt("Cole aqui o time em formato Showdown:");
+    if(!txt) return;
+    // limpar slots atuais
+    pokemonList.innerHTML = "";
+    pokeCount = 0;
 
-  importBtn.addEventListener('click', ()=> {
-    importTextarea.value = '';
-    modal.style.display = 'flex';
-  });
-  cancelImport.addEventListener('click', ()=> modal.style.display = 'none');
-
-  // showdown parser
-  function parseShowdown(txt){
-    // split by blank lines into pokemon blocks
     const blocks = txt.split(/\n\s*\n/).map(b=>b.trim()).filter(Boolean);
-    const parsed = [];
     const invalidNames = [];
-    for(const block of blocks){
-      const lines = block.split('\n').map(l=>l.trim()).filter(Boolean);
-      if(!lines.length) continue;
-      // first line: "Name @ Item" or just "Name"
-      let name = '';
-      let item = null;
+    blocks.forEach(block=>{
+      const lines = block.split("\n").map(l=>l.trim()).filter(Boolean);
+      if(!lines.length) return;
       const first = lines[0];
-      if(first.includes('@')){
-        const [left,right] = first.split('@').map(s=>s.trim());
-        name = left;
-        item = right || null;
+      // primeira linha pode ser "Name @ Item" ou só "Name"
+      let name = "";
+      let item = "";
+      if(first.includes("@")){
+        const parts = first.split("@");
+        name = parts[0].trim();
+        item = parts[1].trim();
       } else {
-        name = first;
+        name = first.trim();
       }
-      // validate name exists in pokemon.json
+      // só aceitar se estiver no pokemon.json
       const matched = findExactPokemon(name);
       if(!matched){
         invalidNames.push(name);
-        continue;
-      }
-      const p = { name: matched, item, moves: [] , evs: {}, ivs: {} };
-      for(let i=1;i<lines.length;i++){
-        const l = lines[i];
-        if(l.startsWith('Ability:')){
-          p.ability = l.replace('Ability:','').trim();
-        } else if(l.startsWith('Tera Type:')){
-          p.tera = l.replace('Tera Type:','').trim();
-        } else if(l.startsWith('EVs:')){
-          // parse: "164 HP / 64 Def / 28 SpA / 252 Spe"
-          const parts = l.replace('EVs:','').split('/').map(s=>s.trim()).filter(Boolean);
-          parts.forEach(part=>{
-            const m = part.match(/^(\d+)\s+([A-Za-z0-9]+)$/);
-            if(m){
-              const val = Number(m[1]);
-              const stat = m[2].replace('SpA','SpA').replace('SpD','SpD');
-              p.evs[stat] = val;
-            }
-          });
-        } else if(l.startsWith('IVs:')){
-          const parts = l.replace('IVs:','').split('/').map(s=>s.trim()).filter(Boolean);
-          parts.forEach(part=>{
-            const m = part.match(/^(\d+)\s+([A-Za-z0-9]+)$/);
-            if(m){
-              const val = Number(m[1]);
-              const stat = m[2].replace('SpA','SpA').replace('SpD','SpD');
-              p.ivs[stat] = val;
-            }
-          });
-        } else if(l.endsWith('Nature')){
-          p.nature = l.replace('Nature','').trim();
-        } else if(l.startsWith('-')){
-          p.moves.push(l.replace(/^-/, '').trim());
-        }
-      }
-      parsed.push(p);
-    }
-    return {parsed, invalidNames};
-  }
-
-  doImport.addEventListener('click', async ()=>{
-    const txt = importTextarea.value.trim();
-    if(!txt){ alert('Cole o texto Showdown primeiro'); return; }
-    const {parsed, invalidNames} = parseShowdown(txt);
-    if(parsed.length === 0){
-      alert('Nenhum Pokémon válido encontrado para importar.');
-      if(invalidNames.length) alert('Nomes inválidos: ' + invalidNames.join(', '));
-      return;
-    }
-    if(parsed.length > MAX_SLOTS){
-      if(!confirm(`O texto contém ${parsed.length} pokémons, mas o máximo é ${MAX_SLOTS}. Deseja importar os primeiros ${MAX_SLOTS}?`)){
         return;
       }
+      const p = { name: matched, item: item, moves: [] };
+      lines.slice(1).forEach(l=>{
+        if(l.startsWith("Ability:")) p.ability = l.replace("Ability:","").trim();
+        else if(l.endsWith("Nature")) p.nature = l.replace("Nature","").trim();
+        else if(l.startsWith("EVs:")) p.evs = l.replace("EVs:","").trim();
+        else if(l.startsWith("IVs:")) p.ivs = l.replace("IVs:","").trim();
+        else if(l.startsWith("Tera Type:")) p.tera = l.replace("Tera Type:","").trim();
+        else if(l.startsWith("-")) p.moves.push(l.replace(/^-/, "").trim());
+      });
+      addPokemonSlot(p);
+    });
+
+    if(invalidNames.length){
+      alert("Os seguintes nomes NÃO foram encontrados no pokemon.json e foram ignorados:\n" + invalidNames.join(", "));
     }
-    // clear current
-    pokemonList.innerHTML = '';
-    pokeCount = 0;
-    // add parsed (limit to 6)
-    for(let i=0;i<Math.min(parsed.length, MAX_SLOTS); i++){
-      await addSlot(parsed[i]);
-    }
-    modal.style.display = 'none';
-    if(invalidNames.length) alert('Alguns nomes foram ignorados (não encontrados no pokemon.json):\n' + invalidNames.join(', '));
   });
 
-  // ---------- save team to firebase ----------
-  document.getElementById('teamForm').addEventListener('submit', async (e)=>{
+  // ---------- SUBMIT / SALVAR TIME ----------
+  document.getElementById('teamForm').addEventListener('submit', async e=>{
     e.preventDefault();
     const user = auth.currentUser;
-    if(!user){ alert('É preciso estar logado para salvar.'); return; }
+    if(!user){ alert("É preciso estar logado."); return; }
     const team = collectTeamData();
-    if(!team.pokemon.length){ alert('Adicione pelo menos 1 Pokémon antes de salvar.'); return; }
-    // validate EV totals
-    for(const p of team.pokemon){
-      const evSum = Object.values(p.evs||{}).reduce((s,v)=>s + (Number(v)||0),0);
-      if(evSum > 510){ alert(`O Pokémon ${p.name} tem EVs com total ${evSum} (>510). Corrija antes de salvar.`); return; }
-    }
+    if(!team.pokemon.length){ alert("Selecione pelo menos 1 Pokémon antes de salvar."); return; }
     team.owner = user.uid;
     team.ownerName = user.displayName || user.email || null;
     const teamRef = push(ref(db, 'teams'));
     await set(teamRef, team);
-    alert('Time salvo com sucesso!');
+    alert("Time salvo com sucesso!");
+    // optional: redirecionar
+    // window.location.href = "simple_teams.html";
   });
 
-  // optional: allow clicking outside modal to close
-  document.getElementById('modal').addEventListener('click', (e)=>{
-    if(e.target === document.getElementById('modal')) modal.style.display = 'none';
-  });
+  // função para debug / teste: se quiser criar slots vazios iniciais, descomente
+  // addPokemonSlot(); addPokemonSlot();
 
 </script>
 </body>
