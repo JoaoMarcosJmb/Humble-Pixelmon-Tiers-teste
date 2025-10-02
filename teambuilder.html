@@ -208,15 +208,15 @@
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
   import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "SUA_APIKEY",
-    authDomain: "SEU_PROJECT.firebaseapp.com",
-    databaseURL: "https://SEU_PROJECT.firebaseio.com",
-    projectId: "SEU_PROJECT",
-    storageBucket: "SEU_PROJECT.appspot.com",
-    messagingSenderId: "0000000000",
-    appId: "1:0000000000:web:xxxxxxxx"
-  };
+const firebaseConfig = {
+  apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
+  authDomain: "sampleteans.firebaseapp.com",
+  databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
+  projectId: "sampleteans",
+  storageBucket: "sampleteans.firebasestorage.app",
+  messagingSenderId: "1069510029261",
+  appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
+};
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
