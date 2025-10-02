@@ -78,6 +78,20 @@
       border:1px solid var(--gold);
       border-radius:12px;
       background:rgba(0,0,0,0.3);
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+    }
+    .poke-slot img{
+      width:56px;
+      height:56px;
+      object-fit:contain;
+      background:#111;
+      border-radius:8px;
+      border:1px solid #333;
+    }
+    .poke-slot .fields{
+      flex:1;
     }
     .poke-slot h4{
       margin:0 0 8px 0;
@@ -169,7 +183,6 @@
           <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
             <button type="button" id="importBtn" class="btn btn-secondary">Importar</button>
             <button type="button" id="exportBtn" class="btn btn-secondary">Exportar</button>
-            <button type="button" id="copyBtn" class="btn btn-secondary">Copiar</button>
             <button type="submit" class="btn btn-primary">Salvar Time</button>
           </div>
         </form>
@@ -181,7 +194,7 @@
         <h3>Como usar o Team Builder</h3>
         <ol class="hint" style="padding-left:18px; line-height:1.5;">
           <li><strong>Nomeie seu time</strong> e escolha uma <span class="tier-badge">Tier</span>.</li>
-          <li><strong>Adicione Pokémon</strong> (até 6) com Nome, Item, Ability, Nature, EVs/IVs e Moves.</li>
+          <li><strong>Adicione Pokémon</strong> (até 6) escolhendo pelo nome. A imagem aparece automaticamente.</li>
           <li>Use <strong>Importar</strong> ou <strong>Exportar</strong> em formato Showdown.</li>
           <li><strong>Salve</strong> seu time no Firebase (precisa estar logado).</li>
         </ol>
@@ -190,33 +203,27 @@
       <div class="card">
         <h3>Regras de validação</h3>
         <ul class="hint" style="padding-left:18px; line-height:1.5;">
-          <li>EVs por stat: <strong>0–252</strong></li>
-          <li>Total de EVs ≤ <strong>510</strong></li>
-          <li>IVs: <strong>0–31</strong></li>
-          <li>Máx. <strong>4 moves</strong> por Pokémon</li>
           <li>Máx. <strong>6 Pokémon</strong> no time</li>
+          <li>Máx. <strong>4 moves</strong> por Pokémon</li>
         </ul>
       </div>
     </aside>
   </div>
-
-  <!-- datalist para autocomplete de Pokémon -->
-  <datalist id="pokemonListData"></datalist>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
   import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
   import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
-  authDomain: "sampleteans.firebaseapp.com",
-  databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
-  projectId: "sampleteans",
-  storageBucket: "sampleteans.firebasestorage.app",
-  messagingSenderId: "1069510029261",
-  appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
-};
+  const firebaseConfig = {
+    apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
+    authDomain: "sampleteans.firebaseapp.com",
+    databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
+    projectId: "sampleteans",
+    storageBucket: "sampleteans.firebasestorage.app",
+    messagingSenderId: "1069510029261",
+    appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
+  };
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
@@ -244,17 +251,11 @@ const firebaseConfig = {
     }
   };
 
-  // carregar lista de pokémons para autocomplete
+  // carregar lista de pokémons para selects
+  let pokemonData = [];
   fetch("pokemon.json")
     .then(res => res.json())
-    .then(data => {
-      const list = document.getElementById("pokemonListData");
-      data.forEach(p => {
-        const opt = document.createElement("option");
-        opt.value = p.name;
-        list.appendChild(opt);
-      });
-    });
+    .then(data => pokemonData = data);
 
   const pokemonList = document.getElementById('pokemonList');
   const addPokemonBtn = document.getElementById('addPokemon');
@@ -263,27 +264,46 @@ const firebaseConfig = {
   addPokemonBtn.onclick=()=>{
     if(pokeCount>=6){alert("Máximo de 6 Pokémon.");return;}
     pokeCount++;
+
     const div=document.createElement('div');
     div.className="poke-slot";
-    div.innerHTML=`<h4>Pokémon ${pokeCount}</h4>
-      <label>Nome <input class="pname" list="pokemonListData"></label><br><br>
-      <label>Item <input class="pitem"></label><br><br>
-      <label>Ability <input class="pability"></label><br><br>
-      <label>Nature 
-        <select class="pnature">
-          <option value="">-- Selecione --</option>
-          <option>Adamant</option><option>Bashful</option><option>Bold</option><option>Brave</option>
-          <option>Calm</option><option>Careful</option><option>Docile</option><option>Gentle</option>
-          <option>Hardy</option><option>Hasty</option><option>Impish</option><option>Jolly</option>
-          <option>Lax</option><option>Lonely</option><option>Mild</option><option>Modest</option>
-          <option>Naive</option><option>Naughty</option><option>Quiet</option><option>Quirky</option>
-          <option>Rash</option><option>Relaxed</option><option>Sassy</option><option>Serious</option><option>Timid</option>
-        </select>
-      </label><br><br>
-      <label>Tera <input class="ptera" placeholder="Opcional"></label><br><br>
-      <label>EVs <input class="pevs" placeholder="hp/atk/def/spa/spd/spe"></label><br><br>
-      <label>IVs <input class="pivs" placeholder="hp/atk/def/spa/spd/spe"></label><br><br>
-      <label>Moves <textarea class="pmoves" placeholder="1 por linha"></textarea></label>`;
+    div.innerHTML=`
+      <img class="poke-img" alt="">
+      <div class="fields">
+        <h4>Pokémon ${pokeCount}</h4>
+        <label>Nome 
+          <select class="pname">
+            <option value="">-- Selecione --</option>
+            ${pokemonData.map(p=>`<option>${p}</option>`).join("")}
+          </select>
+        </label><br><br>
+        <label>Item <input class="pitem"></label><br><br>
+        <label>Ability <input class="pability"></label><br><br>
+        <label>Nature 
+          <select class="pnature">
+            <option value="">-- Selecione --</option>
+            <option>Adamant</option><option>Bold</option><option>Brave</option>
+            <option>Calm</option><option>Careful</option><option>Gentle</option>
+            <option>Jolly</option><option>Modest</option><option>Timid</option>
+          </select>
+        </label><br><br>
+        <label>Moves <textarea class="pmoves" placeholder="1 por linha"></textarea></label>
+      </div>`;
+
+    const select = div.querySelector(".pname");
+    const img = div.querySelector(".poke-img");
+    select.addEventListener("change", async e=>{
+      const nome = e.target.value;
+      if(!nome){img.src="";return;}
+      try {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${nome.toLowerCase()}`);
+        const poke = await res.json();
+        img.src = poke.sprites.front_default;
+      } catch {
+        img.src="";
+      }
+    });
+
     pokemonList.appendChild(div);
   };
 
@@ -298,9 +318,6 @@ const firebaseConfig = {
       p.item=slot.querySelector('.pitem').value;
       p.ability=slot.querySelector('.pability').value;
       p.nature=slot.querySelector('.pnature').value;
-      p.tera=slot.querySelector('.ptera').value || null; // opcional
-      p.evs=slot.querySelector('.pevs').value;
-      p.ivs=slot.querySelector('.pivs').value;
       p.moves=slot.querySelector('.pmoves').value.split("\n").filter(x=>x);
       team.pokemon.push(p);
     });
