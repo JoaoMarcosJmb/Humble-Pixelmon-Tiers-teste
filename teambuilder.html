@@ -1,697 +1,257 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Humble — Team Builder</title>
-<link rel="icon" href="https://i.imgur.com/XOEcuO8.png">
-<style>
-  :root{
-    --gold: #d1a720;
-    --bg-1: #080808;
-    --panel: rgba(20,20,20,0.56);
-    --glass: rgba(255,255,255,0.03);
-    --muted: #bfc3c9;
-    --accent: #1e90ff;
-    --radius: 14px;
-    --fw-strong: 700;
-    --card-padding: 18px;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0; font-family:Inter, "Segoe UI", Roboto, Arial, sans-serif;
-    background:
-      linear-gradient(135deg, rgba(5,6,10,0.92), rgba(12,10,18,0.88)),
-      url("https://i.imgur.com/vATNRmF.png") center/cover fixed no-repeat;
-    color: #f3f3f3;
-    -webkit-font-smoothing:antialiased;
-    -moz-osx-font-smoothing:grayscale;
-    padding:32px;
-    display:flex; align-items:flex-start; justify-content:center;
-  }
-
-  /* Page container */
-  .wrap{
-    width:100%; max-width:1100px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:18px; box-shadow: 0 10px 40px rgba(0,0,0,0.6);
-    padding:20px; border:1px solid rgba(209,167,32,0.06);
-    backdrop-filter: blur(6px);
-  }
-
-  /* Header */
-  header.app-header{
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    margin-bottom:18px;
-  }
-  .brand{
-    display:flex; align-items:center; gap:12px;
-  }
-  .brand img{ width:44px; height:44px; border-radius:8px; }
-  .brand h1{ margin:0; font-size:1.15rem; color:var(--gold); letter-spacing:0.2px; }
-  .auth-actions{ display:flex; gap:8px; align-items:center; }
-  .btn{
-    background:var(--gold); color:#000; border:none; padding:8px 12px; border-radius:10px;
-    font-weight:700; cursor:pointer;
-  }
-  .btn.ghost{
-    background:transparent; color:var(--muted); border:1px solid rgba(255,255,255,0.06);
-  }
-  .avatar{
-    display:inline-flex; align-items:center; gap:8px; padding:6px 8px; border-radius:10px;
-    background: rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.02);
-  }
-  .avatar img{ width:36px; height:36px; border-radius:50%; object-fit:cover; }
-
-  /* Main layout */
-  .grid{
-    display:grid; grid-template-columns: 1fr 360px; gap:18px;
-  }
-  @media (max-width:980px){ .grid{ grid-template-columns: 1fr; } }
-
-  /* Builder card */
-  .card{
-    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius: var(--radius);
-    padding: var(--card-padding);
-    border: 1px solid rgba(209,167,32,0.06);
-  }
-  h2{ margin:0 0 12px 0; color:var(--gold); font-size:1.05rem; }
-
-  label{ display:block; font-size:0.9rem; color:var(--muted); margin-bottom:6px; }
-
-  input[type="text"], input[type="number"], select, textarea{
-    width:100%; padding:8px 10px; border-radius:10px; border:1px solid rgba(255,255,255,0.04);
-    background: rgba(0,0,0,0.45); color:var(--muted); font-size:0.95rem;
-  }
-  textarea{ min-height:100px; resize:vertical; }
-
-  .row{ display:flex; gap:8px; align-items:center; }
-  .row > *{ flex:1 1 auto; }
-
-  .controls { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-top:10px; }
-
-  .pokemon-slot{
-    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.02));
-    border-radius:12px; padding:12px; border:1px solid rgba(255,255,255,0.03);
-    margin-bottom:10px;
-  }
-  .slot-header{ display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:8px; }
-  .slot-header h3{ margin:0; color:var(--gold); font-size:0.95rem; }
-  .small-grid{ display:grid; grid-template-columns: repeat(6,1fr); gap:6px; }
-  .stat-input{ padding:6px; text-align:center; border-radius:8px; }
-
-  .muted-note{ color:var(--muted); font-size:0.9rem; margin-top:6px; }
-
-  .actions-row{ display:flex; gap:8px; margin-top:12px; }
-
-  /* right column */
-  .right-col .panel{
-    padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.03); background: rgba(0,0,0,0.35);
-  }
-  .tier-badge{
-    display:inline-block; padding:6px 10px; border-radius:999px; background:rgba(0,0,0,0.45);
-    border:1px solid rgba(255,255,255,0.03); color:var(--gold); font-weight:700;
-  }
-
-  /* small helpers */
-  .hint{ font-size:0.88rem; color:var(--muted); }
-  .danger{ color:#ffb86b; font-weight:700; }
-  .success{ color:#8bed8b; font-weight:700; }
-
-  footer{ margin-top:14px; text-align:center; color:var(--muted); font-size:0.85rem; }
-
-  /* nice focus */
-  input:focus, select:focus, textarea:focus { outline: 2px solid rgba(30,144,255,0.12); border-color: rgba(30,144,255,0.22); }
-</style>
+  <meta charset="UTF-8">
+  <title>Team Builder</title>
+  <style>
+    :root{
+      --bg-dark:#0a0a0f;
+      --panel:rgba(20,20,28,0.85);
+      --gold:#d4af37;
+      --muted:#aaa;
+    }
+    body{
+      margin:0;
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
+      background: linear-gradient(135deg, rgba(5,6,10,0.92), rgba(12,10,18,0.88)),
+        url("https://i.imgur.com/vATNRmF.png") center/cover fixed no-repeat;
+      color:#f3f3f3;
+      padding:32px;
+      display:flex;
+      justify-content:center;
+      min-height:100vh;
+      box-sizing:border-box;
+    }
+    .wrap{
+      display:grid;
+      grid-template-columns:2fr 1fr;
+      gap:24px;
+      width:100%;
+      max-width:1200px;
+    }
+    .card{
+      background:var(--panel);
+      border:1px solid var(--gold);
+      border-radius:12px;
+      padding:20px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.4);
+    }
+    h2,h3{margin-top:0;color:var(--gold)}
+    input,select,textarea,button{
+      font:inherit;
+      padding:6px 8px;
+      border-radius:6px;
+      border:1px solid #333;
+      background:#111;
+      color:#eee;
+      width:100%;
+      box-sizing:border-box;
+    }
+    button{
+      background:var(--gold);
+      color:#000;
+      font-weight:bold;
+      cursor:pointer;
+      border:none;
+      transition:0.2s;
+    }
+    button:hover{filter:brightness(1.1)}
+    .poke-slot{margin-bottom:16px; padding:10px; border:1px dashed var(--muted); border-radius:8px}
+    .poke-slot h4{margin:0 0 6px 0; color:var(--gold)}
+    .hint{color:var(--muted); font-size:0.9rem}
+    .tier-badge{background:var(--gold); color:#000; padding:2px 6px; border-radius:6px; font-size:0.85em}
+  </style>
 </head>
 <body>
-  <div class="wrap" role="main">
-    <header class="app-header">
-      <div class="brand">
-        <img src="https://i.imgur.com/XOEcuO8.png" alt="logo">
-        <div>
-          <h1>Humble</h1>
-          <div class="hint">Team Builder</div>
-        </div>
-      </div>
-      <div class="auth-actions" id="authArea">
-        <button class="btn" id="loginBtn">Login</button>
-        <button class="btn ghost" id="registerBtn">Registrar</button>
-      </div>
-    </header>
-
-    <main class="grid">
-      <!-- LEFT: Builder -->
-      <section class="card" id="builderCard">
-        <h2>Criar / Importar Time</h2>
-
-        <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
-          <div style="flex:1">
-            <label for="teamName">Nome do Time</label>
-            <input id="teamName" type="text" placeholder="Nome público do time (opcional)">
+  <div class="wrap">
+    <main>
+      <div class="card">
+        <h2>Criar Time</h2>
+        <form id="teamForm">
+          <div style="margin-bottom:12px;">
+            <label>Nome do Time</label>
+            <input id="teamName" required>
           </div>
-          <div style="width:180px;">
-            <label for="teamTier">Tier (obrigatório)</label>
+          <div style="margin-bottom:12px;">
+            <label>Tier</label>
             <select id="teamTier" required>
-              <option value="">-- Selecione a Tier --</option>
+              <option value="">-- Selecione --</option>
+              <option>OU</option>
+              <option>UU</option>
+              <option>RU</option>
+              <option>NU</option>
+              <option>PU</option>
             </select>
           </div>
-        </div>
-
-        <div>
-          <label for="importArea">Importar do Showdown</label>
-          <textarea id="importArea" placeholder="Cole o time no formato Showdown..."></textarea>
-          <div class="controls">
-            <button class="btn ghost" id="btnImport">Importar</button>
-            <button class="btn ghost" id="btnClearImport">Limpar</button>
-            <div class="muted-note" id="importMsg" style="display:none;"></div>
-          </div>
-        </div>
-
-        <form id="teamForm">
-          <div id="pokemonList" style="margin-top:12px;"></div>
-
-          <div class="actions-row">
-            <button type="button" class="btn" id="addPokemon">+ Adicionar Pokémon</button>
-            <button type="button" class="btn ghost" id="exportShowdown">Exportar (Showdown)</button>
-            <button type="button" class="btn ghost" id="btnCopyAll">Copiar Showdown</button>
-            <button type="submit" class="btn" id="saveTeamBtn">Salvar Time</button>
+          <div id="pokemonList"></div>
+          <button type="button" id="addPokemon">+ Adicionar Pokémon</button>
+          <div style="margin-top:16px; display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="button" id="importBtn">Importar Showdown</button>
+            <button type="button" id="exportBtn">Exportar Showdown</button>
+            <button type="button" id="copyBtn">Copiar</button>
+            <button type="submit">Salvar Time</button>
           </div>
         </form>
-
-        <div style="margin-top:12px;">
-          <label>Preview Showdown</label>
-          <textarea id="previewShowdown" readonly placeholder="Preview aparecerá aqui..." style="min-height:100px"></textarea>
-        </div>
-
-      </section>
-
-      <!-- RIGHT: actions / help -->
-      <aside class="right-col">
-        <div class="panel card">
-          <h3 style="margin-top:0;color:var(--gold)">Ações rápidas</h3>
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <div class="hint">Importe times no formato Showdown e salve no seu Firebase. A Tier é obrigatória.</div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button id="btnCopyTeamJSON" class="btn ghost">Copiar JSON</button>
-              <button id="btnSignGoogle" class="btn ghost">Login com Google</button>
-            </div>
-            <div style="margin-top:8px;">
-              <div class="hint">Validações:</div>
-              <ul class="hint">
-                <li>EVs por stat: 0–252 • Total EVs ≤ 510</li>
-                <li>IVs: 0–31</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <div style="height:14px"></div>
-
-        <div class="panel card">
-          <h3 style="margin-top:0;color:var(--gold)">Ajuda rápida</h3>
-          <div class="hint">
-            <strong>Import:</strong> cole o time (cada Pokémon separado por linha em branco).<br>
-            <strong>Export:</strong> copia o time em formato Showdown pronto para colar no teambuilder do Showdown.
-          </div>
-        </div>
-      </aside>
+      </div>
     </main>
-
-    <footer>Feito com ❤️ — Humble Team Builder</footer>
+    <aside class="right-col">
+      <div class="card">
+        <h3>Como usar o Team Builder</h3>
+        <ol class="hint" style="padding-left:18px; line-height:1.5;">
+          <li><strong>Nomeie seu time</strong> e escolha uma <span class="tier-badge">Tier</span> obrigatória.</li>
+          <li><strong>Adicione Pokémon</strong> (até 6) preenchendo Nome, Item, Ability, Nature, EVs/IVs e Moves.</li>
+          <li>Use <strong>Importar Showdown</strong> para colar times ou <strong>Exportar Showdown</strong> para levar pro Showdown.</li>
+          <li><strong>Salve</strong> seu time no Firebase (apenas estando logado).</li>
+        </ol>
+      </div>
+      <div style="height:14px"></div>
+      <div class="card">
+        <h3>Regras de validação</h3>
+        <ul class="hint" style="padding-left:18px; line-height:1.5;">
+          <li>EVs por stat: <strong>0–252</strong></li>
+          <li>Total de EVs ≤ <strong>510</strong></li>
+          <li>IVs: <strong>0–31</strong></li>
+          <li>Máx. <strong>4 moves</strong> por Pokémon</li>
+          <li>Máx. <strong>6 Pokémon</strong> no time</li>
+        </ul>
+      </div>
+      <div style="height:14px"></div>
+      <div class="card">
+        <h3>Autenticação</h3>
+        <p class="hint" style="line-height:1.5;">
+          Para <strong>salvar seus times</strong> você precisa estar logado.<br>
+          Você pode entrar com sua conta <strong>Google</strong> ou criar uma conta com <strong>e-mail</strong>.
+        </p>
+      </div>
+    </aside>
   </div>
 
-  <!-- Firebase JS SDK (modular) -->
-  <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-  import {
-    getAuth, onAuthStateChanged, signInWithPopup, GoogleAuthProvider,
-    createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, signOut
-  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-  import {
-    getDatabase, ref, set, push, onValue, query, orderByChild
-  } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-database.js";
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js";
+  import { getDatabase, ref, push, set } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-database.js";
 
-  // ====== CONFIGURE AQUI (substitua pelo seu config se necessário) ======
   const firebaseConfig = {
-    apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
-    authDomain: "sampleteans.firebaseapp.com",
-    databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
-    projectId: "sampleteans",
-    storageBucket: "sampleteans.firebasestorage.app",
-    messagingSenderId: "1069510029261",
-    appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
+    apiKey: "SUA_APIKEY",
+    authDomain: "SEU_PROJECT.firebaseapp.com",
+    databaseURL: "https://SEU_PROJECT.firebaseio.com",
+    projectId: "SEU_PROJECT",
+    storageBucket: "SEU_PROJECT.appspot.com",
+    messagingSenderId: "0000000000",
+    appId: "1:0000000000:web:xxxxxxxx"
   };
+
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db = getDatabase(app);
 
-  // ====== ELEMENTS ======
-  const authArea = document.getElementById('authArea');
-  const loginBtn = document.getElementById('loginBtn');
-  const registerBtn = document.getElementById('registerBtn');
-  const btnSignGoogle = document.getElementById('btnSignGoogle');
-
-  const addPokemonBtn = document.getElementById('addPokemon');
   const pokemonList = document.getElementById('pokemonList');
-  const teamForm = document.getElementById('teamForm');
-  const teamNameInput = document.getElementById('teamName');
-  const exportShowdownBtn = document.getElementById('exportShowdown');
-  const btnImport = document.getElementById('btnImport');
-  const importArea = document.getElementById('importArea');
-  const btnClearImport = document.getElementById('btnClearImport');
-  const importMsg = document.getElementById('importMsg');
-  const evWarning = document.createElement('div');
+  const addPokemonBtn = document.getElementById('addPokemon');
+  let pokeCount=0;
 
-  const tierSelect = document.getElementById('teamTier');
-  const btnCopyAll = document.getElementById('btnCopyAll');
-  const btnCopyTeamJSON = document.getElementById('btnCopyTeamJSON');
-  const previewShowdown = document.getElementById('previewShowdown');
-  const saveTeamBtn = document.getElementById('saveTeamBtn');
-
-  // ====== DATA ======
-  const natures = ["Hardy","Lonely","Brave","Adamant","Naughty","Bold","Docile","Relaxed","Impish","Lax","Modest","Mild","Quiet","Bashful","Rash","Calm","Gentle","Sassy","Careful","Quirky","Timid","Hasty","Serious","Jolly","Naive"];
-  const tiers = ["LC","Monotype","NU","National Dex","National Dex Monotype","National Dex UU","OU","PU","RU","Ubers","UU","ZU","National Dex RU","Monomon","Starter League","Only Smeargle","National Dex Ubers","National Dex AG"];
-
-  tiers.forEach(t=>{
-    const o = document.createElement('option'); o.value = t; o.textContent = t; tierSelect.appendChild(o);
-  });
-
-  // ensure at least one slot initially
-  let pokeCount = 0;
-
-  // ====== UI helpers ======
-  function escapeHtml(s=''){ return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-  function recalcPokeNumbers(){
-    const slots = Array.from(pokemonList.children);
-    pokeCount = slots.length;
-    slots.forEach((s,i)=>{
-      const h = s.querySelector('h3');
-      if(h) h.textContent = `Pokémon ${i+1}`;
-    });
-  }
-
-  // ====== create slot ======
-  function createPokemonSlot(prefill){
-    if(pokeCount >= 6){ alert('Máximo 6 pokémones por time'); return; }
+  addPokemonBtn.onclick=()=>{
+    if(pokeCount>=6){alert("Máximo de 6 Pokémon.");return;}
     pokeCount++;
-    const id = 'poke' + Date.now() + '_' + Math.floor(Math.random()*9999);
-    const wrapper = document.createElement('div');
-    wrapper.className = 'pokemon-slot';
-    wrapper.dataset.id = id;
-
-    const name = prefill?.name || '';
-    const item = prefill?.item || '';
-    const ability = prefill?.ability || '';
-    const tera = prefill?.tera || '';
-    const nature = prefill?.nature || '';
-    const evs = Object.assign({HP:0,Atk:0,Def:0,SpA:0,SpD:0,Spe:0}, prefill?.evs || {});
-    const ivs = Object.assign({HP:31,Atk:31,Def:31,SpA:31,SpD:31,Spe:31}, prefill?.ivs || {});
-    const moves = prefill?.moves || ['','','',''];
-
-    wrapper.innerHTML = `
-      <div class="slot-header">
-        <h3>Pokémon ${pokeCount}</h3>
-        <div style="display:flex; gap:8px;">
-          <button type="button" class="btn ghost btn-remove">Remover</button>
-          <button type="button" class="btn ghost btn-copy">Copiar Showdown</button>
-        </div>
-      </div>
-
-      <div class="row" style="margin-bottom:8px;">
-        <input type="text" name="name" placeholder="Nome (ex: Ninetales-Alola)" value="${escapeHtml(name)}" />
-        <input type="text" name="item" placeholder="Item (ex: Leftovers)" value="${escapeHtml(item)}" />
-      </div>
-
-      <div class="row" style="margin-bottom:8px;">
-        <input type="text" name="ability" placeholder="Ability" value="${escapeHtml(ability)}" />
-        <input type="text" name="tera" placeholder="Tera Type" value="${escapeHtml(tera)}" />
-      </div>
-
-      <div style="margin-bottom:8px;">
-        <label>Nature</label>
-        <select name="nature">${natures.map(n=>`<option ${n===nature?'selected':''}>${n}</option>`).join('')}</select>
-      </div>
-
-      <div style="margin-bottom:8px;">
-        <label>EVs (HP / Atk / Def / SpA / SpD / Spe)</label>
-        <div class="small-grid">
-          ${['HP','Atk','Def','SpA','SpD','Spe'].map(stat=>`<input class="stat-input ev-input" data-stat="${stat}" type="number" min="0" max="252" value="${evs[stat]||0}" />`).join('')}
-        </div>
-      </div>
-
-      <div style="margin-bottom:8px;">
-        <label>IVs (HP / Atk / Def / SpA / SpD / Spe)</label>
-        <div class="small-grid">
-          ${['HP','Atk','Def','SpA','SpD','Spe'].map(stat=>`<input class="stat-input iv-input" data-stat="${stat}" type="number" min="0" max="31" value="${ivs[stat]||31}" />`).join('')}
-        </div>
-      </div>
-
-      <div>
-        <label>Moves (até 4)</label>
-        <div style="display:flex;flex-direction:column;gap:6px;margin-top:6px;">
-          ${[0,1,2,3].map(i=>`<input type="text" class="move-input" data-move-index="${i}" placeholder="Move ${i+1}" value="${escapeHtml(moves[i]||'')}" />`).join('')}
-        </div>
-      </div>
-    `;
-
-    // events
-    wrapper.querySelector('.btn-remove').onclick = ()=>{
-      wrapper.remove();
-      recalcPokeNumbers();
-      renderPreview();
-    };
-    wrapper.querySelector('.btn-copy').onclick = ()=>{
-      const showdown = buildShowdownTextFromSlot(wrapper);
-      navigator.clipboard.writeText(showdown).then(()=>alert('Copied to clipboard'));
-    };
-
-    // EV/IV inputs validation
-    wrapper.querySelectorAll('.ev-input').forEach(inp=>{
-      inp.addEventListener('input', ()=>{
-        let v = parseInt(inp.value) || 0;
-        if(v < 0) inp.value = 0;
-        if(v > 252) inp.value = 252;
-        validateAllEVs(false);
-        renderPreview();
-      });
-    });
-    wrapper.querySelectorAll('.iv-input').forEach(inp=>{
-      inp.addEventListener('input', ()=>{
-        let v = parseInt(inp.value) || 0;
-        if(v < 0) inp.value = 0;
-        if(v > 31) inp.value = 31;
-        renderPreview();
-      });
-    });
-    wrapper.querySelectorAll('input.move-input, input[name=name], input[name=item], input[name=ability], input[name=tera], select[name=nature]').forEach(inp=>{
-      inp.addEventListener('input', ()=> renderPreview());
-    });
-
-    pokemonList.appendChild(wrapper);
-    return wrapper;
-  }
-
-  function buildShowdownTextFromSlot(slot){
-    const name = slot.querySelector('input[name=name]').value.trim() || '—';
-    const item = slot.querySelector('input[name=item]').value.trim();
-    const ability = slot.querySelector('input[name=ability]').value.trim();
-    const tera = slot.querySelector('input[name=tera]').value.trim();
-    const nature = slot.querySelector('select[name=nature]').value || '';
-    const evInputs = slot.querySelectorAll('.ev-input');
-    const ivInputs = slot.querySelectorAll('.iv-input');
-    const moves = Array.from(slot.querySelectorAll('.move-input')).map(m=>m.value.trim()).filter(Boolean);
-
-    const line1 = item ? `${name} @ ${item}` : `${name}`;
-    const abilityLine = ability ? `Ability: ${ability}` : '';
-    const teraLine = tera ? `Tera Type: ${tera}` : '';
-    const evParts = [];
-    evInputs.forEach(inp => {
-      const stat = inp.dataset.stat; const v=parseInt(inp.value)||0;
-      if(v>0) evParts.push(`${v} ${stat}`);
-    });
-    const evLine = evParts.length? `EVs: ${evParts.join(' / ')}` : '';
-    const ivParts = [];
-    ivInputs.forEach(inp => {
-      const stat = inp.dataset.stat; const v=parseInt(inp.value)||0;
-      if(v!==31) ivParts.push(`${v} ${stat}`);
-    });
-    const ivLine = ivParts.length? `IVs: ${ivParts.join(' / ')}` : '';
-    const natureLine = nature? `${nature} Nature` : '';
-    const moveLines = moves.map(m=>`- ${m}`).join('\n');
-
-    return [line1, abilityLine, teraLine, evLine, natureLine, ivLine, moveLines].filter(Boolean).join('\n') + '\n';
-  }
-
-  function buildShowdownTextFromAll(){
-    const slots = Array.from(pokemonList.children);
-    return slots.map(s=>buildShowdownTextFromSlot(s)).join('\n');
-  }
+    const div=document.createElement('div');
+    div.className="poke-slot";
+    div.innerHTML=`<h4>Pokémon ${pokeCount}</h4>
+      <label>Nome <input class="pname"></label><br>
+      <label>Item <input class="pitem"></label><br>
+      <label>Ability <input class="pability"></label><br>
+      <label>Nature <input class="pnature"></label><br>
+      <label>Tera <input class="ptera"></label><br>
+      <label>EVs <input class="pevs" placeholder="hp/atk/def/spa/spd/spe"></label><br>
+      <label>IVs <input class="pivs" placeholder="hp/atk/def/spa/spd/spe"></label><br>
+      <label>Moves <textarea class="pmoves" placeholder="1 por linha"></textarea></label>`;
+    pokemonList.appendChild(div);
+  };
 
   function collectTeamData(){
-    const slots = Array.from(pokemonList.children);
-    const team = { name: teamNameInput.value.trim() || null, createdAt: Date.now(), pokemon: [] };
-    const teamTierElem = document.getElementById('teamTier');
-    team.tier = teamTierElem ? (teamTierElem.value || null) : null;
-    slots.forEach(slot=>{
-      const name = slot.querySelector('input[name=name]').value.trim() || '—';
-      const item = slot.querySelector('input[name=item]').value.trim() || '';
-      const ability = slot.querySelector('input[name=ability]').value.trim() || '';
-      const tera = slot.querySelector('input[name=tera]').value.trim() || '';
-      const nature = slot.querySelector('select[name=nature]').value || '';
-      const evs = {}; slot.querySelectorAll('.ev-input').forEach(i=>evs[i.dataset.stat]=parseInt(i.value)||0);
-      const ivs = {}; slot.querySelectorAll('.iv-input').forEach(i=>ivs[i.dataset.stat]=parseInt(i.value)||0);
-      const moves = Array.from(slot.querySelectorAll('.move-input')).map(i=>i.value.trim()).filter(Boolean);
-      team.pokemon.push({ name, item, ability, tera, nature, evs, ivs, moves });
+    const team={};
+    team.name=document.getElementById('teamName').value.trim();
+    team.tier=document.getElementById('teamTier').value;
+    team.pokemon=[];
+    pokemonList.querySelectorAll('.poke-slot').forEach(slot=>{
+      const p={};
+      p.name=slot.querySelector('.pname').value;
+      p.item=slot.querySelector('.pitem').value;
+      p.ability=slot.querySelector('.pability').value;
+      p.nature=slot.querySelector('.pnature').value;
+      p.tera=slot.querySelector('.ptera').value;
+      p.evs=slot.querySelector('.pevs').value;
+      p.ivs=slot.querySelector('.pivs').value;
+      p.moves=slot.querySelector('.pmoves').value.split("\\n").filter(x=>x);
+      team.pokemon.push(p);
     });
+    team.createdAt=Date.now();
     return team;
   }
 
-  // Export & copy
-  exportShowdownBtn.onclick = ()=> {
-    const txt = buildShowdownTextFromAll();
-    if(!txt.trim()){ alert('Sem Pokémon no time'); return; }
-    navigator.clipboard.writeText(txt).then(()=>alert('Time copiado em formato Showdown'));
+  document.getElementById('teamForm').addEventListener('submit', async e=>{
+    e.preventDefault();
+    const user=auth.currentUser;
+    if(!user){alert("É preciso estar logado."); return;}
+    const team=collectTeamData();
+    team.owner=user.uid;
+    team.ownerName=user.displayName||user.email;
+    const teamRef=push(ref(db,'teams'));
+    await set(teamRef,team);
+    alert("Time salvo com sucesso!");
+    window.location.href="simple_teams.html";
+  });
+
+  // Import/Export simples
+  document.getElementById('exportBtn').onclick=()=>{
+    const team=collectTeamData();
+    let txt="";
+    team.pokemon.forEach(p=>{
+      txt+=p.name+" @ "+p.item+"\\n";
+      if(p.ability) txt+="Ability: "+p.ability+"\\n";
+      if(p.nature) txt+=p.nature+" Nature\\n";
+      if(p.evs) txt+="EVs: "+p.evs+"\\n";
+      (p.moves||[]).forEach(m=>txt+="- "+m+"\\n");
+      txt+="\\n";
+    });
+    const w=window.open();
+    w.document.write("<pre>"+txt+"</pre>");
   };
 
-  btnCopyAll.addEventListener('click', ()=> {
-    const txt = buildShowdownTextFromAll();
-    navigator.clipboard.writeText(txt).then(()=>alert('Time copiado em formato Showdown'));
-  });
-
-  btnCopyTeamJSON.addEventListener('click', ()=> {
-    const data = collectTeamData();
-    navigator.clipboard.writeText(JSON.stringify(data, null, 2)).then(()=>alert('JSON copiado'));
-  });
-
-  // Import parsing
-  btnClearImport.addEventListener('click', ()=>{ importArea.value=''; importMsg.style.display='none'; renderPreview(); });
-  btnImport.addEventListener('click', ()=>{
-    const text = importArea.value.trim();
-    if(!text){ importMsg.style.display='block'; importMsg.textContent='Cole o texto do Showdown antes de importar.'; return; }
-    try{
-      const parsed = parseShowdownText(text);
-      pokemonList.innerHTML=''; pokeCount=0;
-      parsed.forEach(p=>createPokemonSlot(p));
-      importMsg.style.display='block'; importMsg.style.color='lightgreen';
-      importMsg.textContent = `Importado ${parsed.length} Pokémon(s). Revise e salve.`;
-      validateAllEVs();
-      renderPreview();
-    }catch(err){
-      importMsg.style.display='block'; importMsg.style.color='#ffb86b';
-      importMsg.textContent = 'Erro no parse: ' + err.message;
-    }
-  });
-
-  function parseShowdownText(text){
-    const blocks = text.split(/\n\s*\n/).map(b=>b.trim()).filter(Boolean);
-    const out = blocks.map(block=>{
-      const lines = block.split('\n').map(L=>L.trim()).filter(Boolean);
-      const p = { name:'', item:'', ability:'', tera:'', nature:'', evs:{}, ivs:{}, moves:[] };
-      const first = lines.shift();
-      const mItem = first.match(/^(.+?)\s+@\s+(.+)$/);
-      if(mItem){ p.name = mItem[1].trim(); p.item = mItem[2].trim(); }
-      else p.name = first.trim();
-
-      lines.forEach(line=>{
-        if(/^Ability:\s*/i.test(line)){ p.ability = line.replace(/^Ability:\s*/i,'').trim(); return; }
-        if(/^Tera Type:\s*/i.test(line)){ p.tera = line.replace(/^Tera Type:\s*/i,'').trim(); return; }
-        if(/^EVs:\s*/i.test(line)){
-          const evstr = line.replace(/^EVs:\s*/i,'').trim();
-          evstr.split('/').map(s=>s.trim()).forEach(part=>{
-            const mm = part.match(/^(\d+)\s+([A-Za-z]+)$/);
-            if(mm){ const v=parseInt(mm[1]); const k = normalizeStatName(mm[2]); p.evs[k]=v; }
-          });
-          return;
-        }
-        if(/^IVs:\s*/i.test(line)){
-          const ivstr = line.replace(/^IVs:\s*/i,'').trim();
-          ivstr.split('/').map(s=>s.trim()).forEach(part=>{
-            const mm = part.match(/^(\d+)\s+([A-Za-z]+)$/);
-            if(mm){ const v=parseInt(mm[1]); const k = normalizeStatName(mm[2]); p.ivs[k]=v; }
-          });
-          return;
-        }
-        if(/Nature$/i.test(line) || natures.includes(line.replace(' Nature','').trim())){
-          p.nature = line.replace(/Nature$/i,'').trim();
-          return;
-        }
-        if(/^\-\s*/.test(line)){ p.moves.push(line.replace(/^\-\s*/,'').trim()); return; }
-        const mm = line.match(/^(\d+)\s+([A-Za-z]+)$/);
-        if(mm){ const v=parseInt(mm[1]); const k = normalizeStatName(mm[2]); p.evs[k]=v; return; }
-      });
-      return p;
+  document.getElementById('copyBtn').onclick=()=>{
+    const team=collectTeamData();
+    let txt="";
+    team.pokemon.forEach(p=>{
+      txt+=p.name+" @ "+p.item+"\\n";
+      if(p.ability) txt+="Ability: "+p.ability+"\\n";
+      if(p.nature) txt+=p.nature+" Nature\\n";
+      if(p.evs) txt+="EVs: "+p.evs+"\\n";
+      (p.moves||[]).forEach(m=>txt+="- "+m+"\\n");
+      txt+="\\n";
     });
-    return out;
-  }
+    navigator.clipboard.writeText(txt);
+    alert("Copiado!");
+  };
 
-  function normalizeStatName(s){
-    s = s.replace(/\./g,'').replace(/[^A-Za-z]/g,'').toLowerCase();
-    if(/^hp/i.test(s)) return 'HP';
-    if(/^atk/i.test(s)) return 'Atk';
-    if(/^def$/i.test(s)) return 'Def';
-    if(/^spa/i.test(s) || /^spatk/i.test(s)) return 'SpA';
-    if(/^spd/i.test(s) || /^spdef/i.test(s)) return 'SpD';
-    if(/^spe/i.test(s) || /^spd?e/i.test(s)) return 'Spe';
-    if(s.toLowerCase().includes('spa')) return 'SpA';
-    if(s.toLowerCase().includes('spd')) return 'SpD';
-    if(s.toLowerCase().includes('atk')) return 'Atk';
-    if(s.toLowerCase().includes('def')) return 'Def';
-    if(s.toLowerCase().includes('spe')) return 'Spe';
-    return s;
-  }
-
-  // EV validation
-  function validateAllEVs(showAlert=false){
-    const slots = Array.from(pokemonList.children);
-    let invalid = false;
-    let messages = [];
-    slots.forEach((slot, idx)=>{
-      const evInputs = slot.querySelectorAll('.ev-input');
-      let total=0;
-      evInputs.forEach(i=>{
-        let v = parseInt(i.value) || 0;
-        if(v<0) { i.value = 0; v=0; }
-        if(v>252){ i.value = 252; v=252; }
-        total += v;
+  document.getElementById('importBtn').onclick=()=>{
+    const txt=prompt("Cole o texto do Showdown aqui:");
+    if(!txt) return;
+    pokemonList.innerHTML=""; pokeCount=0;
+    const blocks=txt.split(/\\n\\n+/);
+    blocks.forEach(b=>{
+      if(!b.trim()) return;
+      addPokemonBtn.onclick();
+      const slot=pokemonList.lastChild;
+      const lines=b.split(/\\n/);
+      let first=lines[0].split(" @ ");
+      slot.querySelector('.pname').value=first[0].trim();
+      if(first[1]) slot.querySelector('.pitem').value=first[1].trim();
+      lines.slice(1).forEach(l=>{
+        if(l.startsWith("Ability:")) slot.querySelector('.pability').value=l.replace("Ability:","").trim();
+        else if(l.endsWith("Nature")) slot.querySelector('.pnature').value=l.replace("Nature","").trim();
+        else if(l.startsWith("EVs:")) slot.querySelector('.pevs').value=l.replace("EVs:","").trim();
+        else if(l.startsWith("-")) slot.querySelector('.pmoves').value+=(l.replace("-","").trim()+"\\n");
       });
-      if(total>510){ invalid = true; messages.push(`Pokémon ${idx+1}: total de EVs = ${total} (máx 510)`); }
     });
-    if(invalid){
-      evWarning.className='danger'; evWarning.style.display='block';
-      evWarning.textContent = messages.join(' • ');
-      if(showAlert) return true;
-      return true;
-    } else {
-      evWarning.style.display='none';
-      return false;
-    }
-  }
-
-  // Preview (showdown)
-  function renderPreview(){
-    previewShowdown.value = buildShowdownTextFromAll();
-  }
-
-  // initial slot
-  createPokemonSlot();
-  renderPreview();
-
-  // add pokemon
-  addPokemonBtn.addEventListener('click', ()=>{ createPokemonSlot(); renderPreview(); });
-
-  // listen global input for debounce arming
-  let evDeb;
-  document.addEventListener('input', ()=>{ clearTimeout(evDeb); evDeb = setTimeout(()=>{ validateAllEVs(false); renderPreview(); }, 220); });
-
-  // ====== Auth UI & actions ======
-  function renderAuthUI(user){
-    if(user){
-      authArea.innerHTML = `
-        <div class="avatar">
-          <img src="${user.photoURL||'https://i.pravatar.cc/150'}" alt="avatar" />
-          <div style="display:flex;flex-direction:column;line-height:1;">
-            <strong style="color:var(--gold)">${escapeHtml(user.displayName||user.email||'Usuário')}</strong>
-            <small style="color:var(--muted);font-size:.82rem">${escapeHtml(user.email||'')}</small>
-          </div>
-          <button id="logoutBtn" class="btn ghost">Sair</button>
-        </div>
-      `;
-      document.getElementById('logoutBtn').onclick = async ()=>{ await signOut(auth); };
-    } else {
-      authArea.innerHTML = `
-        <button class="btn" id="loginBtn">Login</button>
-        <button class="btn ghost" id="registerBtn">Registrar</button>
-      `;
-      document.getElementById('loginBtn').onclick = showEmailLogin;
-      document.getElementById('registerBtn').onclick = showEmailRegister;
-    }
-  }
-
-  onAuthStateChanged(auth, user => {
-    renderAuthUI(user);
-  });
-
-  // quick google sign
-  btnSignGoogle.addEventListener('click', async ()=>{
-    try{
-      const provider = new GoogleAuthProvider();
-      const res = await signInWithPopup(auth, provider);
-      const user = res.user;
-      // ensure user data in DB (simple write)
-      await set(ref(db, `users/${user.uid}`), { displayName: user.displayName || null, email: user.email || null, createdAt: Date.now() });
-      alert('Logado como ' + (user.displayName || user.email));
-    }catch(err){ alert('Erro Google: ' + err.message); }
-  });
-
-  // email login/register popup (simple prompt flow)
-  function showEmailLogin(){
-    const email = prompt('Email:');
-    if(!email) return;
-    const pass = prompt('Senha:');
-    if(!pass) return;
-    signInWithEmailAndPassword(auth, email, pass).then(()=>alert('Logado!')).catch(e=>alert('Erro: '+e.message));
-  }
-  function showEmailRegister(){
-    const nick = prompt('Nickname (o que aparecerá no time):');
-    if(!nick) return;
-    const email = prompt('Email:');
-    if(!email) return;
-    const pass = prompt('Senha:');
-    if(!pass) return;
-    createUserWithEmailAndPassword(auth, email, pass).then(async (cred)=>{
-      await updateProfile(cred.user, { displayName: nick });
-      await set(ref(db, `users/${cred.user.uid}`), { displayName: nick, email: email, createdAt: Date.now() });
-      alert('Conta criada e logado!');
-    }).catch(e=>alert('Erro: '+e.message));
-  }
-
-  // ====== Save to Firebase (require tier) ======
-  teamForm.addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    const user = auth.currentUser;
-    if(!user){ alert('Precisa fazer login para salvar (use Google ou Email)'); return; }
-
-    const teamTierElem = document.getElementById('teamTier');
-    if(!teamTierElem || !teamTierElem.value){
-      alert('Selecione uma Tier antes de salvar o time.');
-      return;
-    }
-
-    const invalid = validateAllEVs(true);
-    if(invalid){ alert('Erros de EV/IV. Corrija antes de salvar.'); return; }
-
-    const teamRef = push(ref(db, 'teams'));
-    const data = collectTeamData();
-    data.owner = user.uid;
-    data.ownerName = user.displayName || user.email || 'Anônimo';
-    // write
-    try{
-      await set(teamRef, data);
-      alert('Time salvo com sucesso!');
-      // clear
-      pokemonList.innerHTML=''; pokeCount=0; createPokemonSlot(); renderPreview();
-      teamNameInput.value=''; tierSelect.value='';
-    }catch(err){
-      alert('Erro ao salvar: ' + err.message);
-    }
-  });
-
-  // ====== small utilities ======
-  function formatStatMap(map){
-    if(!map) return '';
-    return ['HP','Atk','Def','SpA','SpD','Spe'].map(k=> (map[k]||0) + ' ' + k ).join(' / ');
-  }
-
-  // ====== Optional: preview render (called) ======
-  // renderPreview already defined above (populate preview)
-
-  // ====== Extra: prefill sample (dev) - commented out
-  // createPokemonSlot({ name:'Kingambit', item:'Leftovers', ability:'Supreme Overlord', tera:'Dragon', nature:'Adamant', evs:{HP:4,Atk:252,Def:0,SpA:0,SpD:0,Spe:252}, ivs:{HP:31,Atk:31,Def:31,SpA:31,SpD:31,Spe:31}, moves:['Behemoth Blade','Swords Dance'] });
-
-  </script>
+  };
+</script>
 </body>
 </html>
