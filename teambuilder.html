@@ -551,70 +551,81 @@ Moonblast"></textarea>
     URL.revokeObjectURL(a.href);
   });
 
-  // ---------- IMPORT SHOWDOWN (from textarea) ----------
-  function parseShowdownTeam(text){
-    const blocks = text.split(/\n\s*\n/).map(b=>b.trim()).filter(Boolean);
-    const parsed = [];
-    const invalid = [];
-    blocks.forEach(block=>{
-      const lines = block.split("\n").map(l=>l.trim()).filter(Boolean);
-      if (!lines.length) return;
-      const first = lines[0];
-      let name = "";
-      let item = "";
-      if (first.includes("@")) {
-        const parts = first.split("@");
-        name = parts[0].trim();
-        item = parts.slice(1).join("@").trim();
+ // ---------- IMPORT SHOWDOWN (from textarea) ----------
+function cleanName(name){
+  return name.replace(/\s*\(M\)$/i, "")
+             .replace(/\s*\(F\)$/i, "")
+             .trim();
+}
+
+function parseShowdownTeam(text){
+  const blocks = text.split(/\n\s*\n/).map(b=>b.trim()).filter(Boolean);
+  const parsed = [];
+  const invalid = [];
+  blocks.forEach(block=>{
+    const lines = block.split("\n").map(l=>l.trim()).filter(Boolean);
+    if (!lines.length) return;
+    const first = lines[0];
+    let name = "";
+    let item = "";
+    if (first.includes("@")) {
+      const parts = first.split("@");
+      name = parts[0].trim();
+      item = parts.slice(1).join("@").trim();
+    } else {
+      name = first.trim();
+    }
+
+    // 🔥 limpar gênero (M) / (F)
+    name = cleanName(name);
+
+    const matched = findExactPokemon(name);
+    if (!matched) {
+      invalid.push(name);
+      return;
+    }
+    const p = { name: matched, item: item, moves: [], evs: {}, ivs: {} };
+    lines.slice(1).forEach(l=>{
+      if (/^Ability:\s*/i.test(l)) {
+        p.ability = l.replace(/^Ability:\s*/i,"").trim();
+      } else if (/Nature$/i.test(l)) {
+        p.nature = l.replace(/Nature$/i,"").trim();
+      } else if (/^EVs:\s*/i.test(l)) {
+        const s = l.replace(/^EVs:\s*/i,"").trim();
+        s.split("/").map(x=>x.trim()).filter(Boolean).forEach(seg=>{
+          const m = seg.match(/^(\d+)\s+([A-Za-z]+)$/);
+          if(!m) return;
+          const val = m[1];
+          const stat = m[2].toLowerCase();
+          const map = { hp:'hp', atk:'atk', def:'def', spa:'spa', spd:'spd', spe:'spe' };
+          const key = map[stat] || map[stat.toLowerCase()] || null;
+          if (key) p.evs[key] = val;
+        });
+      } else if (/^IVs:\s*/i.test(l)) {
+        const s = l.replace(/^IVs:\s*/i,"").trim();
+        s.split("/").map(x=>x.trim()).filter(Boolean).forEach(seg=>{
+          const m = seg.match(/^(\d+)\s+([A-Za-z]+)$/);
+          if(!m) return;
+          const val = m[1];
+          const stat = m[2].toLowerCase();
+          const map = { hp:'hp', atk:'atk', def:'def', spa:'spa', spd:'spd', spe:'spe' };
+          const key = map[stat] || map[stat.toLowerCase()] || null;
+          if (key) p.ivs[key] = val;
+        });
+      } else if (/^Tera Type:\s*/i.test(l)) {
+        p.tera = l.replace(/^Tera Type:\s*/i,"").trim();
+      } else if (/^\-/.test(l)) {
+        const m = l.replace(/^\-\s*/,"").trim();
+        if (m) p.moves.push(m);
       } else {
-        name = first.trim();
+        // ignore other lines como Level, Shiny, etc.
       }
-      const matched = findExactPokemon(name);
-      if (!matched) {
-        invalid.push(name);
-        return;
-      }
-      const p = { name: matched, item: item, moves: [], evs: {}, ivs: {} };
-      lines.slice(1).forEach(l=>{
-        if (/^Ability:\s*/i.test(l)) {
-          p.ability = l.replace(/^Ability:\s*/i,"").trim();
-        } else if (/Nature$/i.test(l)) {
-          p.nature = l.replace(/Nature$/i,"").trim();
-        } else if (/^EVs:\s*/i.test(l)) {
-          const s = l.replace(/^EVs:\s*/i,"").trim();
-          s.split("/").map(x=>x.trim()).filter(Boolean).forEach(seg=>{
-            const m = seg.match(/^(\d+)\s+([A-Za-z]+)$/);
-            if(!m) return;
-            const val = m[1];
-            const stat = m[2].toLowerCase();
-            const map = { hp:'hp', atk:'atk', def:'def', spa:'spa', spd:'spd', spe:'spe' };
-            const key = map[stat] || map[stat.toLowerCase()] || null;
-            if (key) p.evs[key] = val;
-          });
-        } else if (/^IVs:\s*/i.test(l)) {
-          const s = l.replace(/^IVs:\s*/i,"").trim();
-          s.split("/").map(x=>x.trim()).filter(Boolean).forEach(seg=>{
-            const m = seg.match(/^(\d+)\s+([A-Za-z]+)$/);
-            if(!m) return;
-            const val = m[1];
-            const stat = m[2].toLowerCase();
-            const map = { hp:'hp', atk:'atk', def:'def', spa:'spa', spd:'spd', spe:'spe' };
-            const key = map[stat] || map[stat.toLowerCase()] || null;
-            if (key) p.ivs[key] = val;
-          });
-        } else if (/^Tera Type:\s*/i.test(l)) {
-          p.tera = l.replace(/^Tera Type:\s*/i,"").trim();
-        } else if (/^\-/.test(l)) {
-          const m = l.replace(/^\-\s*/,"").trim();
-          if (m) p.moves.push(m);
-        } else {
-          // ignore other lines like Level, Shiny, etc.
-        }
-      });
-      parsed.push(p);
     });
-    return {parsed, invalid};
-  }
+    parsed.push(p);
+  });
+  return {parsed, invalid};
+}
+
 
   document.getElementById('importBtn').addEventListener('click', ()=>{
     const txt = document.getElementById('showdownInput').value.trim();
