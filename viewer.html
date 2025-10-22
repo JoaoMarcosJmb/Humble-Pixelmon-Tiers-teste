@@ -362,10 +362,13 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       return hypeA === hypeB ? 0 : hypeA ? -1 : 1;
     });
 
+    // 🔹 Detecta geração para Smogon (8 = ss, 9 = sv)
+    const gen = version.includes("1.16") ? "sv" : "ss";
+
     entries.forEach(([key, info])=>{
       const namePretty = prettifyKey(key);
       const smogonName = normalizeName(key);
-      const smogonUrl = `https://www.smogon.com/dex/ss/pokemon/${smogonName}`;
+      const smogonUrl = `https://www.smogon.com/dex/${gen}/pokemon/${smogonName}`;
 
       const id = (typeof info === "number") ? info : (info && typeof info.id === "number" ? info.id : null);
       const spriteFromJson = info && info.sprite ? info.sprite : null;
@@ -405,11 +408,30 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       card.appendChild(img);
       card.appendChild(h2);
 
-      // 🌟 Destaque visual para pokémons hype
+      // 🌟 Destaque visual e texto adicional para hype
       if (info && info.hype) {
         card.style.border = "3px solid var(--cor-dourado)";
-        card.style.boxShadow = "0 0 20px rgba(209, 167, 32, 0.7)";
-        card.style.transform = "scale(1.05)";
+        card.style.boxShadow = "0 0 25px rgba(209, 167, 32, 0.9)";
+        card.style.position = "relative";
+        card.innerHTML += `
+          <p style="
+            margin: 6px 0 0 0;
+            font-size: 0.95rem;
+            color: #ffd84d;
+            font-weight: bold;
+            text-shadow: 0 0 8px rgba(255,215,77,0.9);
+          ">🔥 Em alta nesta tier!</p>
+        `;
+
+        // Animação suave de brilho pulsante
+        card.animate([
+          { boxShadow: '0 0 20px rgba(209, 167, 32, 0.3)' },
+          { boxShadow: '0 0 30px rgba(209, 167, 32, 0.9)' },
+          { boxShadow: '0 0 20px rgba(209, 167, 32, 0.3)' }
+        ], {
+          duration: 3000,
+          iterations: Infinity
+        });
       }
 
       container.appendChild(card);
@@ -439,3 +461,4 @@ document.addEventListener('DOMContentLoaded', async ()=> {
 </script>
 </body>
 </html>
+
