@@ -1,0 +1,2978 @@
+{
+  "abomasnow": {
+    "id": 460
+  },
+  "abomasnow-mega": {
+    "id": 10060
+  },
+  "abra": {
+    "id": 63
+  },
+  "absol": {
+    "id": 359
+  },
+  "absol-mega": {
+    "id": 10057
+  },
+  "accelgor": {
+    "id": 617
+  },
+  "aerodactyl": {
+    "id": 142
+  },
+  "aggron": {
+    "id": 306
+  },
+  "aggron-mega": {
+    "id": 10053
+  },
+  "aipom": {
+    "id": 190
+  },
+  "alcremie": {
+    "id": 869
+  },
+  "altaria": {
+    "id": 334
+  },
+  "amaura": {
+    "id": 698
+  },
+  "ambipom": {
+    "id": 424
+  },
+  "ampharos": {
+    "id": 181
+  },
+  "ampharos-mega": {
+    "id": 10045
+  },
+  "anorith": {
+    "id": 347
+  },
+  "appletun": {
+    "id": 842
+  },
+  "applin": {
+    "id": 840
+  },
+  "araquanid": {
+    "id": 752
+  },
+  "arbok": {
+    "id": 24
+  },
+  "arboliva": {
+    "id": 930
+  },
+  "arcanine": {
+    "id": 59
+  },
+  "arcanine-hisui": {
+    "id": 10230
+  },
+  "archen": {
+    "id": 566
+  },
+  "archeops": {
+    "id": 567
+  },
+  "arctibax": {
+    "id": 997
+  },
+  "arctovish": {
+    "id": 883
+  },
+  "arctozolt": {
+    "id": 881
+  },
+  "ariados": {
+    "id": 168
+  },
+  "armaldo": {
+    "id": 348
+  },
+  "armarouge": {
+    "id": 936
+  },
+  "aromatisse": {
+    "id": 683
+  },
+  "aron": {
+    "id": 304
+  },
+  "arrokuda": {
+    "id": 846
+  },
+  "articuno": {
+    "id": 144
+  },
+  "articuno-galar": {
+    "id": 10169
+  },
+  "audino": {
+    "id": 531
+  },
+  "audino-mega": {
+    "id": 10069
+  },
+  "aurorus": {
+    "id": 699
+  },
+  "avalugg": {
+    "id": 713
+  },
+  "avalugg-hisui": {
+    "id": 10243
+  },
+  "axew": {
+    "id": 610
+  },
+  "azelf": {
+    "id": 482
+  },
+  "azurill": {
+    "id": 298
+  },
+  "bagon": {
+    "id": 371
+  },
+  "baltoy": {
+    "id": 343
+  },
+  "banette": {
+    "id": 354
+  },
+  "banette-mega": {
+    "id": 10056
+  },
+  "barbaracle": {
+    "id": 689
+  },
+  "barboach": {
+    "id": 339
+  },
+  "barraskewda": {
+    "id": 847
+  },
+  "basculegion-female": {
+    "id": 10248
+  },
+  "basculegion-male": {
+    "id": 902
+  },
+  "basculin-blue-striped": {
+    "id": 10016
+  },
+  "basculin-red-striped": {
+    "id": 550
+  },
+  "basculin-white-striped": {
+    "id": 10247
+  },
+  "bastiodon": {
+    "id": 411
+  },
+  "bayleef": {
+    "id": 153
+  },
+  "beartic": {
+    "id": 614
+  },
+  "beautifly": {
+    "id": 267
+  },
+  "beedrill": {
+    "id": 15
+  },
+  "beheeyem": {
+    "id": 606
+  },
+  "beldum": {
+    "id": 374
+  },
+  "bellibolt": {
+    "id": 939
+  },
+  "bellossom": {
+    "id": 182
+  },
+  "bellsprout": {
+    "id": 69
+  },
+  "bergmite": {
+    "id": 712
+  },
+  "bewear": {
+    "id": 760
+  },
+  "bibarel": {
+    "id": 400
+  },
+  "bidoof": {
+    "id": 399
+  },
+  "binacle": {
+    "id": 688
+  },
+  "blastoise": {
+    "id": 9
+  },
+  "blipbug": {
+    "id": 824
+  },
+  "blitzle": {
+    "id": 522
+  },
+  "boldore": {
+    "id": 525
+  },
+  "boltund": {
+    "id": 836
+  },
+  "bombirdier": {
+    "id": 962
+  },
+  "bonsly": {
+    "id": 438
+  },
+  "bouffalant": {
+    "id": 626
+  },
+  "bounsweet": {
+    "id": 761
+  },
+  "braixen": {
+    "id": 654
+  },
+  "brambleghast": {
+    "id": 947
+  },
+  "bramblin": {
+    "id": 946
+  },
+  "braviary": {
+    "id": 628
+  },
+  "braviary-hisui": {
+    "id": 10240
+  },
+  "breloom": {
+    "id": 286
+  },
+  "brionne": {
+    "id": 729
+  },
+  "bronzong": {
+    "id": 437
+  },
+  "bronzor": {
+    "id": 436
+  },
+  "brute-bonnet": {
+    "id": 986
+  },
+  "bruxish": {
+    "id": 779
+  },
+  "budew": {
+    "id": 406
+  },
+  "buizel": {
+    "id": 418
+  },
+  "bulbasaur": {
+    "id": 1
+  },
+  "buneary": {
+    "id": 427
+  },
+  "bunnelby": {
+    "id": 659
+  },
+  "burmy": {
+    "id": 412
+  },
+  "butterfree": {
+    "id": 12
+  },
+  "cacnea": {
+    "id": 331
+  },
+  "cacturne": {
+    "id": 332
+  },
+  "calyrex": {
+    "id": 898
+  },
+  "camerupt": {
+    "id": 323
+  },
+  "camerupt-mega": {
+    "id": 10087
+  },
+  "capsakid": {
+    "id": 951
+  },
+  "carbink": {
+    "id": 703
+  },
+  "carkol": {
+    "id": 838
+  },
+  "carnivine": {
+    "id": 455
+  },
+  "carracosta": {
+    "id": 565
+  },
+  "carvanha": {
+    "id": 318
+  },
+  "cascoon": {
+    "id": 268
+  },
+  "castform": {
+    "id": 351
+  },
+  "castform-rainy": {
+    "id": 10014
+  },
+  "castform-sunny": {
+    "id": 10013
+  },
+  "caterpie": {
+    "id": 10
+  },
+  "celebi": {
+    "id": 251
+  },
+  "centiskorch": {
+    "id": 851
+  },
+  "cetitan": {
+    "id": 975
+  },
+  "cetoddle": {
+    "id": 974
+  },
+  "chandelure": {
+    "id": 609
+  },
+  "charcadet": {
+    "id": 935
+  },
+  "charizard": {
+    "id": 6
+  },
+  "charjabug": {
+    "id": 737
+  },
+  "charmander": {
+    "id": 4
+  },
+  "charmeleon": {
+    "id": 5
+  },
+  "chatot": {
+    "id": 441
+  },
+  "cherrim": {
+    "id": 421
+  },
+  "cherubi": {
+    "id": 420
+  },
+  "chesnaught": {
+    "id": 652
+  },
+  "chespin": {
+    "id": 650
+  },
+  "chewtle": {
+    "id": 833
+  },
+  "chikorita": {
+    "id": 152
+  },
+  "chimchar": {
+    "id": 390
+  },
+  "chimecho": {
+    "id": 358
+  },
+  "chinchou": {
+    "id": 170
+  },
+  "chingling": {
+    "id": 433
+  },
+  "cinccino": {
+    "id": 573
+  },
+  "clamperl": {
+    "id": 366
+  },
+  "clauncher": {
+    "id": 692
+  },
+  "clawitzer": {
+    "id": 693
+  },
+  "claydol": {
+    "id": 344
+  },
+  "clefairy": {
+    "id": 35
+  },
+  "cleffa": {
+    "id": 173
+  },
+  "clobbopus": {
+    "id": 852
+  },
+  "cloyster": {
+    "id": 91
+  },
+  "coalossal": {
+    "id": 839
+  },
+  "cobalion": {
+    "id": 638
+  },
+  "cofagrigus": {
+    "id": 563
+  },
+  "combee": {
+    "id": 415
+  },
+  "combusken": {
+    "id": 256
+  },
+  "comfey": {
+    "id": 764
+  },
+  "copperajah": {
+    "id": 879
+  },
+  "corphish": {
+    "id": 341
+  },
+  "corsola": {
+    "id": 222
+  },
+  "corsola-galar": {
+    "id": 10173
+  },
+  "corvisquire": {
+    "id": 822
+  },
+  "cosmoem": {
+    "id": 790
+  },
+  "cosmog": {
+    "id": 789
+  },
+  "cottonee": {
+    "id": 546
+  },
+  "crabominable": {
+    "id": 740
+  },
+  "crabrawler": {
+    "id": 739
+  },
+  "cradily": {
+    "id": 346
+  },
+  "cramorant": {
+    "id": 845
+  },
+  "cramorant-gorging": {
+    "id": 10183
+  },
+  "cramorant-gulping": {
+    "id": 10182
+  },
+  "cranidos": {
+    "id": 408
+  },
+  "crawdaunt": {
+    "id": 342
+  },
+  "cresselia": {
+    "id": 488
+  },
+  "croagunk": {
+    "id": 453
+  },
+  "crobat": {
+    "id": 169
+  },
+  "crocalor": {
+    "id": 910
+  },
+  "croconaw": {
+    "id": 159
+  },
+  "crustle": {
+    "id": 558
+  },
+  "cryogonal": {
+    "id": 615
+  },
+  "cubchoo": {
+    "id": 613
+  },
+  "cubone": {
+    "id": 104
+  },
+  "cufant": {
+    "id": 878
+  },
+  "cursola": {
+    "id": 864
+  },
+  "cutiefly": {
+    "id": 742
+  },
+  "cyclizar": {
+    "id": 967
+  },
+  "cyndaquil": {
+    "id": 155
+  },
+  "dachsbun": {
+    "id": 927
+  },
+  "darmanitan-standard": {
+    "id": 555
+  },
+  "darmanitan-zen": {
+    "id": 10017
+  },
+  "dartrix": {
+    "id": 723
+  },
+  "darumaka": {
+    "id": 554
+  },
+  "darumaka-galar": {
+    "id": 10176
+  },
+  "decidueye": {
+    "id": 724
+  },
+  "decidueye-hisui": {
+    "id": 10244
+  },
+  "dedenne": {
+    "id": 702
+  },
+  "deerling": {
+    "id": 585
+  },
+  "deino": {
+    "id": 633
+  },
+  "delcatty": {
+    "id": 301
+  },
+  "delibird": {
+    "id": 225
+  },
+  "delphox": {
+    "id": 655
+  },
+  "deoxys-defense": {
+    "id": 10002
+  },
+  "deoxys-normal": {
+    "id": 386
+  },
+  "dewgong": {
+    "id": 87
+  },
+  "dewott": {
+    "id": 502
+  },
+  "dewpider": {
+    "id": 751
+  },
+  "dhelmise": {
+    "id": 781
+  },
+  "diancie": {
+    "id": 719
+  },
+  "diggersby": {
+    "id": 660
+  },
+  "diglett": {
+    "id": 50
+  },
+  "diglett-alola": {
+    "id": 10105
+  },
+  "dipplin": {
+    "id": 1011
+  },
+  "ditto": {
+    "id": 132
+  },
+  "dodrio": {
+    "id": 85
+  },
+  "doduo": {
+    "id": 84
+  },
+  "dolliv": {
+    "id": 929
+  },
+  "donphan": {
+    "id": 232
+  },
+  "dottler": {
+    "id": 825
+  },
+  "doublade": {
+    "id": 680
+  },
+  "dracozolt": {
+    "id": 880
+  },
+  "dragalge": {
+    "id": 691
+  },
+  "dragonair": {
+    "id": 148
+  },
+  "drakloak": {
+    "id": 886
+  },
+  "drampa": {
+    "id": 780
+  },
+  "drapion": {
+    "id": 452
+  },
+  "dratini": {
+    "id": 147
+  },
+  "drednaw": {
+    "id": 834
+  },
+  "dreepy": {
+    "id": 885
+  },
+  "drifblim": {
+    "id": 426
+  },
+  "drifloon": {
+    "id": 425
+  },
+  "drilbur": {
+    "id": 529
+  },
+  "drizzile": {
+    "id": 817
+  },
+  "drowzee": {
+    "id": 96
+  },
+  "druddigon": {
+    "id": 621
+  },
+  "dubwool": {
+    "id": 832
+  },
+  "ducklett": {
+    "id": 580
+  },
+  "dudunsparce-three-segment": {
+    "id": 10255
+  },
+  "dudunsparce-two-segment": {
+    "id": 982
+  },
+  "dugtrio": {
+    "id": 51
+  },
+  "dugtrio-alola": {
+    "id": 10106
+  },
+  "dunsparce": {
+    "id": 206
+  },
+  "duosion": {
+    "id": 578
+  },
+  "duraludon": {
+    "id": 884
+  },
+  "durant": {
+    "id": 632
+  },
+  "dusclops": {
+    "id": 356
+  },
+  "dusknoir": {
+    "id": 477
+  },
+  "duskull": {
+    "id": 355
+  },
+  "dustox": {
+    "id": 269
+  },
+  "dwebble": {
+    "id": 557
+  },
+  "eelektrik": {
+    "id": 603
+  },
+  "eelektross": {
+    "id": 604
+  },
+  "eevee": {
+    "id": 133
+  },
+  "eiscue-ice": {
+    "id": 875
+  },
+  "eiscue-noice": {
+    "id": 10185
+  },
+  "ekans": {
+    "id": 23
+  },
+  "eldegoss": {
+    "id": 830
+  },
+  "electabuzz": {
+    "id": 125
+  },
+  "electivire": {
+    "id": 466
+  },
+  "electrike": {
+    "id": 309
+  },
+  "electrode": {
+    "id": 101
+  },
+  "electrode-hisui": {
+    "id": 10232
+  },
+  "elekid": {
+    "id": 239
+  },
+  "elgyem": {
+    "id": 605
+  },
+  "emboar": {
+    "id": 500
+  },
+  "emolga": {
+    "id": 587
+  },
+  "empoleon": {
+    "id": 395
+  },
+  "enamorus-therian": {
+    "id": 10249
+  },
+  "entei": {
+    "id": 244
+  },
+  "escavalier": {
+    "id": 589
+  },
+  "espeon": {
+    "id": 196
+  },
+  "espurr": {
+    "id": 677
+  },
+  "exeggcute": {
+    "id": 102
+  },
+  "exeggutor": {
+    "id": 103
+  },
+  "exeggutor-alola": {
+    "id": 10114
+  },
+  "exploud": {
+    "id": 295
+  },
+  "falinks": {
+    "id": 870
+  },
+  "farfetchd": {
+    "id": 83
+  },
+  "farfetchd-galar": {
+    "id": 10166
+  },
+  "farigiraf": {
+    "id": 981
+  },
+  "fearow": {
+    "id": 22
+  },
+  "feebas": {
+    "id": 349
+  },
+  "fennekin": {
+    "id": 653
+  },
+  "feraligatr": {
+    "id": 160
+  },
+  "ferroseed": {
+    "id": 597
+  },
+  "fezandipiti": {
+    "id": 1016
+  },
+  "fidough": {
+    "id": 926
+  },
+  "finizen": {
+    "id": 963
+  },
+  "finneon": {
+    "id": 456
+  },
+  "flaaffy": {
+    "id": 180
+  },
+  "flabebe": {
+    "id": 669
+  },
+  "flamigo": {
+    "id": 973
+  },
+  "flapple": {
+    "id": 841
+  },
+  "flareon": {
+    "id": 136
+  },
+  "fletchinder": {
+    "id": 662
+  },
+  "fletchling": {
+    "id": 661
+  },
+  "flittle": {
+    "id": 955
+  },
+  "floatzel": {
+    "id": 419
+  },
+  "floette": {
+    "id": 670
+  },
+  "floragato": {
+    "id": 907
+  },
+  "florges": {
+    "id": 671
+  },
+  "flygon": {
+    "id": 330
+  },
+  "fomantis": {
+    "id": 753
+  },
+  "foongus": {
+    "id": 590
+  },
+  "forretress": {
+    "id": 205
+  },
+  "fraxure": {
+    "id": 611
+  },
+  "frigibax": {
+    "id": 996
+  },
+  "frillish": {
+    "id": 592
+  },
+  "froakie": {
+    "id": 656
+  },
+  "frogadier": {
+    "id": 657
+  },
+  "froslass": {
+    "id": 478
+  },
+  "frosmoth": {
+    "id": 873
+  },
+  "fuecoco": {
+    "id": 909
+  },
+  "furfrou": {
+    "id": 676
+  },
+  "furret": {
+    "id": 162
+  },
+  "gabite": {
+    "id": 444
+  },
+  "gallade": {
+    "id": 475
+  },
+  "galvantula": {
+    "id": 596
+  },
+  "garbodor": {
+    "id": 569
+  },
+  "gardevoir": {
+    "id": 282
+  },
+  "gastly": {
+    "id": 92
+  },
+  "gastrodon": {
+    "id": 423
+  },
+  "geodude": {
+    "id": 74
+  },
+  "geodude-alola": {
+    "id": 10109
+  },
+  "gible": {
+    "id": 443
+  },
+  "gigalith": {
+    "id": 526
+  },
+  "gimmighoul": {
+    "id": 999
+  },
+  "girafarig": {
+    "id": 203
+  },
+  "glaceon": {
+    "id": 471
+  },
+  "glalie": {
+    "id": 362
+  },
+  "glalie-mega": {
+    "id": 10074
+  },
+  "glameow": {
+    "id": 431
+  },
+  "glastrier": {
+    "id": 896
+  },
+  "gligar": {
+    "id": 207
+  },
+  "glimmet": {
+    "id": 969
+  },
+  "gloom": {
+    "id": 44
+  },
+  "gogoat": {
+    "id": 673
+  },
+  "golbat": {
+    "id": 42
+  },
+  "goldeen": {
+    "id": 118
+  },
+  "golduck": {
+    "id": 55
+  },
+  "golem": {
+    "id": 76
+  },
+  "golem-alola": {
+    "id": 10111
+  },
+  "golett": {
+    "id": 622
+  },
+  "golisopod": {
+    "id": 768
+  },
+  "golurk": {
+    "id": 623
+  },
+  "goodra": {
+    "id": 706
+  },
+  "goodra-hisui": {
+    "id": 10242
+  },
+  "goomy": {
+    "id": 704
+  },
+  "gorebyss": {
+    "id": 368
+  },
+  "gossifleur": {
+    "id": 829
+  },
+  "gothita": {
+    "id": 574
+  },
+  "gothitelle": {
+    "id": 576
+  },
+  "gothorita": {
+    "id": 575
+  },
+  "gourgeist-average": {
+    "id": 711
+  },
+  "grafaiai": {
+    "id": 945
+  },
+  "granbull": {
+    "id": 210
+  },
+  "grapploct": {
+    "id": 853
+  },
+  "graveler": {
+    "id": 75
+  },
+  "graveler-alola": {
+    "id": 10110
+  },
+  "greavard": {
+    "id": 971
+  },
+  "greedent": {
+    "id": 820
+  },
+  "grimer": {
+    "id": 88
+  },
+  "grimer-alola": {
+    "id": 10112
+  },
+  "grimmsnarl": {
+    "id": 861
+  },
+  "grookey": {
+    "id": 810
+  },
+  "grotle": {
+    "id": 388
+  },
+  "grovyle": {
+    "id": 253
+  },
+  "growlithe": {
+    "id": 58
+  },
+  "growlithe-hisui": {
+    "id": 10229
+  },
+  "grubbin": {
+    "id": 736
+  },
+  "grumpig": {
+    "id": 326
+  },
+  "gulpin": {
+    "id": 316
+  },
+  "gumshoos": {
+    "id": 735
+  },
+  "gurdurr": {
+    "id": 533
+  },
+  "guzzlord": {
+    "id": 799
+  },
+  "hakamo-o": {
+    "id": 783
+  },
+  "happiny": {
+    "id": 440
+  },
+  "hariyama": {
+    "id": 297
+  },
+  "hatenna": {
+    "id": 856
+  },
+  "hattrem": {
+    "id": 857
+  },
+  "haunter": {
+    "id": 93
+  },
+  "heatmor": {
+    "id": 631
+  },
+  "heliolisk": {
+    "id": 695
+  },
+  "helioptile": {
+    "id": 694
+  },
+  "heracross": {
+    "id": 214
+  },
+  "herdier": {
+    "id": 507
+  },
+  "hippopotas": {
+    "id": 449
+  },
+  "hitmonchan": {
+    "id": 107
+  },
+  "hitmonlee": {
+    "id": 106
+  },
+  "hitmontop": {
+    "id": 237
+  },
+  "honchkrow": {
+    "id": 430
+  },
+  "honedge": {
+    "id": 679
+  },
+  "hoopa": {
+    "id": 720
+  },
+  "hoothoot": {
+    "id": 163
+  },
+  "hoppip": {
+    "id": 187
+  },
+  "horsea": {
+    "id": 116
+  },
+  "houndoom": {
+    "id": 229
+  },
+  "houndoom-mega": {
+    "id": 10048
+  },
+  "houndour": {
+    "id": 228
+  },
+  "houndstone": {
+    "id": 972
+  },
+  "huntail": {
+    "id": 367
+  },
+  "hypno": {
+    "id": 97
+  },
+  "igglybuff": {
+    "id": 174
+  },
+  "illumise": {
+    "id": 314
+  },
+  "impidimp": {
+    "id": 859
+  },
+  "incineroar": {
+    "id": 727
+  },
+  "indeedee-female": {
+    "id": 10186
+  },
+  "indeedee-male": {
+    "id": 876
+  },
+  "infernape": {
+    "id": 392
+  },
+  "inkay": {
+    "id": 686
+  },
+  "inteleon": {
+    "id": 818
+  },
+  "iron-jugulis": {
+    "id": 993
+  },
+  "iron-thorns": {
+    "id": 995
+  },
+  "ivysaur": {
+    "id": 2
+  },
+  "jangmo-o": {
+    "id": 782
+  },
+  "jellicent": {
+    "id": 593
+  },
+  "jigglypuff": {
+    "id": 39
+  },
+  "jolteon": {
+    "id": 135
+  },
+  "joltik": {
+    "id": 595
+  },
+  "jumpluff": {
+    "id": 189
+  },
+  "jynx": {
+    "id": 124
+  },
+  "kabuto": {
+    "id": 140
+  },
+  "kabutops": {
+    "id": 141
+  },
+  "kadabra": {
+    "id": 64
+  },
+  "kakuna": {
+    "id": 14
+  },
+  "kangaskhan": {
+    "id": 115
+  },
+  "karrablast": {
+    "id": 588
+  },
+  "kecleon": {
+    "id": 352
+  },
+  "kilowattrel": {
+    "id": 941
+  },
+  "kingdra": {
+    "id": 230
+  },
+  "kingler": {
+    "id": 99
+  },
+  "kirlia": {
+    "id": 281
+  },
+  "klang": {
+    "id": 600
+  },
+  "klawf": {
+    "id": 950
+  },
+  "kleavor": {
+    "id": 900
+  },
+  "klefki": {
+    "id": 707
+  },
+  "klink": {
+    "id": 599
+  },
+  "klinklang": {
+    "id": 601
+  },
+  "koffing": {
+    "id": 109
+  },
+  "komala": {
+    "id": 775
+  },
+  "krabby": {
+    "id": 98
+  },
+  "kricketot": {
+    "id": 401
+  },
+  "kricketune": {
+    "id": 402
+  },
+  "krokorok": {
+    "id": 552
+  },
+  "krookodile": {
+    "id": 553
+  },
+  "kubfu": {
+    "id": 891
+  },
+  "lairon": {
+    "id": 305
+  },
+  "lampent": {
+    "id": 608
+  },
+  "lanturn": {
+    "id": 171
+  },
+  "lapras": {
+    "id": 131
+  },
+  "larvesta": {
+    "id": 636
+  },
+  "larvitar": {
+    "id": 246
+  },
+  "latias": {
+    "id": 380
+  },
+  "leafeon": {
+    "id": 470
+  },
+  "leavanny": {
+    "id": 542
+  },
+  "lechonk": {
+    "id": 915
+  },
+  "ledian": {
+    "id": 166
+  },
+  "ledyba": {
+    "id": 165
+  },
+  "lickilicky": {
+    "id": 463
+  },
+  "lickitung": {
+    "id": 108
+  },
+  "liepard": {
+    "id": 510
+  },
+  "lileep": {
+    "id": 345
+  },
+  "lilligant": {
+    "id": 549
+  },
+  "lillipup": {
+    "id": 506
+  },
+  "linoone": {
+    "id": 264
+  },
+  "linoone-galar": {
+    "id": 10175
+  },
+  "litleo": {
+    "id": 667
+  },
+  "litten": {
+    "id": 725
+  },
+  "litwick": {
+    "id": 607
+  },
+  "lokix": {
+    "id": 920
+  },
+  "lombre": {
+    "id": 271
+  },
+  "lopunny": {
+    "id": 428
+  },
+  "lotad": {
+    "id": 270
+  },
+  "loudred": {
+    "id": 294
+  },
+  "lucario": {
+    "id": 448
+  },
+  "ludicolo": {
+    "id": 272
+  },
+  "lumineon": {
+    "id": 457
+  },
+  "lunatone": {
+    "id": 337
+  },
+  "lurantis": {
+    "id": 754
+  },
+  "luvdisc": {
+    "id": 370
+  },
+  "luxio": {
+    "id": 404
+  },
+  "luxray": {
+    "id": 405
+  },
+  "lycanroc-dusk": {
+    "id": 10152
+  },
+  "lycanroc-midday": {
+    "id": 745
+  },
+  "lycanroc-midnight": {
+    "id": 10126
+  },
+  "mabosstiff": {
+    "id": 943
+  },
+  "machamp": {
+    "id": 68
+  },
+  "machoke": {
+    "id": 67
+  },
+  "machop": {
+    "id": 66
+  },
+  "magby": {
+    "id": 240
+  },
+  "magcargo": {
+    "id": 219
+  },
+  "magikarp": {
+    "id": 129
+  },
+  "magmar": {
+    "id": 126
+  },
+  "magmortar": {
+    "id": 467
+  },
+  "magnemite": {
+    "id": 81
+  },
+  "magneton": {
+    "id": 82
+  },
+  "makuhita": {
+    "id": 296
+  },
+  "malamar": {
+    "id": 687
+  },
+  "mandibuzz": {
+    "id": 630
+  },
+  "manectric": {
+    "id": 310
+  },
+  "manectric-mega": {
+    "id": 10055
+  },
+  "mankey": {
+    "id": 56
+  },
+  "mantine": {
+    "id": 226
+  },
+  "mantyke": {
+    "id": 458
+  },
+  "maractus": {
+    "id": 556
+  },
+  "mareanie": {
+    "id": 747
+  },
+  "mareep": {
+    "id": 179
+  },
+  "marill": {
+    "id": 183
+  },
+  "marowak": {
+    "id": 105
+  },
+  "marowak-alola": {
+    "id": 10115
+  },
+  "marshtomp": {
+    "id": 259
+  },
+  "maschiff": {
+    "id": 942
+  },
+  "masquerain": {
+    "id": 284
+  },
+  "maushold-family-of-four": {
+    "id": 925
+  },
+  "maushold-family-of-three": {
+    "id": 10257
+  },
+  "mawile": {
+    "id": 303
+  },
+  "medicham": {
+    "id": 308
+  },
+  "meditite": {
+    "id": 307
+  },
+  "meganium": {
+    "id": 154
+  },
+  "meloetta-aria": {
+    "id": 648
+  },
+  "meloetta-pirouette": {
+    "id": 10018
+  },
+  "meltan": {
+    "id": 808
+  },
+  "meowstic-male": {
+    "id": 678
+  },
+  "meowth": {
+    "id": 52
+  },
+  "meowth-alola": {
+    "id": 10107
+  },
+  "meowth-galar": {
+    "id": 10161
+  },
+  "mesprit": {
+    "id": 481
+  },
+  "metagross": {
+    "id": 376
+  },
+  "metang": {
+    "id": 375
+  },
+  "metapod": {
+    "id": 11
+  },
+  "mienfoo": {
+    "id": 619
+  },
+  "mightyena": {
+    "id": 262
+  },
+  "milcery": {
+    "id": 868
+  },
+  "milotic": {
+    "id": 350
+  },
+  "miltank": {
+    "id": 241
+  },
+  "mime-jr": {
+    "id": 439
+  },
+  "mimikyu-busted": {
+    "id": 10143
+  },
+  "mimikyu-disguised": {
+    "id": 778
+  },
+  "minccino": {
+    "id": 572
+  },
+  "minior-red-meteor": {
+    "id": 774
+  },
+  "minun": {
+    "id": 312
+  },
+  "misdreavus": {
+    "id": 200
+  },
+  "mismagius": {
+    "id": 429
+  },
+  "monferno": {
+    "id": 391
+  },
+  "morelull": {
+    "id": 755
+  },
+  "morgrem": {
+    "id": 860
+  },
+  "morpeko-full-belly": {
+    "id": 877
+  },
+  "morpeko-hangry": {
+    "id": 10187
+  },
+  "mothim": {
+    "id": 414
+  },
+  "mr-mime": {
+    "id": 122
+  },
+  "mr-mime-galar": {
+    "id": 10168
+  },
+  "mr-rime": {
+    "id": 866
+  },
+  "mudbray": {
+    "id": 749
+  },
+  "mudkip": {
+    "id": 258
+  },
+  "mudsdale": {
+    "id": 750
+  },
+  "muk": {
+    "id": 89
+  },
+  "muk-alola": {
+    "id": 10113
+  },
+  "munchlax": {
+    "id": 446
+  },
+  "munkidori": {
+    "id": 1015
+  },
+  "munna": {
+    "id": 517
+  },
+  "murkrow": {
+    "id": 198
+  },
+  "musharna": {
+    "id": 518
+  },
+  "nacli": {
+    "id": 932
+  },
+  "naclstack": {
+    "id": 933
+  },
+  "natu": {
+    "id": 177
+  },
+  "necrozma": {
+    "id": 800
+  },
+  "nickit": {
+    "id": 827
+  },
+  "nidoking": {
+    "id": 34
+  },
+  "nidoqueen": {
+    "id": 31
+  },
+  "nidoran-f": {
+    "id": 29
+  },
+  "nidoran-m": {
+    "id": 32
+  },
+  "nidorina": {
+    "id": 30
+  },
+  "nidorino": {
+    "id": 33
+  },
+  "nihilego": {
+    "id": 793
+  },
+  "nincada": {
+    "id": 290
+  },
+  "ninetales": {
+    "id": 38
+  },
+  "ninetales-alola": {
+    "id": 10104
+  },
+  "ninjask": {
+    "id": 291
+  },
+  "noctowl": {
+    "id": 164
+  },
+  "noibat": {
+    "id": 714
+  },
+  "noivern": {
+    "id": 715
+  },
+  "nosepass": {
+    "id": 299
+  },
+  "numel": {
+    "id": 322
+  },
+  "nuzleaf": {
+    "id": 274
+  },
+  "nymble": {
+    "id": 919
+  },
+  "obstagoon": {
+    "id": 862
+  },
+  "octillery": {
+    "id": 224
+  },
+  "oddish": {
+    "id": 43
+  },
+  "ogerpon": {
+    "id": 1017
+  },
+  "oinkologne-female": {
+    "id": 10254
+  },
+  "oinkologne-male": {
+    "id": 916
+  },
+  "okidogi": {
+    "id": 1014
+  },
+  "omanyte": {
+    "id": 138
+  },
+  "omastar": {
+    "id": 139
+  },
+  "onix": {
+    "id": 95
+  },
+  "oranguru": {
+    "id": 765
+  },
+  "orbeetle": {
+    "id": 826
+  },
+  "oricorio-baile": {
+    "id": 741
+  },
+  "oricorio-pau": {
+    "id": 10124
+  },
+  "oricorio-sensu": {
+    "id": 10125
+  },
+  "orthworm": {
+    "id": 968
+  },
+  "oshawott": {
+    "id": 501
+  },
+  "overqwil": {
+    "id": 904
+  },
+  "pachirisu": {
+    "id": 417
+  },
+  "palafin-hero": {
+    "id": 10256
+  },
+  "palossand": {
+    "id": 770
+  },
+  "palpitoad": {
+    "id": 536
+  },
+  "pancham": {
+    "id": 674
+  },
+  "pangoro": {
+    "id": 675
+  },
+  "panpour": {
+    "id": 515
+  },
+  "pansage": {
+    "id": 511
+  },
+  "pansear": {
+    "id": 513
+  },
+  "paras": {
+    "id": 46
+  },
+  "parasect": {
+    "id": 47
+  },
+  "passimian": {
+    "id": 766
+  },
+  "patrat": {
+    "id": 504
+  },
+  "pawmi": {
+    "id": 921
+  },
+  "pawmo": {
+    "id": 922
+  },
+  "pawmot": {
+    "id": 923
+  },
+  "pawniard": {
+    "id": 624
+  },
+  "pelipper": {
+    "id": 279
+  },
+  "perrserker": {
+    "id": 863
+  },
+  "persian": {
+    "id": 53
+  },
+  "persian-alola": {
+    "id": 10108
+  },
+  "petilil": {
+    "id": 548
+  },
+  "phanpy": {
+    "id": 231
+  },
+  "phantump": {
+    "id": 708
+  },
+  "phione": {
+    "id": 489
+  },
+  "pichu": {
+    "id": 172
+  },
+  "pidgeot": {
+    "id": 18
+  },
+  "pidgeot-mega": {
+    "id": 10073
+  },
+  "pidgeotto": {
+    "id": 17
+  },
+  "pidgey": {
+    "id": 16
+  },
+  "pidove": {
+    "id": 519
+  },
+  "pignite": {
+    "id": 499
+  },
+  "pikachu": {
+    "id": 25
+  },
+  "pikipek": {
+    "id": 731
+  },
+  "piloswine": {
+    "id": 221
+  },
+  "pincurchin": {
+    "id": 871
+  },
+  "pineco": {
+    "id": 204
+  },
+  "pinsir": {
+    "id": 127
+  },
+  "piplup": {
+    "id": 393
+  },
+  "plusle": {
+    "id": 311
+  },
+  "poipole": {
+    "id": 803
+  },
+  "politoed": {
+    "id": 186
+  },
+  "poliwag": {
+    "id": 60
+  },
+  "poliwhirl": {
+    "id": 61
+  },
+  "poliwrath": {
+    "id": 62
+  },
+  "poltchageist": {
+    "id": 1012
+  },
+  "polteageist": {
+    "id": 855
+  },
+  "ponyta": {
+    "id": 77
+  },
+  "ponyta-galar": {
+    "id": 10162
+  },
+  "poochyena": {
+    "id": 261
+  },
+  "popplio": {
+    "id": 728
+  },
+  "porygon": {
+    "id": 137
+  },
+  "porygon2": {
+    "id": 233
+  },
+  "primarina": {
+    "id": 730
+  },
+  "primeape": {
+    "id": 57
+  },
+  "prinplup": {
+    "id": 394
+  },
+  "probopass": {
+    "id": 476
+  },
+  "psyduck": {
+    "id": 54
+  },
+  "pumpkaboo-average": {
+    "id": 710
+  },
+  "pupitar": {
+    "id": 247
+  },
+  "purrloin": {
+    "id": 509
+  },
+  "purugly": {
+    "id": 432
+  },
+  "pyroar": {
+    "id": 668
+  },
+  "pyukumuku": {
+    "id": 771
+  },
+  "quagsire": {
+    "id": 195
+  },
+  "quaxly": {
+    "id": 912
+  },
+  "quaxwell": {
+    "id": 913
+  },
+  "quilava": {
+    "id": 156
+  },
+  "quilladin": {
+    "id": 651
+  },
+  "qwilfish": {
+    "id": 211
+  },
+  "qwilfish-hisui": {
+    "id": 10234
+  },
+  "raboot": {
+    "id": 814
+  },
+  "rabsca": {
+    "id": 954
+  },
+  "raichu": {
+    "id": 26
+  },
+  "raichu-alola": {
+    "id": 10100
+  },
+  "raikou": {
+    "id": 243
+  },
+  "ralts": {
+    "id": 280
+  },
+  "rampardos": {
+    "id": 409
+  },
+  "rapidash": {
+    "id": 78
+  },
+  "rapidash-galar": {
+    "id": 10163
+  },
+  "raticate": {
+    "id": 20
+  },
+  "raticate-alola": {
+    "id": 10092
+  },
+  "rattata": {
+    "id": 19
+  },
+  "rattata-alola": {
+    "id": 10091
+  },
+  "regice": {
+    "id": 378
+  },
+  "regidrago": {
+    "id": 895
+  },
+  "regieleki": {
+    "id": 894
+  },
+  "regigigas": {
+    "id": 486
+  },
+  "regirock": {
+    "id": 377
+  },
+  "registeel": {
+    "id": 379
+  },
+  "relicanth": {
+    "id": 369
+  },
+  "rellor": {
+    "id": 953
+  },
+  "remoraid": {
+    "id": 223
+  },
+  "reuniclus": {
+    "id": 579
+  },
+  "revavroom": {
+    "id": 966
+  },
+  "rhydon": {
+    "id": 112
+  },
+  "rhyhorn": {
+    "id": 111
+  },
+  "rhyperior": {
+    "id": 464
+  },
+  "ribombee": {
+    "id": 743
+  },
+  "riolu": {
+    "id": 447
+  },
+  "rockruff": {
+    "id": 744
+  },
+  "roggenrola": {
+    "id": 524
+  },
+  "rolycoly": {
+    "id": 837
+  },
+  "rookidee": {
+    "id": 821
+  },
+  "roselia": {
+    "id": 315
+  },
+  "roserade": {
+    "id": 407
+  },
+  "rotom": {
+    "id": 479
+  },
+  "rotom-fan": {
+    "id": 10011
+  },
+  "rotom-frost": {
+    "id": 10010
+  },
+  "rotom-heat": {
+    "id": 10008
+  },
+  "rotom-mow": {
+    "id": 10012
+  },
+  "rowlet": {
+    "id": 722
+  },
+  "rufflet": {
+    "id": 627
+  },
+  "runerigus": {
+    "id": 867
+  },
+  "sableye": {
+    "id": 302
+  },
+  "salandit": {
+    "id": 757
+  },
+  "salazzle": {
+    "id": 758
+  },
+  "samurott": {
+    "id": 503
+  },
+  "sandaconda": {
+    "id": 844
+  },
+  "sandile": {
+    "id": 551
+  },
+  "sandshrew": {
+    "id": 27
+  },
+  "sandshrew-alola": {
+    "id": 10101
+  },
+  "sandslash": {
+    "id": 28
+  },
+  "sandslash-alola": {
+    "id": 10102
+  },
+  "sandy-shocks": {
+    "id": 989
+  },
+  "sandygast": {
+    "id": 769
+  },
+  "sawk": {
+    "id": 539
+  },
+  "sawsbuck": {
+    "id": 586
+  },
+  "scatterbug": {
+    "id": 664
+  },
+  "sceptile": {
+    "id": 254
+  },
+  "sceptile-mega": {
+    "id": 10065
+  },
+  "scorbunny": {
+    "id": 813
+  },
+  "scovillain": {
+    "id": 952
+  },
+  "scrafty": {
+    "id": 560
+  },
+  "scraggy": {
+    "id": 559
+  },
+  "scream-tail": {
+    "id": 985
+  },
+  "scyther": {
+    "id": 123
+  },
+  "seadra": {
+    "id": 117
+  },
+  "seaking": {
+    "id": 119
+  },
+  "sealeo": {
+    "id": 364
+  },
+  "seedot": {
+    "id": 273
+  },
+  "seel": {
+    "id": 86
+  },
+  "seismitoad": {
+    "id": 537
+  },
+  "sentret": {
+    "id": 161
+  },
+  "servine": {
+    "id": 496
+  },
+  "seviper": {
+    "id": 336
+  },
+  "sewaddle": {
+    "id": 540
+  },
+  "sharpedo": {
+    "id": 319
+  },
+  "sharpedo-mega": {
+    "id": 10070
+  },
+  "shaymin-land": {
+    "id": 492
+  },
+  "shedinja": {
+    "id": 292
+  },
+  "shelgon": {
+    "id": 372
+  },
+  "shellder": {
+    "id": 90
+  },
+  "shellos": {
+    "id": 422
+  },
+  "shelmet": {
+    "id": 616
+  },
+  "shieldon": {
+    "id": 410
+  },
+  "shiftry": {
+    "id": 275
+  },
+  "shiinotic": {
+    "id": 756
+  },
+  "shinx": {
+    "id": 403
+  },
+  "shroodle": {
+    "id": 944
+  },
+  "shroomish": {
+    "id": 285
+  },
+  "shuckle": {
+    "id": 213
+  },
+  "shuppet": {
+    "id": 353
+  },
+  "sigilyph": {
+    "id": 561
+  },
+  "silcoon": {
+    "id": 266
+  },
+  "silicobra": {
+    "id": 843
+  },
+  "silvally": {
+    "id": 773
+  },
+  "simipour": {
+    "id": 516
+  },
+  "simisage": {
+    "id": 512
+  },
+  "simisear": {
+    "id": 514
+  },
+  "sinistcha": {
+    "id": 1013
+  },
+  "sinistea": {
+    "id": 854
+  },
+  "sirfetchd": {
+    "id": 865
+  },
+  "sizzlipede": {
+    "id": 850
+  },
+  "skeledirge": {
+    "id": 911
+  },
+  "skiddo": {
+    "id": 672
+  },
+  "skiploom": {
+    "id": 188
+  },
+  "skitty": {
+    "id": 300
+  },
+  "skorupi": {
+    "id": 451
+  },
+  "skrelp": {
+    "id": 690
+  },
+  "skuntank": {
+    "id": 435
+  },
+  "skwovet": {
+    "id": 819
+  },
+  "slaking": {
+    "id": 289
+  },
+  "slakoth": {
+    "id": 287
+  },
+  "sliggoo": {
+    "id": 705
+  },
+  "sliggoo-hisui": {
+    "id": 10241
+  },
+  "slither-wing": {
+    "id": 988
+  },
+  "slowking": {
+    "id": 199
+  },
+  "slowpoke": {
+    "id": 79
+  },
+  "slowpoke-galar": {
+    "id": 10164
+  },
+  "slugma": {
+    "id": 218
+  },
+  "slurpuff": {
+    "id": 685
+  },
+  "smeargle": {
+    "id": 235
+  },
+  "smoliv": {
+    "id": 928
+  },
+  "smoochum": {
+    "id": 238
+  },
+  "sneasel": {
+    "id": 215
+  },
+  "sneasel-hisui": {
+    "id": 10235
+  },
+  "snivy": {
+    "id": 495
+  },
+  "snom": {
+    "id": 872
+  },
+  "snorlax": {
+    "id": 143
+  },
+  "snorunt": {
+    "id": 361
+  },
+  "snover": {
+    "id": 459
+  },
+  "snubbull": {
+    "id": 209
+  },
+  "sobble": {
+    "id": 816
+  },
+  "solosis": {
+    "id": 577
+  },
+  "solrock": {
+    "id": 338
+  },
+  "spearow": {
+    "id": 21
+  },
+  "spewpa": {
+    "id": 665
+  },
+  "spheal": {
+    "id": 363
+  },
+  "spidops": {
+    "id": 918
+  },
+  "spinarak": {
+    "id": 167
+  },
+  "spinda": {
+    "id": 327
+  },
+  "spiritomb": {
+    "id": 442
+  },
+  "spoink": {
+    "id": 325
+  },
+  "sprigatito": {
+    "id": 906
+  },
+  "spritzee": {
+    "id": 682
+  },
+  "squawkabilly-blue-plumage": {
+    "id": 10260
+  },
+  "squawkabilly-green-plumage": {
+    "id": 931
+  },
+  "squawkabilly-white-plumage": {
+    "id": 10262
+  },
+  "squawkabilly-yellow-plumage": {
+    "id": 10261
+  },
+  "squirtle": {
+    "id": 7
+  },
+  "stakataka": {
+    "id": 805
+  },
+  "stantler": {
+    "id": 234
+  },
+  "staraptor": {
+    "id": 398
+  },
+  "staravia": {
+    "id": 397
+  },
+  "starly": {
+    "id": 396
+  },
+  "starmie": {
+    "id": 121
+  },
+  "staryu": {
+    "id": 120
+  },
+  "steelix": {
+    "id": 208
+  },
+  "steelix-mega": {
+    "id": 10072
+  },
+  "steenee": {
+    "id": 762
+  },
+  "stonjourner": {
+    "id": 874
+  },
+  "stoutland": {
+    "id": 508
+  },
+  "stufful": {
+    "id": 759
+  },
+  "stunfisk": {
+    "id": 618
+  },
+  "stunfisk-galar": {
+    "id": 10180
+  },
+  "stunky": {
+    "id": 434
+  },
+  "sudowoodo": {
+    "id": 185
+  },
+  "suicune": {
+    "id": 245
+  },
+  "sunflora": {
+    "id": 192
+  },
+  "sunkern": {
+    "id": 191
+  },
+  "surskit": {
+    "id": 283
+  },
+  "swablu": {
+    "id": 333
+  },
+  "swadloon": {
+    "id": 541
+  },
+  "swalot": {
+    "id": 317
+  },
+  "swampert": {
+    "id": 260
+  },
+  "swampert-mega": {
+    "id": 10064
+  },
+  "swanna": {
+    "id": 581
+  },
+  "swellow": {
+    "id": 277
+  },
+  "swinub": {
+    "id": 220
+  },
+  "swirlix": {
+    "id": 684
+  },
+  "swoobat": {
+    "id": 528
+  },
+  "sylveon": {
+    "id": 700
+  },
+  "tadbulb": {
+    "id": 938
+  },
+  "taillow": {
+    "id": 276
+  },
+  "talonflame": {
+    "id": 663
+  },
+  "tandemaus": {
+    "id": 924
+  },
+  "tangela": {
+    "id": 114
+  },
+  "tangrowth": {
+    "id": 465
+  },
+  "tapu-bulu": {
+    "id": 787
+  },
+  "tarountula": {
+    "id": 917
+  },
+  "tatsugiri-curly": {
+    "id": 978
+  },
+  "tatsugiri-droopy": {
+    "id": 10258
+  },
+  "tatsugiri-stretchy": {
+    "id": 10259
+  },
+  "tauros": {
+    "id": 128
+  },
+  "tauros-paldea-aqua-breed": {
+    "id": 10252
+  },
+  "tauros-paldea-blaze-breed": {
+    "id": 10251
+  },
+  "tauros-paldea-combat-breed": {
+    "id": 10250
+  },
+  "teddiursa": {
+    "id": 216
+  },
+  "tentacool": {
+    "id": 72
+  },
+  "tentacruel": {
+    "id": 73
+  },
+  "tepig": {
+    "id": 498
+  },
+  "thievul": {
+    "id": 828
+  },
+  "throh": {
+    "id": 538
+  },
+  "thundurus-incarnate": {
+    "id": 642
+  },
+  "thwackey": {
+    "id": 811
+  },
+  "timburr": {
+    "id": 532
+  },
+  "tinkatink": {
+    "id": 957
+  },
+  "tinkaton": {
+    "id": 959
+  },
+  "tinkatuff": {
+    "id": 958
+  },
+  "tirtouga": {
+    "id": 564
+  },
+  "toedscool": {
+    "id": 948
+  },
+  "toedscruel": {
+    "id": 949
+  },
+  "togedemaru": {
+    "id": 777
+  },
+  "togekiss": {
+    "id": 468
+  },
+  "togepi": {
+    "id": 175
+  },
+  "togetic": {
+    "id": 176
+  },
+  "torchic": {
+    "id": 255
+  },
+  "torkoal": {
+    "id": 324
+  },
+  "tornadus-incarnate": {
+    "id": 641
+  },
+  "torracat": {
+    "id": 726
+  },
+  "torterra": {
+    "id": 389
+  },
+  "totodile": {
+    "id": 158
+  },
+  "toucannon": {
+    "id": 733
+  },
+  "toxel": {
+    "id": 848
+  },
+  "toxicroak": {
+    "id": 454
+  },
+  "toxtricity-amped": {
+    "id": 849
+  },
+  "toxtricity-low-key": {
+    "id": 10184
+  },
+  "tranquill": {
+    "id": 520
+  },
+  "trapinch": {
+    "id": 328
+  },
+  "treecko": {
+    "id": 252
+  },
+  "trevenant": {
+    "id": 709
+  },
+  "tropius": {
+    "id": 357
+  },
+  "trubbish": {
+    "id": 568
+  },
+  "trumbeak": {
+    "id": 732
+  },
+  "tsareena": {
+    "id": 763
+  },
+  "turtonator": {
+    "id": 776
+  },
+  "turtwig": {
+    "id": 387
+  },
+  "tympole": {
+    "id": 535
+  },
+  "tynamo": {
+    "id": 602
+  },
+  "type-null": {
+    "id": 772
+  },
+  "typhlosion": {
+    "id": 157
+  },
+  "typhlosion-hisui": {
+    "id": 10233
+  },
+  "tyrantrum": {
+    "id": 697
+  },
+  "tyrogue": {
+    "id": 236
+  },
+  "tyrunt": {
+    "id": 696
+  },
+  "umbreon": {
+    "id": 197
+  },
+  "unfezant": {
+    "id": 521
+  },
+  "unown": {
+    "id": 201
+  },
+  "ursaring": {
+    "id": 217
+  },
+  "uxie": {
+    "id": 480
+  },
+  "vanillish": {
+    "id": 583
+  },
+  "vanillite": {
+    "id": 582
+  },
+  "vanilluxe": {
+    "id": 584
+  },
+  "vaporeon": {
+    "id": 134
+  },
+  "varoom": {
+    "id": 965
+  },
+  "veluza": {
+    "id": 976
+  },
+  "venipede": {
+    "id": 543
+  },
+  "venomoth": {
+    "id": 49
+  },
+  "venonat": {
+    "id": 48
+  },
+  "venusaur": {
+    "id": 3
+  },
+  "vespiquen": {
+    "id": 416
+  },
+  "vibrava": {
+    "id": 329
+  },
+  "victreebel": {
+    "id": 71
+  },
+  "vigoroth": {
+    "id": 288
+  },
+  "vikavolt": {
+    "id": 738
+  },
+  "vileplume": {
+    "id": 45
+  },
+  "virizion": {
+    "id": 640
+  },
+  "vivillon": {
+    "id": 666
+  },
+  "volbeat": {
+    "id": 313
+  },
+  "volcanion": {
+    "id": 721
+  },
+  "voltorb": {
+    "id": 100
+  },
+  "voltorb-hisui": {
+    "id": 10231
+  },
+  "vullaby": {
+    "id": 629
+  },
+  "vulpix": {
+    "id": 37
+  },
+  "vulpix-alola": {
+    "id": 10103
+  },
+  "wailmer": {
+    "id": 320
+  },
+  "wailord": {
+    "id": 321
+  },
+  "walrein": {
+    "id": 365
+  },
+  "wartortle": {
+    "id": 8
+  },
+  "watchog": {
+    "id": 505
+  },
+  "wattrel": {
+    "id": 940
+  },
+  "weedle": {
+    "id": 13
+  },
+  "weepinbell": {
+    "id": 70
+  },
+  "weezing": {
+    "id": 110
+  },
+  "weezing-galar": {
+    "id": 10167
+  },
+  "whimsicott": {
+    "id": 547
+  },
+  "whirlipede": {
+    "id": 544
+  },
+  "whiscash": {
+    "id": 340
+  },
+  "whismur": {
+    "id": 293
+  },
+  "wigglytuff": {
+    "id": 40
+  },
+  "wiglett": {
+    "id": 960
+  },
+  "wimpod": {
+    "id": 767
+  },
+  "wingull": {
+    "id": 278
+  },
+  "wishiwashi-school": {
+    "id": 10127
+  },
+  "wishiwashi-solo": {
+    "id": 746
+  },
+  "wo-chien": {
+    "id": 1001
+  },
+  "wobbuffet": {
+    "id": 202
+  },
+  "woobat": {
+    "id": 527
+  },
+  "wooloo": {
+    "id": 831
+  },
+  "wooper": {
+    "id": 194
+  },
+  "wooper-paldea": {
+    "id": 10253
+  },
+  "wormadam-plant": {
+    "id": 413
+  },
+  "wormadam-sandy": {
+    "id": 10004
+  },
+  "wormadam-trash": {
+    "id": 10005
+  },
+  "wugtrio": {
+    "id": 961
+  },
+  "wurmple": {
+    "id": 265
+  },
+  "wynaut": {
+    "id": 360
+  },
+  "wyrdeer": {
+    "id": 899
+  },
+  "xatu": {
+    "id": 178
+  },
+  "yamask": {
+    "id": 562
+  },
+  "yamask-galar": {
+    "id": 10179
+  },
+  "yamper": {
+    "id": 835
+  },
+  "yanma": {
+    "id": 193
+  },
+  "yanmega": {
+    "id": 469
+  },
+  "yungoos": {
+    "id": 734
+  },
+  "zangoose": {
+    "id": 335
+  },
+  "zarude": {
+    "id": 893
+  },
+  "zebstrika": {
+    "id": 523
+  },
+  "zigzagoon": {
+    "id": 263
+  },
+  "zigzagoon-galar": {
+    "id": 10174
+  },
+  "zoroark": {
+    "id": 571
+  },
+  "zorua": {
+    "id": 570
+  },
+  "zorua-hisui": {
+    "id": 10238
+  },
+  "zubat": {
+    "id": 41
+  },
+  "zweilous": {
+    "id": 634
+  }
+}
