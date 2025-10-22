@@ -348,8 +348,19 @@ document.addEventListener('DOMContentLoaded', async ()=> {
     const res = await fetch(file);
     if(!res.ok) throw new Error('Arquivo não encontrado: '+res.statusText);
     const data = await res.json();
-    const entries = Object.entries(data);
-    if(entries.length===0){ container.innerHTML='<p>Nenhum item encontrado no JSON.</p>'; return; }
+
+    let entries = Object.entries(data);
+    if(entries.length===0){ 
+      container.innerHTML='<p>Nenhum item encontrado no JSON.</p>'; 
+      return; 
+    }
+
+    // 🔹 Move "hype": true para o início da lista
+    entries.sort((a, b) => {
+      const hypeA = a[1] && a[1].hype;
+      const hypeB = b[1] && b[1].hype;
+      return hypeA === hypeB ? 0 : hypeA ? -1 : 1;
+    });
 
     entries.forEach(([key, info])=>{
       const namePretty = prettifyKey(key);
@@ -389,14 +400,22 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       };
 
       const h2 = document.createElement('h2');
-      h2.textContent=namePretty; // 🔹 ID não aparece mais
+      h2.textContent=namePretty;
 
       card.appendChild(img);
       card.appendChild(h2);
+
+      // 🌟 Destaque visual para pokémons hype
+      if (info && info.hype) {
+        card.style.border = "3px solid var(--cor-dourado)";
+        card.style.boxShadow = "0 0 20px rgba(209, 167, 32, 0.7)";
+        card.style.transform = "scale(1.05)";
+      }
+
       container.appendChild(card);
     });
 
-    // 🔍 Filtro de pesquisa por nome OU ID
+    // 🔍 Filtro de pesquisa
     const searchInput = document.getElementById('searchPokemon');
     searchInput.addEventListener('input', function() {
       const term = this.value.toLowerCase().trim();
