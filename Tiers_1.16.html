@@ -8,12 +8,13 @@
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   <link rel="shortcut icon" type="image/png" href="img/mike_anotando2.png">
   <link rel="apple-touch-icon" href="img/mike_anotando2.png">
-  
+
   <style>
     :root {
-      --cor-dourado: #d1a720;
-      --cor-fundo: #1a1a1a; 
-      --cor-texto: #f5f5f5;
+      --cor-dourado: #d1a720; /* dourado mais suave */
+      --cor-fundo: #1a1a1a;    /* fundo escuro uniforme */
+      --cor-card: rgba(40, 35, 25, 0.85); /* card escuro semi-transparente */
+      --cor-texto: #f5f5f5;    /* off-white */
     }
 
     body {
@@ -24,15 +25,12 @@
       margin: 0;
       padding: 0;
       min-height: 100vh;
-      color: var(--cor-texto);
       display: flex;
-      justify-content: center;
-      align-items: center;
       flex-direction: column;
-      text-align: center;
+      align-items: center;
+      color: var(--cor-texto);
     }
 
-    /* ---------- Cabeçalho ---------- */
     header {
       position: fixed;
       top: 0;
@@ -110,7 +108,6 @@
       z-index: 1200;
       max-width: calc(100% - 20px);
       overflow-wrap: break-word;
-      text-align: left; /* ✅ alinhamento à esquerda */
     }
 
     nav.active {
@@ -122,36 +119,75 @@
       text-decoration: none;
       font-size: 1rem;
       transition: color 0.2s;
-      display: block;   /* ✅ cada link ocupa a linha inteira */
-      text-align: left; /* ✅ reforço de alinhamento */
     }
 
     nav a:hover {
       color: var(--cor-texto);
     }
 
-    /* ---------- Conteúdo ---------- */
-    main {
-      margin-top: 120px;
+    /* CONTAINER DOS BOTÕES */
+    .container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* sempre 2 por linha */
+      gap: 25px;
+      width: 90%;
+      max-width: 1000px;
+      padding: 120px 30px 60px;
     }
 
-    main h2 {
-      font-size: 2.5rem;
+    .card {
+      background: var(--cor-card);
+      border-radius: 16px;
+      padding: 20px 15px;
+      text-align: left;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+      transition: transform 0.25s, box-shadow 0.25s;
+      cursor: pointer;
+      text-decoration: none;
       color: var(--cor-dourado);
-      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
     }
 
-    main p {
-      font-size: 1.5rem;
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 20px rgba(209, 167, 32, 0.3);
+    }
+
+    .card img {
+      width: 80px;
+      height: auto;
+      border-radius: 8px;
+      background-color: var(--cor-card);
+    }
+
+    .card-text {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .card h2 {
+      margin: 0 0 5px 0;
+      font-size: 1.4rem;
+      color: var(--cor-dourado);
+    }
+
+    .card p {
+      margin: 0;
+      font-size: 0.95rem;
       color: var(--cor-texto);
     }
 
-    /* Responsivo */
-    @media (max-width: 500px) {
+    /* RESPONSIVO PARA CELULAR */
+    @media (max-width: 600px) {
+      .container {
+        grid-template-columns: 1fr; /* no celular fica 1 por linha */
+      }
       header h1 {
         font-size: 1.3rem;
       }
-
       nav {
         right: 5px;
         left: 5px;
@@ -162,13 +198,11 @@
 <body>
   <header>
     <h1>
-      <a href="index.html">
-        <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
-      </a>
-      Tiers 1.16
+      <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
+      Escolha sua Tier
     </h1>
 
-    <!-- Botão Menu -->
+    <!-- MENU HAMBURGUER -->
     <div class="menu-toggle" id="menuBtn">
       <span></span>
       <span></span>
@@ -176,7 +210,7 @@
     </div>
   </header>
 
-  <!-- Menu Dropdown -->
+  <!-- MENU DROPDOWN -->
   <nav id="dropdownMenu">
     <a href="index.html">🏠 Início</a>
     <a href="https://www.humblepixelmon.com.br">🌐 Site Oficial</a>
@@ -185,25 +219,147 @@
     <a href="notas.html">📝 Notas de Atualização</a>
   </nav>
 
-  <main>
-    <h2>🚧 Em breve 🚧</h2>
-  </main>
+  <div class="container">
+    <a href="viewer.html?file=tiers_1.16/Monotype.json" class="card">
+      <img src="img/Monomon.png" alt="Monotype">
+      <div class="card-text">
+        <h2>Monomon</h2>
+        <p>Restrição a apenas uma espécie por equipe</p>
+      </div>
+    </a>
+
+    <a href="viewer.html?file=tiers_1.16/National_Dex.json" class="card">
+      <img src="img/Starters.png" alt="National Dex">
+      <div class="card-text">
+        <h2>Starters</h2>
+        <p>Somente Pokémon iniciais e suas evoluções</p>
+      </div>
+    </a>
+
+    <a href="viewer.html?file=tiers_1.16/National_Dex_Monotype.json" class="card">
+      <img src="img/Only_Smeargle.png" alt="National Dex Monotype">
+      <div class="card-text">
+        <h2>Only Smeargle</h2>
+        <p>Exclusiva para o Smeargle, e mais ninguém</p>
+      </div>
+    </a>
+    <a href="viewer.html?file=tiers_1.16/National_Dex_RU.json" class="card">
+      <img src="img/natdexubers.png" alt="National Dex RU">
+      <div class="card-text">
+        <h2>Nat. Dex Ubers</h2>
+        <p>Formato para os mais fortes</p>
+      </div>
+    </a>
+        </a>
+    <a href="viewer.html?file=tiers_1.16/National_Dex_Ubers.json" class="card">
+      <img src="img/natdexubers.png" alt="National Dex Ubers">
+      <div class="card-text">
+        <h2>Nat. Dex Ubers</h2>
+        <p>Formato para os mais fortes</p>
+      </div>
+    </a>
+    </a>
+    <a href="viewer.html?file=tiers_1.16/National_Dex_UU.json" class="card">
+      <img src="img/natdexubers.png" alt="National Dex UU">
+      <div class="card-text">
+        <h2>Nat. Dex Ubers</h2>
+        <p>Formato para os mais fortes</p>
+      </div>
+    </a>
+    </a>
+    <a href="viewer.html?file=tiers_1.16/NU.json" class="card">
+      <img src="img/natdexubers.png" alt="NU">
+      <div class="card-text">
+        <h2>Nat. Dex Ubers</h2>
+        <p>Formato para os mais fortes</p>
+      </div>
+    </a>
+    </a>
+    <a href="viewer.html?file=tiers_1.16/OU.json" class="card">
+      <img src="img/natdexubers.png" alt="OU">
+      <div class="card-text">
+        <h2>Nat. Dex Ubers</h2>
+        <p>Formato para os mais fortes</p>
+      </div>
+    </a>
+    </a>
+    <a href="viewer.html?file=tiers_1.16/allowlist_nat_dex_ubers.json" class="card">
+      <img src="img/natdexubers.png" alt="Nat. Dex Ubers">
+      <div class="card-text">
+        <h2>Nat. Dex Ubers</h2>
+        <p>Formato para os mais fortes</p>
+      </div>
+    </a>
+    </a>
+    <a href="viewer.html?file=tiers_1.16/allowlist_nat_dex_ubers.json" class="card">
+      <img src="img/natdexubers.png" alt="Nat. Dex Ubers">
+      <div class="card-text">
+        <h2>Nat. Dex Ubers</h2>
+        <p>Formato para os mais fortes</p>
+      </div>
+    </a>
+    </a>
+    <a href="viewer.html?file=tiers_1.16/allowlist_nat_dex_ubers.json" class="card">
+      <img src="img/natdexubers.png" alt="Nat. Dex Ubers">
+      <div class="card-text">
+        <h2>Nat. Dex Ubers</h2>
+        <p>Formato para os mais fortes</p>
+      </div>
+    </a>
+    </a>
+    <a href="viewer.html?file=tiers_1.16/allowlist_nat_dex_ubers.json" class="card">
+      <img src="img/natdexubers.png" alt="Nat. Dex Ubers">
+      <div class="card-text">
+        <h2>Nat. Dex Ubers</h2>
+        <p>Formato para os mais fortes</p>
+      </div>
+    </a>
+    </a>
+    <a href="viewer.html?file=tiers_1.16/allowlist_nat_dex_ubers.json" class="card">
+      <img src="img/natdexubers.png" alt="Nat. Dex Ubers">
+      <div class="card-text">
+        <h2>Nat. Dex Ubers</h2>
+        <p>Formato para os mais fortes</p>
+      </div>
+    </a>
+    </a>
+    <a href="viewer.html?file=tiers_1.16/allowlist_nat_dex_ubers.json" class="card">
+      <img src="img/natdexubers.png" alt="Nat. Dex Ubers">
+      <div class="card-text">
+        <h2>Nat. Dex Ubers</h2>
+        <p>Formato para os mais fortes</p>
+      </div>
+    </a>
+
+
+    <!-- TIER NOVA -->
+    <a href="Tier_Nova.html" class="card">
+      <img src="img/gancho.png" alt="???">
+      <div class="card-text">
+        <h2>???</h2>
+        <p>Nova Tier especial em desenvolvimento</p>
+      </div>
+    </a>
+  </div>
 
   <script>
     const menuBtn = document.getElementById("menuBtn");
     const dropdownMenu = document.getElementById("dropdownMenu");
 
     menuBtn.addEventListener("click", () => {
-      menuBtn.classList.toggle("active");
       dropdownMenu.classList.toggle("active");
+      menuBtn.classList.toggle("active");
     });
 
-    document.addEventListener("click", (e) => {
+    document.addEventListener("click", function(e) {
       if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
-        menuBtn.classList.remove("active");
         dropdownMenu.classList.remove("active");
+        menuBtn.classList.remove("active");
       }
     });
   </script>
 </body>
 </html>
+
+
+
