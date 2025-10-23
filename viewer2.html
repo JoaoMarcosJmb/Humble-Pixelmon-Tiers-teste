@@ -518,10 +518,13 @@ document.addEventListener('DOMContentLoaded', async ()=> {
         const namePretty = prettifyKey(key);
         const smogonName = normalizeName(key);
         const smogonUrl = `https://www.smogon.com/dex/${gen}/pokemon/${smogonName}`;
-        const id = info?.id || null;
-        const spriteUrl = id 
-          ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
-          : `https://img.pokemondb.net/artwork/large/${encodeURIComponent(smogonName)}.jpg`;
+       const id = info?.id || null;
+const hasForm = /[-]/.test(key); // se o nome tiver hífen, é forma (ex: "lycanroc-dusk")
+
+// se tiver forma, ignora o id e usa nome direto
+const spriteUrl = (!hasForm && id)
+  ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
+  : `https://img.pokemondb.net/artwork/large/${encodeURIComponent(smogonName)}.jpg`;
 
         const card = document.createElement('a');
         card.className = 'card';
