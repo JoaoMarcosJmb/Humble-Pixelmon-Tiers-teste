@@ -33,6 +33,7 @@
     color: var(--cor-texto);
   }
 
+  /* HEADER */
   header {
     position: fixed;
     top: 0;
@@ -62,6 +63,7 @@
   header h1 img { height: 40px; cursor: pointer; }
   header h1 a { display: flex; align-items: center; }
 
+  /* MENU */
   .menu-toggle {
     position: relative;
     display: flex;
@@ -113,13 +115,13 @@
 
   nav a:hover { color: var(--cor-texto); }
 
+  /* MAIN */
   main {
     margin-top: 110px;
     width: 90%;
     max-width: 1200px;
   }
 
-  /* Linha título + barra de busca */
   .title-search {
     display: flex;
     align-items: center;
@@ -135,10 +137,10 @@
     margin: 0;
   }
 
-  /* Campo de busca */
+  /* CAMPO DE PESQUISA */
   #searchPokemon {
     width: 100%;
-    max-width: 260px; /* 🔹 igual ao card */
+    max-width: 260px;
     padding: 10px;
     border-radius: 8px;
     border: 1px solid var(--cor-dourado);
@@ -147,17 +149,52 @@
     color: var(--cor-texto);
   }
 
-  .container {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
-    justify-items: center;
+  /* CONTAINER PRINCIPAL - LISTA DE TIERS (vertical) */
+  #pokemonContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 36px;
+    width: 100%;
+    box-sizing: border-box;
+    align-items: stretch;
+    padding-bottom: 40px;
   }
 
+  /* SEÇÃO DE CADA TIER */
+  .tier-section {
+    width: 100%;
+    display: block;
+    margin: 0;
+  }
+
+  /* TÍTULO DA TIER */
+  .tier-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111;
+    background: linear-gradient(90deg, #d1a720 0%, #b28d1b 100%);
+    padding: 8px 14px;
+    border-radius: 6px;
+    display: inline-block;
+    margin: 0 0 12px 0;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.35);
+    text-shadow: 0 0 3px rgba(255,255,255,0.3);
+  }
+
+  /* LISTA DE CARDS DENTRO DA TIER */
+  .tier-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: flex-start;
+    justify-content: flex-start;
+  }
+
+  /* CARD INDIVIDUAL */
   .card {
     background: var(--cor-card);
     border-radius: 16px;
-    padding: 20px 15px;
+    padding: 15px 12px;
     text-align: left;
     box-shadow: 0 4px 12px rgba(0,0,0,0.6);
     transition: transform 0.25s, box-shadow 0.25s;
@@ -165,25 +202,70 @@
     color: var(--cor-texto);
     display: flex;
     align-items: center;
-    gap: 15px;
-    width: 100%;
+    gap: 12px;
+    min-width: 220px;
     max-width: 260px;
+    flex: 0 0 auto;
   }
 
   .card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 8px 20px rgba(209, 167, 32, 0.3);
+    transform: translateY(-6px);
+    box-shadow: 0 8px 18px rgba(209, 167, 32, 0.35);
   }
 
   .card img {
-    width: 80px;
+    width: 70px;
     height: auto;
     border-radius: 8px;
     background-color: var(--cor-card);
   }
 
-  .card h2 { margin: 0; font-size: 1.2rem; color: #fff; }
+  .card h2 {
+    margin: 0;
+    font-size: 1.05rem;
+    color: #fff;
+  }
 
+  /* EFEITO HYPE 🔥 */
+  .card.hype {
+    position: relative;
+    border: 2px solid #d1a720;
+    box-shadow: 0 0 10px rgba(209, 167, 32, 0.5);
+    animation: hypeGlow 3s ease-in-out infinite;
+    overflow: hidden;
+  }
+
+  .card.hype::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 6px;
+    height: 100%;
+    background: linear-gradient(180deg, #ffd84d, #d1a720);
+    box-shadow: 0 0 10px rgba(209,167,32,0.6);
+  }
+
+  .hype-badge {
+    position: absolute;
+    top: 6px;
+    right: 10px;
+    font-size: 1.4rem;
+    text-shadow: 0 0 6px rgba(255,200,0,0.9);
+    animation: flameFloat 2s ease-in-out infinite;
+  }
+
+  @keyframes hypeGlow {
+    0%,100% { box-shadow: 0 0 10px rgba(209, 167, 32, 0.4); }
+    50% { box-shadow: 0 0 20px rgba(209, 167, 32, 0.8); }
+  }
+
+  @keyframes flameFloat {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+  }
+
+  /* BOX DO CRIADOR */
   .creator-container {
     position: fixed;
     top: 120px;
@@ -197,109 +279,34 @@
     gap: 8px;
   }
 
-  .creator-container h2 { margin: 0; font-size: 1.3rem; font-weight: bold; color: var(--cor-dourado); }
+  .creator-container h2 {
+    margin: 0;
+    font-size: 1.3rem;
+    font-weight: bold;
+    color: var(--cor-dourado);
+  }
+
   .creator-container img {
     width: 120px;
     height: 120px;
     object-fit: cover;
     object-position: top;
     border-radius: 8px;
-    box-shadow: none;
   }
 
-  @media (max-width: 1000px) { .container { grid-template-columns: repeat(3, 1fr); } .creator-container { display: none; } }
-  @media (max-width: 700px) { .container { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 500px) { .container { grid-template-columns: 1fr; } }
-/* 💫 Destaque visual refinado para pokémons hype */
-.card.hype {
-  position: relative;
-  border: 2px solid #d1a720;
-  box-shadow: 0 0 10px rgba(209, 167, 32, 0.5);
-  animation: hypeGlow 3s ease-in-out infinite;
-  overflow: hidden;
-}
+  @media (max-width: 1000px) {
+    .creator-container { display: none; }
+  }
 
-.card.hype::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 6px;
-  height: 100%;
-  background: linear-gradient(180deg, #ffd84d, #d1a720);
-  box-shadow: 0 0 10px rgba(209,167,32,0.6);
-}
+  @media (max-width: 700px) {
+    .card { min-width: 180px; max-width: 220px; }
+  }
 
-.hype-badge {
-  position: absolute;
-  top: 6px;
-  right: 10px;
-  font-size: 1.4rem;
-  text-shadow: 0 0 6px rgba(255,200,0,0.9);
-  animation: flameFloat 2s ease-in-out infinite;
-}
-
-@keyframes hypeGlow {
-  0%,100% { box-shadow: 0 0 10px rgba(209, 167, 32, 0.4); }
-  50% { box-shadow: 0 0 20px rgba(209, 167, 32, 0.8); }
-}
-
-@keyframes flameFloat {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-2px); }
-}
-.tier-section {
-  margin-bottom: 45px;
-  width: 100%;
-}
-
-.tier-title {
-  font-size: 1.4rem;
-  font-weight: bold;
-  text-align: left;
-  color: #d1a720;
-  background: rgba(30, 25, 15, 0.85);
-  border-left: 5px solid #d1a720;
-  padding: 10px 15px;
-  border-radius: 6px;
-  margin-bottom: 18px;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.5);
-}
-
-.container-tier {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 20px;
-  justify-items: center;
-}
-.tier-section {
-  margin-bottom: 40px;
-  width: 100%;
-}
-
-.tier-title {
-  font-size: 1.3rem;
-  font-weight: bold;
-  color: #000;
-  background: linear-gradient(90deg, #d1a720 0%, #b28d1b 100%);
-  padding: 8px 16px;
-  border-radius: 6px;
-  width: fit-content;
-  margin-bottom: 15px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.4);
-  text-shadow: 0 0 3px rgba(255,255,255,0.3);
-}
-
-.tier-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 18px;
-  justify-content: flex-start;
-  align-items: flex-start;
-}
-
-
+  @media (max-width: 500px) {
+    .card { width: 100%; max-width: none; }
+  }
 </style>
+
 </head>
 <body>
 <header>
@@ -439,7 +446,8 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       return; 
     }
 
-    const tierOrder = ["LC","ZU","PU","NU","RU","UU","OU","Ubers","AG"];
+    // ORDEM: maior -> menor (AG primeiro)
+    const tierOrder = ["AG","Ubers","OU","UU","RU","NU","PU","ZU","LC"];
     const grouped = {};
     for(const tier of tierOrder) grouped[tier] = [];
     for(const [key, info] of entries){
@@ -451,6 +459,7 @@ document.addEventListener('DOMContentLoaded', async ()=> {
     const gen = version.includes("1.16") ? "sv" : "ss";
     container.innerHTML = "";
 
+    // Renderiza as sections verticalmente (AG primeiro)
     for(const tier of tierOrder){
       const list = grouped[tier];
       if(!list || list.length === 0) continue;
@@ -507,10 +516,11 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       container.appendChild(section);
     }
 
+    // Filtro de pesquisa: esconde cards e, se a seção ficar vazia, esconde a seção
     const searchInput = document.getElementById('searchPokemon');
     searchInput.addEventListener('input', function() {
       const term = this.value.toLowerCase().trim();
-      document.querySelectorAll('.tier-section').forEach(section=>{
+      document.querySelectorAll('#pokemonContainer .tier-section').forEach(section=>{
         let visibleCount = 0;
         section.querySelectorAll('.card').forEach(card=>{
           const text = card.querySelector('h2').textContent.toLowerCase();
