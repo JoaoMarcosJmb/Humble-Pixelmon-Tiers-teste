@@ -236,33 +236,37 @@
   }
 
   /* EFEITO HYPE 🔥 */
-  .card.hype {
-    position: relative;
-    border: 2px solid #d1a720;
-    box-shadow: 0 0 10px rgba(209, 167, 32, 0.5);
-    animation: hypeGlow 3s ease-in-out infinite;
-    overflow: hidden;
-  }
+  /* 🔥 CARD HYPE — mesmo tamanho do normal */
+.card.hype {
+  position: relative;
+  border: 2px solid rgba(209, 167, 32, 0.6);
+  box-shadow: 0 0 12px rgba(209, 167, 32, 0.25);
+  animation: none; /* remove o pulso que “aumentava” o tamanho */
+  overflow: hidden;
+  padding: 18px 13px; /* 🔹 reduz 2px da borda pra igualar o normal */
+  box-sizing: border-box;
+}
 
-  .card.hype::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 6px;
-    height: 100%;
-    background: linear-gradient(180deg, #ffd84d, #d1a720);
-    box-shadow: 0 0 10px rgba(209,167,32,0.6);
-  }
+.card.hype::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(180deg, #ffd84d, #d1a720);
+  box-shadow: 0 0 6px rgba(209, 167, 32, 0.4);
+  border-radius: 16px 0 0 16px;
+}
 
-  .hype-badge {
-    position: absolute;
-    top: 6px;
-    right: 10px;
-    font-size: 1.4rem;
-    text-shadow: 0 0 6px rgba(255,200,0,0.9);
-    animation: flameFloat 2s ease-in-out infinite;
-  }
+.hype-badge {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 1.3rem;
+  text-shadow: 0 0 4px rgba(255, 200, 0, 0.8);
+  animation: none;
+}
 
   @keyframes hypeGlow {
     0%,100% { box-shadow: 0 0 10px rgba(209, 167, 32, 0.4); }
