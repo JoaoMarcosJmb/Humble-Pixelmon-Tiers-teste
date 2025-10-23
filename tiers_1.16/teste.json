@@ -42,7 +42,6 @@
     "id": 212,
     "tier": "OU"
   }
-  {
   "bulbasaur": { "id": 1, "tier": "LC" },
   "charmander": { "id": 4, "tier": "LC" },
   "squirtle": { "id": 7, "tier": "LC" },
@@ -275,4 +274,4 @@
   "gimmighoul-chest": { "id": 999, "tier": "LC" }
 }
 
-}
+
