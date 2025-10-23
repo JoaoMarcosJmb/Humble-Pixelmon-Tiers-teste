@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Carregando...</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<!-- FAVICON -->
+<link rel="icon" type="image/png" href="img/mike_anotando2.png">
+<link rel="shortcut icon" type="image/png" href="img/mike_anotando2.png">
+<link rel="apple-touch-icon" href="img/mike_anotando2.png">
+
+  
+<style>
+  :root {
+    --cor-dourado: #d1a720;
+    --cor-fundo: #1a1a1a;
+    --cor-card: rgba(40, 35, 25, 0.85);
+    --cor-texto: #f5f5f5;
+  }
+
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)),
+                url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed;
+    background-size: cover;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: var(--cor-texto);
+  }
+
+  header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(20, 20, 20, 0.9);
+    border-bottom: 2px solid var(--cor-dourado);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    z-index: 1000;
+    box-sizing: border-box;
+  }
+
+  header h1 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    color: var(--cor-dourado);
+    font-size: 1.8rem;
+  }
+
+  header h1 img { height: 40px; cursor: pointer; }
+  header h1 a { display: flex; align-items: center; }
+
+  .menu-toggle {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 30px;
+    height: 22px;
+    cursor: pointer;
+    z-index: 1100;
+  }
+
+  .menu-toggle span {
+    display: block;
+    height: 4px;
+    background: var(--cor-texto);
+    border-radius: 4px;
+    transition: 0.3s;
+  }
+
+  .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .menu-toggle.active span:nth-child(2) { opacity: 0; }
+  .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+  nav {
+    position: absolute;
+    top: 65px;
+    right: 10px;
+    background: rgba(30, 25, 20, 0.95);
+    border: 1px solid var(--cor-dourado);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.6);
+    display: none;
+    flex-direction: column;
+    padding: 15px;
+    gap: 12px;
+    z-index: 1200;
+    max-width: calc(100% - 20px);
+    overflow-wrap: break-word;
+  }
+
+  nav.active { display: flex; }
+
+  nav a {
+    color: var(--cor-dourado);
+    text-decoration: none;
+    font-size: 1rem;
+    transition: color 0.2s;
+  }
+
+  nav a:hover { color: var(--cor-texto); }
+
+  main {
+    margin-top: 110px;
+    width: 90%;
+    max-width: 1200px;
+  }
+
+  /* Linha título + barra de busca */
+  .title-search {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .subtitulo-tier {
+    font-size: 1.1rem;
+    color: var(--cor-texto);
+    margin: 0;
+  }
+
+  /* Campo de busca */
+  #searchPokemon {
+    width: 100%;
+    max-width: 260px; /* 🔹 igual ao card */
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid var(--cor-dourado);
+    font-size: 1rem;
+    background: var(--cor-card);
+    color: var(--cor-texto);
+  }
+
+  .container {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    justify-items: center;
+  }
+
+  .card {
+    background: var(--cor-card);
+    border-radius: 16px;
+    padding: 20px 15px;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    transition: transform 0.25s, box-shadow 0.25s;
+    text-decoration: none;
+    color: var(--cor-texto);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    max-width: 260px;
+  }
+
+  .card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 8px 20px rgba(209, 167, 32, 0.3);
+  }
+
+  .card img {
+    width: 80px;
+    height: auto;
+    border-radius: 8px;
+    background-color: var(--cor-card);
+  }
+
+  .card h2 { margin: 0; font-size: 1.2rem; color: #fff; }
+
+  .creator-container {
+    position: fixed;
+    top: 120px;
+    right: 20px;
+    text-align: center;
+    color: var(--cor-dourado);
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .creator-container h2 { margin: 0; font-size: 1.3rem; font-weight: bold; color: var(--cor-dourado); }
+  .creator-container img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    object-position: top;
+    border-radius: 8px;
+    box-shadow: none;
+  }
+
+  @media (max-width: 1000px) { .container { grid-template-columns: repeat(3, 1fr); } .creator-container { display: none; } }
+  @media (max-width: 700px) { .container { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 500px) { .container { grid-template-columns: 1fr; } }
+/* 💫 Destaque visual refinado para pokémons hype */
+.card.hype {
+  position: relative;
+  border: 2px solid #d1a720;
+  box-shadow: 0 0 10px rgba(209, 167, 32, 0.5);
+  animation: hypeGlow 3s ease-in-out infinite;
+  overflow: hidden;
+}
+
+.card.hype::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 6px;
+  height: 100%;
+  background: linear-gradient(180deg, #ffd84d, #d1a720);
+  box-shadow: 0 0 10px rgba(209,167,32,0.6);
+}
+
+.hype-badge {
+  position: absolute;
+  top: 6px;
+  right: 10px;
+  font-size: 1.4rem;
+  text-shadow: 0 0 6px rgba(255,200,0,0.9);
+  animation: flameFloat 2s ease-in-out infinite;
+}
+
+@keyframes hypeGlow {
+  0%,100% { box-shadow: 0 0 10px rgba(209, 167, 32, 0.4); }
+  50% { box-shadow: 0 0 20px rgba(209, 167, 32, 0.8); }
+}
+
+@keyframes flameFloat {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-2px); }
+}
+
+</style>
+</head>
+<body>
+<header>
+  <h1>
+    <a href="index.html">
+      <img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote">
+    </a>
+    <span id="tierTitleHeader">Carregando...</span>
+  </h1>
+
+  <div class="menu-toggle" id="menuBtn">
+    <span></span><span></span><span></span>
+  </div>
+
+  <nav id="dropdownMenu">
+    <a href="index.html">🏠 Início</a>
+    <a href="https://www.humblepixelmon.com.br">🌐 Site Oficial</a>
+    <a href="Tiers_1.12.html">🗡️ Tiers 1.12</a>
+    <a href="Tiers_1.16.html">🛡️ Tiers 1.16</a>
+    <a href="notas.html">📝 Notas de Atualização</a>
+  </nav>
+</header>
+
+<main>
+  <!-- 🔹 Linha com título + pesquisa -->
+  <div class="title-search">
+    <p class="subtitulo-tier">Pokémons permitidos nessa tier:</p>
+    <input type="text" id="searchPokemon" placeholder="Pesquisar por nome ou ID...">
+  </div>
+
+  <div class="container" id="pokemonContainer"></div>
+</main>
+
+<!-- Criador da tier -->
+<div class="creator-container" id="creatorBox"></div>
+
+<script>
+const menuBtn = document.getElementById('menuBtn');
+const dropdownMenu = document.getElementById('dropdownMenu');
+menuBtn.addEventListener('click', ()=>{
+  menuBtn.classList.toggle('active');
+  dropdownMenu.classList.toggle('active');
+});
+
+function prettifyKey(key){
+  return key.replace(/-/g,' ').split(' ').map(w=>w? w[0].toUpperCase()+w.slice(1):'').join(' ');
+}
+
+function normalizeName(key){
+  let name = key.toLowerCase().replace(/\s+/g,'-');
+
+  const keepForms=[
+    "lycanroc-dusk","lycanroc-midnight",
+    "landorus-therian","thundurus-therian","tornadus-therian",
+    "urshifu-rapid-strike","urshifu-single-strike"
+  ];
+
+  if(keepForms.includes(name)) return name;
+
+  if(name.endsWith("-mega") || name.endsWith("-mega-x") || name.endsWith("-mega-y")) return name;
+  if(name.includes("-alola")||name.includes("-galar")||name.includes("-hisui")||name.includes("-paldea")) return name;
+  if(name.startsWith("oricorio")) return "oricorio";
+  if(name.startsWith("arceus-")) return "arceus";
+  if(name==="giratina-origin") return "giratina";
+
+  const removeSuffixes=[
+    "-origin","-therian","-resolute","-pirouette","-eternal","-blade","-base",
+    "-average","-school","-dusk","-dawn","-midday",
+    "-ice","-fire","-water","-grass","-rock","-fighting",
+    "-flying","-ghost","-dark","-fairy","-dragon","-bug",
+    "-ground","-poison","-psychic","-steel","-electric","-normal"
+  ];
+  for(const suf of removeSuffixes)
+    if(name.endsWith(suf)) return name.replace(suf,"");
+
+  return name;
+}
+
+document.addEventListener('DOMContentLoaded', async ()=> {
+  const container = document.getElementById('pokemonContainer');
+  const tierTitleHeader = document.getElementById('tierTitleHeader');
+  const creatorBox = document.getElementById('creatorBox');
+
+  const params = new URLSearchParams(window.location.search);
+  const file = params.get('file') || 'allowlist_Starters.json';
+
+  let version = file.includes('/') ? file.split('/')[0] : 'SemVersao';
+  version = version.replace(/^tiers_/, '');
+
+  let tierName = file.replace(/^.*\//,'')
+                     .replace('.json','')
+                     .replace('allowlist_','')
+                     .replace(/_/g,' ');
+
+  const fullTitle = `${tierName} (${version})`;
+  tierTitleHeader.textContent = fullTitle;
+  document.title = fullTitle;
+
+  const creators = {
+    "Starters": "Jacksonflz",
+    "Monomon": "DD4rk",
+    "Only Smeargle": "FrysendeStorm"
+  };
+
+  if (creators[tierName]) {
+    const nick = creators[tierName];
+    const remoteImg = `https://raw.githubusercontent.com/joaomarcosjmb/Humble-Pixelmon-Tiers/main/img/Criadores/${nick}.png`;
+    const localImg = `img/Criadores/${nick}.png`;
+    const placeholderData = 'data:image/svg+xml;utf8,'+encodeURIComponent(
+      '<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240">'+
+      '<rect fill="#2E2D2D" width="100%" height="100%"/>'+
+      '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#d1a720" font-size="20">Criador</text>'+
+      '</svg>'
+    );
+
+    creatorBox.innerHTML = `
+      <h2>👑 Criador da Tier:</h2>
+      <h2>${nick}</h2>
+      <img id="creatorImg" src="${remoteImg}" alt="${nick}">
+    `;
+
+    const creatorImg = document.getElementById('creatorImg');
+    let triedLocal = false;
+    creatorImg.onerror = function(){
+      if(!triedLocal){
+        triedLocal = true;
+        this.src = localImg;
+      } else {
+        this.onerror = null;
+        this.src = placeholderData;
+      }
+    };
+  }
+
+  try{
+    const res = await fetch(file);
+    if(!res.ok) throw new Error('Arquivo não encontrado: '+res.statusText);
+    const data = await res.json();
+
+    let entries = Object.entries(data);
+    if(entries.length===0){ 
+      container.innerHTML='<p>Nenhum item encontrado no JSON.</p>'; 
+      return; 
+    }
+
+    // 🔹 Move "hype": true para o início da lista
+    entries.sort((a, b) => {
+      const hypeA = a[1] && a[1].hype;
+      const hypeB = b[1] && b[1].hype;
+      return hypeA === hypeB ? 0 : hypeA ? -1 : 1;
+    });
+
+    // 🔹 Detecta geração para Smogon (8 = ss, 9 = sv)
+    const gen = version.includes("1.16") ? "sv" : "ss";
+
+    entries.forEach(([key, info])=>{
+      const namePretty = prettifyKey(key);
+      const smogonName = normalizeName(key);
+      const smogonUrl = `https://www.smogon.com/dex/${gen}/pokemon/${smogonName}`;
+
+      const id = (typeof info === "number") ? info : (info && typeof info.id === "number" ? info.id : null);
+      const spriteFromJson = info && info.sprite ? info.sprite : null;
+
+      let spriteUrl = null;
+      if(id){
+        spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+      } else if(spriteFromJson){
+        spriteUrl = spriteFromJson;
+      } else {
+        spriteUrl = `https://img.pokemondb.net/artwork/large/${encodeURIComponent(normalizeName(key))}.jpg`;
+      }
+
+      const card = document.createElement('a');
+      card.className='card';
+      card.href=smogonUrl;
+      card.target="_blank";
+      card.rel="noopener";
+
+      const img = document.createElement('img');
+      img.alt=namePretty;
+      img.loading='lazy';
+      img.src=spriteUrl;
+      img.onerror=function(){
+        this.onerror=null;
+        this.src='data:image/svg+xml;utf8,'+encodeURIComponent(
+          '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">'+
+          '<rect fill="#2E2D2D" width="100%" height="100%"/>'+
+          '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#999" font-size="14">no image</text>'+
+          '</svg>'
+        );
+      };
+
+      const h2 = document.createElement('h2');
+      h2.textContent=namePretty;
+
+      card.appendChild(img);
+      card.appendChild(h2);
+
+      // 🌟 Destaque visual e texto adicional para hype
+      if (info && info.hype) {
+  card.classList.add('hype');
+  const badge = document.createElement('div');
+  badge.className = 'hype-badge';
+  badge.innerHTML = '🔥';
+  card.appendChild(badge);
+}
+
+
+      container.appendChild(card);
+    });
+
+    // 🔍 Filtro de pesquisa
+    const searchInput = document.getElementById('searchPokemon');
+    searchInput.addEventListener('input', function() {
+      const term = this.value.toLowerCase().trim();
+      const cards = document.querySelectorAll('#pokemonContainer .card');
+      
+      cards.forEach(card => {
+        const text = card.querySelector('h2').textContent.toLowerCase();
+        if (text.includes(term)) {
+          card.style.display = "flex";
+        } else {
+          card.style.display = "none";
+        }
+      });
+    });
+
+  }catch(err){
+    container.innerHTML=`<p><strong>Erro:</strong> não foi possível carregar <code>${file}</code>. ${err.message}</p>`;
+    console.error(err);
+  }
+});
+</script>
+</body>
+</html>
+
