@@ -163,7 +163,7 @@
     "id": 700,
     "tier": "NU"
   },
-  "tauros-paldea-aqua-breed": {
+  "tauros-paldea-aqua": {
     "id": 10252,
     "tier": "NU"
   },
@@ -171,7 +171,7 @@
     "id": 73,
     "tier": "NU"
   },
-  "tornadus-incarnate": {
+  "tornadusincarnate": {
     "id": 641,
     "tier": "NU"
   },
@@ -251,24 +251,12 @@
     "id": 845,
     "tier": "PU"
   },
-  "cramorant-gorging": {
-    "id": 10183,
-    "tier": "PU"
-  },
-  "cramorant-gulping": {
-    "id": 10182,
-    "tier": "PU"
-  },
   "decidueye-hisui": {
     "id": 10244,
     "tier": "PU"
   },
   "delphox": {
     "id": 655,
-    "tier": "PU"
-  },
-  "dudunsparce-three-segment": {
-    "id": 10255,
     "tier": "PU"
   },
   "dudunsparce-two-segment": {
@@ -387,19 +375,11 @@
     "id": 10165,
     "tier": "PU"
   },
-  "tatsugiri-curly": {
+  "tatsugiri": {
     "id": 978,
     "tier": "PU"
   },
-  "tatsugiri-droopy": {
-    "id": 10258,
-    "tier": "PU"
-  },
-  "tatsugiri-stretchy": {
-    "id": 10259,
-    "tier": "PU"
-  },
-  "tauros-paldea-blaze-breed": {
+  "tauros-paldea-blaze": {
     "id": 10251,
     "tier": "PU"
   },
@@ -459,15 +439,15 @@
     "id": 354,
     "tier": "ZU"
   },
-  "basculin-blue-striped": {
+  "basculin-blue": {
     "id": 10016,
     "tier": "ZU"
   },
-  "basculin-red-striped": {
+  "basculin-red": {
     "id": 550,
     "tier": "ZU"
   },
-  "basculin-white-striped": {
+  "basculin-white": {
     "id": 10247,
     "tier": "ZU"
   },
@@ -2472,3 +2452,4 @@
     "tier": "LC"
   }
 }
+
