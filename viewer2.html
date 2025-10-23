@@ -192,14 +192,16 @@
 }
 
   /* LISTA DE CARDS DENTRO DA TIER */
- .tier-grid {
+ /* GRADE RESPONSIVA: 4 colunas fixas dentro do container principal */
+.tier-grid {
   display: flex;
   flex-wrap: wrap;
   gap: 16px;
-  align-items: flex-start;
-  justify-content: space-between; /* 🔹 distribui igualmente */
+  justify-content: center; /* 🔹 centraliza quando tiver menos de 4 */
+  width: 100%;
+  box-sizing: border-box;
 }
-
+/* CARD: largura calculada para 4 colunas dentro do container (leva em conta 3 gaps de 16px) */
 .card {
   background: var(--cor-card);
   border-radius: 16px;
@@ -212,9 +214,33 @@
   display: flex;
   align-items: center;
   gap: 15px;
-  width: calc(25% - 12px); /* 🔹 4 cards por linha com gap de 16px */
-  min-width: 220px;        /* 🔹 evita quebrar o layout em telas muito pequenas */
+
+  /* chave: largura fixa relativa ao container para garantir 4 por linha */
+  flex: 0 0 calc((100% - 48px) / 4); /* 48px = 3 * gap(16px) */
+  max-width: calc((100% - 48px) / 4);
   box-sizing: border-box;
+}
+
+/* Ajustes para telas menores (3 / 2 / 1 colunas) */
+@media (max-width: 1000px) {
+  .card {
+    flex: 0 0 calc((100% - 32px) / 3); /* 3 colunas (2 gaps) */
+    max-width: calc((100% - 32px) / 3);
+  }
+}
+
+@media (max-width: 700px) {
+  .card {
+    flex: 0 0 calc((100% - 16px) / 2); /* 2 colunas (1 gap) */
+    max-width: calc((100% - 16px) / 2);
+  }
+}
+
+@media (max-width: 500px) {
+  .card {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
 }
 
   .card:hover {
