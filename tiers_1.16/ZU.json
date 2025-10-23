@@ -295,7 +295,7 @@
   "meowth": { "id": 52, "tier": "LC" },
   "psyduck": { "id": 54, "tier": "LC" },
   "mankey": { "id": 56, "tier": "LC" },
-  "growlithe-hisuian": { "id": 58, "tier": "LC" },
+  "growlithe-hisuian": { "id": 10229, "tier": "LC" },
   "growlithe": { "id": 58, "tier": "LC" },
   "poliwag": { "id": 60, "tier": "LC" },
   "bellsprout": { "id": 69, "tier": "LC" },
@@ -505,3 +505,4 @@
   "frigibax": { "id": 996, "tier": "LC" },
   "gimmighoul": { "id": 999, "tier": "LC" }
 }
+
