@@ -386,24 +386,8 @@ document.addEventListener('DOMContentLoaded', async ()=> {
 
   try{
     const res = await fetch(file);
-    if(!res.ok) throw new Error('Arquivo não encontrado: ' + res.statusText);
-
-    // ✅ Suporte ao formato com bloco NatDex separado
-    const rawText = await res.text();
-    const parts = rawText.split(/}\s*{/);
-
-    // Detecta o primeiro bloco (NatDex global)
-    let globalNatDex = false;
-    if (parts[0].includes('"NatDex": true')) {
-      globalNatDex = true;
-    }
-
-    // Reconstrói o JSON principal
-    let jsonText = parts[1];
-    if (!jsonText) throw new Error("Formato inválido: lista de pokémons não encontrada.");
-    jsonText = '{' + jsonText;
-    if (!jsonText.trim().endsWith('}')) jsonText += '}';
-    const data = JSON.parse(jsonText);
+    if(!res.ok) throw new Error('Arquivo não encontrado: '+res.statusText);
+    const data = await res.json();
 
     let entries = Object.entries(data);
     if(entries.length===0){ 
@@ -414,16 +398,6 @@ document.addEventListener('DOMContentLoaded', async ()=> {
     // 🔹 Ordem de tiers padrão
     const tierOrder = ["LC","ZU","PU","NU","RU","UU","OU","Ubers","AG"];
 
-    // 🔹 Ordem das tiers NatDex
-    const natDexOrder = [
-      "National Dex RU",
-      "National Dex UU",
-      "National Dex",
-      "National Dex Ubers",
-      "National Dex AG",
-      "National Dex Monotype"
-    ];
-
     // 🔹 Filtros visuais
     const filtersBox = document.createElement('div');
     filtersBox.style.display = "flex";
@@ -432,9 +406,8 @@ document.addEventListener('DOMContentLoaded', async ()=> {
     filtersBox.innerHTML = `
       <select id="tierFilter">
         <option value="">Todas as tiers</option>
-        ${natDexOrder.concat(tierOrder).map(t => `<option value="${t}">${t}</option>`).join('')}
+        ${tierOrder.map(t => `<option value="${t}">${t}</option>`).join('')}
       </select>
-      <label><input type="checkbox" id="natdexFilter"> Apenas Nat.Dex</label>
     `;
     document.querySelector('.title-search').appendChild(filtersBox);
 
@@ -444,9 +417,8 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       const hypeB = b[1]?.hype ? 1 : 0;
       if (hypeA !== hypeB) return hypeB - hypeA;
 
-      const orderList = globalNatDex ? natDexOrder : tierOrder;
-      const tierA = a[1]?.tier ? orderList.indexOf(a[1].tier) : 999;
-      const tierB = b[1]?.tier ? orderList.indexOf(b[1].tier) : 999;
+      const tierA = a[1]?.tier ? tierOrder.indexOf(a[1].tier) : 999;
+      const tierB = b[1]?.tier ? tierOrder.indexOf(b[1].tier) : 999;
       return tierA - tierB;
     });
 
@@ -456,14 +428,9 @@ document.addEventListener('DOMContentLoaded', async ()=> {
     function renderCards() {
       container.innerHTML = "";
       const tierValue = document.getElementById("tierFilter").value;
-      const onlyNatdex = document.getElementById("natdexFilter").checked;
 
       entries.forEach(([key, info])=>{
-        const isNatDex = globalNatDex || !!info["Nat.dex"];
-
-        // filtros ativos
         if (tierValue && info.tier !== tierValue) return;
-        if (onlyNatdex && !isNatDex) return;
 
         const namePretty = prettifyKey(key);
         const smogonName = normalizeName(key);
@@ -507,7 +474,6 @@ document.addEventListener('DOMContentLoaded', async ()=> {
     // inicializa e re-renderiza nos filtros
     renderCards();
     document.getElementById('tierFilter').addEventListener('change', renderCards);
-    document.getElementById('natdexFilter').addEventListener('change', renderCards);
 
     // 🔍 Filtro de pesquisa
     const searchInput = document.getElementById('searchPokemon');
