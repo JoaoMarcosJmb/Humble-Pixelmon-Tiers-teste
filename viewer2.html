@@ -395,85 +395,115 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       return; 
     }
 
-    // 🔹 Move "hype": true para o início da lista
-    entries.sort((a, b) => {
-      const hypeA = a[1] && a[1].hype;
-      const hypeB = b[1] && b[1].hype;
-      return hypeA === hypeB ? 0 : hypeA ? -1 : 1;
+    // 🔹 Ordem de tiers padrão
+    const tierOrder = ["LC","ZU","PU","NU","RU","UU","OU","Ubers","AG"];
+
+    // 🔹 Ordem das tiers NatDex
+    const natDexOrder = [
+      "National Dex RU",
+      "National Dex UU",
+      "National Dex",
+      "National Dex Ubers",
+      "National Dex AG",
+      "National Dex Monotype"
+    ];
+
+    // 🔹 Filtros visuais
+    const filtersBox = document.createElement('div');
+    filtersBox.style.display = "flex";
+    filtersBox.style.gap = "10px";
+    filtersBox.style.marginBottom = "15px";
+    filtersBox.innerHTML = `
+      <select id="tierFilter">
+        <option value="">Todas as tiers</option>
+        ${natDexOrder.concat(tierOrder).map(t => `<option value="${t}">${t}</option>`).join('')}
+      </select>
+      <label><input type="checkbox" id="natdexFilter"> Apenas Nat.Dex</label>
+    `;
+    document.querySelector('.title-search').appendChild(filtersBox);
+
+    // 🔹 Ordenação geral (hype primeiro, depois tier)
+    entries.sort((a,b)=>{
+      const hypeA = a[1]?.hype ? 1 : 0;
+      const hypeB = b[1]?.hype ? 1 : 0;
+      if (hypeA !== hypeB) return hypeB - hypeA;
+
+      const aNat = a[1]?.["Nat.dex"];
+      const bNat = b[1]?.["Nat.dex"];
+      const orderList = (aNat || bNat) ? natDexOrder : tierOrder;
+
+      const tierA = a[1]?.tier ? orderList.indexOf(a[1].tier) : 999;
+      const tierB = b[1]?.tier ? orderList.indexOf(b[1].tier) : 999;
+      return tierA - tierB;
     });
 
     // 🔹 Detecta geração para Smogon (8 = ss, 9 = sv)
     const gen = version.includes("1.16") ? "sv" : "ss";
 
-    entries.forEach(([key, info])=>{
-      const namePretty = prettifyKey(key);
-      const smogonName = normalizeName(key);
-      const smogonUrl = `https://www.smogon.com/dex/${gen}/pokemon/${smogonName}`;
+    function renderCards() {
+      container.innerHTML = "";
+      const tierValue = document.getElementById("tierFilter").value;
+      const onlyNatdex = document.getElementById("natdexFilter").checked;
 
-      const id = (typeof info === "number") ? info : (info && typeof info.id === "number" ? info.id : null);
-      const spriteFromJson = info && info.sprite ? info.sprite : null;
+      entries.forEach(([key, info])=>{
+        const isNatDex = !!info["Nat.dex"];
 
-      let spriteUrl = null;
-      if(id){
-        spriteUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
-      } else if(spriteFromJson){
-        spriteUrl = spriteFromJson;
-      } else {
-        spriteUrl = `https://img.pokemondb.net/artwork/large/${encodeURIComponent(normalizeName(key))}.jpg`;
-      }
+        // filtros ativos
+        if (tierValue && info.tier !== tierValue) return;
+        if (onlyNatdex && !isNatDex) return;
 
-      const card = document.createElement('a');
-      card.className='card';
-      card.href=smogonUrl;
-      card.target="_blank";
-      card.rel="noopener";
+        const namePretty = prettifyKey(key);
+        const smogonName = normalizeName(key);
+        const smogonUrl = `https://www.smogon.com/dex/${gen}/pokemon/${smogonName}`;
 
-      const img = document.createElement('img');
-      img.alt=namePretty;
-      img.loading='lazy';
-      img.src=spriteUrl;
-      img.onerror=function(){
-        this.onerror=null;
-        this.src='data:image/svg+xml;utf8,'+encodeURIComponent(
-          '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200">'+
-          '<rect fill="#2E2D2D" width="100%" height="100%"/>'+
-          '<text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#999" font-size="14">no image</text>'+
-          '</svg>'
-        );
-      };
+        const id = info?.id || null;
+        const spriteUrl = id 
+          ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
+          : `https://img.pokemondb.net/artwork/large/${encodeURIComponent(normalizeName(key))}.jpg`;
 
-      const h2 = document.createElement('h2');
-      h2.textContent=namePretty;
+        const card = document.createElement('a');
+        card.className = 'card';
+        card.href = smogonUrl;
+        card.target = "_blank";
+        card.rel = "noopener";
 
-      card.appendChild(img);
-      card.appendChild(h2);
+        const img = document.createElement('img');
+        img.src = spriteUrl;
+        img.alt = namePretty;
+        img.loading = 'lazy';
 
-      // 🌟 Destaque visual e texto adicional para hype
-      if (info && info.hype) {
-  card.classList.add('hype');
-  const badge = document.createElement('div');
-  badge.className = 'hype-badge';
-  badge.innerHTML = '🔥';
-  card.appendChild(badge);
-}
+        const h2 = document.createElement('h2');
+        h2.textContent = namePretty;
 
+        card.appendChild(img);
+        card.appendChild(h2);
 
-      container.appendChild(card);
-    });
+        // 🌟 destaque hype
+        if (info.hype) {
+          card.classList.add('hype');
+          const badge = document.createElement('div');
+          badge.className = 'hype-badge';
+          badge.innerHTML = '🔥';
+          card.appendChild(badge);
+        }
+
+        container.appendChild(card);
+      });
+    }
+
+    // inicializa e re-renderiza nos filtros
+    renderCards();
+    document.getElementById('tierFilter').addEventListener('change', renderCards);
+    document.getElementById('natdexFilter').addEventListener('change', renderCards);
 
     // 🔍 Filtro de pesquisa
     const searchInput = document.getElementById('searchPokemon');
     searchInput.addEventListener('input', function() {
       const term = this.value.toLowerCase().trim();
       const cards = document.querySelectorAll('#pokemonContainer .card');
-      
       cards.forEach(card => {
         const text = card.querySelector('h2').textContent.toLowerCase();
-        if (text.includes(term)) {
-          card.style.display = "flex";
-        } else {
-          card.style.display = "none";
-        }
+        card.style.display = text.includes(term) ? "flex" : "none";
       });
     });
 
@@ -483,6 +513,7 @@ document.addEventListener('DOMContentLoaded', async ()=> {
   }
 });
 </script>
+
 </body>
 </html>
 
