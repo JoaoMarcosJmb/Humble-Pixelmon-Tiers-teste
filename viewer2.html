@@ -386,8 +386,24 @@ document.addEventListener('DOMContentLoaded', async ()=> {
 
   try{
     const res = await fetch(file);
-    if(!res.ok) throw new Error('Arquivo não encontrado: '+res.statusText);
-    const data = await res.json();
+    if(!res.ok) throw new Error('Arquivo não encontrado: ' + res.statusText);
+
+    // ✅ Suporte ao formato com bloco NatDex separado
+    const rawText = await res.text();
+    const parts = rawText.split(/}\s*{/);
+
+    // Detecta o primeiro bloco (NatDex global)
+    let globalNatDex = false;
+    if (parts[0].includes('"NatDex": true')) {
+      globalNatDex = true;
+    }
+
+    // Reconstrói o JSON principal
+    let jsonText = parts[1];
+    if (!jsonText) throw new Error("Formato inválido: lista de pokémons não encontrada.");
+    jsonText = '{' + jsonText;
+    if (!jsonText.trim().endsWith('}')) jsonText += '}';
+    const data = JSON.parse(jsonText);
 
     let entries = Object.entries(data);
     if(entries.length===0){ 
@@ -428,10 +444,7 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       const hypeB = b[1]?.hype ? 1 : 0;
       if (hypeA !== hypeB) return hypeB - hypeA;
 
-      const aNat = a[1]?.["Nat.dex"];
-      const bNat = b[1]?.["Nat.dex"];
-      const orderList = (aNat || bNat) ? natDexOrder : tierOrder;
-
+      const orderList = globalNatDex ? natDexOrder : tierOrder;
       const tierA = a[1]?.tier ? orderList.indexOf(a[1].tier) : 999;
       const tierB = b[1]?.tier ? orderList.indexOf(b[1].tier) : 999;
       return tierA - tierB;
@@ -446,7 +459,7 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       const onlyNatdex = document.getElementById("natdexFilter").checked;
 
       entries.forEach(([key, info])=>{
-        const isNatDex = !!info["Nat.dex"];
+        const isNatDex = globalNatDex || !!info["Nat.dex"];
 
         // filtros ativos
         if (tierValue && info.tier !== tierValue) return;
