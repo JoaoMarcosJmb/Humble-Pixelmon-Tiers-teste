@@ -259,7 +259,7 @@
     "id": 655,
     "tier": "PU"
   },
-  "dudunsparce-two-segment": {
+  "dudunsparce": {
     "id": 982,
     "tier": "PU"
   },
@@ -547,12 +547,8 @@
     "id": 604,
     "tier": "ZU"
   },
-  "eiscue-ice": {
+  "eiscue": {
     "id": 875,
-    "tier": "ZU"
-  },
-  "eiscue-noice": {
-    "id": 10185,
     "tier": "ZU"
   },
   "electivire": {
@@ -787,7 +783,7 @@
     "id": 262,
     "tier": "ZU"
   },
-  "minior-red-meteor": {
+  "minior": {
     "id": 774,
     "tier": "ZU"
   },
@@ -799,12 +795,8 @@
     "id": 429,
     "tier": "ZU"
   },
-  "morpeko-full-belly": {
+  "morpeko": {
     "id": 877,
-    "tier": "ZU"
-  },
-  "morpeko-hangry": {
-    "id": 10187,
     "tier": "ZU"
   },
   "muk": {
@@ -1003,20 +995,8 @@
     "id": 442,
     "tier": "ZU"
   },
-  "squawkabilly-blue-plumage": {
+  "squawkabilly": {
     "id": 10260,
-    "tier": "ZU"
-  },
-  "squawkabilly-green-plumage": {
-    "id": 931,
-    "tier": "ZU"
-  },
-  "squawkabilly-white-plumage": {
-    "id": 10262,
-    "tier": "ZU"
-  },
-  "squawkabilly-yellow-plumage": {
-    "id": 10261,
     "tier": "ZU"
   },
   "stonjourner": {
@@ -1043,7 +1023,7 @@
     "id": 128,
     "tier": "ZU"
   },
-  "tauros-paldea-combat-breed": {
+  "tauros-paldea-combat": {
     "id": 10250,
     "tier": "ZU"
   },
@@ -2452,4 +2432,5 @@
     "tier": "LC"
   }
 }
+
 
