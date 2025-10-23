@@ -395,21 +395,8 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       return; 
     }
 
-    // 🔹 Ordem de tiers padrão
+    // 🔹 Ordem de tiers padrão (apenas para ordenação interna)
     const tierOrder = ["LC","ZU","PU","NU","RU","UU","OU","Ubers","AG"];
-
-    // 🔹 Filtros visuais
-    const filtersBox = document.createElement('div');
-    filtersBox.style.display = "flex";
-    filtersBox.style.gap = "10px";
-    filtersBox.style.marginBottom = "15px";
-    filtersBox.innerHTML = `
-      <select id="tierFilter">
-        <option value="">Todas as tiers</option>
-        ${tierOrder.map(t => `<option value="${t}">${t}</option>`).join('')}
-      </select>
-    `;
-    document.querySelector('.title-search').appendChild(filtersBox);
 
     // 🔹 Ordenação geral (hype primeiro, depois tier)
     entries.sort((a,b)=>{
@@ -425,13 +412,11 @@ document.addEventListener('DOMContentLoaded', async ()=> {
     // 🔹 Detecta geração para Smogon (8 = ss, 9 = sv)
     const gen = version.includes("1.16") ? "sv" : "ss";
 
+    // Renderiza todos os cards
     function renderCards() {
       container.innerHTML = "";
-      const tierValue = document.getElementById("tierFilter").value;
 
       entries.forEach(([key, info])=>{
-        if (tierValue && info.tier !== tierValue) return;
-
         const namePretty = prettifyKey(key);
         const smogonName = normalizeName(key);
         const smogonUrl = `https://www.smogon.com/dex/${gen}/pokemon/${smogonName}`;
@@ -471,9 +456,8 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       });
     }
 
-    // inicializa e re-renderiza nos filtros
+    // Inicializa
     renderCards();
-    document.getElementById('tierFilter').addEventListener('change', renderCards);
 
     // 🔍 Filtro de pesquisa
     const searchInput = document.getElementById('searchPokemon');
@@ -492,6 +476,7 @@ document.addEventListener('DOMContentLoaded', async ()=> {
   }
 });
 </script>
+
 
 </body>
 </html>
