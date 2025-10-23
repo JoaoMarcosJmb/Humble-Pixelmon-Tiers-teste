@@ -295,9 +295,7 @@ menuBtn.addEventListener('click', ()=>{
 });
 
 function prettifyKey(key){
-  return key.replace(/-/g,' ').split(' ')
-            .map(w=>w? w[0].toUpperCase()+w.slice(1):'')
-            .join(' ');
+  return key.replace(/-/g,' ').split(' ').map(w=>w? w[0].toUpperCase()+w.slice(1):'').join(' ');
 }
 
 function normalizeName(key){
@@ -308,6 +306,7 @@ function normalizeName(key){
     "landorus-therian","thundurus-therian","tornadus-therian",
     "urshifu-rapid-strike","urshifu-single-strike"
   ];
+
   if(keepForms.includes(name)) return name;
 
   if(name.endsWith("-mega") || name.endsWith("-mega-x") || name.endsWith("-mega-y")) return name;
@@ -325,6 +324,7 @@ function normalizeName(key){
   ];
   for(const suf of removeSuffixes)
     if(name.endsWith(suf)) return name.replace(suf,"");
+
   return name;
 }
 
@@ -391,14 +391,14 @@ document.addEventListener('DOMContentLoaded', async ()=> {
 
     let entries = Object.entries(data);
     if(entries.length===0){ 
-      container.innerHTML='<p>Nenhum Pokémon encontrado no JSON.</p>'; 
+      container.innerHTML='<p>Nenhum item encontrado no JSON.</p>'; 
       return; 
     }
 
-    // 🔹 Ordem padrão de tiers
+    // 🔹 Ordem de tiers padrão (apenas para ordenação interna)
     const tierOrder = ["LC","ZU","PU","NU","RU","UU","OU","Ubers","AG"];
 
-    // 🔹 Ordena primeiro por hype, depois pela tier
+    // 🔹 Ordenação geral (hype primeiro, depois tier)
     entries.sort((a,b)=>{
       const hypeA = a[1]?.hype ? 1 : 0;
       const hypeB = b[1]?.hype ? 1 : 0;
@@ -409,86 +409,54 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       return tierA - tierB;
     });
 
-    // 🔹 Agrupa pokémons por tier
-    const groups = {};
-    entries.forEach(([key, info])=>{
-      const tier = info.tier || "Sem Tier";
-      if(!groups[tier]) groups[tier] = [];
-      groups[tier].push([key, info]);
-    });
-
-    // 🔹 Define geração Smogon
+    // 🔹 Detecta geração para Smogon (8 = ss, 9 = sv)
     const gen = version.includes("1.16") ? "sv" : "ss";
 
+    // Renderiza todos os cards
     function renderCards() {
       container.innerHTML = "";
 
-      // tiers que realmente existem no JSON
-      const allTiers = tierOrder.concat(Object.keys(groups).filter(t=>!tierOrder.includes(t)));
+      entries.forEach(([key, info])=>{
+        const namePretty = prettifyKey(key);
+        const smogonName = normalizeName(key);
+        const smogonUrl = `https://www.smogon.com/dex/${gen}/pokemon/${smogonName}`;
 
-      for(const tier of allTiers){
-        const list = groups[tier];
-        if(!list || list.length === 0) continue; // 👈 pula tiers vazias
+        const id = info?.id || null;
+        const spriteUrl = id 
+          ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
+          : `https://img.pokemondb.net/artwork/large/${encodeURIComponent(normalizeName(key))}.jpg`;
 
-        // título da tier
-        const title = document.createElement('h2');
-        title.textContent = tier;
-        title.className = 'tier-title';
-        title.style.color = '#d1a720';
-        title.style.margin = '25px 0 10px';
-        title.style.fontSize = '1.6rem';
-        title.style.textShadow = '0 0 6px rgba(209,167,32,0.5)';
-        container.appendChild(title);
+        const card = document.createElement('a');
+        card.className = 'card';
+        card.href = smogonUrl;
+        card.target = "_blank";
+        card.rel = "noopener";
 
-        // grade de cards
-        const tierContainer = document.createElement('div');
-        tierContainer.className = 'container-tier';
-        tierContainer.style.display = 'grid';
-        tierContainer.style.gridTemplateColumns = 'repeat(auto-fit, minmax(240px, 1fr))';
-        tierContainer.style.gap = '20px';
+        const img = document.createElement('img');
+        img.src = spriteUrl;
+        img.alt = namePretty;
+        img.loading = 'lazy';
 
-        list.forEach(([key, info])=>{
-          const namePretty = prettifyKey(key);
-          const smogonName = normalizeName(key);
-          const smogonUrl = `https://www.smogon.com/dex/${gen}/pokemon/${smogonName}`;
+        const h2 = document.createElement('h2');
+        h2.textContent = namePretty;
 
-          const id = info?.id || null;
-          const spriteUrl = id 
-            ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
-            : `https://img.pokemondb.net/artwork/large/${encodeURIComponent(normalizeName(key))}.jpg`;
+        card.appendChild(img);
+        card.appendChild(h2);
 
-          const card = document.createElement('a');
-          card.className = 'card';
-          card.href = smogonUrl;
-          card.target = "_blank";
-          card.rel = "noopener";
+        // 🌟 destaque hype
+        if (info.hype) {
+          card.classList.add('hype');
+          const badge = document.createElement('div');
+          badge.className = 'hype-badge';
+          badge.innerHTML = '🔥';
+          card.appendChild(badge);
+        }
 
-          const img = document.createElement('img');
-          img.src = spriteUrl;
-          img.alt = namePretty;
-          img.loading = 'lazy';
-
-          const h2 = document.createElement('h2');
-          h2.textContent = namePretty;
-
-          card.appendChild(img);
-          card.appendChild(h2);
-
-          if (info.hype) {
-            card.classList.add('hype');
-            const badge = document.createElement('div');
-            badge.className = 'hype-badge';
-            badge.innerHTML = '🔥';
-            card.appendChild(badge);
-          }
-
-          tierContainer.appendChild(card);
-        });
-
-        container.appendChild(tierContainer);
-      }
+        container.appendChild(card);
+      });
     }
 
+    // Inicializa
     renderCards();
 
     // 🔍 Filtro de pesquisa
@@ -500,13 +468,6 @@ document.addEventListener('DOMContentLoaded', async ()=> {
         const text = card.querySelector('h2').textContent.toLowerCase();
         card.style.display = text.includes(term) ? "flex" : "none";
       });
-
-      // esconde títulos de tiers se todos os cards dela sumirem
-      document.querySelectorAll('.tier-title').forEach(title=>{
-        const nextGrid = title.nextElementSibling;
-        const visible = nextGrid && [...nextGrid.children].some(c=>c.style.display!=="none");
-        title.style.display = visible ? "block" : "none";
-      });
     });
 
   }catch(err){
@@ -516,6 +477,6 @@ document.addEventListener('DOMContentLoaded', async ()=> {
 });
 </script>
 
+
 </body>
 </html>
-
