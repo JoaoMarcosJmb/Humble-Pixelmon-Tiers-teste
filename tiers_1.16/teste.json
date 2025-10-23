@@ -1,0 +1,45 @@
+{
+  "abomasnow": {
+    "id": 460,
+    "tier": "OU"
+  },
+  "blaziken": {
+    "id": 257,
+    "tier": "Ubers",
+    "hype": true
+  },
+  "smeargle": {
+    "id": 235,
+    "tier": "ZU"
+  },
+  "kingambit": {
+    "id": 983,
+    "tier": "Ubers",
+    "hype": true
+  },
+  "lucario": {
+    "id": 448,
+    "tier": "UU"
+  },
+  "garchomp": {
+    "id": 445,
+    "tier": "OU"
+  },
+  "charizard": {
+    "id": 6,
+    "tier": "RU"
+  },
+  "greninja": {
+    "id": 658,
+    "tier": "OU",
+    "hype": true
+  },
+  "mimikyu": {
+    "id": 778,
+    "tier": "UU"
+  },
+  "scizor": {
+    "id": 212,
+    "tier": "OU"
+  }
+}
