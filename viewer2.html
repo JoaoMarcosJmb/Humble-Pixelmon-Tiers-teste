@@ -272,6 +272,32 @@
   gap: 20px;
   justify-items: center;
 }
+.tier-section {
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.tier-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #000;
+  background: linear-gradient(90deg, #d1a720 0%, #b28d1b 100%);
+  padding: 8px 16px;
+  border-radius: 6px;
+  width: fit-content;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.4);
+  text-shadow: 0 0 3px rgba(255,255,255,0.3);
+}
+
+.tier-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
 
 </style>
 </head>
@@ -324,15 +350,12 @@ function prettifyKey(key){
 
 function normalizeName(key){
   let name = key.toLowerCase().replace(/\s+/g,'-');
-
   const keepForms=[
-    "lycanroc-dusk","lycanroc-midnight",
-    "landorus-therian","thundurus-therian","tornadus-therian",
-    "urshifu-rapid-strike","urshifu-single-strike"
+    "lycanroc-dusk","lycanroc-midnight","landorus-therian",
+    "thundurus-therian","tornadus-therian","urshifu-rapid-strike","urshifu-single-strike"
   ];
-
   if(keepForms.includes(name)) return name;
-  if(name.endsWith("-mega") || name.endsWith("-mega-x") || name.endsWith("-mega-y")) return name;
+  if(name.endsWith("-mega")||name.endsWith("-mega-x")||name.endsWith("-mega-y")) return name;
   if(name.includes("-alola")||name.includes("-galar")||name.includes("-hisui")||name.includes("-paldea")) return name;
   if(name.startsWith("oricorio")) return "oricorio";
   if(name.startsWith("arceus-")) return "arceus";
@@ -340,14 +363,12 @@ function normalizeName(key){
 
   const removeSuffixes=[
     "-origin","-therian","-resolute","-pirouette","-eternal","-blade","-base",
-    "-average","-school","-dusk","-dawn","-midday",
-    "-ice","-fire","-water","-grass","-rock","-fighting",
-    "-flying","-ghost","-dark","-fairy","-dragon","-bug",
+    "-average","-school","-dusk","-dawn","-midday","-ice","-fire","-water","-grass",
+    "-rock","-fighting","-flying","-ghost","-dark","-fairy","-dragon","-bug",
     "-ground","-poison","-psychic","-steel","-electric","-normal"
   ];
   for(const suf of removeSuffixes)
     if(name.endsWith(suf)) return name.replace(suf,"");
-
   return name;
 }
 
@@ -418,10 +439,7 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       return; 
     }
 
-    // 🔹 Ordem de tiers
     const tierOrder = ["LC","ZU","PU","NU","RU","UU","OU","Ubers","AG"];
-
-    // 🔹 Agrupar por tier
     const grouped = {};
     for(const tier of tierOrder) grouped[tier] = [];
     for(const [key, info] of entries){
@@ -430,13 +448,12 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       grouped[t].push([key, info]);
     }
 
-    // 🔹 Renderização com divisões
-    container.innerHTML = "";
     const gen = version.includes("1.16") ? "sv" : "ss";
+    container.innerHTML = "";
 
     for(const tier of tierOrder){
       const list = grouped[tier];
-      if(!list || list.length === 0) continue; // só mostra se houver Pokémon
+      if(!list || list.length === 0) continue;
 
       const section = document.createElement('section');
       section.className = 'tier-section';
@@ -447,7 +464,7 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       section.appendChild(title);
 
       const grid = document.createElement('div');
-      grid.className = 'container-tier';
+      grid.className = 'tier-grid';
 
       list.forEach(([key, info])=>{
         const namePretty = prettifyKey(key);
@@ -490,7 +507,6 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       container.appendChild(section);
     }
 
-    // 🔍 Filtro de pesquisa
     const searchInput = document.getElementById('searchPokemon');
     searchInput.addEventListener('input', function() {
       const term = this.value.toLowerCase().trim();
