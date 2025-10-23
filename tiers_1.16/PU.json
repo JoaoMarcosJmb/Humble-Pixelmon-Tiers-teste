@@ -47,14 +47,6 @@
     "id": 845,
     "tier": "PU"
   },
-  "cramorant-gorging": {
-    "id": 10183,
-    "tier": "PU"
-  },
-  "cramorant-gulping": {
-    "id": 10182,
-    "tier": "PU"
-  },
   "decidueye-hisui": {
     "id": 10244,
     "tier": "PU"
@@ -63,11 +55,7 @@
     "id": 655,
     "tier": "PU"
   },
-  "dudunsparce-three-segment": {
-    "id": 10255,
-    "tier": "PU"
-  },
-  "dudunsparce-two-segment": {
+  "dudunsparce": {
     "id": 982,
     "tier": "PU"
   },
@@ -183,19 +171,11 @@
     "id": 10165,
     "tier": "PU"
   },
-  "tatsugiri-curly": {
+  "tatsugiri": {
     "id": 978,
     "tier": "PU"
   },
-  "tatsugiri-droopy": {
-    "id": 10258,
-    "tier": "PU"
-  },
-  "tatsugiri-stretchy": {
-    "id": 10259,
-    "tier": "PU"
-  },
-  "tauros-paldea-blaze-breed": {
+  "tauros-paldea-blaze": {
     "id": 10251,
     "tier": "PU"
   },
@@ -255,15 +235,15 @@
     "id": 354,
     "tier": "ZU"
   },
-  "basculin-blue-striped": {
+  "basculin-blue": {
     "id": 10016,
     "tier": "ZU"
   },
-  "basculin-red-striped": {
+  "basculin-red": {
     "id": 550,
     "tier": "ZU"
   },
-  "basculin-white-striped": {
+  "basculin-white": {
     "id": 10247,
     "tier": "ZU"
   },
@@ -603,7 +583,7 @@
     "id": 262,
     "tier": "ZU"
   },
-  "minior-red-meteor": {
+  "minior": {
     "id": 774,
     "tier": "ZU"
   },
@@ -617,10 +597,6 @@
   },
   "morpeko-full-belly": {
     "id": 877,
-    "tier": "ZU"
-  },
-  "morpeko-hangry": {
-    "id": 10187,
     "tier": "ZU"
   },
   "muk": {
@@ -819,20 +795,8 @@
     "id": 442,
     "tier": "ZU"
   },
-  "squawkabilly-blue-plumage": {
+  "squawkabilly": {
     "id": 10260,
-    "tier": "ZU"
-  },
-  "squawkabilly-green-plumage": {
-    "id": 931,
-    "tier": "ZU"
-  },
-  "squawkabilly-white-plumage": {
-    "id": 10262,
-    "tier": "ZU"
-  },
-  "squawkabilly-yellow-plumage": {
-    "id": 10261,
     "tier": "ZU"
   },
   "stonjourner": {
@@ -859,7 +823,7 @@
     "id": 128,
     "tier": "ZU"
   },
-  "tauros-paldea-combat-breed": {
+  "tauros-paldea-combat": {
     "id": 10250,
     "tier": "ZU"
   },
@@ -2268,3 +2232,4 @@
     "tier": "LC"
   }
 }
+
