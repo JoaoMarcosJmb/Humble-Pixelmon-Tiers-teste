@@ -248,6 +248,30 @@
   0%,100% { transform: translateY(0); }
   50% { transform: translateY(-2px); }
 }
+.tier-section {
+  margin-bottom: 45px;
+  width: 100%;
+}
+
+.tier-title {
+  font-size: 1.4rem;
+  font-weight: bold;
+  text-align: left;
+  color: #d1a720;
+  background: rgba(30, 25, 15, 0.85);
+  border-left: 5px solid #d1a720;
+  padding: 10px 15px;
+  border-radius: 6px;
+  margin-bottom: 18px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.5);
+}
+
+.container-tier {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 20px;
+  justify-items: center;
+}
 
 </style>
 </head>
@@ -308,7 +332,6 @@ function normalizeName(key){
   ];
 
   if(keepForms.includes(name)) return name;
-
   if(name.endsWith("-mega") || name.endsWith("-mega-x") || name.endsWith("-mega-y")) return name;
   if(name.includes("-alola")||name.includes("-galar")||name.includes("-hisui")||name.includes("-paldea")) return name;
   if(name.startsWith("oricorio")) return "oricorio";
@@ -389,42 +412,51 @@ document.addEventListener('DOMContentLoaded', async ()=> {
     if(!res.ok) throw new Error('Arquivo não encontrado: '+res.statusText);
     const data = await res.json();
 
-    let entries = Object.entries(data);
+    const entries = Object.entries(data);
     if(entries.length===0){ 
-      container.innerHTML='<p>Nenhum item encontrado no JSON.</p>'; 
+      container.innerHTML='<p>Nenhum Pokémon encontrado no JSON.</p>'; 
       return; 
     }
 
-    // 🔹 Ordem de tiers padrão (apenas para ordenação interna)
+    // 🔹 Ordem de tiers
     const tierOrder = ["LC","ZU","PU","NU","RU","UU","OU","Ubers","AG"];
 
-    // 🔹 Ordenação geral (hype primeiro, depois tier)
-    entries.sort((a,b)=>{
-      const hypeA = a[1]?.hype ? 1 : 0;
-      const hypeB = b[1]?.hype ? 1 : 0;
-      if (hypeA !== hypeB) return hypeB - hypeA;
+    // 🔹 Agrupar por tier
+    const grouped = {};
+    for(const tier of tierOrder) grouped[tier] = [];
+    for(const [key, info] of entries){
+      const t = info.tier || "SemTier";
+      if(!grouped[t]) grouped[t] = [];
+      grouped[t].push([key, info]);
+    }
 
-      const tierA = a[1]?.tier ? tierOrder.indexOf(a[1].tier) : 999;
-      const tierB = b[1]?.tier ? tierOrder.indexOf(b[1].tier) : 999;
-      return tierA - tierB;
-    });
-
-    // 🔹 Detecta geração para Smogon (8 = ss, 9 = sv)
+    // 🔹 Renderização com divisões
+    container.innerHTML = "";
     const gen = version.includes("1.16") ? "sv" : "ss";
 
-    // Renderiza todos os cards
-    function renderCards() {
-      container.innerHTML = "";
+    for(const tier of tierOrder){
+      const list = grouped[tier];
+      if(!list || list.length === 0) continue; // só mostra se houver Pokémon
 
-      entries.forEach(([key, info])=>{
+      const section = document.createElement('section');
+      section.className = 'tier-section';
+
+      const title = document.createElement('h2');
+      title.className = 'tier-title';
+      title.textContent = `${tier} (${list.length})`;
+      section.appendChild(title);
+
+      const grid = document.createElement('div');
+      grid.className = 'container-tier';
+
+      list.forEach(([key, info])=>{
         const namePretty = prettifyKey(key);
         const smogonName = normalizeName(key);
         const smogonUrl = `https://www.smogon.com/dex/${gen}/pokemon/${smogonName}`;
-
         const id = info?.id || null;
         const spriteUrl = id 
           ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
-          : `https://img.pokemondb.net/artwork/large/${encodeURIComponent(normalizeName(key))}.jpg`;
+          : `https://img.pokemondb.net/artwork/large/${encodeURIComponent(smogonName)}.jpg`;
 
         const card = document.createElement('a');
         card.className = 'card';
@@ -443,7 +475,6 @@ document.addEventListener('DOMContentLoaded', async ()=> {
         card.appendChild(img);
         card.appendChild(h2);
 
-        // 🌟 destaque hype
         if (info.hype) {
           card.classList.add('hype');
           const badge = document.createElement('div');
@@ -452,21 +483,26 @@ document.addEventListener('DOMContentLoaded', async ()=> {
           card.appendChild(badge);
         }
 
-        container.appendChild(card);
+        grid.appendChild(card);
       });
-    }
 
-    // Inicializa
-    renderCards();
+      section.appendChild(grid);
+      container.appendChild(section);
+    }
 
     // 🔍 Filtro de pesquisa
     const searchInput = document.getElementById('searchPokemon');
     searchInput.addEventListener('input', function() {
       const term = this.value.toLowerCase().trim();
-      const cards = document.querySelectorAll('#pokemonContainer .card');
-      cards.forEach(card => {
-        const text = card.querySelector('h2').textContent.toLowerCase();
-        card.style.display = text.includes(term) ? "flex" : "none";
+      document.querySelectorAll('.tier-section').forEach(section=>{
+        let visibleCount = 0;
+        section.querySelectorAll('.card').forEach(card=>{
+          const text = card.querySelector('h2').textContent.toLowerCase();
+          const match = text.includes(term);
+          card.style.display = match ? "flex" : "none";
+          if(match) visibleCount++;
+        });
+        section.style.display = visibleCount > 0 ? "block" : "none";
       });
     });
 
@@ -476,7 +512,6 @@ document.addEventListener('DOMContentLoaded', async ()=> {
   }
 });
 </script>
-
 
 </body>
 </html>
