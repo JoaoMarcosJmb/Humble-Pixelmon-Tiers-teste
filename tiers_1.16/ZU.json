@@ -302,7 +302,7 @@
   "tentacool": { "id": 72, "tier": "LC" },
   "geodude-alolan": { "id": 10109, "tier": "LC" },
   "geodude": { "id": 74, "tier": "LC" },
-  "slowpoke-galarian": { "id": 79, "tier": "LC" },
+  "slowpoke-galarian": { "id": 10164, "tier": "LC" },
   "slowpoke": { "id": 79, "tier": "LC" },
   "magnemite": { "id": 81, "tier": "LC" },
   "doduo": { "id": 84, "tier": "LC" },
@@ -505,5 +505,6 @@
   "frigibax": { "id": 996, "tier": "LC" },
   "gimmighoul": { "id": 999, "tier": "LC" }
 }
+
 
 
