@@ -192,30 +192,30 @@
 }
 
   /* LISTA DE CARDS DENTRO DA TIER */
-  .tier-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 16px;
-    align-items: flex-start;
-    justify-content: flex-start;
-  }
+ .tier-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: flex-start;
+  justify-content: space-between; /* 🔹 distribui igualmente */
+}
 
-  /* CARD INDIVIDUAL */
-   .card {
-    background: var(--cor-card);
-    border-radius: 16px;
-    padding: 20px 15px;
-    text-align: left;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-    transition: transform 0.25s, box-shadow 0.25s;
-    text-decoration: none;
-    color: var(--cor-texto);
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    width: 100%;
-    max-width: 260px;
-  }
+.card {
+  background: var(--cor-card);
+  border-radius: 16px;
+  padding: 20px 15px;
+  text-align: left;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+  transition: transform 0.25s, box-shadow 0.25s;
+  text-decoration: none;
+  color: var(--cor-texto);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: calc(25% - 12px); /* 🔹 4 cards por linha com gap de 16px */
+  min-width: 220px;        /* 🔹 evita quebrar o layout em telas muito pequenas */
+  box-sizing: border-box;
+}
 
   .card:hover {
     transform: translateY(-6px);
