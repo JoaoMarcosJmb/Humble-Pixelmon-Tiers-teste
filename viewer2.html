@@ -518,9 +518,9 @@ document.addEventListener('DOMContentLoaded', async ()=> {
         const namePretty = prettifyKey(key);
         const smogonName = normalizeName(key);
         const smogonUrl = `https://www.smogon.com/dex/${gen}/pokemon/${smogonName}`;
-       cconst id = info?.id || null;
+      const id = info?.id || null;
 
-// detecta se o nome representa uma forma alternativa (não usa o ID)
+// detecta se é uma forma (usa lista de sufixos válidos)
 const formIndicators = [
   "-mega", "-mega-x", "-mega-y", "-alola", "-galar", "-hisui", "-paldea",
   "-therian", "-origin", "-resolute", "-pirouette", "-eternal", "-blade",
@@ -529,13 +529,13 @@ const formIndicators = [
   "-fairy", "-dragon", "-bug", "-ground", "-poison", "-psychic",
   "-steel", "-electric", "-normal", "-grass"
 ];
+const lowerKey = key.toLowerCase();
+const hasForm = formIndicators.some(suffix => lowerKey.endsWith(suffix));
 
-const hasForm = formIndicators.some(suffix => key.toLowerCase().endsWith(suffix));
-
-// se for forma, ignora o id e usa o nome (img.pokemondb); se não, usa o id normal
+// sempre usa PNG
 const spriteUrl = (!hasForm && id)
   ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
-  : `https://img.pokemondb.net/artwork/large/${encodeURIComponent(smogonName)}.png`;
+  : `https://img.pokemondb.net/artwork/${encodeURIComponent(smogonName)}.png`;
 
         const card = document.createElement('a');
         card.className = 'card';
