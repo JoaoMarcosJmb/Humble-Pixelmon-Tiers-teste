@@ -280,7 +280,7 @@
   "wugtrio": { "id": 961, "tier": "ZU" },
   "orthworm": { "id": 968, "tier": "ZU" },
   "veluza": { "id": 976, "tier": "ZU" },
-  "farigiraf": { "id": 981, "tier": "ZU" }
+  "farigiraf": { "id": 981, "tier": "ZU" },
   "bulbasaur": { "id": 1, "tier": "LC" },
   "charmander": { "id": 4, "tier": "LC" },
   "squirtle": { "id": 7, "tier": "LC" },
@@ -505,4 +505,5 @@
   "frigibax": { "id": 996, "tier": "LC" },
   "gimmighoul": { "id": 999, "tier": "LC" }
 }
+
 
