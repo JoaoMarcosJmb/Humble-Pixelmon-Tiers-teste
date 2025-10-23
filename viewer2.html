@@ -169,17 +169,26 @@
 
   /* TÍTULO DA TIER */
   .tier-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #111;
-    background: linear-gradient(90deg, #d1a720 0%, #b28d1b 100%);
-    padding: 8px 14px;
-    border-radius: 6px;
-    display: inline-block;
-    margin: 0 0 12px 0;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.35);
-    text-shadow: 0 0 3px rgba(255,255,255,0.3);
-  }
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #f5f5f5;
+  background: rgba(30, 25, 15, 0.7);
+  padding: 8px 16px;
+  border-radius: 10px;
+  display: inline-block;
+  margin: 0 0 14px 0;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.5);
+  border: 1.5px solid var(--cor-dourado);
+  text-shadow: 0 0 4px rgba(0,0,0,0.8);
+  letter-spacing: 0.5px;
+  transition: all 0.25s ease-in-out;
+}
+
+.tier-title:hover {
+  background: rgba(35, 30, 20, 0.9);
+  box-shadow: 0 0 15px rgba(209, 167, 32, 0.4);
+  transform: translateY(-2px);
+}
 
   /* LISTA DE CARDS DENTRO DA TIER */
   .tier-grid {
