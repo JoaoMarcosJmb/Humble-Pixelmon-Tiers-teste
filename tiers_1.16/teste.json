@@ -73,8 +73,7 @@
   "shellder": { "id": 90, "tier": "LC" },
   "drowzee": { "id": 96, "tier": "LC" },
   "voltorb": { "id": 100, "tier": "LC" },
-  "poltchageist-artisan": { "id": 1012, "tier": "LC" },
-  "poltchageist-counterfeit": { "id": 1012, "tier": "LC" },
+  "poltchageist": { "id": 1012, "tier": "LC" },
   "exeggcute": { "id": 102, "tier": "LC" },
   "koffing": { "id": 109, "tier": "LC" },
   "rhyhorn": { "id": 111, "tier": "LC" },
@@ -145,8 +144,7 @@
   "shieldon": { "id": 410, "tier": "LC" },
   "combee": { "id": 415, "tier": "LC" },
   "buizel": { "id": 418, "tier": "LC" },
-  "shellos-east": { "id": 422, "tier": "LC" },
-  "shellos-west": { "id": 422, "tier": "LC" },
+  "shellos": { "id": 422, "tier": "LC" },
   "drifloon": { "id": 425, "tier": "LC" },
   "chingling": { "id": 433, "tier": "LC" },
   "stunky": { "id": 434, "tier": "LC" },
@@ -175,10 +173,7 @@
   "gothita": { "id": 574, "tier": "LC" },
   "solosis": { "id": 577, "tier": "LC" },
   "ducklett": { "id": 580, "tier": "LC" },
-  "deerling-autumn": { "id": 585, "tier": "LC" },
-  "deerling-spring": { "id": 585, "tier": "LC" },
-  "deerling-summer": { "id": 585, "tier": "LC" },
-  "deerling-winter": { "id": 585, "tier": "LC" },
+  "deerling": { "id": 585, "tier": "LC" },
   "foongus": { "id": 590, "tier": "LC" },
   "joltik": { "id": 595, "tier": "LC" },
   "tynamo": { "id": 602, "tier": "LC" },
@@ -235,8 +230,7 @@
   "silicobra": { "id": 843, "tier": "LC" },
   "arrokuda": { "id": 846, "tier": "LC" },
   "toxel": { "id": 848, "tier": "LC" },
-  "sinistea-antique": { "id": 854, "tier": "LC" },
-  "sinistea-phony": { "id": 854, "tier": "LC" },
+  "sinistea": { "id": 854, "tier": "LC" },
   "hatenna": { "id": 856, "tier": "LC" },
   "impidimp": { "id": 859, "tier": "LC" },
   "milcery": { "id": 868, "tier": "LC" },
@@ -271,7 +265,7 @@
   "greavard": { "id": 971, "tier": "LC" },
   "cetoddle": { "id": 974, "tier": "LC" },
   "frigibax": { "id": 996, "tier": "LC" },
-  "gimmighoul-chest": { "id": 999, "tier": "LC" }
+  "gimmighoul": { "id": 999, "tier": "LC" }
 }
 
 
