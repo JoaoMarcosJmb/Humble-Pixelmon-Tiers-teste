@@ -247,8 +247,16 @@
     "id": 902,
     "tier": "RU"
   },
-  "basculin-red-striped": {
+  "basculin-blue": {
+    "id": 10016,
+    "tier": "RU"
+  },
+  "basculin-red": {
     "id": 550,
+    "tier": "RU"
+  },
+  "basculin-white": {
+    "id": 10247,
     "tier": "RU"
   },
   "bastiodon": {
@@ -799,7 +807,7 @@
     "id": 927,
     "tier": "RU"
   },
-  "darmanitan-standard": {
+  "darmanitan": {
     "id": 555,
     "tier": "RU"
   },
@@ -999,7 +1007,7 @@
     "id": 580,
     "tier": "LC"
   },
-  "dudunsparce-two-segment": {
+  "dudunsparce": {
     "id": 982,
     "tier": "RU"
   },
@@ -1507,7 +1515,7 @@
     "id": 575,
     "tier": "NFE"
   },
-  "gourgeist-average": {
+  "gourgeist": {
     "id": 711,
     "tier": "RU"
   },
@@ -1545,10 +1553,6 @@
   },
   "greninja": {
     "id": 658,
-    "tier": "OU"
-  },
-  "greninja-battle-bond": {
-    "id": 10116,
     "tier": "OU"
   },
   "grimer": {
@@ -1887,7 +1891,7 @@
     "id": 352,
     "tier": "RU"
   },
-  "keldeo-ordinary": {
+  "keldeo": {
     "id": 647,
     "tier": "UU"
   },
@@ -2279,7 +2283,7 @@
     "id": 284,
     "tier": "RU"
   },
-  "maushold-family-of-four": {
+  "maushold": {
     "id": 925,
     "tier": "RU"
   },
@@ -2391,7 +2395,7 @@
     "id": 439,
     "tier": "LC"
   },
-  "mimikyu-disguised": {
+  "mimikyu": {
     "id": 778,
     "tier": "RU"
   },
@@ -2399,7 +2403,7 @@
     "id": 572,
     "tier": "LC"
   },
-  "minior-red-meteor": {
+  "minior": {
     "id": 774,
     "tier": "RU"
   },
@@ -2643,7 +2647,7 @@
     "id": 826,
     "tier": "RU"
   },
-  "oricorio-baile": {
+  "oricorio": {
     "id": 741,
     "tier": "RU"
   },
@@ -2899,7 +2903,7 @@
     "id": 54,
     "tier": "LC"
   },
-  "pumpkaboo-average": {
+  "pumpkaboo": {
     "id": 710,
     "tier": "LC"
   },
@@ -3591,8 +3595,8 @@
     "id": 682,
     "tier": "LC"
   },
-  "squawkabilly-green-plumage": {
-    "id": 931,
+  "squawkabilly": {
+    "id": 10260,
     "tier": "RU"
   },
   "squirtle": {
@@ -3771,7 +3775,7 @@
     "id": 917,
     "tier": "LC"
   },
-  "tatsugiri-curly": {
+  "tatsugiri": {
     "id": 978,
     "tier": "RU"
   },
@@ -3923,7 +3927,7 @@
     "id": 454,
     "tier": "RU"
   },
-  "toxtricity-amped": {
+  "toxtricity": {
     "id": 849,
     "tier": "RU"
   },
@@ -4223,12 +4227,8 @@
     "id": 278,
     "tier": "LC"
   },
-  "wishiwashi-school": {
+  "wishiwashi": {
     "id": 10127,
-    "tier": "RU"
-  },
-  "wishiwashi-solo": {
-    "id": 746,
     "tier": "RU"
   },
   "wo-chien": {
@@ -4255,16 +4255,8 @@
     "id": 10253,
     "tier": "LC"
   },
-  "wormadam-plant": {
+  "wormadam": {
     "id": 413,
-    "tier": "RU"
-  },
-  "wormadam-sandy": {
-    "id": 10004,
-    "tier": "RU"
-  },
-  "wormadam-trash": {
-    "id": 10005,
     "tier": "RU"
   },
   "wugtrio": {
