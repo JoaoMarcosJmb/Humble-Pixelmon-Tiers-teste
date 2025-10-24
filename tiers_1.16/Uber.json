@@ -51,7 +51,7 @@
     "id": 987,
     "tier": "Uber"
   },
-  "giratina-altered": {
+  "giratina": {
     "id": 487,
     "tier": "Uber"
   },
@@ -101,10 +101,6 @@
   },
   "magearna": {
     "id": 801,
-    "tier": "Uber"
-  },
-  "magearna-original": {
-    "id": 10147,
     "tier": "Uber"
   },
   "mewtwo": {
@@ -443,10 +439,6 @@
     "id": 658,
     "tier": "UU"
   },
-  "greninja-battle-bond": {
-    "id": 10116,
-    "tier": "UU"
-  },
   "hawlucha": {
     "id": 701,
     "tier": "UU"
@@ -471,12 +463,8 @@
     "id": 1010,
     "tier": "UU"
   },
-  "keldeo-ordinary": {
+  "keldeo": {
     "id": 647,
-    "tier": "UU"
-  },
-  "keldeo-resolute": {
-    "id": 10024,
     "tier": "UU"
   },
   "latios": {
@@ -719,12 +707,8 @@
     "id": 473,
     "tier": "RU"
   },
-  "maushold-family-of-four": {
+  "maushold": {
     "id": 925,
-    "tier": "RU"
-  },
-  "maushold-family-of-three": {
-    "id": 10257,
     "tier": "RU"
   },
   "mew": {
@@ -735,11 +719,7 @@
     "id": 620,
     "tier": "RU"
   },
-  "mimikyu-busted": {
-    "id": 10143,
-    "tier": "RU"
-  },
-  "mimikyu-disguised": {
+  "mimikyu": {
     "id": 778,
     "tier": "RU"
   },
@@ -979,7 +959,7 @@
     "id": 700,
     "tier": "NU"
   },
-  "tauros-paldea-aqua-breed": {
+  "tauros-paldea-aqua": {
     "id": 10252,
     "tier": "NU"
   },
@@ -1067,14 +1047,6 @@
     "id": 845,
     "tier": "PU"
   },
-  "cramorant-gorging": {
-    "id": 10183,
-    "tier": "PU"
-  },
-  "cramorant-gulping": {
-    "id": 10182,
-    "tier": "PU"
-  },
   "decidueye-hisui": {
     "id": 10244,
     "tier": "PU"
@@ -1083,11 +1055,7 @@
     "id": 655,
     "tier": "PU"
   },
-  "dudunsparce-three-segment": {
-    "id": 10255,
-    "tier": "PU"
-  },
-  "dudunsparce-two-segment": {
+  "dudunsparce": {
     "id": 982,
     "tier": "PU"
   },
@@ -1207,15 +1175,7 @@
     "id": 978,
     "tier": "PU"
   },
-  "tatsugiri-droopy": {
-    "id": 10258,
-    "tier": "PU"
-  },
-  "tatsugiri-stretchy": {
-    "id": 10259,
-    "tier": "PU"
-  },
-  "tauros-paldea-blaze-breed": {
+  "tauros-paldea-blaze": {
     "id": 10251,
     "tier": "PU"
   },
@@ -1275,15 +1235,15 @@
     "id": 354,
     "tier": "ZU"
   },
-  "basculin-blue-striped": {
+  "basculin-blue": {
     "id": 10016,
     "tier": "ZU"
   },
-  "basculin-red-striped": {
+  "basculin-red": {
     "id": 550,
     "tier": "ZU"
   },
-  "basculin-white-striped": {
+  "basculin-white": {
     "id": 10247,
     "tier": "ZU"
   },
@@ -1383,12 +1343,8 @@
     "id": 604,
     "tier": "ZU"
   },
-  "eiscue-ice": {
+  "eiscue": {
     "id": 875,
-    "tier": "ZU"
-  },
-  "eiscue-noice": {
-    "id": 10185,
     "tier": "ZU"
   },
   "electivire": {
@@ -1623,7 +1579,7 @@
     "id": 262,
     "tier": "ZU"
   },
-  "minior-red-meteor": {
+  "minior": {
     "id": 774,
     "tier": "ZU"
   },
@@ -1635,12 +1591,8 @@
     "id": 429,
     "tier": "ZU"
   },
-  "morpeko-full-belly": {
+  "morpeko": {
     "id": 877,
-    "tier": "ZU"
-  },
-  "morpeko-hangry": {
-    "id": 10187,
     "tier": "ZU"
   },
   "muk": {
@@ -1839,20 +1791,8 @@
     "id": 442,
     "tier": "ZU"
   },
-  "squawkabilly-blue-plumage": {
+  "squawkabilly": {
     "id": 10260,
-    "tier": "ZU"
-  },
-  "squawkabilly-green-plumage": {
-    "id": 931,
-    "tier": "ZU"
-  },
-  "squawkabilly-white-plumage": {
-    "id": 10262,
-    "tier": "ZU"
-  },
-  "squawkabilly-yellow-plumage": {
-    "id": 10261,
     "tier": "ZU"
   },
   "stonjourner": {
@@ -1879,7 +1819,7 @@
     "id": 128,
     "tier": "ZU"
   },
-  "tauros-paldea-combat-breed": {
+  "tauros-paldea-combat": {
     "id": 10250,
     "tier": "ZU"
   },
@@ -3288,3 +3228,4 @@
     "tier": "LC"
   }
 }
+
