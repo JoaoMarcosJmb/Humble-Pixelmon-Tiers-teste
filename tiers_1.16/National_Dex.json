@@ -1067,13 +1067,8 @@
     "id": 133,
     "tier": "LC"
   },
-  "eiscue-ice": {
-    "id": 875,
-    "tier": "RU"
-  },
-  "eiscue-noice": {
-    "id": 10185,
-    "tier": "RU"
+  "eiscue": {
+    "id": 875
   },
   "ekans": {
     "id": 23,
@@ -4372,3 +4367,4 @@
     "tier": "UU"
   }
 }
+
