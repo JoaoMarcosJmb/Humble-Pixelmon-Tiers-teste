@@ -2849,13 +2849,13 @@
   "tauros": {
     "id": 128
   },
-  "tauros-paldea-aqua-breed": {
+  "tauros-paldea-aqua": {
     "id": 10252
   },
-  "tauros-paldea-blaze-breed": {
+  "tauros-paldea-blaze": {
     "id": 10251
   },
-  "tauros-paldea-combat-breed": {
+  "tauros-paldea-combat": {
     "id": 10250
   },
   "teddiursa": {
@@ -3297,5 +3297,6 @@
     "id": 718
   }
 }
+
 
 
