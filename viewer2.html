@@ -485,7 +485,6 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       return; 
     }
 
-    // ORDEM: maior -> menor (AG primeiro)
     const tierOrder = ["AG","Uber","OU","UU","RU","NU","PU","ZU","NFE","LC"];
     const grouped = {};
     for(const tier of tierOrder) grouped[tier] = [];
@@ -498,7 +497,6 @@ document.addEventListener('DOMContentLoaded', async ()=> {
     const gen = version.includes("1.16") ? "sv" : "ss";
     container.innerHTML = "";
 
-    // Renderiza as sections verticalmente (AG primeiro)
     for(const tier of tierOrder){
       const list = grouped[tier];
       if(!list || list.length === 0) continue;
@@ -518,11 +516,10 @@ document.addEventListener('DOMContentLoaded', async ()=> {
         const namePretty = prettifyKey(key);
         const smogonName = normalizeName(key);
         const smogonUrl = `https://www.smogon.com/dex/${gen}/pokemon/${smogonName}`;
-      const id = info?.id || null;
-const spriteUrl = id 
-  ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
-  : `https://img.pokemondb.net/artwork/large/${encodeURIComponent(smogonName)}.jpg`;
-
+        const id = info?.id || null;
+        const spriteUrl = id 
+          ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
+          : `https://img.pokemondb.net/artwork/large/${encodeURIComponent(smogonName)}.jpg`;
 
         const card = document.createElement('a');
         card.className = 'card';
@@ -556,7 +553,6 @@ const spriteUrl = id
       container.appendChild(section);
     }
 
-    // Filtro de pesquisa: esconde cards e, se a seção ficar vazia, esconde a seção
     const searchInput = document.getElementById('searchPokemon');
     searchInput.addEventListener('input', function() {
       const term = this.value.toLowerCase().trim();
@@ -577,6 +573,27 @@ const spriteUrl = id
     console.error(err);
   }
 });
+
+// 🔹 Função para garantir que todas as imagens sejam carregadas corretamente
+function garantirImagensCarregadas() {
+  const imagens = document.querySelectorAll("#pokemonContainer img, #creatorBox img, header img");
+  imagens.forEach((img) => {
+    const srcOriginal = img.getAttribute("src");
+    if (!srcOriginal) return;
+    const timestamp = new Date().getTime();
+    img.src = `${srcOriginal}?t=${timestamp}`;
+    img.onerror = () => {
+      console.warn("Tentando recarregar imagem:", srcOriginal);
+      setTimeout(() => {
+        img.src = `${srcOriginal}?t=${new Date().getTime()}`;
+      }, 1000);
+    };
+  });
+}
+
+// chama quando tudo carregar e novamente depois de 2s
+window.addEventListener("load", garantirImagensCarregadas);
+setTimeout(garantirImagensCarregadas, 2000);
 </script>
 
 </body>
