@@ -3774,15 +3774,15 @@
     "id": 128,
     "tier": "RU"
   },
-  "tauros-paldea-aqua-breed": {
+  "tauros-paldea-aqua": {
     "id": 10252,
     "tier": "RU"
   },
-  "tauros-paldea-blaze-breed": {
+  "tauros-paldea-blaze": {
     "id": 10251,
     "tier": "RU"
   },
-  "tauros-paldea-combat-breed": {
+  "tauros-paldea-combat": {
     "id": 10250,
     "tier": "RU"
   },
@@ -4363,5 +4363,6 @@
     "tier": "UU"
   }
 }
+
 
 
