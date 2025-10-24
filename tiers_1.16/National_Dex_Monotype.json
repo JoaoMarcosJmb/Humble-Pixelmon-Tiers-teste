@@ -1559,10 +1559,6 @@
     "id": 658,
     "tier": "OU"
   },
-  "greninja-battle-bond": {
-    "id": 10116,
-    "tier": "OU"
-  },
   "grimer": {
     "id": 88,
     "tier": "LC"
@@ -1895,7 +1891,7 @@
     "id": 352,
     "tier": "RU"
   },
-  "keldeo-ordinary": {
+  "keldeo": {
     "id": 647,
     "tier": "UU"
   },
@@ -2403,7 +2399,7 @@
     "id": 439,
     "tier": "LC"
   },
-  "mimikyu-disguised": {
+  "mimikyu": {
     "id": 778,
     "tier": "RU"
   },
@@ -2411,7 +2407,7 @@
     "id": 572,
     "tier": "LC"
   },
-  "minior-red-meteor": {
+  "minior": {
     "id": 774,
     "tier": "RU"
   },
@@ -4404,3 +4400,4 @@
     "tier": "UBER"
   }
 }
+
