@@ -2334,10 +2334,6 @@
     "id": 417,
     "tier": "RU"
   },
-  "palafin-hero": {
-    "id": 10256,
-    "tier": "RU"
-  },
   "palossand": {
     "id": 770,
     "tier": "RU"
@@ -3879,4 +3875,5 @@
     "tier": "NFE"
   }
 }
+
 
