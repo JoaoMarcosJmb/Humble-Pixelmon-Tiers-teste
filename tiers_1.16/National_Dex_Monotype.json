@@ -809,11 +809,8 @@
   "eevee": {
     "id": 133
   },
-  "eiscue-ice": {
+  "eiscue": {
     "id": 875
-  },
-  "eiscue-noice": {
-    "id": 10185
   },
   "ekans": {
     "id": 23
@@ -3303,3 +3300,4 @@
     "id": 718
   }
 }
+
