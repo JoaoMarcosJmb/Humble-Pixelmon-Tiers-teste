@@ -4606,11 +4606,11 @@
     "id": 634,
     "tier": "NFE"
   },
-  "zygarde-10": {
+  "zygarde-10%": {
     "id": 10181,
     "tier": "UU"
   },
-  "zygarde-50": {
+  "zygarde-50%": {
     "id": 718,
     "tier": "UBER"
   },
@@ -4619,6 +4619,7 @@
     "tier": "UBER"
   }
 }
+
 
 
 
