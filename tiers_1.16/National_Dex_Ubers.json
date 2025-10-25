@@ -2766,15 +2766,15 @@
     "id": 1017,
     "tier": "RU"
   },
-  "ogerpon-cornerstone-mask": {
+  "ogerpon-cornerstone": {
     "id": 10275,
     "tier": "OU"
   },
-  "ogerpon-hearthflame-mask": {
+  "ogerpon-hearthflame": {
     "id": 10274,
     "tier": "Uber"
   },
-  "ogerpon-wellspring-mask": {
+  "ogerpon-wellspring": {
     "id": 10273,
     "tier": "OU"
   },
@@ -4619,6 +4619,7 @@
     "tier": "Uber"
   }
 }
+
 
 
 
