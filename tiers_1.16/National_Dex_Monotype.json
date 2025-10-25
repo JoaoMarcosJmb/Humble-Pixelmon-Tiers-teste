@@ -1075,12 +1075,8 @@
     "id": 133,
     "tier": "LC"
   },
-  "eiscue-ice": {
+  "eiscue": {
     "id": 875,
-    "tier": "RU"
-  },
-  "eiscue-noice": {
-    "id": 10185,
     "tier": "RU"
   },
   "ekans": {
@@ -2447,7 +2443,7 @@
     "id": 860,
     "tier": "NFE"
   },
-  "morpeko-full-belly": {
+  "morpeko": {
     "id": 877,
     "tier": "RU"
   },
@@ -4400,6 +4396,7 @@
     "tier": "Uber"
   }
 }
+
 
 
 
