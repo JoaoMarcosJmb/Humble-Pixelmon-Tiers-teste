@@ -528,7 +528,7 @@ document.addEventListener('DOMContentLoaded', async ()=> {
         card.rel = "noopener";
 
         const img = document.createElement('img');
-        img.src = spriteUrl;
+        enqueueLoad(img, spriteUrl);
         img.alt = namePretty;
         img.loading = 'lazy';
 
@@ -574,26 +574,60 @@ document.addEventListener('DOMContentLoaded', async ()=> {
   }
 });
 
-// 🔹 Função para garantir que todas as imagens sejam carregadas corretamente
-function garantirImagensCarregadas() {
-  const imagens = document.querySelectorAll("#pokemonContainer img, #creatorBox img, header img");
-  imagens.forEach((img) => {
-    const srcOriginal = img.getAttribute("src");
-    if (!srcOriginal) return;
-    const timestamp = new Date().getTime();
-    img.src = `${srcOriginal}?t=${timestamp}`;
-    img.onerror = () => {
-      console.warn("Tentando recarregar imagem:", srcOriginal);
-      setTimeout(() => {
-        img.src = `${srcOriginal}?t=${new Date().getTime()}`;
-      }, 1000);
-    };
-  });
+let _nowLoading = 0;
+const MAX_CONCURRENCY = 10;
+const _queue = [];
+
+function _kickQueue() {
+  while (_nowLoading < MAX_CONCURRENCY && _queue.length) {
+    const job = _queue.shift();
+    job();
+  }
 }
 
-// chama quando tudo carregar e novamente depois de 2s
-window.addEventListener("load", garantirImagensCarregadas);
-setTimeout(garantirImagensCarregadas, 2000);
+function enqueueLoad(img, url) {
+  _queue.push(() => {
+    _nowLoading++;
+    const cleanup = () => { _nowLoading--; _kickQueue(); };
+
+    // retry simples com backoff exponencial + jitter
+    let tries = 0;
+    const maxTries = 4;
+    const base = 500; // ms
+
+    const tryOnce = () => {
+      img.src = url; // não usa timestamp; deixa o cache trabalhar
+    };
+
+    const onLoad = () => {
+      img.removeEventListener('load', onLoad);
+      img.removeEventListener('error', onError);
+      cleanup();
+    };
+
+    const onError = () => {
+      tries++;
+      if (tries >= maxTries) {
+        img.removeEventListener('load', onLoad);
+        img.removeEventListener('error', onError);
+        cleanup();
+        return;
+      }
+      const wait = Math.pow(2, tries - 1) * base + Math.random() * 200;
+      setTimeout(() => {
+        // força um novo ciclo de fetch sem cache-buster
+        img.removeAttribute('src');
+        tryOnce();
+      }, wait);
+    };
+
+    img.addEventListener('load', onLoad, { once: false });
+    img.addEventListener('error', onError, { once: false });
+    tryOnce();
+  });
+
+  _kickQueue();
+}
 </script>
 
 </body>
