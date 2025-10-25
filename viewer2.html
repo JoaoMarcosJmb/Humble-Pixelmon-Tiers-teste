@@ -518,8 +518,9 @@ document.addEventListener('DOMContentLoaded', async ()=> {
         const smogonUrl = `https://www.smogon.com/dex/${gen}/pokemon/${smogonName}`;
         const id = info?.id || null;
         const spriteUrl = id 
-          ? `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`
+          ? `img/official-artwork/${id}.png`
           : `https://img.pokemondb.net/artwork/large/${encodeURIComponent(smogonName)}.jpg`;
+
 
         const card = document.createElement('a');
         card.className = 'card';
@@ -527,10 +528,19 @@ document.addEventListener('DOMContentLoaded', async ()=> {
         card.target = "_blank";
         card.rel = "noopener";
 
+        // cria o <img>
         const img = document.createElement('img');
-        enqueueLoad(img, spriteUrl);
         img.alt = namePretty;
         img.loading = 'lazy';
+
+        // se a imagem local não existir, tenta buscar a oficial online
+        img.onerror = () => {
+          img.onerror = null; // evita loop infinito
+          img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+        };
+
+        // usa o sistema de fila que você já tem
+        enqueueLoad(img, spriteUrl);
 
         const h2 = document.createElement('h2');
         h2.textContent = namePretty;
