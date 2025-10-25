@@ -123,7 +123,7 @@
     "id": 10155,
     "tier": "Uber"
   },
-  "ogerpon-hearthflame-mask": {
+  "ogerpon-hearthflame": {
     "id": 10274,
     "tier": "Uber"
   },
@@ -335,7 +335,7 @@
     "id": 10171,
     "tier": "OU"
   },
-  "ogerpon-wellspring-mask": {
+  "ogerpon-wellspring": {
     "id": 10273,
     "tier": "OU"
   },
@@ -503,7 +503,7 @@
     "id": 1017,
     "tier": "UU"
   },
-  "ogerpon-cornerstone-mask": {
+  "ogerpon-cornerstone": {
     "id": 10275,
     "tier": "UU"
   },
@@ -3241,4 +3241,5 @@
   }
 
 }
+
 
