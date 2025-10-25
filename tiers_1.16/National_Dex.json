@@ -855,10 +855,6 @@
     "id": 10002,
     "tier": "RU"
   },
-  "deoxys-normal": {
-    "id": 386,
-    "tier": "RU"
-  },
   "dewgong": {
     "id": 87,
     "tier": "RU"
@@ -2430,7 +2426,7 @@
     "id": 860,
     "tier": "NFE"
   },
-  "morpeko-full-belly": {
+  "morpeko": {
     "id": 877,
     "tier": "RU"
   },
@@ -4359,6 +4355,7 @@
     "tier": "UU"
   }
 }
+
 
 
 
