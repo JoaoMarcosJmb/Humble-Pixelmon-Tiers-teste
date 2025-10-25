@@ -4051,6 +4051,10 @@
     "id": 892,
     "tier": "Uber"
   },
+  "urshifu-rapid-strike": {
+    "id": 10191,
+    "tier": "OU"
+  },
   "uxie": {
     "id": 480,
     "tier": "RU"
@@ -4396,4 +4400,5 @@
     "tier": "Uber"
   }
 }
+
 
