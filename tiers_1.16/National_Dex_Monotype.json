@@ -53,7 +53,7 @@
   },
   "alakazam-mega": {
     "id": 10037,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "alcremie": {
     "id": 869,
@@ -337,7 +337,7 @@
   },
   "blastoise-mega": {
     "id": 10036,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "blipbug": {
     "id": 824,
@@ -861,11 +861,11 @@
   },
   "deoxys-normal": {
     "id": 386,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "deoxys-speed": {
     "id": 10003,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "dewgong": {
     "id": 87,
@@ -885,7 +885,7 @@
   },
   "dialga-origin": {
     "id": 10245,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "diancie": {
     "id": 719,
@@ -1585,7 +1585,7 @@
   },
   "groudon-primal": {
     "id": 10078,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "grovyle": {
     "id": 253,
@@ -1977,7 +1977,7 @@
   },
   "kyogre-primal": {
     "id": 10077,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "kyurem": {
     "id": 646,
@@ -1993,7 +1993,7 @@
   },
   "landorus-incarnate": {
     "id": 645,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "landorus-therian": {
     "id": 10021,
@@ -2369,11 +2369,11 @@
   },
   "mewtwo-mega-x": {
     "id": 10043,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "mewtwo-mega-y": {
     "id": 10044,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "mienfoo": {
     "id": 619,
@@ -2677,7 +2677,7 @@
   },
   "palkia-origin": {
     "id": 10246,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "palossand": {
     "id": 770,
@@ -3089,7 +3089,7 @@
   },
   "roaring-moon": {
     "id": 1005,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "rockruff": {
     "id": 744,
@@ -3533,7 +3533,7 @@
   },
   "sneasler": {
     "id": 903,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "snivy": {
     "id": 495,
@@ -4049,7 +4049,7 @@
   },
   "urshifu-single-strike": {
     "id": 892,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "uxie": {
     "id": 480,
@@ -4177,7 +4177,7 @@
   },
   "walking-wake": {
     "id": 1009,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "walrein": {
     "id": 365,
@@ -4329,11 +4329,11 @@
   },
   "yveltal": {
     "id": 717,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "zacian-crowned": {
     "id": 10188,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "zangoose": {
     "id": 335,
@@ -4393,6 +4393,7 @@
   },
   "zygarde-50%": {
     "id": 718,
-    "tier": "UBER"
+    "tier": "Uber"
   }
 }
+
