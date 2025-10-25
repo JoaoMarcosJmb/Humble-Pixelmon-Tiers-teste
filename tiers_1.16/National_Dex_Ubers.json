@@ -53,7 +53,7 @@
   },
   "alakazam-mega": {
     "id": 10037,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "alcremie": {
     "id": 869,
@@ -93,7 +93,7 @@
   },
   "annihilape": {
     "id": 979,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "anorith": {
     "id": 347,
@@ -129,7 +129,7 @@
   },
   "arceus": {
     "id": 493,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "archen": {
     "id": 566,
@@ -273,7 +273,7 @@
   },
   "baxcalibur": {
     "id": 998,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "bayleef": {
     "id": 153,
@@ -349,7 +349,7 @@
   },
   "blastoise-mega": {
     "id": 10036,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "blaziken": {
     "id": 257,
@@ -357,7 +357,7 @@
   },
   "blaziken-mega": {
     "id": 10050,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "blipbug": {
     "id": 824,
@@ -485,7 +485,7 @@
   },
   "calyrex-ice": {
     "id": 10193,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "camerupt": {
     "id": 323,
@@ -617,11 +617,11 @@
   },
   "chi-yu": {
     "id": 1004,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "chien-pao": {
     "id": 1002,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "chikorita": {
     "id": 152,
@@ -841,7 +841,7 @@
   },
   "darkrai": {
     "id": 491,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "darmanitan": {
     "id": 555,
@@ -893,7 +893,7 @@
   },
   "deoxys-attack": {
     "id": 10001,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "deoxys-defense": {
     "id": 10002,
@@ -901,11 +901,11 @@
   },
   "deoxys-normal": {
     "id": 386,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "deoxys-speed": {
     "id": 10003,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "dewgong": {
     "id": 87,
@@ -925,11 +925,11 @@
   },
   "dialga": {
     "id": 483,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "dialga-origin": {
     "id": 10245,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "diancie": {
     "id": 719,
@@ -989,7 +989,7 @@
   },
   "dracovish": {
     "id": 882,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "dracozolt": {
     "id": 880,
@@ -1001,7 +1001,7 @@
   },
   "dragapult": {
     "id": 887,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "dragonair": {
     "id": 148,
@@ -1196,7 +1196,7 @@
   },
   "espathra": {
     "id": 956,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "espeon": {
     "id": 196,
@@ -1208,7 +1208,7 @@
   },
   "eternatus": {
     "id": 890,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "excadrill": {
     "id": 530,
@@ -1336,7 +1336,7 @@
   },
   "flutter-mane": {
     "id": 987,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "flygon": {
     "id": 330,
@@ -1444,7 +1444,7 @@
   },
   "genesect": {
     "id": 649,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "gengar": {
     "id": 94,
@@ -1480,11 +1480,11 @@
   },
   "giratina": {
     "id": 487,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "giratina-origin": {
     "id": 10007,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "glaceon": {
     "id": 471,
@@ -1656,11 +1656,11 @@
   },
   "groudon": {
     "id": 383,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "groudon-primal": {
     "id": 10078,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "grovyle": {
     "id": 253,
@@ -1792,7 +1792,7 @@
   },
   "ho-oh": {
     "id": 250,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "honchkrow": {
     "id": 430,
@@ -1888,7 +1888,7 @@
   },
   "iron-bundle": {
     "id": 991,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "iron-hands": {
     "id": 992,
@@ -1976,7 +1976,7 @@
   },
   "kangaskhan-mega": {
     "id": 10039,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "karrablast": {
     "id": 588,
@@ -2076,11 +2076,11 @@
   },
   "kyogre": {
     "id": 382,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "kyogre-primal": {
     "id": 10077,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "kyurem": {
     "id": 646,
@@ -2088,11 +2088,11 @@
   },
   "kyurem-black": {
     "id": 10022,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "kyurem-white": {
     "id": 10023,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "lairon": {
     "id": 305,
@@ -2104,7 +2104,7 @@
   },
   "landorus-incarnate": {
     "id": 645,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "landorus-therian": {
     "id": 10021,
@@ -2240,7 +2240,7 @@
   },
   "lucario-mega": {
     "id": 10059,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "ludicolo": {
     "id": 272,
@@ -2248,7 +2248,7 @@
   },
   "lugia": {
     "id": 249,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "lumineon": {
     "id": 457,
@@ -2256,7 +2256,7 @@
   },
   "lunala": {
     "id": 792,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "lunatone": {
     "id": 337,
@@ -2316,7 +2316,7 @@
   },
   "magearna": {
     "id": 801,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "magikarp": {
     "id": 129,
@@ -2408,7 +2408,7 @@
   },
   "marshadow": {
     "id": 802,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "marshtomp": {
     "id": 259,
@@ -2496,7 +2496,7 @@
   },
   "metagross-mega": {
     "id": 10076,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "metang": {
     "id": 375,
@@ -2512,15 +2512,15 @@
   },
   "mewtwo": {
     "id": 150,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "mewtwo-mega-x": {
     "id": 10043,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "mewtwo-mega-y": {
     "id": 10044,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "mienfoo": {
     "id": 619,
@@ -2664,7 +2664,7 @@
   },
   "naganadel": {
     "id": 804,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "natu": {
     "id": 177,
@@ -2772,7 +2772,7 @@
   },
   "ogerpon-hearthflame-mask": {
     "id": 10274,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "ogerpon-wellspring-mask": {
     "id": 10273,
@@ -2832,15 +2832,15 @@
   },
   "palafin": {
     "id": 964,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "palkia": {
     "id": 484,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "palkia-origin": {
     "id": 10246,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "palossand": {
     "id": 770,
@@ -2932,7 +2932,7 @@
   },
   "pheromosa": {
     "id": 795,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "phione": {
     "id": 489,
@@ -3188,7 +3188,7 @@
   },
   "rayquaza": {
     "id": 384,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "regice": {
     "id": 378,
@@ -3228,7 +3228,7 @@
   },
   "reshiram": {
     "id": 643,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "reuniclus": {
     "id": 579,
@@ -3264,7 +3264,7 @@
   },
   "roaring-moon": {
     "id": 1005,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "rockruff": {
     "id": 744,
@@ -3340,7 +3340,7 @@
   },
   "salamence-mega": {
     "id": 10089,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "salandit": {
     "id": 757,
@@ -3504,7 +3504,7 @@
   },
   "shaymin-sky": {
     "id": 10006,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "shedinja": {
     "id": 292,
@@ -3716,7 +3716,7 @@
   },
   "sneasler": {
     "id": 903,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "snivy": {
     "id": 495,
@@ -3748,7 +3748,7 @@
   },
   "solgaleo": {
     "id": 791,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "solosis": {
     "id": 577,
@@ -3764,7 +3764,7 @@
   },
   "spectrier": {
     "id": 897,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "spewpa": {
     "id": 665,
@@ -4236,7 +4236,7 @@
   },
   "ursaluna-bloodmoon": {
     "id": 10272,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "ursaring": {
     "id": 217,
@@ -4248,7 +4248,7 @@
   },
   "urshifu-single-strike": {
     "id": 892,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "uxie": {
     "id": 480,
@@ -4376,7 +4376,7 @@
   },
   "walking-wake": {
     "id": 1009,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "walrein": {
     "id": 365,
@@ -4528,15 +4528,15 @@
   },
   "yveltal": {
     "id": 717,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "zacian": {
     "id": 888,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "zacian-crowned": {
     "id": 10188,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "zamazenta": {
     "id": 889,
@@ -4544,7 +4544,7 @@
   },
   "zamazenta-crowned": {
     "id": 10189,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "zangoose": {
     "id": 335,
@@ -4568,7 +4568,7 @@
   },
   "zekrom": {
     "id": 644,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "zeraora": {
     "id": 807,
@@ -4612,13 +4612,14 @@
   },
   "zygarde-50%": {
     "id": 718,
-    "tier": "UBER"
+    "tier": "Uber"
   },
   "zygarde-complete": {
     "id": 10120,
-    "tier": "UBER"
+    "tier": "Uber"
   }
 }
+
 
 
 
