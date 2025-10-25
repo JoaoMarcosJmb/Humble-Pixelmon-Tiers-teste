@@ -983,14 +983,6 @@
     "id": 203,
     "tier": "NFE"
   },
-  "giratina": {
-    "id": 487,
-    "tier": "Uber"
-  },
-  "giratina-origin": {
-    "id": 10007,
-    "tier": "Uber"
-  },
   "glaceon": {
     "id": 471,
     "tier": "ZU"
@@ -3060,4 +3052,5 @@
     "tier": "NFE"
   }
 }
+
 
