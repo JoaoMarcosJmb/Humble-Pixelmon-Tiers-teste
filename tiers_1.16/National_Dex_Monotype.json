@@ -2615,11 +2615,11 @@
     "id": 1017,
     "tier": "RU"
   },
-  "ogerpon-cornerstone-mask": {
+  "ogerpon-cornerstone": {
     "id": 10275,
     "tier": "OU"
   },
-  "ogerpon-wellspring-mask": {
+  "ogerpon-wellspring": {
     "id": 10273,
     "tier": "OU"
   },
@@ -3799,15 +3799,15 @@
     "id": 128,
     "tier": "RU"
   },
-  "tauros-paldea-aqua-breed": {
+  "tauros-paldea-aqua": {
     "id": 10252,
     "tier": "RU"
   },
-  "tauros-paldea-blaze-breed": {
+  "tauros-paldea-blaze": {
     "id": 10251,
     "tier": "RU"
   },
-  "tauros-paldea-combat-breed": {
+  "tauros-paldea-combat": {
     "id": 10250,
     "tier": "RU"
   },
@@ -4400,5 +4400,6 @@
     "tier": "Uber"
   }
 }
+
 
 
