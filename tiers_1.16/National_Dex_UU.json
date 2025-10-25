@@ -23,11 +23,7 @@
     "id": 617,
     "tier": "RU"
   },
-  "aegislash-blade": {
-    "id": 10026,
-    "tier": "UU"
-  },
-  "aegislash-shield": {
+  "aegislash": {
     "id": 681,
     "tier": "UU"
   },
@@ -4111,6 +4107,7 @@
     "tier": "UU"
   }
 }
+
 
 
 
