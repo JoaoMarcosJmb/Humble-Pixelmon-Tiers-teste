@@ -2871,6 +2871,10 @@
     "id": 892,
     "tier": "Uber"
   },
+  "urshifu-rapid-strike": {
+    "id": 10191,
+    "tier": "Uber"
+  },
   "uxie": {
     "id": 480,
     "tier": "PU"
@@ -3092,3 +3096,4 @@
     "tier": "NFE"
   }
 }
+
