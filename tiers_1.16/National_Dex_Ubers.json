@@ -129,7 +129,8 @@
   },
   "arceus": {
     "id": 493,
-    "tier": "Uber"
+    "tier": "Uber",
+    "hype": true
   },
   "archen": {
     "id": 566,
@@ -1661,7 +1662,8 @@
   },
   "groudon-primal": {
     "id": 10078,
-    "tier": "Uber"
+    "tier": "Uber",
+    "hype": true
   },
   "grovyle": {
     "id": 253,
@@ -1793,7 +1795,8 @@
   },
   "ho-oh": {
     "id": 250,
-    "tier": "Uber"
+    "tier": "Uber",
+    "hype": true
   },
   "honchkrow": {
     "id": 430,
@@ -2409,7 +2412,8 @@
   },
   "marshadow": {
     "id": 802,
-    "tier": "Uber"
+    "tier": "Uber",
+    "hype": true
   },
   "marshtomp": {
     "id": 259,
@@ -4529,7 +4533,8 @@
   },
   "yveltal": {
     "id": 717,
-    "tier": "Uber"
+    "tier": "Uber",
+    "hype": true
   },
   "zacian": {
     "id": 888,
@@ -4537,7 +4542,8 @@
   },
   "zacian-crowned": {
     "id": 10188,
-    "tier": "Uber"
+    "tier": "Uber",
+    "hype": true
   },
   "zamazenta": {
     "id": 889,
@@ -4617,9 +4623,11 @@
   },
   "zygarde-complete": {
     "id": 10120,
-    "tier": "Uber"
+    "tier": "Uber",
+    "hype": true
   }
 }
+
 
 
 
