@@ -197,7 +197,7 @@
   "drifblim": { "id": 426, "tier": "ZU" },
   "mismagius": { "id": 429, "tier": "ZU" },
   "honchkrow": { "id": 430, "tier": "ZU" },
-  "spiritomb": { "id": 442, "tier": "ZU" },
+  "spiritomb": { "id": 442, "tier": "ZU", "hype": true },
   "lumineon": { "id": 457, "tier": "ZU" },
   "abomasnow": { "id": 460, "tier": "ZU" },
   "electivire": { "id": 466, "tier": "ZU" },
@@ -211,7 +211,7 @@
   "rotom-frost": { "id": 10010, "tier": "ZU" },
   "rotom-mow": { "id": 10012, "tier": "ZU" },
   "rotom": { "id": 479, "tier": "ZU" },
-  "mesprit": { "id": 481, "tier": "ZU" },
+  "mesprit": { "id": 481, "tier": "ZU", "hype": true },
   "regigigas": { "id": 486, "tier": "ZU" },
   "phione": { "id": 489, "tier": "ZU" },
   "shaymin-land": { "id": 492, "tier": "ZU" },
@@ -505,6 +505,7 @@
   "frigibax": { "id": 996, "tier": "LC" },
   "gimmighoul": { "id": 999, "tier": "LC" }
 }
+
 
 
 
