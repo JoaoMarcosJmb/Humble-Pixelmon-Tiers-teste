@@ -77,7 +77,8 @@
   },
   "latios": {
     "id": 381,
-    "tier": "UU"
+    "tier": "UU",
+    "hype": true
   },
   "lokix": {
     "id": 920,
@@ -2838,7 +2839,13 @@
   "zorua-hisui": {
     "id": 10238,
     "tier": "LC"
+  },
+  "weavile": {
+    "id": 461,
+    "tier": "UU",
+    "hype": true
   }
 }
+
 
 
