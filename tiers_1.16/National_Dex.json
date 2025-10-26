@@ -57,7 +57,8 @@
   },
   "alomomola": {
     "id": 594,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "altaria": {
     "id": 334,
@@ -877,7 +878,8 @@
   },
   "diancie-mega": {
     "id": 10075,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "diggersby": {
     "id": 660,
@@ -1193,7 +1195,8 @@
   },
   "ferrothorn": {
     "id": 598,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "fezandipiti": {
     "id": 1016,
@@ -1377,7 +1380,8 @@
   },
   "gholdengo": {
     "id": 1000,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "gible": {
     "id": 443,
@@ -1429,7 +1433,8 @@
   },
   "gliscor": {
     "id": 472,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "gloom": {
     "id": 44,
@@ -1977,7 +1982,8 @@
   },
   "landorus-therian": {
     "id": 10021,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "lanturn": {
     "id": 171,
@@ -2601,7 +2607,8 @@
   },
   "ogerpon-wellspring": {
     "id": 10273,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "oinkologne-female": {
     "id": 10254,
@@ -3753,7 +3760,8 @@
   },
   "tapu-lele": {
     "id": 786,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "tarountula": {
     "id": 917,
@@ -3901,7 +3909,8 @@
   },
   "toxapex": {
     "id": 748,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "toxel": {
     "id": 848,
@@ -4293,7 +4302,8 @@
   },
   "zamazenta": {
     "id": 889,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "zangoose": {
     "id": 335,
@@ -4356,6 +4366,7 @@
     "tier": "UU"
   }
 }
+
 
 
 
