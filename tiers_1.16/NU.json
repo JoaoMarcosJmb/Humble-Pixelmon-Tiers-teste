@@ -69,11 +69,13 @@
   },
   "flamigo": {
     "id": 973,
-    "tier": "NU"
+    "tier": "NU",
+    "hype": true
   },
   "flygon": {
     "id": 330,
-    "tier": "NU"
+    "tier": "NU",
+    "hype": true
   },
   "galvantula": {
     "id": 596,
@@ -121,7 +123,8 @@
   },
   "munkidori": {
     "id": 1015,
-    "tier": "NU"
+    "tier": "NU",
+    "hype": true
   },
   "ninetales-alola": {
     "id": 10104,
@@ -2432,6 +2435,7 @@
     "tier": "LC"
   }
 }
+
 
 
 
