@@ -121,7 +121,8 @@
   },
   "milotic": {
     "id": 350,
-    "tier": "PU"
+    "tier": "PU",
+    "hype": true
   },
   "mudsdale": {
     "id": 750,
@@ -149,15 +150,18 @@
   },
   "rhydon": {
     "id": 112,
-    "tier": "PU"
+    "tier": "PU",
+    "hype": true
   },
   "rotom-heat": {
     "id": 10008,
-    "tier": "PU"
+    "tier": "PU",
+    "hype": true
   },
   "salazzle": {
     "id": 758,
-    "tier": "PU"
+    "tier": "PU",
+    "hype": true
   },
   "sandslash-alola": {
     "id": 10102,
@@ -2232,5 +2236,6 @@
     "tier": "LC"
   }
 }
+
 
 
