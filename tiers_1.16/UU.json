@@ -178,7 +178,8 @@
   },
   "zarude": {
     "id": 893,
-    "tier": "UU"
+    "tier": "UU",
+    "hype": true
   },
   "zoroark-hisui": {
     "id": 10239,
@@ -2846,6 +2847,7 @@
     "hype": true
   }
 }
+
 
 
 
