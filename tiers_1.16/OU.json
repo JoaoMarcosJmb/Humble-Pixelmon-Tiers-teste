@@ -1,7 +1,8 @@
 {
   "alomomola": {
     "id": 594,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "araquanid": {
     "id": 752,
@@ -3040,6 +3041,7 @@
     "tier": "LC"
   }
 }
+
 
 
 
