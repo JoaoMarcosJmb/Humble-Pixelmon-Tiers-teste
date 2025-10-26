@@ -595,7 +595,7 @@
     "id": 429,
     "tier": "ZU"
   },
-  "morpeko-full-belly": {
+  "morpeko": {
     "id": 877,
     "tier": "ZU"
   },
@@ -2232,4 +2232,5 @@
     "tier": "LC"
   }
 }
+
 
