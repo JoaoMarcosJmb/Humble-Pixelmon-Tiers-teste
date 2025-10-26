@@ -1,8 +1,7 @@
 {
   "alomomola": {
     "id": 594,
-    "tier": "OU",
-    "hype": true
+    "tier": "OU"
   },
   "araquanid": {
     "id": 752,
@@ -46,7 +45,8 @@
   },
   "dragonite": {
     "id": 149,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "enamorus-incarnate": {
     "id": 905,
@@ -62,7 +62,8 @@
   },
   "gholdengo": {
     "id": 1000,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "glimmora": {
     "id": 970,
@@ -74,7 +75,8 @@
   },
   "great-tusk": {
     "id": 984,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "hatterene": {
     "id": 858,
@@ -102,7 +104,8 @@
   },
   "kingambit": {
     "id": 983,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "kommo-o": {
     "id": 784,
@@ -134,7 +137,8 @@
   },
   "ogerpon-wellspring": {
     "id": 10273,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "okidogi": {
     "id": 1014,
@@ -174,7 +178,8 @@
   },
   "ting-lu": {
     "id": 1003,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "ursaluna": {
     "id": 901,
@@ -194,7 +199,8 @@
   },
   "zamazenta": {
     "id": 889,
-    "tier": "OU"
+    "tier": "OU",
+    "hype": true
   },
   "zapdos": {
     "id": 145,
@@ -3041,6 +3047,7 @@
     "tier": "LC"
   }
 }
+
 
 
 
