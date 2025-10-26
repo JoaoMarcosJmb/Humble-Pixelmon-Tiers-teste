@@ -1739,7 +1739,7 @@
     "id": 860,
     "tier": "NFE"
   },
-  "morpeko-full-belly": {
+  "morpeko": {
     "id": 877,
     "tier": "ZU"
   },
@@ -3056,6 +3056,7 @@
     "tier": "NFE"
   }
 }
+
 
 
 
