@@ -136,10 +136,10 @@
   "litwick": { "id": 607, "tier": "LC" },
   "axew": { "id": 610, "tier": "LC" },
   "cubchoo": { "id": 613, "tier": "LC" },
-  "mienfoo": { "id": 619, "tier": "LC" },
+  "mienfoo": { "id": 619, "tier": "LC", "hype": true },
   "golett": { "id": 622, "tier": "LC" },
   "pawniard": { "id": 624, "tier": "LC" },
-  "vullaby": { "id": 629, "tier": "LC" },
+  "vullaby": { "id": 629, "tier": "LC", "hype": true },
   "deino": { "id": 633, "tier": "LC" },
   "larvesta": { "id": 636, "tier": "LC" },
   "chespin": { "id": 650, "tier": "LC" },
@@ -223,5 +223,6 @@
   "frigibax": { "id": 996, "tier": "LC" },
   "gimmighoul": { "id": 999, "tier": "LC" }
 }
+
 
 
