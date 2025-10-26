@@ -501,6 +501,13 @@ document.addEventListener('DOMContentLoaded', async ()=> {
       const list = grouped[tier];
       if(!list || list.length === 0) continue;
 
+      // 🔥 Coloca os hype no topo antes de renderizar
+      list.sort((a, b) => {
+        const hypeA = a[1].hype ? 1 : 0;
+        const hypeB = b[1].hype ? 1 : 0;
+        return hypeB - hypeA;
+      });
+
       const section = document.createElement('section');
       section.className = 'tier-section';
 
@@ -521,25 +528,19 @@ document.addEventListener('DOMContentLoaded', async ()=> {
           ? `img/official-artwork/${id}.png`
           : `https://img.pokemondb.net/artwork/large/${encodeURIComponent(smogonName)}.jpg`;
 
-
         const card = document.createElement('a');
         card.className = 'card';
         card.href = smogonUrl;
         card.target = "_blank";
         card.rel = "noopener";
 
-        // cria o <img>
         const img = document.createElement('img');
         img.alt = namePretty;
         img.loading = 'lazy';
-
-        // se a imagem local não existir, tenta buscar a oficial online
         img.onerror = () => {
-          img.onerror = null; // evita loop infinito
+          img.onerror = null;
           img.src = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
         };
-
-        // usa o sistema de fila que você já tem
         enqueueLoad(img, spriteUrl);
 
         const h2 = document.createElement('h2');
@@ -600,13 +601,12 @@ function enqueueLoad(img, url) {
     _nowLoading++;
     const cleanup = () => { _nowLoading--; _kickQueue(); };
 
-    // retry simples com backoff exponencial + jitter
     let tries = 0;
     const maxTries = 4;
-    const base = 500; // ms
+    const base = 500; 
 
     const tryOnce = () => {
-      img.src = url; // não usa timestamp; deixa o cache trabalhar
+      img.src = url;
     };
 
     const onLoad = () => {
@@ -625,7 +625,6 @@ function enqueueLoad(img, url) {
       }
       const wait = Math.pow(2, tries - 1) * base + Math.random() * 200;
       setTimeout(() => {
-        // força um novo ciclo de fetch sem cache-buster
         img.removeAttribute('src');
         tryOnce();
       }, wait);
