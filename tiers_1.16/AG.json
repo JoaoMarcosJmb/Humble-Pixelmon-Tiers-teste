@@ -2,10 +2,12 @@
   "calyrex-shadow": {
     "id": 10194,
     "tier": "AG"
+    "hype": true
   },
   "miraidon": {
     "id": 1008,
     "tier": "AG"
+    "hype": true
   },
     "annihilape": {
     "id": 979,
@@ -3241,6 +3243,7 @@
   }
 
 }
+
 
 
 
