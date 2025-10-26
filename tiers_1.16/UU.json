@@ -783,7 +783,7 @@
     "id": 10165,
     "tier": "PU"
   },
-  "tatsugiri-curly": {
+  "tatsugiri": {
     "id": 978,
     "tier": "PU"
   },
@@ -2840,4 +2840,5 @@
     "tier": "LC"
   }
 }
+
 
