@@ -25,7 +25,8 @@
   },
   "aegislash": {
     "id": 681,
-    "tier": "UU"
+    "tier": "UU",
+    "hype": true
   },
   "aerodactyl": {
     "id": 142,
@@ -33,7 +34,8 @@
   },
   "aerodactyl-mega": {
     "id": 10042,
-    "tier": "UU"
+    "tier": "UU",
+    "hype": true
   },
   "aggron": {
     "id": 306,
@@ -501,7 +503,8 @@
   },
   "celesteela": {
     "id": 797,
-    "tier": "UU"
+    "tier": "UU",
+    "hype": true
   },
   "centiskorch": {
     "id": 851,
@@ -1097,7 +1100,8 @@
   },
   "excadrill": {
     "id": 530,
-    "tier": "UU"
+    "tier": "UU",
+    "hype": true
   },
   "exeggcute": {
     "id": 102,
@@ -2933,7 +2937,8 @@
   },
   "rotom-wash": {
     "id": 10009,
-    "tier": "UU"
+    "tier": "UU",
+    "hype": true
   },
   "rowlet": {
     "id": 722,
@@ -3025,7 +3030,8 @@
   },
   "scizor": {
     "id": 212,
-    "tier": "UU"
+    "tier": "UU",
+    "hype": true
   },
   "scolipede": {
     "id": 545,
@@ -3265,7 +3271,8 @@
   },
   "slowbro": {
     "id": 80,
-    "tier": "UU"
+    "tier": "UU",
+    "hype": true
   },
   "slowbro-galar": {
     "id": 10165,
@@ -4108,6 +4115,7 @@
     "tier": "UU"
   }
 }
+
 
 
 
