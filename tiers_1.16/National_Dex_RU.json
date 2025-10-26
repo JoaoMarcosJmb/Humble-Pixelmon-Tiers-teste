@@ -33,7 +33,8 @@
   },
   "aggron-mega": {
     "id": 10053,
-    "tier": "RU"
+    "tier": "RU",
+    "hype": true
   },
   "aipom": {
     "id": 190,
@@ -209,7 +210,8 @@
   },
   "basculegion-female": {
     "id": 10248,
-    "tier": "RU"
+    "tier": "RU",
+    "hype": true
   },
   "basculegion-male": {
     "id": 902,
@@ -701,7 +703,8 @@
   },
   "cyclizar": {
     "id": 967,
-    "tier": "RU"
+    "tier": "RU",
+    "hype": true
   },
   "cyndaquil": {
     "id": 155,
@@ -1717,7 +1720,8 @@
   },
   "krookodile": {
     "id": 553,
-    "tier": "RU"
+    "tier": "RU",
+    "hype": true
   },
   "kubfu": {
     "id": 891,
@@ -1749,7 +1753,8 @@
   },
   "latias": {
     "id": 380,
-    "tier": "RU"
+    "tier": "RU",
+    "hype": true
   },
   "leafeon": {
     "id": 470,
@@ -3073,11 +3078,13 @@
   },
   "slither-wing": {
     "id": 988,
-    "tier": "RU"
+    "tier": "RU",
+    "hype": true
   },
   "slowking": {
     "id": 199,
-    "tier": "RU"
+    "tier": "RU",
+    "hype": true
   },
   "slowpoke": {
     "id": 79,
@@ -3876,6 +3883,7 @@
     "tier": "NFE"
   }
 }
+
 
 
 
