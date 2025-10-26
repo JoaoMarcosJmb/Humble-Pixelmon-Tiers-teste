@@ -5,7 +5,8 @@
   },
   "arceus": {
     "id": 493,
-    "tier": "Uber"
+    "tier": "Uber",
+    "hype": true
   },
   "baxcalibur": {
     "id": 998,
@@ -45,7 +46,8 @@
   },
   "eternatus": {
     "id": 890,
-    "tier": "Uber"
+    "tier": "Uber",
+    "hype": true
   },
   "flutter-mane": {
     "id": 987,
@@ -65,7 +67,8 @@
   },
   "ho-oh": {
     "id": 250,
-    "tier": "Uber"
+    "tier": "Uber",
+    "hype": true
   },
   "iron-bundle": {
     "id": 991,
@@ -73,11 +76,13 @@
   },
   "koraidon": {
     "id": 1007,
-    "tier": "Uber"
+    "tier": "Uber",
+    "hype": true
   },
   "kyogre": {
     "id": 382,
-    "tier": "Uber"
+    "tier": "Uber",
+    "hype": true
   },
   "kyurem-black": {
     "id": 10022,
@@ -113,7 +118,8 @@
   },
   "necrozma-dusk": {
     "id": 10155,
-    "tier": "Uber"
+    "tier": "Uber",
+    "hype": true
   },
   "ogerpon-hearthflame-mask": {
     "id": 10274,
@@ -185,7 +191,8 @@
   },
   "zacian-crowned": {
     "id": 10188,
-    "tier": "Uber"
+    "tier": "Uber",
+    "hype": true
   },
   "zamazenta-crowned": {
     "id": 10189,
@@ -3232,6 +3239,7 @@
     "tier": "LC"
   }
 }
+
 
 
 
