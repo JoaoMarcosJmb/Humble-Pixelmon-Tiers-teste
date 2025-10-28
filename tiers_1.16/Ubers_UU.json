@@ -90,7 +90,7 @@
   },
   "articuno-galar": {
     "id": 10169,
-    "tier": "PU"
+    "tier": "NU"
   },
   "avalugg": {
     "id": 713,
@@ -594,7 +594,7 @@
   },
   "diancie": {
     "id": 719,
-    "tier": "NU"
+    "tier": "RU"
   },
   "diglett": {
     "id": 50,
@@ -1162,7 +1162,7 @@
   },
   "gyarados": {
     "id": 130,
-    "tier": "RU"
+    "tier": "UU"
   },
   "hakamo-o": {
     "id": 783,
@@ -1198,7 +1198,7 @@
   },
   "heatran": {
     "id": 485,
-    "tier": "UU"
+    "tier": "OU"
   },
   "heracross": {
     "id": 214,
@@ -1258,7 +1258,7 @@
   },
   "houndstone": {
     "id": 972,
-    "tier": "PU"
+    "tier": "NU"
   },
   "hydreigon": {
     "id": 635,
@@ -1602,7 +1602,7 @@
   },
   "mamoswine": {
     "id": 473,
-    "tier": "RU"
+    "tier": "UU"
   },
   "manaphy": {
     "id": 490,
@@ -2480,7 +2480,7 @@
   },
   "slowbro-galar": {
     "id": 10165,
-    "tier": "PU"
+    "tier": "NU"
   },
   "slowking": {
     "id": 199,
@@ -2772,7 +2772,7 @@
   },
   "tornadus-therian": {
     "id": 10019,
-    "tier": "UU"
+    "tier": "OU"
   },
   "torracat": {
     "id": 726,
@@ -2944,7 +2944,7 @@
   },
   "volcanion": {
     "id": 721,
-    "tier": "RU"
+    "tier": "UU"
   },
   "volcarona": {
     "id": 637,
@@ -3020,7 +3020,7 @@
   },
   "wo-chien": {
     "id": 1001,
-    "tier": "PU"
+    "tier": "NU"
   },
   "wooper": {
     "id": 194,
@@ -3068,7 +3068,7 @@
   },
   "zapdos-galar": {
     "id": 10170,
-    "tier": "RU"
+    "tier": "UU"
   },
   "zarude": {
     "id": 893,

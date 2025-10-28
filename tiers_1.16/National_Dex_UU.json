@@ -826,10 +826,6 @@
     "id": 10002,
     "tier": "RU"
   },
-  "deoxys-normal": {
-    "id": 386,
-    "tier": "RU"
-  },
   "dewgong": {
     "id": 87,
     "tier": "RU"
@@ -896,7 +892,7 @@
   },
   "dracozolt": {
     "id": 880,
-    "tier": "RU"
+    "tier": "UU"
   },
   "dragalge": {
     "id": 691,
@@ -1417,7 +1413,7 @@
   },
   "goodra-hisui": {
     "id": 10242,
-    "tier": "RU"
+    "tier": "UU"
   },
   "goomy": {
     "id": 704,
@@ -2155,10 +2151,6 @@
     "id": 648,
     "tier": "RU"
   },
-  "meloetta-pirouette": {
-    "id": 10018,
-    "tier": "RU"
-  },
   "meltan": {
     "id": 808,
     "tier": "RU"
@@ -2445,7 +2437,7 @@
   },
   "okidogi": {
     "id": 1014,
-    "tier": "RU"
+    "tier": "UU"
   },
   "omanyte": {
     "id": 138,
@@ -3562,6 +3554,10 @@
     "id": 787,
     "tier": "RU"
   },
+  "tapu-fini": {
+    "id": 788,
+    "tier": "UU"
+  },
   "tarountula": {
     "id": 917,
     "tier": "LC"
@@ -3616,7 +3612,7 @@
   },
   "thundurus-incarnate": {
     "id": 642,
-    "tier": "RU"
+    "tier": "UU"
   },
   "thwackey": {
     "id": 811,

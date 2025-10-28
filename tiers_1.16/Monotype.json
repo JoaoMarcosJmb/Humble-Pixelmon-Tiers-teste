@@ -81,7 +81,7 @@
   },
   "articuno-galar": {
     "id": 10169,
-    "tier": "PU"
+    "tier": "NU"
   },
   "avalugg": {
     "id": 713,
@@ -547,10 +547,6 @@
     "id": 10002,
     "tier": "RU"
   },
-  "deoxys-normal": {
-    "id": 386,
-    "tier": "Uber"
-  },
   "deoxys-speed": {
     "id": 10003,
     "tier": "OU"
@@ -569,7 +565,7 @@
   },
   "diancie": {
     "id": 719,
-    "tier": "NU"
+    "tier": "RU"
   },
   "diglett": {
     "id": 50,
@@ -711,12 +707,8 @@
     "id": 133,
     "tier": "LC"
   },
-  "eiscue-ice": {
+  "eiscue": {
     "id": 875,
-    "tier": "ZU"
-  },
-  "eiscue-noice": {
-    "id": 10185,
     "tier": "ZU"
   },
   "ekans": {
@@ -1189,7 +1181,7 @@
   },
   "heatran": {
     "id": 485,
-    "tier": "UU"
+    "tier": "OU"
   },
   "heracross": {
     "id": 214,
@@ -1249,7 +1241,7 @@
   },
   "houndstone": {
     "id": 972,
-    "tier": "PU"
+    "tier": "NU"
   },
   "hydreigon": {
     "id": 635,
@@ -1639,10 +1631,6 @@
     "id": 648,
     "tier": "NU"
   },
-  "meloetta-pirouette": {
-    "id": 10018,
-    "tier": "NU"
-  },
   "meowscarada": {
     "id": 908,
     "tier": "OU"
@@ -1859,9 +1847,21 @@
     "id": 765,
     "tier": "ZU"
   },
-  "oricorio": {
+  "oricorio-baile": {
     "id": 741,
     "tier": "ZU"
+  },
+  "oricorio-pau": {
+    "id": 10124,
+    "tier": "ZU"
+  },
+  "oricorio-sensu": {
+    "id": 10125,
+    "tier": "RU"
+  },
+  "oricorio-pom-pom": {
+    "id": 10123,
+    "tier": "UU"
   },
   "orthworm": {
     "id": 968,
@@ -2339,10 +2339,6 @@
     "id": 540,
     "tier": "LC"
   },
-  "shaymin-sky": {
-    "id": 10006,
-    "tier": "Uber"
-  },
   "shelgon": {
     "id": 372,
     "tier": "NFE"
@@ -2445,7 +2441,7 @@
   },
   "slowbro-galar": {
     "id": 10165,
-    "tier": "PU"
+    "tier": "NU"
   },
   "slowking": {
     "id": 199,
@@ -2741,7 +2737,7 @@
   },
   "tornadus-therian": {
     "id": 10019,
-    "tier": "UU"
+    "tier": "OU"
   },
   "torracat": {
     "id": 726,
@@ -2834,10 +2830,6 @@
   "ursaring": {
     "id": 217,
     "tier": "NFE"
-  },
-  "urshifu-single-strike": {
-    "id": 892,
-    "tier": "Uber"
   },
   "urshifu-rapid-strike": {
     "id": 10191,
@@ -2985,7 +2977,7 @@
   },
   "wo-chien": {
     "id": 1001,
-    "tier": "PU"
+    "tier": "NU"
   },
   "wooper": {
     "id": 194,

@@ -830,10 +830,6 @@
     "id": 680,
     "tier": "NFE"
   },
-  "dracozolt": {
-    "id": 880,
-    "tier": "RU"
-  },
   "dragalge": {
     "id": 691,
     "tier": "RU"
@@ -1324,10 +1320,6 @@
   },
   "goodra": {
     "id": 706,
-    "tier": "RU"
-  },
-  "goodra-hisui": {
-    "id": 10242,
     "tier": "RU"
   },
   "goomy": {
@@ -2296,10 +2288,6 @@
     "id": 916,
     "tier": "RU"
   },
-  "okidogi": {
-    "id": 1014,
-    "tier": "RU"
-  },
   "omanyte": {
     "id": 138,
     "tier": "LC"
@@ -2320,8 +2308,20 @@
     "id": 826,
     "tier": "RU"
   },
-  "oricorio": {
+  "oricorio-baile": {
     "id": 741,
+    "tier": "RU"
+  },
+  "oricorio-pau": {
+    "id": 10124,
+    "tier": "RU"
+  },
+  "oricorio-sensu": {
+    "id": 10125,
+    "tier": "RU"
+  },
+  "oricorio-pom-pom": {
+    "id": 10123,
     "tier": "RU"
   },
   "orthworm": {
@@ -3408,10 +3408,6 @@
   },
   "throh": {
     "id": 538,
-    "tier": "RU"
-  },
-  "thundurus-incarnate": {
-    "id": 642,
     "tier": "RU"
   },
   "thwackey": {

@@ -51,10 +51,6 @@
     "id": 724,
     "tier": "NU"
   },
-  "diancie": {
-    "id": 719,
-    "tier": "NU"
-  },
   "dragalge": {
     "id": 691,
     "tier": "NU"
@@ -224,7 +220,7 @@
   },
   "articuno-galar": {
     "id": 10169,
-    "tier": "PU"
+    "tier": "NU"
   },
   "avalugg-hisui": {
     "id": 10243,
@@ -320,7 +316,7 @@
   },
   "houndstone": {
     "id": 972,
-    "tier": "PU"
+    "tier": "NU"
   },
   "kingdra": {
     "id": 230,
@@ -376,7 +372,7 @@
   },
   "slowbro-galar": {
     "id": 10165,
-    "tier": "PU"
+    "tier": "NU"
   },
   "tatsugiri": {
     "id": 978,
@@ -404,7 +400,7 @@
   },
   "wo-chien": {
     "id": 1001,
-    "tier": "PU"
+    "tier": "NU"
   },
   "zoroark": {
     "id": 571,

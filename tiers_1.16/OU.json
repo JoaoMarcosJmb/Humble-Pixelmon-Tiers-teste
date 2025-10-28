@@ -264,7 +264,7 @@
   },
   "heatran": {
     "id": 485,
-    "tier": "UU"
+    "tier": "OU"
   },
   "hydreigon": {
     "id": 635,
@@ -368,7 +368,7 @@
   },
   "tornadus-therian": {
     "id": 10019,
-    "tier": "UU"
+    "tier": "OU"
   },
   "toxapex": {
     "id": 748,
@@ -484,7 +484,7 @@
   },
   "gyarados": {
     "id": 130,
-    "tier": "RU"
+    "tier": "UU"
   },
   "hippowdon": {
     "id": 450,
@@ -524,7 +524,7 @@
   },
   "mamoswine": {
     "id": 473,
-    "tier": "RU"
+    "tier": "UU"
   },
   "maushold": {
     "id": 925,
@@ -608,11 +608,11 @@
   },
   "volcanion": {
     "id": 721,
-    "tier": "RU"
+    "tier": "UU"
   },
   "zapdos-galar": {
     "id": 10170,
-    "tier": "RU"
+    "tier": "UU"
   },
     "altaria": {
     "id": 334,
@@ -668,7 +668,7 @@
   },
   "diancie": {
     "id": 719,
-    "tier": "NU"
+    "tier": "RU"
   },
   "dragalge": {
     "id": 691,
@@ -836,7 +836,7 @@
   },
   "articuno-galar": {
     "id": 10169,
-    "tier": "PU"
+    "tier": "NU"
   },
   "avalugg-hisui": {
     "id": 10243,
@@ -932,7 +932,7 @@
   },
   "houndstone": {
     "id": 972,
-    "tier": "PU"
+    "tier": "NU"
   },
   "kingdra": {
     "id": 230,
@@ -988,7 +988,7 @@
   },
   "slowbro-galar": {
     "id": 10165,
-    "tier": "PU"
+    "tier": "NU"
   },
   "tatsugiri": {
     "id": 978,
@@ -1016,7 +1016,7 @@
   },
   "wo-chien": {
     "id": 1001,
-    "tier": "PU"
+    "tier": "NU"
   },
   "zoroark": {
     "id": 571,

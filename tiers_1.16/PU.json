@@ -15,10 +15,6 @@
     "id": 59,
     "tier": "PU"
   },
-  "articuno-galar": {
-    "id": 10169,
-    "tier": "PU"
-  },
   "avalugg-hisui": {
     "id": 10243,
     "tier": "PU"
@@ -111,10 +107,6 @@
     "id": 720,
     "tier": "PU"
   },
-  "houndstone": {
-    "id": 972,
-    "tier": "PU"
-  },
   "kingdra": {
     "id": 230,
     "tier": "PU"
@@ -171,10 +163,6 @@
     "id": 435,
     "tier": "PU"
   },
-  "slowbro-galar": {
-    "id": 10165,
-    "tier": "PU"
-  },
   "tatsugiri": {
     "id": 978,
     "tier": "PU"
@@ -197,10 +185,6 @@
   },
   "venusaur": {
     "id": 3,
-    "tier": "PU"
-  },
-  "wo-chien": {
-    "id": 1001,
     "tier": "PU"
   },
   "zoroark": {
