@@ -546,20 +546,34 @@
     function clearItem(id) { const i=document.getElementById(`editor-${id}`).querySelector('.p-item'); i.value=""; updateItemIcon(id,i); saveCurrentTeamToStorage(); }
     function clearInput(btn) { btn.previousElementSibling.value=""; saveCurrentTeamToStorage(); }
 
-    async function updatePokemon(id, el) {
-      // --- NOVO: Capitaliza a primeira letra de cada palavra ---
+async function updatePokemon(id, el) {
+        // 1. Formata o texto do input para ter a primeira letra maiúscula (Visual)
         if (el.value) {
-            // Isso transforma "pikachu" em "Pikachu" e "iron valiant" em "Iron Valiant"
             el.value = el.value.toLowerCase().replace(/(?:^|\s|-)\S/g, function(a) { return a.toUpperCase(); });
         }
-        const val = el.value; if(val.length<2) return;
+
+        const val = el.value; 
+        if(val.length < 2) return;
+        
         const apiName = formatToApiName(val);
-        const img = document.getElementById(`img-${id}`); const tabImg = document.getElementById(`tab-img-${id}`);
+        const img = document.getElementById(`img-${id}`); 
+        const tabImg = document.getElementById(`tab-img-${id}`);
         
-        // Se a Tier foi carregada, usa o ID
-        if (pokemonIdMap[val]) { img.src = `${IMG_PATH}${pokemonIdMap[val]}.png`; tabImg.src = `${IMG_PATH}${pokemonIdMap[val]}.png`; } 
-        else { img.src = `${IMG_PATH}${apiName}.png`; tabImg.src = `${IMG_PATH}${apiName}.png`; }
+        // --- CORREÇÃO AQUI ---
+        // Se o Pokémon existe no JSON da Tier, pega o ID dele.
+        // O .toLowerCase() garante que 'Gengar' vire 'gengar.png' para bater com o arquivo.
+        if (pokemonIdMap[val]) { 
+            const safeId = pokemonIdMap[val].toLowerCase(); // <--- O SEGREDO ESTÁ AQUI
+            img.src = `${IMG_PATH}${safeId}.png`; 
+            tabImg.src = `${IMG_PATH}${safeId}.png`; 
+        } 
+        else { 
+            // apiName já é minúsculo por padrão, então aqui funciona normal
+            img.src = `${IMG_PATH}${apiName}.png`; 
+            tabImg.src = `${IMG_PATH}${apiName}.png`; 
+        }
         
+        // Tenta buscar dados na API (Stats, Abilities, etc)
         try {
             const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${apiName}`);
             if(r.ok) {
