@@ -47,7 +47,7 @@
   {
     "name": "Booster Energy",
     "description": "Activates the Protosynthesis or Quark Drive Abilities. Single use.",
-    "ban": ""
+    "ban": "National_Dex_Monotype, Monotype"
   },
   {
     "name": "Black Sludge",
@@ -62,7 +62,7 @@
   {
     "name": "Light Clay",
     "description": "Holder's use of Aurora Veil, Light Screen, or Reflect lasts 8 turns instead of 5.",
-    "ban": ""
+    "ban": "National_Dex_RU, National_Dex_UU, PU, RU, ZU, NU "
   },
   {
     "name": "Weakness Policy",
@@ -142,27 +142,27 @@
   {
     "name": "Terrain Extender",
     "description": "Holder's use of Electric/Grassy/Misty/Psychic Terrain lasts 8 turns instead of 5.",
-    "ban": ""
+    "ban": "National_Dex_Monotype"
   },
   {
     "name": "Damp Rock",
     "description": "Holder's use of Rain Dance lasts 8 turns instead of 5.",
-    "ban": ""
+    "ban": "National_Dex_Monotype, Monotype, PU, ZU, LC"
   },
   {
     "name": "Heat Rock",
     "description": "Holder's use of Sunny Day lasts 8 turns instead of 5.",
-    "ban": ""
+    "ban": "LC, ZU"
   },
   {
     "name": "Smooth Rock",
     "description": "Holder's use of Sandstorm lasts 8 turns instead of 5.",
-    "ban": ""
+    "ban": "National_Dex_Monotype, Monotype"
   },
   {
     "name": "Icy Rock",
     "description": "Holder's use of Snowscape lasts 8 turns instead of 5.",
-    "ban": ""
+    "ban": "National_Dex_Monotype"
   },
   {
     "name": "Salac Berry",
@@ -657,17 +657,22 @@
   {
     "name": "King's Rock",
     "description": "Holder's attacks without a chance to flinch gain a 10% chance to flinch.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU, National_Dex_Monotype, National_Dex,"
+  },
+  {
+    "name": "Lax Incense",
+    "description": "The accuracy of attacks against the holder is 0.9x.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
   },
   {
     "name": "Razor Fang",
     "description": "Holder's attacks without a chance to flinch gain a 10% chance to flinch.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU, National_Dex_Monotype, National_Dex"
   },
   {
     "name": "Quick Claw",
     "description": "Each turn, holder has a 20% chance to move first in its priority bracket.",
-    "ban": ""
+    "ban": "National_Dex_Monotype, Monotype, PU, ZU, NU, National_Dex"
   },
   {
     "name": "Lagging Tail",
@@ -677,7 +682,7 @@
   {
     "name": "Bright Powder",
     "description": "The accuracy of attacks against the holder is 0.9x.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU, National_Dex_Monotype, National_Dex, National_Dex_Ubers"
   },
   {
     "name": "Protective Pads",
@@ -767,7 +772,7 @@
   {
     "name": "Focus Band",
     "description": "Holder has a 10% chance to survive an attack that would KO it with 1 HP.",
-    "ban": ""
+    "ban": "National_Dex_Monotype, Monotype"
   },
   {
     "name": "Jaboca Berry",
@@ -820,6 +825,96 @@
     "ban": ""
   },
   {
+    "name": "Pretty Feather",
+    "description": "Though this feather is beautiful, it's just a regular feather and has no effect.",
+    "ban": ""
+  },
+  {
+    "name": "Power Anklet",
+    "description": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "ban": ""
+  },
+  {
+    "name": "Power Band",
+    "description": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "ban": ""
+  },
+  {
+    "name": "Power Belt",
+    "description": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "ban": ""
+  },
+  {
+    "name": "Power Bracer",
+    "description": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "ban": ""
+  },
+  {
+    "name": "Power Lens",
+    "description": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "ban": ""
+  },
+  {
+    "name": "Power Weight",
+    "description": "Holder's Speed is halved. The Klutz Ability does not ignore this effect.",
+    "ban": ""
+  },
+  {
+    "name": "Fire Stone",
+    "description": "Evolves certain species of Pokemon when used.",
+    "ban": ""
+  },
+  {
+    "name": "Water Stone",
+    "description": "Evolves certain species of Pokemon when used.",
+    "ban": ""
+  },
+  {
+    "name": "Thunder Stone",
+    "description": "Evolves certain species of Pokemon when used.",
+    "ban": ""
+  },
+  {
+    "name": "Leaf Stone",
+    "description": "Evolves certain species of Pokemon when used.",
+    "ban": ""
+  },
+  {
+    "name": "Moon Stone",
+    "description": "Evolves certain species of Pokemon when used.",
+    "ban": ""
+  },
+  {
+    "name": "Sun Stone",
+    "description": "Evolves certain species of Pokemon when used.",
+    "ban": ""
+  },
+  {
+    "name": "Shiny Stone",
+    "description": "Evolves certain species of Pokemon when used.",
+    "ban": ""
+  },
+  {
+    "name": "Dusk Stone",
+    "description": "Evolves certain species of Pokemon when used.",
+    "ban": ""
+  },
+  {
+    "name": "Dawn Stone",
+    "description": "Evolves certain species of Pokemon when used.",
+    "ban": ""
+  },
+  {
+    "name": "Ice Stone",
+    "description": "Evolves certain species of Pokemon when used.",
+    "ban": ""
+  },
+  {
+    "name": "Oval Stone",
+    "description": "Evolves Happiny into Chansey when held and leveled up during the day.",
+    "ban": ""
+  },
+  {
     "name": "Adamant Orb",
     "description": "If held by a Dialga, its Steel- and Dragon-type attacks have 1.2x power.",
     "ban": ""
@@ -835,6 +930,181 @@
     "ban": ""
   },
   {
+    "name": "Grepa Berry",
+    "description": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "ban": ""
+  },
+  {
+    "name": "Hondew Berry",
+    "description": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "ban": ""
+  },
+  {
+    "name": "Kelpsy Berry",
+    "description": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "ban": ""
+  },
+  {
+    "name": "Pomeg Berry",
+    "description": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "ban": ""
+  },
+  {
+    "name": "Qualot Berry",
+    "description": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "ban": ""
+  },
+  {
+    "name": "Tamato Berry",
+    "description": "Cannot be eaten by the holder. No effect when eaten with Bug Bite or Pluck.",
+    "ban": ""
+  },
+  {
+    "name": "Big Nugget",
+    "description": "A big nugget of pure gold that gives off a lustrous gleam.",
+    "ban": ""
+  },
+  {
+    "name": "Rare Bone",
+    "description": "No competitive use other than when used with Fling.",
+    "ban": ""
+  },
+  {
+    "name": "Auspicious Armor",
+    "description": "Evolves Charcadet into Armarouge when used.",
+    "ban": ""
+  },
+  {
+    "name": "Malicious Armor",
+    "description": "Evolves Charcadet into Ceruledge when used.",
+    "ban": ""
+  },
+  {
+    "name": "Chipped Pot",
+    "description": "Evolves Sinistea-Antique into Polteageist-Antique when used.",
+    "ban": ""
+  },
+  {
+    "name": "Cracked Pot",
+    "description": "Evolves Sinistea into Polteageist when used.",
+    "ban": ""
+  },
+  {
+    "name": "Unremarkable Teacup",
+    "description": "Evolves Poltchageist into Sinistcha when used.",
+    "ban": ""
+  },
+  {
+    "name": "Masterpiece Teacup",
+    "description": "Evolves Poltchageist-Artisan into Sinistcha-Masterpiece when used.",
+    "ban": ""
+  },
+  {
+    "name": "Berry Sweet",
+    "description": "Evolves Milcery into Alcremie when held and spun around.",
+    "ban": ""
+  },
+  {
+    "name": "Clover Sweet",
+    "description": "Evolves Milcery into Alcremie when held and spun around.",
+    "ban": ""
+  },
+  {
+    "name": "Flower Sweet",
+    "description": "Evolves Milcery into Alcremie when held and spun around.",
+    "ban": ""
+  },
+  {
+    "name": "Love Sweet",
+    "description": "Evolves Milcery into Alcremie when held and spun around.",
+    "ban": ""
+  },
+  {
+    "name": "Ribbon Sweet",
+    "description": "Evolves Milcery into Alcremie when held and spun around.",
+    "ban": ""
+  },
+  {
+    "name": "Star Sweet",
+    "description": "Evolves Milcery into Alcremie when held and spun around.",
+    "ban": ""
+  },
+  {
+    "name": "Strawberry Sweet",
+    "description": "Evolves Milcery into Alcremie when held and spun around.",
+    "ban": ""
+  },
+  {
+    "name": "Sweet Apple",
+    "description": "Evolves Applin into Appletun when used.",
+    "ban": ""
+  },
+  {
+    "name": "Tart Apple",
+    "description": "Evolves Applin into Flapple when used.",
+    "ban": ""
+  },
+  {
+    "name": "Syrupy Apple",
+    "description": "Evolves Applin into Dipplin when used.",
+    "ban": ""
+  },
+  {
+    "name": "Galarica Cuff",
+    "description": "Evolves Galarian Slowpoke into Galarian Slowbro when used.",
+    "ban": ""
+  },
+  {
+    "name": "Galarica Wreath",
+    "description": "Evolves Galarian Slowpoke into Galarian Slowking when used.",
+    "ban": ""
+  },
+  {
+    "name": "Metal Alloy",
+    "description": "Evolves Duraludon into Archaludon when used.",
+    "ban": ""
+  },
+  {
+    "name": "Dragon Scale",
+    "description": "Evolves Seadra into Kingdra when traded.",
+    "ban": ""
+  },
+  {
+    "name": "Dubious Disc",
+    "description": "Evolves Porygon2 into Porygon-Z when traded.",
+    "ban": ""
+  },
+  {
+    "name": "Electirizer",
+    "description": "Evolves Electabuzz into Electivire when traded.",
+    "ban": ""
+  },
+  {
+    "name": "Magmarizer",
+    "description": "Evolves Magmar into Magmortar when traded.",
+    "ban": ""
+  },
+  {
+    "name": "Prism Scale",
+    "description": "Evolves Feebas into Milotic when traded.",
+    "ban": ""
+  },
+  {
+    "name": "Protector",
+    "description": "Evolves Rhydon into Rhyperior when traded.",
+    "ban": ""
+  },
+  {
+    "name": "Reaper Cloth",
+    "description": "Evolves Dusclops into Dusknoir when traded.",
+    "ban": ""
+  },
+  {
+    "name": "Up-Grade",
+    "description": "Evolves Porygon into Porygon2 when traded.",
+    "ban": ""
+  },
+  {
     "name": "Chilan Berry",
     "description": "Halves damage taken from a Normal-type attack. Single use.",
     "ban": ""
@@ -842,246 +1112,421 @@
   {
     "name": "Gengarite",
     "description": "Allows Gengar to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU, National_Dex_Monotype, National_Dex, National_Dex_Ubers" 
   },
   {
     "name": "Salamencite",
     "description": "Allows Salamence to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU, National_Dex_Monotype, National_Dex" 
   },
   {
     "name": "Lucarionite",
     "description": "Allows Lucario to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU,National_Dex_RU, National_Dex_UU, National_Dex_Monotype, National_Dex" 
   },
   {
     "name": "Kangaskhanite",
     "description": "Allows Kangaskhan to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU, National_Dex_Monotype, National_Dex" 
   },
   {
     "name": "Metagrossite",
     "description": "Allows Metagross to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU, National_Dex_Monotype, National_Dex" 
   },
   {
     "name": "Charizardite X",
     "description": "Allows Charizard to Mega Evolve into Mega Charizard X.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU" 
   },
   {
     "name": "Charizardite Y",
     "description": "Allows Charizard to Mega Evolve into Mega Charizard Y.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU" 
   },
   {
     "name": "Mawilite",
     "description": "Allows Mawile to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_Monotype, National_Dex_RU, National_Dex_UU" 
   },
   {
     "name": "Galladite",
     "description": "Allows Gallade to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU" 
   },
   {
     "name": "Gardevoirite",
     "description": "Allows Gardevoir to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU" 
   },
   {
     "name": "Scizorite",
     "description": "Allows Scizor to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU" 
   },
   {
     "name": "Tyranitarite",
     "description": "Allows Tyranitar to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU" 
   },
   {
     "name": "Gyaradosite",
     "description": "Allows Gyarados to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU" 
   },
   {
     "name": "Venusaurite",
     "description": "Allows Venusaur to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU" 
   },
   {
     "name": "Blastoisinite",
     "description": "Allows Blastoise to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU, National_Dex_Monotype, National_Dex" 
   },
   {
     "name": "Blazikenite",
     "description": "Allows Blaziken to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU, National_Dex_Monotype, National_Dex" 
   },
   {
     "name": "Sceptilite",
     "description": "Allows Sceptile to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
   },
   {
     "name": "Swampertite",
     "description": "Allows Swampert to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU" 
   },
   {
     "name": "Latiasite",
     "description": "Allows Latias to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU" 
   },
   {
     "name": "Latiosite",
     "description": "Allows Latios to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU" 
   },
   {
     "name": "Mewtwonite X",
     "description": "Allows Mewtwo to Mega Evolve into Mega Mewtwo X.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU, National_Dex_Monotype, National_Dex" 
   },
   {
     "name": "Mewtwonite Y",
     "description": "Allows Mewtwo to Mega Evolve into Mega Mewtwo Y.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU, National_Dex_Monotype, National_Dex" 
   },
   {
     "name": "Garchompite",
     "description": "Allows Garchomp to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU" 
   },
   {
     "name": "Beedrillite",
     "description": "Allows Beedrill to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU" 
   },
   {
     "name": "Pidgeotite",
     "description": "Allows Pidgeot to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
   },
   {
     "name": "Alakazite",
     "description": "Allows Alakazam to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU, National_Dex_Monotype, National_Dex" 
   },
   {
     "name": "Slowbronite",
     "description": "Allows Slowbro to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU" 
   },
   {
     "name": "Aerodactylite",
     "description": "Allows Aerodactyl to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU" 
   },
   {
     "name": "Ampharosite",
     "description": "Allows Ampharos to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
   },
   {
     "name": "Steelixite",
     "description": "Allows Steelix to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
   },
   {
     "name": "Heracronite",
     "description": "Allows Heracross to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU" 
   },
   {
     "name": "Houndoominite",
     "description": "Allows Houndoom to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
   },
   {
     "name": "Sableyeite",
     "description": "Allows Sableye to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU" 
   },
   {
     "name": "Sharpedonite",
     "description": "Allows Sharpedo to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
   },
   {
     "name": "Cameruptite",
     "description": "Allows Camerupt to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
   },
   {
     "name": "Altarianite",
     "description": "Allows Altaria to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU" 
   },
   {
     "name": "Glalitite",
     "description": "Allows Glalie to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
   },
   {
     "name": "Absolite",
     "description": "Allows Absol to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
   },
   {
     "name": "Lopunnite",
     "description": "Allows Lopunny to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU" 
   },
   {
     "name": "Abomasite",
     "description": "Allows Abomasnow to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
   },
   {
     "name": "Audinite",
     "description": "Allows Audino to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
   },
   {
     "name": "Diancite",
     "description": "Allows Diancie to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU" 
   },
   {
     "name": "Aggronite",
     "description": "Allows Aggron to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
   },
   {
     "name": "Banettite",
     "description": "Allows Banette to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, " 
   },
   {
     "name": "Manectite",
     "description": "Allows Manectric to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
   },
   {
     "name": "Medichamite",
     "description": "Allows Medicham to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_Monotype, National_Dex_RU, National_Dex_UU" 
   },
   {
     "name": "Pinsirite",
     "description": "Allows Pinsir to Mega Evolve during battle.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU, National_Dex_RU, National_Dex_UU" 
   },
   {
     "name": "Red Orb",
     "description": "Triggers Primal Reversion for Groudon upon switching in.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
   },
   {
     "name": "Blue Orb",
     "description": "Triggers Primal Reversion for Kyogre upon switching in.",
-    "ban": ""
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU" 
+  },
+  {
+    "name": "Normalium Z",
+    "description": "If holder has a Normal move, this item allows it to use a Normal Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Firium Z",
+    "description": "If holder has a Fire move, this item allows it to use a Fire Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Waterium Z",
+    "description": "If holder has a Water move, this item allows it to use a Water Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Electrium Z",
+    "description": "If holder has an Electric move, this item allows it to use an Electric Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Grassium Z",
+    "description": "If holder has a Grass move, this item allows it to use a Grass Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Icium Z",
+    "description": "If holder has an Ice move, this item allows it to use an Ice Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Fightinium Z",
+    "description": "If holder has a Fighting move, this item allows it to use a Fighting Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Poisonium Z",
+    "description": "If holder has a Poison move, this item allows it to use a Poison Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Groundium Z",
+    "description": "If holder has a Ground move, this item allows it to use a Ground Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Flyinium Z",
+    "description": "If holder has a Flying move, this item allows it to use a Flying Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Psychium Z",
+    "description": "If holder has a Psychic move, this item allows it to use a Psychic Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Buginium Z",
+    "description": "If holder has a Bug move, this item allows it to use a Bug Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Rockium Z",
+    "description": "If holder has a Rock move, this item allows it to use a Rock Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Ghostium Z",
+    "description": "If holder has a Ghost move, this item allows it to use a Ghost Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Dragonium Z",
+    "description": "If holder has a Dragon move, this item allows it to use a Dragon Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Darkinium Z",
+    "description": "If holder has a Dark move, this item allows it to use a Dark Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Steelium Z",
+    "description": "If holder has a Steel move, this item allows it to use a Steel Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Fairium Z",
+    "description": "If holder has a Fairy move, this item allows it to use a Fairy Z-Move.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Pikanium Z",
+    "description": "If held by a Pikachu with Volt Tackle, it can use Catastropika.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Decidium Z",
+    "description": "If held by a Decidueye with Spirit Shackle, it can use Sinister Arrow Raid.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Incinium Z",
+    "description": "If held by an Incineroar with Darkest Lariat, it can use Malicious Moonsault.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Primarium Z",
+    "description": "If held by a Primarina with Sparkling Aria, it can use Oceanic Operetta.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Tapunium Z",
+    "description": "If held by a Tapu with Nature's Madness, it can use Guardian of Alola.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Marshadium Z",
+    "description": "If held by Marshadow with Spectral Thief, it can use Soul-Stealing 7-Star Strike.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Aloraichium Z",
+    "description": "If held by an Alolan Raichu with Thunderbolt, it can use Stoked Sparksurfer.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Snorlium Z",
+    "description": "If held by a Snorlax with Giga Impact, it can use Pulverizing Pancake.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Eevium Z",
+    "description": "If held by an Eevee with Last Resort, it can use Extreme Evoboost.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Mewnium Z",
+    "description": "If held by a Mew with Psychic, it can use Genesis Supernova.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Pikashunium Z",
+    "description": "If held by a Cap Pikachu with Thunderbolt, it can use 10,000,000 Volt Thunderbolt.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Ultranecrozium Z",
+    "description": "If held by Necrozma-Dusk-Mane/Dawn-Wings with Photon Geyser, it can use Light That Burns the Sky.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Solganium Z",
+    "description": "If held by Solgaleo or Dusk Mane Necrozma with Sunsteel Strike, it can use Searing Sunraze Smash.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Lunalium Z",
+    "description": "If held by Lunala or Dawn Wings Necrozma with Moongeist Beam, it can use Menacing Moonraze Maelstrom.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Mimikium Z",
+    "description": "If held by a Mimikyu with Play Rough, it can use Let's Snuggle Forever.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Lycanium Z",
+    "description": "If held by a Lycanroc with Stone Edge, it can use Splintered Stormshards.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
+  },
+  {
+    "name": "Kommonium Z",
+    "description": "If held by a Kommo-o with Clanging Scales, it can use Clangorous Soulblaze.",
+    "ban": "LC, Monotype, PU, NU, RU, UU, OU, Uber, AG, ZU, Ubers_UU"
   }
 ]
