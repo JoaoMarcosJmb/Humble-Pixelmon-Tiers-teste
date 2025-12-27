@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Humble Team Builder - Compacto</title>
+  <title>Humble Team Builder - Tier Edition</title>
   
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
@@ -59,10 +59,31 @@
     /* --- LAYOUT --- */
     .builder-wrapper { max-width: 1400px; margin: 0 auto; padding: 20px; }
 
+    /* TOOLBAR (Agora com Seletor de Tier) */
     .toolbar {
       display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
       background: rgba(30,30,30,0.8); padding: 15px; border-radius: 8px; border: 1px solid var(--cor-borda);
+      flex-wrap: wrap; gap: 15px;
     }
+
+    .toolbar-title h2 { margin: 0; color: #fff; font-size: 1.5rem; }
+    .toolbar-title small { color: #aaa; }
+
+    .toolbar-controls { display: flex; gap: 15px; align-items: center; }
+
+    /* Estilo do Seletor de Tier */
+    .tier-select {
+        background: #111;
+        color: var(--cor-dourado);
+        border: 1px solid var(--cor-dourado);
+        padding: 10px 15px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        font-size: 1rem;
+        min-width: 150px;
+    }
+    .tier-select option { background: #222; color: #fff; }
 
     .editor-grid {
       display: grid;
@@ -88,40 +109,23 @@
     .header-row h4 { margin: 0; color: var(--cor-dourado); font-size: 1rem; }
     .slot-badge { background: #111; color: #666; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; }
 
-    /* --- VISUAL COMPACTO (Side by Side) --- */
+    /* --- VISUAL COMPACTO --- */
     .compact-header {
-      display: flex;
-      gap: 15px;
-      margin-bottom: 15px;
-      align-items: flex-start;
+      display: flex; gap: 15px; margin-bottom: 15px; align-items: flex-start;
     }
 
     .visual-small-box {
-      width: 70px;
-      height: 70px;
-      flex-shrink: 0;
-      background: rgba(0,0,0,0.3);
-      border: 1px solid #444;
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
+      width: 70px; height: 70px; flex-shrink: 0;
+      background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 50%;
+      display: flex; justify-content: center; align-items: center; overflow: hidden;
     }
 
     .poke-sprite-small {
-      width: 55px;
-      height: 55px;
-      object-fit: contain;
+      width: 55px; height: 55px; object-fit: contain;
       filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
     }
     
-    .header-inputs {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+    .header-inputs { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; }
 
     /* --- INPUTS --- */
     .row { display: flex; gap: 10px; }
@@ -186,19 +190,16 @@
     <option value="Corviknight"><option value="Dragapult"><option value="Grimmsnarl"><option value="Swampert"><option value="Blaziken">
     <option value="Zacian"><option value="Rayquaza"><option value="Kyogre"><option value="Groudon"><option value="Ditto">
   </datalist>
-
   <datalist id="list-items">
     <option value="Leftovers"><option value="Life Orb"><option value="Choice Scarf"><option value="Choice Band"><option value="Choice Specs">
     <option value="Focus Sash"><option value="Rocky Helmet"><option value="Heavy-Duty Boots"><option value="Assault Vest"><option value="Sitrus Berry">
     <option value="Weakness Policy"><option value="Black Sludge"><option value="Eviolite"><option value="Expert Belt">
   </datalist>
-
   <datalist id="list-abilities">
     <option value="Intimidate"><option value="Levitate"><option value="Rough Skin"><option value="Pressure"><option value="Swift Swim">
     <option value="Chlorophyll"><option value="Sand Stream"><option value="Drizzle"><option value="Regenerator"><option value="Beast Boost">
     <option value="Technician"><option value="Mold Breaker"><option value="Prankster"><option value="Magic Bounce"><option value="Libero">
   </datalist>
-
   <datalist id="list-moves">
     <option value="Earthquake"><option value="Thunderbolt"><option value="Ice Beam"><option value="Flamethrower"><option value="Protect">
     <option value="Toxic"><option value="Scald"><option value="U-turn"><option value="Stealth Rock"><option value="Defog"><option value="Roost">
@@ -208,7 +209,7 @@
   <header>
     <h1>
         <a href="feed.html">
-            <img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder <span style="font-size:0.8rem; color:#666; margin-left:10px;">LITE</span>
+            <img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder <span style="font-size:0.8rem; color:#666; margin-left:10px;">TIER</span>
         </a>
     </h1>
     <div class="menu-toggle" id="menuBtn">
@@ -226,10 +227,28 @@
 
   <div class="builder-wrapper">
     <div class="toolbar">
-      <div>
-        <h2 style="margin:0; color:#fff;">Criar Time</h2>
+      <div class="toolbar-title">
+        <h2>Criar Time</h2>
+        <small>Selecione a Tier do torneio</small>
       </div>
-      <button class="btn-action" onclick="gerarTextoShowdown()">💾 Gerar Texto</button>
+      
+      <div class="toolbar-controls">
+        <select id="teamTier" class="tier-select">
+            <option value="" disabled selected>Selecionar Tier</option>
+            <option value="AG">AG (Anything Goes)</option>
+            <option value="Uber">Uber</option>
+            <option value="OU">OU (OverUsed)</option>
+            <option value="UU">UU (UnderUsed)</option>
+            <option value="RU">RU (RarelyUsed)</option>
+            <option value="NU">NU (NeverUsed)</option>
+            <option value="PU">PU</option>
+            <option value="ZU">ZU</option>
+            <option value="NFE">NFE (Not Fully Evolved)</option>
+            <option value="LC">LC (Little Cup)</option>
+        </select>
+
+        <button class="btn-action" onclick="gerarTextoShowdown()">💾 Gerar Texto</button>
+      </div>
     </div>
 
     <div class="editor-grid" id="teamContainer"></div>
@@ -249,7 +268,6 @@
       menuBtn.classList.toggle("active");
       dropdownMenu.classList.toggle("active");
     });
-
     document.addEventListener("click", (e) => {
       if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
         menuBtn.classList.remove("active");
@@ -267,11 +285,9 @@
         "Naive", "Naughty", "Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious", "Timid"
     ];
     
-    // Caminho da Imagem
+    // Configurações de Imagem
     const IMG_PATH = "img/official-artwork/"; 
     const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
-
-    // Cache
     const pokeCache = {};
 
     function formatToApiName(name) {
@@ -284,7 +300,7 @@
         .replace(/♂/g, '-m');
     }
 
-    // --- 3. RENDERIZAR SLOTS (LAYOUT COMPACTO) ---
+    // --- 3. RENDERIZAR SLOTS (COMPACTO) ---
     function renderSlots() {
       const container = document.getElementById('teamContainer');
       const natureOptions = NATURES.map(n => `<option value="${n}">${n}</option>`).join('');
@@ -402,11 +418,19 @@
       remainLabel.style.color = remaining === 0 ? "#d1a720" : "#4dff88";
     }
 
-    // --- 6. EXPORTAR ---
+    // --- 6. EXPORTAR (AGORA COM TIER NO CABEÇALHO) ---
     function gerarTextoShowdown() {
       let fullText = "";
-      let hasData = false;
+      
+      // Pega a Tier Selecionada
+      const tierSelect = document.getElementById('teamTier');
+      const selectedTier = tierSelect.value;
 
+      if (selectedTier) {
+        fullText += `=== [Gen 9] ${selectedTier} ===\n\n`;
+      }
+
+      let hasData = false;
       for (let i = 1; i <= TOTAL_SLOTS; i++) {
         let slot = document.getElementById(`poke-${i}`);
         let name = slot.querySelector('.p-name').value.trim();
