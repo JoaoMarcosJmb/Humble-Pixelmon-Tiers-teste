@@ -3,7 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Humble Team Builder - Completo</title>
+  
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
+  <link rel="shortcut icon" type="image/png" href="img/mike_anotando2.png">
   
   <style>
     /* --- CSS GERAL --- */
@@ -15,28 +17,71 @@
       --cor-alerta: #ff4d4d;
       --cor-sucesso: #4dff88;
     }
-    body { font-family: "Segoe UI", Arial, sans-serif; background: linear-gradient(135deg, rgba(20,20,20,0.9), rgba(40,30,20,0.9)), url("https://i.imgur.com/vATNRmF.png"); background-size: cover; margin: 0; padding-top: 80px; color: var(--cor-texto); }
+
+    body { 
+      font-family: "Segoe UI", Arial, sans-serif; 
+      background: linear-gradient(135deg, rgba(20,20,20,0.9), rgba(40,30,20,0.9)), 
+                  url("https://i.imgur.com/vATNRmF.png"); 
+      background-size: cover; 
+      background-attachment: fixed;
+      margin: 0; 
+      padding-top: 80px; 
+      color: var(--cor-texto); 
+    }
     
-    /* Header (Padrão) */
-    header { position: fixed; top: 0; left: 0; right: 0; width: 100%; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(20, 20, 20, 0.95); border-bottom: 2px solid var(--cor-dourado); z-index: 1000; box-sizing: border-box; }
-    header h1 { font-size: 1.6rem; color: var(--cor-dourado); display: flex; gap: 10px; margin: 0; align-items: center; }
+    /* --- HEADER (Menu) --- */
+    header { 
+      position: fixed; 
+      top: 0; left: 0; right: 0; width: 100%; 
+      padding: 15px 20px; 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      background: rgba(20, 20, 20, 0.95); 
+      border-bottom: 2px solid var(--cor-dourado); 
+      z-index: 1000; 
+      box-sizing: border-box; 
+    }
+    
+    header h1 { 
+      font-size: 1.6rem; 
+      color: var(--cor-dourado); 
+      display: flex; 
+      gap: 10px; 
+      margin: 0; 
+      align-items: center; 
+    }
+    
     header h1 img { height: 40px; }
+    
+    .menu-toggle { display: flex; flex-direction: column; width: 30px; gap: 5px; cursor: pointer; }
+    .menu-toggle span { height: 4px; background: #fff; border-radius: 4px; }
 
     /* --- LAYOUT DO BUILDER --- */
-    .builder-wrapper { max-width: 1400px; margin: 0 auto; padding: 20px; }
+    .builder-wrapper { 
+      max-width: 1400px; 
+      margin: 0 auto; 
+      padding: 20px; 
+    }
 
     .toolbar {
-      display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
-      background: rgba(0,0,0,0.6); padding: 15px; border-radius: 8px; border: 1px solid #444;
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      margin-bottom: 20px;
+      background: rgba(0,0,0,0.6); 
+      padding: 15px; 
+      border-radius: 8px; 
+      border: 1px solid #444;
     }
 
     .editor-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); /* Responsivo: encaixa quantos der */
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); 
       gap: 20px;
     }
 
-    /* CARD DE POKEMON */
+    /* --- CARD DE POKEMON --- */
     .poke-editor {
       background: rgba(30, 30, 30, 0.95);
       border: 1px solid #555;
@@ -44,60 +89,159 @@
       border-radius: 8px;
       padding: 15px;
       position: relative;
+      transition: transform 0.2s;
+    }
+    
+    .poke-editor:hover { border-color: #777; }
+
+    .poke-editor h4 { 
+      margin: 0 0 10px 0; 
+      color: var(--cor-dourado); 
+      display: flex; 
+      justify-content: space-between; 
+    }
+    
+    .slot-number { 
+      font-size: 0.8em; 
+      color: #666; 
+      background: #111; 
+      padding: 2px 8px; 
+      border-radius: 4px; 
     }
 
-    .poke-editor h4 { margin: 0 0 10px 0; color: var(--cor-dourado); display: flex; justify-content: space-between; }
-    .slot-number { font-size: 0.8em; color: #666; background: #111; padding: 2px 8px; border-radius: 4px; }
+    /* --- VISUAL DA IMAGEM --- */
+    .poke-visual-header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 15px;
+      height: 100px;
+      background: radial-gradient(circle, rgba(209,167,32,0.15) 0%, rgba(0,0,0,0) 70%);
+      border-radius: 50%;
+    }
 
-    /* Inputs */
+    .poke-sprite-preview {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      transition: transform 0.3s;
+      filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+    }
+
+    .poke-sprite-preview:hover { transform: scale(1.15); }
+    
+    /* Oculta imagem quebrada */
+    img[src=""], img[src="#"] { opacity: 0; }
+
+    /* --- INPUTS --- */
     .input-group { margin-bottom: 10px; }
+    
     input[type="text"], input[type="number"] {
-      background: var(--cor-input); border: 1px solid #555; color: #fff; padding: 8px;
-      border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 0.9rem;
+      background: var(--cor-input); 
+      border: 1px solid #555; 
+      color: #fff; 
+      padding: 8px;
+      border-radius: 4px; 
+      width: 100%; 
+      box-sizing: border-box; 
+      font-size: 0.9rem;
     }
+    
     input:focus { border-color: var(--cor-dourado); outline: none; }
     
     .row { display: flex; gap: 10px; }
     .col { flex: 1; }
 
-    /* ÁREA DE EVs */
+    /* --- SLIDERS DE EVs --- */
     .stats-box {
-      background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin: 10px 0; border: 1px solid #444;
+      background: rgba(0,0,0,0.3); 
+      padding: 10px; 
+      border-radius: 6px; 
+      margin: 10px 0; 
+      border: 1px solid #444;
     }
+    
     .ev-header {
-      display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 10px; color: #aaa;
+      display: flex; 
+      justify-content: space-between; 
+      font-size: 0.85rem; 
+      margin-bottom: 10px; 
+      color: #aaa;
     }
+    
     .ev-remaining { color: var(--cor-sucesso); font-weight: bold; }
-    .ev-remaining.alert { color: var(--cor-alerta); }
-
-    .stat-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.85rem; }
+    
+    .stat-row { 
+      display: flex; 
+      align-items: center; 
+      gap: 8px; 
+      margin-bottom: 6px; 
+      font-size: 0.85rem; 
+    }
+    
     .stat-label { width: 35px; font-weight: bold; color: #888; }
     
     /* Slider Customizado */
     input[type=range] {
-      -webkit-appearance: none; width: 100%; height: 6px; background: #444; border-radius: 3px; outline: none;
+      -webkit-appearance: none; 
+      width: 100%; 
+      height: 6px; 
+      background: #444; 
+      border-radius: 3px; 
+      outline: none;
     }
+    
     input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 14px; height: 14px; background: var(--cor-dourado); border-radius: 50%; cursor: pointer; transition: 0.2s;
+      -webkit-appearance: none; 
+      width: 14px; 
+      height: 14px; 
+      background: var(--cor-dourado); 
+      border-radius: 50%; 
+      cursor: pointer; 
+      transition: 0.2s;
     }
+    
     input[type=range]:disabled::-webkit-slider-thumb { background: #555; cursor: not-allowed; }
     
     .ev-num { width: 45px !important; text-align: center; padding: 4px !important; }
 
-    /* Moves */
+    /* --- MOVES --- */
     .moves-box { display: flex; flex-direction: column; gap: 6px; }
     .move-input { border-left: 3px solid #666 !important; }
 
-    /* Botão e Export */
+    /* --- BOTOES E EXPORT --- */
     .btn-action {
-      background: var(--cor-dourado); border: none; padding: 12px 25px; font-weight: bold;
-      cursor: pointer; border-radius: 4px; font-size: 1rem; color: #111; transition: 0.2s;
+      background: var(--cor-dourado); 
+      border: none; 
+      padding: 12px 25px; 
+      font-weight: bold;
+      cursor: pointer; 
+      border-radius: 4px; 
+      font-size: 1rem; 
+      color: #111; 
+      transition: 0.2s;
     }
+    
     .btn-action:hover { background: #fff; box-shadow: 0 0 15px rgba(209, 167, 32, 0.4); }
 
-    .export-area { margin-top: 30px; background: #222; padding: 20px; border-radius: 8px; border: 1px dashed #666; }
-    textarea { width: 100%; height: 200px; background: #111; color: var(--cor-dourado); border: 1px solid #444; padding: 10px; font-family: monospace; resize: vertical; }
-
+    .export-area { 
+      margin-top: 30px; 
+      background: #222; 
+      padding: 20px; 
+      border-radius: 8px; 
+      border: 1px dashed #666; 
+    }
+    
+    textarea { 
+      width: 100%; 
+      height: 200px; 
+      background: #111; 
+      color: var(--cor-dourado); 
+      border: 1px solid #444; 
+      padding: 10px; 
+      font-family: monospace; 
+      resize: vertical; 
+    }
   </style>
 </head>
 <body>
@@ -108,18 +252,20 @@
     <option value="Metagross"><option value="Tyranitar"><option value="Scizor"><option value="Rotom-Wash">
     <option value="Landorus-Therian"><option value="Ferrothorn"><option value="Toxapex"><option value="Corviknight">
     <option value="Dragapult"><option value="Grimmsnarl"><option value="Swampert"><option value="Blaziken">
+    <option value="Zacian"><option value="Rayquaza"><option value="Kyogre"><option value="Groudon">
   </datalist>
 
   <datalist id="list-items">
     <option value="Leftovers"><option value="Life Orb"><option value="Choice Scarf"><option value="Choice Band">
     <option value="Choice Specs"><option value="Focus Sash"><option value="Rocky Helmet"><option value="Heavy-Duty Boots">
-    <option value="Assault Vest"><option value="Sitrus Berry"><option value="Weakness Policy"><option value="Remains">
+    <option value="Assault Vest"><option value="Sitrus Berry"><option value="Weakness Policy"><option value="Black Sludge">
   </datalist>
 
   <datalist id="list-abilities">
     <option value="Intimidate"><option value="Levitate"><option value="Rough Skin"><option value="Pressure">
     <option value="Swift Swim"><option value="Chlorophyll"><option value="Sand Stream"><option value="Drizzle">
     <option value="Regenerator"><option value="Beast Boost"><option value="Technician"><option value="Mold Breaker">
+    <option value="Prankster"><option value="Magic Bounce"><option value="Libero"><option value="Multiscale">
   </datalist>
 
   <datalist id="list-moves">
@@ -130,15 +276,19 @@
   </datalist>
 
   <header>
-    <h1><img src="https://i.imgur.com/XOEcuO8.png" alt="Logo"> Humble Builder</h1>
-    <div style="color: #aaa; font-size: 0.9rem;">v2.0</div>
+    <h1>
+      <a href="index.html" style="text-decoration:none; color:inherit; display:flex; align-items:center; gap:10px;">
+        <img src="https://i.imgur.com/XOEcuO8.png" alt="Logo"> Humble Builder
+      </a>
+    </h1>
+    <div class="menu-toggle"><span></span><span></span><span></span></div>
   </header>
 
   <div class="builder-wrapper">
     <div class="toolbar">
       <div>
         <h2 style="margin:0; color:#fff;">Montar Time</h2>
-        <small style="color:#aaa;">Preencha os 6 Pokémon abaixo</small>
+        <small style="color:#aaa;">Digite o nome do Pokémon e a imagem será carregada automaticamente.</small>
       </div>
       <button class="btn-action" onclick="gerarTextoShowdown()">💾 Gerar Texto (Export)</button>
     </div>
@@ -147,17 +297,36 @@
 
     <div class="export-area" id="exportSection">
       <h3 style="color:var(--cor-dourado); margin-top:0;">Resultado para Copiar:</h3>
-      <textarea id="finalOutput" readonly placeholder="Seu time aparecerá aqui..."></textarea>
+      <textarea id="finalOutput" readonly placeholder="Seu time formatado aparecerá aqui..."></textarea>
     </div>
   </div>
 
   <script>
-    // Configurações
+    // --- CONFIGURAÇÕES ---
     const MAX_EVS = 508;
     const TOTAL_SLOTS = 6;
     const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
+    
+    // Caminho da pasta de imagens LOCAL
+    const IMG_PATH = "img/official-artwork/"; 
+    // Imagem padrão (Pokebola) caso dê erro
+    const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
 
-    // 1. GERAÇÃO DOS 6 SLOTS AUTOMATICAMENTE
+    // Cache simples para não precisar consultar a API toda hora
+    const pokeCache = {};
+
+    // --- 1. FUNÇÃO AUXILIAR: FORMATAR NOME PARA API ---
+    function formatToApiName(name) {
+      return name.trim().toLowerCase()
+        .replace(/ /g, '-')      // Espaços viram hifens
+        .replace(/\./g, '')      // Remove pontos (Mr. Mime)
+        .replace(/'/g, '')       // Remove apóstrofos (Farfetch'd)
+        .replace(/:/g, '')       // Remove dois pontos
+        .replace(/♀/g, '-f')     
+        .replace(/♂/g, '-m');
+    }
+
+    // --- 2. GERAÇÃO DA INTERFACE (6 SLOTS) ---
     function renderSlots() {
       const container = document.getElementById('teamContainer');
       
@@ -165,13 +334,28 @@
         const div = document.createElement('div');
         div.className = 'poke-editor';
         div.id = `poke-${i}`;
+        
         div.innerHTML = `
           <h4>Pokémon <span class="slot-number">#${i}</span></h4>
           
-          <div class="row">
-            <div class="col"><input type="text" class="p-name" list="list-pokemon" placeholder="Nome (ex: Garchomp)"></div>
-            <div class="col"><input type="text" class="p-item" list="list-items" placeholder="Item"></div>
+          <div class="poke-visual-header">
+            <img src="${IMG_ERROR}" 
+                 id="img-${i}" 
+                 class="poke-sprite-preview" 
+                 onerror="this.src='${IMG_ERROR}'">
           </div>
+
+          <div class="row">
+            <div class="col">
+              <input type="text" class="p-name" list="list-pokemon" 
+                     placeholder="Nome (ex: Garchomp)" 
+                     onchange="updateImage('${i}', this.value)">
+            </div>
+            <div class="col">
+              <input type="text" class="p-item" list="list-items" placeholder="Item">
+            </div>
+          </div>
+          
           <div class="input-group">
             <input type="text" class="p-ability" list="list-abilities" placeholder="Habilidade (Ability)">
           </div>
@@ -203,15 +387,53 @@
       }
     }
 
-    // 2. LOGICA MATEMÁTICA DOS EVS (LIMITADOR 508)
+    // --- 3. LÓGICA DE IMAGEM (API -> ID -> LOCAL FILE) ---
+    async function updateImage(slotId, pokeName) {
+      const imgElement = document.getElementById(`img-${slotId}`);
+      
+      if (!pokeName || pokeName.length < 2) {
+        imgElement.src = IMG_ERROR;
+        return;
+      }
+
+      const apiName = formatToApiName(pokeName);
+
+      // Verifica cache
+      if (pokeCache[apiName]) {
+        imgElement.src = `${IMG_PATH}${pokeCache[apiName]}.png`;
+        return;
+      }
+
+      try {
+        // Busca ID na PokéAPI
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${apiName}`);
+        
+        if (!response.ok) throw new Error('Pokemon não encontrado');
+        
+        const data = await response.json();
+        const dexId = data.id; // Ex: 445
+        
+        // Salva cache
+        pokeCache[apiName] = dexId;
+
+        // Carrega imagem local pelo ID
+        imgElement.src = `${IMG_PATH}${dexId}.png`;
+
+      } catch (error) {
+        console.error(error);
+        imgElement.src = IMG_ERROR;
+      }
+    }
+
+    // --- 4. LÓGICA DE EVs (CALCULO DE LIMITES) ---
     function updateEV(slotId, statName, newValue) {
       let val = parseInt(newValue) || 0;
       
-      // Limite individual de 252 (Regra do jogo)
+      // Limite individual (252)
       if (val > 252) val = 252;
       if (val < 0) val = 0;
 
-      // Calcular quanto já foi gasto nos OUTROS atributos
+      // Soma atual dos outros stats
       let currentTotal = 0;
       STATS.forEach(s => {
         if (s !== statName) {
@@ -220,51 +442,48 @@
         }
       });
 
-      // Verificar se o novo valor estoura o limite de 508
+      // Limite total (508)
       let available = MAX_EVS - currentTotal;
-      
-      if (val > available) {
-        val = available; // Trava no máximo possível
-      }
+      if (val > available) val = available;
 
-      // Atualiza os inputs visuais (Slider e Numero)
+      // Atualiza inputs
       document.getElementById(`range-${slotId}-${statName}`).value = val;
       document.getElementById(`num-${slotId}-${statName}`).value = val;
 
-      // Atualiza o texto de "Restam: X"
+      // Atualiza texto de restantes
       let newTotal = currentTotal + val;
       let remaining = MAX_EVS - newTotal;
       let remainLabel = document.getElementById(`remain-${slotId}`);
       remainLabel.innerText = `Restam: ${remaining}`;
       
-      // Muda cor se chegar a 0
       if(remaining === 0) {
-        remainLabel.style.color = "#d1a720"; // Dourado quando completo
+        remainLabel.style.color = "#d1a720";
         remainLabel.innerText = "EVs Completos!";
       } else {
-        remainLabel.style.color = "#4dff88"; // Verde enquanto tem sobra
+        remainLabel.style.color = "#4dff88";
       }
     }
 
-    // 3. GERAR TEXTO FINAL
+    // --- 5. GERAR TEXTO EXPORTÁVEL ---
     function gerarTextoShowdown() {
       let fullText = "";
+      let hasData = false;
 
       for (let i = 1; i <= TOTAL_SLOTS; i++) {
         let slot = document.getElementById(`poke-${i}`);
-        
         let name = slot.querySelector('.p-name').value.trim();
-        if (!name) continue; // Pula slot vazio
+        
+        if (!name) continue;
+        hasData = true;
 
         let item = slot.querySelector('.p-item').value.trim();
         let ability = slot.querySelector('.p-ability').value.trim();
         let moves = slot.querySelectorAll('.p-move');
 
-        // Cabeçalho: Pokemon @ Item
+        // Formato Padrão Showdown
         fullText += `${name}${item ? ' @ ' + item : ''}\n`;
         if (ability) fullText += `Ability: ${ability}\n`;
 
-        // EVs
         let evList = [];
         STATS.forEach(s => {
           let val = document.getElementById(`num-${i}-${s}`).value;
@@ -272,20 +491,24 @@
         });
         if (evList.length > 0) fullText += `EVs: ${evList.join(' / ')}\n`;
 
-        // Moves
         moves.forEach(m => {
           if (m.value.trim()) fullText += `- ${m.value.trim()}\n`;
         });
 
-        fullText += "\n"; // Espaço entre pokemons
+        fullText += "\n"; 
+      }
+
+      if (!hasData) {
+        alert("Preencha pelo menos um Pokémon antes de gerar o texto.");
+        return;
       }
 
       document.getElementById('finalOutput').value = fullText;
       document.getElementById('exportSection').scrollIntoView({behavior: "smooth"});
     }
 
-    // Inicializa ao carregar
-    renderSlots();
+    // Inicializa
+    window.onload = renderSlots;
 
   </script>
 </body>
