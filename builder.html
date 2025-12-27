@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Humble Builder - AutoSave</title>
+  <title>Humble Builder - Manual Save</title>
   
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
@@ -62,22 +62,28 @@
     }
     .toolbar-title h2 { margin: 0; color: #fff; font-size: 1.5rem; }
     .toolbar-title small { color: #aaa; }
-    .toolbar-controls { display: flex; gap: 15px; align-items: center; height: 42px; }
+    .toolbar-controls { display: flex; gap: 10px; align-items: center; height: 42px; }
 
     .tier-select {
         background: #111; color: var(--cor-dourado); border: 1px solid var(--cor-dourado);
         padding: 0 15px; border-radius: 5px; font-weight: bold; cursor: pointer;
-        font-size: 0.95rem; min-width: 200px; height: 100%; box-sizing: border-box;
+        font-size: 0.95rem; min-width: 180px; height: 100%; box-sizing: border-box;
     }
     .tier-select:focus { outline: none; box-shadow: 0 0 8px rgba(209, 167, 32, 0.3); }
     .tier-select option { background: #222; color: #fff; }
 
     .btn-action {
-      background: var(--cor-dourado); border: none; padding: 0 25px; font-weight: bold;
+      background: var(--cor-dourado); border: none; padding: 0 20px; font-weight: bold;
       cursor: pointer; border-radius: 4px; color: #111; font-size: 0.95rem; transition: 0.2s;
       height: 100%; display: flex; align-items: center; gap: 8px;
     }
     .btn-action:hover { background: #fff; box-shadow: 0 0 15px rgba(209, 167, 32, 0.5); }
+
+    /* BOTÃO SALVAR (Verde) */
+    .btn-save {
+        background: #28a745; color: #fff;
+    }
+    .btn-save:hover { background: #218838; color: #fff; box-shadow: 0 0 10px #28a745; }
 
     /* --- ABAS --- */
     .tabs-wrapper { display: flex; align-items: flex-end; gap: 5px; margin-bottom: 0; padding-left: 5px; }
@@ -160,12 +166,12 @@
     .col-small { width: 80px; flex: none; }
     .col-mini { width: 60px; flex: none; }
     
-    /* Input Wrapper + Clear X */
-    .input-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
-    .input-with-icon { display: flex; align-items: center; gap: 8px; width:100%; }
+    .input-with-icon { display: flex; align-items: center; gap: 8px; }
     .item-icon-img { width: 30px; height: 30px; object-fit: contain; opacity: 0.3; transition: opacity 0.3s; }
     .item-icon-img.active { opacity: 1; }
 
+    /* Clear X */
+    .input-wrapper { position: relative; width: 100%; display: flex; align-items: center; }
     .clear-x {
         position: absolute; right: 8px; top: 50%; transform: translateY(-50%);
         color: #666; cursor: pointer; font-size: 1.1rem; z-index: 5;
@@ -243,12 +249,12 @@
         <span class="modal-close" onclick="closeModal()">×</span>
       </div>
       <p style="color:#aaa; font-size:0.9rem; margin-top:-10px; margin-bottom:15px;">
-        Copie o texto para salvar, ou cole um time do Showdown para carregar.
+        Copie o texto abaixo para salvar seu time, ou cole um time do Showdown aqui para carregar.
       </p>
       <textarea id="ioText" class="modal-textarea" spellcheck="false"></textarea>
       <div class="modal-buttons">
         <button class="btn-secondary" onclick="copyToClipboard()">Copiar Texto</button>
-        <button class="btn-primary" onclick="processImport()">Salvar (Importar)</button>
+        <button class="btn-primary" onclick="processImport()">Carregar (Importar)</button>
       </div>
     </div>
   </div>
@@ -273,7 +279,7 @@
         <small>Selecione a Tier e monte sua estratégia</small>
       </div>
       <div class="toolbar-controls">
-        <select id="teamTier" class="tier-select" onchange="saveTeam()">
+        <select id="teamTier" class="tier-select" onchange="carregarDados(this.value)">
             <option value="" disabled selected>Selecionar Tier</option>
             <option value="AG">AG</option>
             <option value="LC">LC</option>
@@ -292,7 +298,10 @@
             <option value="Ubers_UU">Ubers UU</option>
             <option value="ZU">ZU</option>
         </select>
-        <button class="btn-action" onclick="openIOModal()">💾 Import / Export</button>
+        
+        <button class="btn-action btn-save" onclick="saveTeamManual()">💾 Salvar</button>
+        
+        <button class="btn-action" onclick="openIOModal()">📥 Texto</button>
       </div>
     </div>
 
@@ -319,17 +328,7 @@
     const MAX_EVS = 508;
     const MAX_SLOTS = 6;
     const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
-    const NATURES_INFO = {
-        "Adamant": "+Atk, -SpA", "Bashful": "Neutral", "Bold": "+Def, -Atk",
-        "Brave": "+Atk, -Spe", "Calm": "+SpD, -Atk", "Careful": "+SpD, -SpA",
-        "Docile": "Neutral", "Gentle": "+SpD, -Def", "Hardy": "Neutral",
-        "Hasty": "+Spe, -Def", "Impish": "+Def, -SpA", "Jolly": "+Spe, -SpA",
-        "Lax": "+Def, -SpD", "Lonely": "+Atk, -Def", "Mild": "+SpA, -Def",
-        "Modest": "+SpA, -Atk", "Naive": "+Spe, -SpD", "Naughty": "+Atk, -SpD",
-        "Quiet": "+SpA, -Spe", "Quirky": "Neutral", "Rash": "+SpA, -SpD",
-        "Relaxed": "+Def, -Spe", "Sassy": "+SpD, -Spe", "Serious": "Neutral",
-        "Timid": "+Spe, -Atk"
-    };
+    const NATURES_INFO = { "Adamant": "+Atk, -SpA", "Bashful": "Neutral", "Bold": "+Def, -Atk", "Brave": "+Atk, -Spe", "Calm": "+SpD, -Atk", "Careful": "+SpD, -SpA", "Docile": "Neutral", "Gentle": "+SpD, -Def", "Hardy": "Neutral", "Hasty": "+Spe, -Def", "Impish": "+Def, -SpA", "Jolly": "+Spe, -SpA", "Lax": "+Def, -SpD", "Lonely": "+Atk, -Def", "Mild": "+SpA, -Def", "Modest": "+SpA, -Atk", "Naive": "+Spe, -SpD", "Naughty": "+Atk, -SpD", "Quiet": "+SpA, -Spe", "Quirky": "Neutral", "Rash": "+SpA, -SpD", "Relaxed": "+Def, -Spe", "Sassy": "+SpD, -Spe", "Serious": "Neutral", "Timid": "+Spe, -Atk" };
 
     const IMG_PATH = "img/official-artwork/"; 
     const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
@@ -344,16 +343,22 @@
     function formatItemToShowdown(name) { return name.toLowerCase().replace(/[^a-z0-9]/g, ''); }
     function formatText(str) { if (!str) return ''; return str.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '); }
 
-    // --- CARREGAMENTO INICIAL ---
+    // --- CARREGAMENTO ---
     window.onload = async function() { 
-        await initItens(); // Carrega itens antes
-        loadFromStorage(); // Carrega time salvo
+        await initItens(); 
+        loadFromStorage(); // Carrega ao iniciar
     };
+
+    function populateStaticDatalists() {
+        const abilities = ["Levitate", "Intimidate", "Overgrow", "Blaze", "Torrent", "Pressure", "Static", "Sturdy"];
+        const moves = ["Earthquake", "Thunderbolt", "Ice Beam", "Protect", "Toxic", "Surf", "Psychic", "Flamethrower"];
+        const listAbil = document.getElementById('list-abilities'); // removido do html base, mas ok
+    }
 
     async function initItens() {
         try {
             const response = await fetch('builder/itens.json');
-            if (response.ok) { todosItens = await response.json(); }
+            if (response.ok) { todosItens = await response.json(); atualizarListaItens(null); }
         } catch (e) { console.log("Erro itens:", e); }
     }
 
@@ -370,15 +375,10 @@
                     if (data[nome].id) pokemonIdMap[nome] = data[nome].id;
                 });
             }
-        } catch (e) { console.log("Tier não carregada (pode não existir)."); }
+        } catch (e) { console.log("Tier não carregada."); }
     }
 
-    function carregarDados(tier) { 
-        carregarPokemonDaTier(tier); 
-        atualizarListaItens(tier); 
-        saveTeam(); // Salva a escolha da Tier
-    }
-
+    function carregarDados(tier) { carregarPokemonDaTier(tier); atualizarListaItens(tier); }
     function atualizarListaItens(tier) {
         const dl = document.getElementById('list-items'); dl.innerHTML = ""; 
         todosItens.forEach(i => {
@@ -387,8 +387,8 @@
         });
     }
 
-    // --- LOCAL STORAGE (AUTO SAVE) ---
-    function saveTeam() {
+    // --- SAVE / LOAD MANUAL ---
+    function saveTeamManual() {
         const teamData = {
             tier: document.getElementById('teamTier').value,
             slots: []
@@ -396,21 +396,16 @@
 
         document.querySelectorAll('.poke-editor').forEach(ed => {
             const id = ed.id.split('-')[1];
-            const name = ed.querySelector('.p-name').value;
-            // Só salva se tiver algo (ou se for o único slot vazio)
-            // Mas vamos salvar tudo para manter o estado exato
             
             const slotData = {
-                name: name,
+                name: ed.querySelector('.p-name').value,
                 item: ed.querySelector('.p-item').value,
                 ability: ed.querySelector('.p-ability').value,
                 nature: ed.querySelector('.p-nature').value,
                 level: ed.querySelector('.p-level').value,
                 gender: ed.querySelector('.p-gender').value,
                 shiny: ed.querySelector('.p-shiny').value,
-                evs: {},
-                ivs: {},
-                moves: []
+                evs: {}, ivs: {}, moves: []
             };
 
             STATS.forEach(s => {
@@ -419,30 +414,24 @@
             });
 
             ed.querySelectorAll('.p-move').forEach(m => slotData.moves.push(m.value));
-            
             teamData.slots.push(slotData);
         });
 
-        localStorage.setItem('humbleTeam', JSON.stringify(teamData));
+        localStorage.setItem('humbleTeamManual', JSON.stringify(teamData));
+        alert("Time salvo no navegador com sucesso!");
     }
 
     function loadFromStorage() {
-        const saved = localStorage.getItem('humbleTeam');
-        if (!saved) {
-            addNewSlot(); // Nada salvo, cria um novo
-            return;
-        }
+        const saved = localStorage.getItem('humbleTeamManual');
+        if (!saved) { addNewSlot(); return; }
 
         try {
             const data = JSON.parse(saved);
-            
-            // 1. Carrega Tier
             if (data.tier) {
                 document.getElementById('teamTier').value = data.tier;
                 carregarDados(data.tier);
             }
 
-            // 2. Recria Slots
             if (data.slots && data.slots.length > 0) {
                 data.slots.forEach(slotData => {
                     const id = addNewSlot();
@@ -456,35 +445,24 @@
                     ed.querySelector('.p-gender').value = slotData.gender;
                     ed.querySelector('.p-shiny').value = slotData.shiny;
 
-                    // Moves
                     const moveInputs = ed.querySelectorAll('.p-move');
                     slotData.moves.forEach((m, idx) => { if(moveInputs[idx]) moveInputs[idx].value = m; });
 
-                    // EVs & IVs
                     STATS.forEach(s => {
-                        updateEV(id, s, slotData.evs[s] || 0); // Dispara atualização visual
+                        updateEV(id, s, slotData.evs[s] || 0); 
                         ed.querySelector(`.p-iv-${s.toLowerCase()}`).value = slotData.ivs[s] || 31;
                     });
 
-                    // Dispara atualizações visuais finais
                     updateImage(id, ed.querySelector('.p-name'));
                     updateItemIcon(id, ed.querySelector('.p-item'));
-                    setTimeout(() => recalcStats(id), 200); // Pequeno delay para garantir que API respondeu
+                    setTimeout(() => recalcStats(id), 500); 
                 });
-                
-                // Foca no primeiro
                 switchTab(1);
-            } else {
-                addNewSlot();
-            }
-
-        } catch (e) {
-            console.log("Erro ao carregar save:", e);
-            addNewSlot();
-        }
+            } else { addNewSlot(); }
+        } catch (e) { console.log(e); addNewSlot(); }
     }
 
-    // --- SLOTS MANAGEMENT ---
+    // --- SLOTS ---
     function addNewSlot() {
         if (document.querySelectorAll('.tab-slot').length >= MAX_SLOTS) return;
         slotCounter++; const id = slotCounter;
@@ -508,7 +486,6 @@
 
         switchTab(id);
         updateAddBtnVisibility();
-        saveTeam(); // Salva ao criar
         return id;
     }
 
@@ -518,21 +495,16 @@
         const editor = document.getElementById(`editor-${id}`);
         const wasActive = tab.classList.contains('active');
         
-        tab.remove();
-        editor.remove();
-        delete slotBaseStats[id];
+        tab.remove(); editor.remove(); delete slotBaseStats[id];
 
         if (wasActive) {
             const remainingTabs = document.querySelectorAll('.tab-slot');
             if (remainingTabs.length > 0) {
                 const lastId = remainingTabs[remainingTabs.length - 1].id.split('-')[1];
                 switchTab(lastId);
-            } else {
-                addNewSlot();
-            }
+            } else { addNewSlot(); }
         }
         updateAddBtnVisibility();
-        saveTeam(); // Salva ao remover
     }
 
     function updateAddBtnVisibility() {
@@ -550,20 +522,18 @@
         if(ed) ed.classList.add('active');
     }
 
-    // --- FUNÇÕES DE CLEAR (X) ---
+    // --- CLEAR X ---
     function clearItem(id) {
         const editor = document.getElementById(`editor-${id}`);
         const input = editor.querySelector('.p-item');
         input.value = "";
         updateItemIcon(id, input);
-        saveTeam();
     }
 
     function clearInput(btn) {
         const wrapper = btn.closest('.input-wrapper');
         const input = wrapper.querySelector('input');
         input.value = "";
-        saveTeam();
     }
 
     function generateEditorHTML(id) {
@@ -576,7 +546,6 @@
         return `
           <div class="header-row"><h4>Pokémon Set</h4></div>
           <div class="editor-layout">
-            
             <div class="left-panel">
                 <div class="visual-large-box"><img src="${IMG_ERROR}" id="img-${id}" class="poke-sprite-large" onerror="this.src='${IMG_ERROR}'"></div>
                 <div class="base-stats-panel" id="stats-panel-${id}">
@@ -594,12 +563,11 @@
 
             <div class="inputs-area">
                 <div class="row">
-                    <div class="col"><label>Pokémon</label><input type="text" class="p-name" list="list-pokemon" placeholder="Pokémon" onchange="updatePokemon('${id}', this); saveTeam();"></div>
-                    
+                    <div class="col"><label>Pokémon</label><input type="text" class="p-name" list="list-pokemon" placeholder="Pokémon" onchange="updatePokemon('${id}', this)"></div>
                     <div class="col"><label>Item</label>
                         <div class="input-with-icon">
                             <div class="input-wrapper">
-                                <input type="text" class="p-item" list="list-items" placeholder="Item" oninput="updateItemIcon('${id}', this); saveTeam();">
+                                <input type="text" class="p-item" list="list-items" placeholder="Item" oninput="updateItemIcon('${id}', this)">
                                 <span class="clear-x" onclick="clearItem('${id}')">×</span>
                             </div>
                             <img id="item-icon-${id}" class="item-icon-img" src="">
@@ -608,14 +576,14 @@
                 </div>
                 <div class="row">
                     <datalist id="abilities-${id}"></datalist>
-                    <div class="col"><label>Ability</label><input type="text" class="p-ability" list="abilities-${id}" placeholder="Ability" onchange="saveTeam()"></div>
-                    <div class="col"><label>Nature</label><select class="p-nature" onchange="recalcStats('${id}'); saveTeam();"><option value="" disabled selected>Nature</option>${natureOptions}</select></div>
-                    <div class="col-small"><label>Level</label><input type="number" class="p-level" value="100" min="1" max="100" onchange="recalcStats('${id}'); saveTeam();"></div>
-                    <div class="col-mini"><label>Gender</label><select class="p-gender" onchange="saveTeam()"><option value="-">-</option><option value="M">M</option><option value="F">F</option></select></div>
-                    <div class="col-mini"><label>Shiny</label><select class="p-shiny" onchange="saveTeam()"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+                    <div class="col"><label>Ability</label><input type="text" class="p-ability" list="abilities-${id}" placeholder="Ability"></div>
+                    <div class="col"><label>Nature</label><select class="p-nature" onchange="recalcStats('${id}')"><option value="" disabled selected>Nature</option>${natureOptions}</select></div>
+                    <div class="col-small"><label>Level</label><input type="number" class="p-level" value="100" min="1" max="100" onchange="recalcStats('${id}')"></div>
+                    <div class="col-mini"><label>Gender</label><select class="p-gender"><option value="-">-</option><option value="M">M</option><option value="F">F</option></select></div>
+                    <div class="col-mini"><label>Shiny</label><select class="p-shiny"><option value="No">No</option><option value="Yes">Yes</option></select></div>
                 </div>
                 <div class="iv-section"><div class="iv-grid">
-                    ${STATS.map(s => `<div class="iv-box"><label>${s}</label><input type="text" class="p-iv-${s.toLowerCase()}" value="31" onchange="recalcStats('${id}'); saveTeam();"></div>`).join('')}
+                    ${STATS.map(s => `<div class="iv-box"><label>${s}</label><input type="text" class="p-iv-${s.toLowerCase()}" value="31" onchange="recalcStats('${id}')"></div>`).join('')}
                 </div></div>
             </div>
           </div>
@@ -627,26 +595,26 @@
           <datalist id="moves-${id}"></datalist>
           <div style="margin-top:20px;">
             <div class="input-wrapper" style="margin-bottom:8px;">
-                <input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 1" onchange="saveTeam()">
+                <input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 1">
                 <span class="clear-x" onclick="clearInput(this)">×</span>
             </div>
             <div class="input-wrapper" style="margin-bottom:8px;">
-                <input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 2" onchange="saveTeam()">
+                <input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 2">
                 <span class="clear-x" onclick="clearInput(this)">×</span>
             </div>
             <div class="input-wrapper" style="margin-bottom:8px;">
-                <input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 3" onchange="saveTeam()">
+                <input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 3">
                 <span class="clear-x" onclick="clearInput(this)">×</span>
             </div>
             <div class="input-wrapper">
-                <input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 4" onchange="saveTeam()">
+                <input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 4">
                 <span class="clear-x" onclick="clearInput(this)">×</span>
             </div>
           </div>
         `;
     }
 
-    // --- IMAGENS E DADOS ---
+    // --- IMAGENS ---
     async function updatePokemon(id, inputElement) {
         const pokeName = inputElement.value;
         const imgEditor = document.getElementById(`img-${id}`);
@@ -668,7 +636,6 @@
             const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${apiName}`);
             if (response.ok) {
                 const data = await response.json();
-                
                 slotBaseStats[id] = {
                     hp: data.stats[0].base_stat, atk: data.stats[1].base_stat, def: data.stats[2].base_stat,
                     spa: data.stats[3].base_stat, spd: data.stats[4].base_stat, spe: data.stats[5].base_stat
@@ -687,7 +654,7 @@
                     const opt = document.createElement('option'); opt.value = formatText(m.move.name); moveList.appendChild(opt);
                 });
             }
-        } catch (e) { console.log("PokeAPI Error", e); }
+        } catch (e) { console.log("PokeAPI Stats Error", e); }
     }
 
     function updateItemIcon(id, input) {
@@ -712,7 +679,6 @@
         lbl.innerText = `Restam: ${rem}`;
         lbl.style.color = rem === 0 ? "#d1a720" : "#4dff88";
         recalcStats(id);
-        saveTeam();
     }
 
     function recalcStats(id) {
@@ -758,7 +724,7 @@
         document.getElementById(`bst-${id}`).innerText = totalBST;
     }
 
-    // --- IMPORT / EXPORT ---
+    // --- MODAL ---
     function openIOModal() {
         let fullText = "";
         const tier = document.getElementById('teamTier').value;
@@ -880,7 +846,6 @@
             setTimeout(() => recalcStats(id), 500);
         });
         closeModal();
-        saveTeam();
     }
   </script>
 </body>
