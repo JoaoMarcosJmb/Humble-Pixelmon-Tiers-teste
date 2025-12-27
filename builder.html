@@ -3,37 +3,40 @@
 <head>
   <meta charset="UTF-8">
   <title>Humble Builder - Manager</title>
+  
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
   <style>
-    /* --- VARIÁVEIS & RESET --- */
+    /* --- CSS GERAL --- */
     :root { 
       --cor-dourado: #d1a720; 
-      --cor-fundo: #1a1a1a; 
-      --cor-painel: #222;
+      --cor-fundo: #111; 
+      --cor-painel: #1a1a1a;
       --cor-texto: #f5f5f5; 
       --cor-input: #2a2a2a; 
       --cor-borda: #444;
     }
+    
     * { box-sizing: border-box; }
     
     body { 
       font-family: "Segoe UI", Arial, sans-serif; 
-      background: #111; 
+      background: var(--cor-fundo); 
       margin: 0; padding: 0; 
       color: var(--cor-texto); 
       height: 100vh; 
-      overflow: hidden; /* O scroll será dentro dos painéis */
+      overflow: hidden; 
       display: flex; flex-direction: column;
     }
     
-    /* --- HEADER (FIXO NO TOPO) --- */
+    /* --- HEADER --- */
     header { 
       height: 60px; padding: 0 20px; flex-shrink: 0;
       display: flex; justify-content: space-between; align-items: center; 
       background: rgba(20, 20, 20, 0.98); border-bottom: 2px solid var(--cor-dourado); 
       z-index: 1000;
     }
+    
     header h1 { font-size: 1.4rem; color: var(--cor-dourado); display: flex; gap: 10px; margin: 0; align-items: center; }
     header h1 img { height: 35px; }
     header a { text-decoration: none; color: inherit; display:flex; align-items:center; gap:10px; }
@@ -41,14 +44,25 @@
     .menu-toggle { display: flex; flex-direction: column; width: 30px; gap: 6px; cursor: pointer; }
     .menu-toggle span { display: block; height: 3px; background: var(--cor-texto); border-radius: 4px; }
 
-    /* --- CONTAINER PRINCIPAL (SIDEBAR + MAIN) --- */
+    /* --- MENU DROPDOWN --- */
+    nav { 
+      position: absolute; top: 60px; right: 20px; background: rgba(30, 25, 20, 0.98); 
+      border: 1px solid var(--cor-dourado); border-radius: 8px; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.8); display: none; 
+      flex-direction: column; padding: 15px; gap: 12px; z-index: 1200; width: 220px; 
+    }
+    nav.active { display: flex; }
+    nav a { color: var(--cor-dourado); font-weight: 500; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; text-decoration: none; }
+
+    /* --- LAYOUT PRINCIPAL (DIVIDIDO) --- */
     .main-container {
         display: flex;
         flex-grow: 1;
-        overflow: hidden; /* Impede scroll na pagina inteira */
+        overflow: hidden;
+        width: 100%;
     }
 
-    /* --- SIDEBAR (LISTA DE TIMES) --- */
+    /* --- SIDEBAR (ESQUERDA) --- */
     .sidebar {
         width: 300px;
         background: #181818;
@@ -60,6 +74,7 @@
     .sidebar-header {
         padding: 15px; border-bottom: 1px solid #333; background: #202020;
     }
+    
     .btn-new-team {
         width: 100%; padding: 12px; background: #28a745; color: white; border: none; 
         border-radius: 4px; font-weight: bold; cursor: pointer; transition:0.2s; font-size: 1rem;
@@ -69,15 +84,15 @@
     .team-list {
         flex-grow: 1; overflow-y: auto; padding: 10px;
     }
-    /* Scrollbar estilizada */
+    /* Scrollbar */
     .team-list::-webkit-scrollbar { width: 6px; }
+    .team-list::-webkit-scrollbar-track { background: #222; }
     .team-list::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
 
-    /* CARD DO TIME (SIDEBAR) */
+    /* CARTÃO DO TIME NA LISTA */
     .sidebar-card {
         background: #2a2a2a; border: 1px solid #444; border-radius: 6px;
-        padding: 10px; margin-bottom: 8px; cursor: pointer; position: relative;
-        transition: 0.2s;
+        padding: 10px; margin-bottom: 8px; cursor: pointer; position: relative; transition: 0.2s;
     }
     .sidebar-card:hover { background: #333; border-color: #666; }
     .sidebar-card.active { border-color: var(--cor-dourado); background: #3a3320; }
@@ -93,7 +108,7 @@
     }
     .btn-delete-card:hover { color: #ff4d4d; }
 
-    /* --- ÁREA PRINCIPAL (BUILDER) --- */
+    /* --- ÁREA DO BUILDER (DIREITA) --- */
     .builder-area {
         flex-grow: 1;
         background: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,30,20,0.95)), 
@@ -101,39 +116,40 @@
         background-size: cover;
         overflow-y: auto;
         padding: 20px;
+        display: flex; flex-direction: column;
     }
-    .builder-content { max-width: 1100px; margin: 0 auto; }
+    
+    .builder-wrapper { width: 100%; max-width: 1200px; margin: 0 auto; }
 
-    /* TOOLBAR */
+    /* BARRA DE FERRAMENTAS */
     .toolbar {
       display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
-      background: rgba(30,30,30,0.9); padding: 12px 20px; border-radius: 8px; border: 1px solid var(--cor-borda);
+      background: rgba(30,30,30,0.95); padding: 12px 20px; border-radius: 8px; border: 1px solid var(--cor-borda);
       flex-wrap: wrap; gap: 15px;
     }
-    .toolbar-left { flex-grow: 1; display: flex; flex-direction: column; gap: 2px; }
+    .toolbar-left { flex-grow: 1; }
     .toolbar-controls { display: flex; gap: 10px; align-items: center; }
 
     #teamNameInput { 
         background: transparent; border: none; border-bottom: 1px solid #555; 
-        color: #fff; font-size: 1.3rem; padding: 2px; width: 100%; max-width: 400px; 
+        color: #fff; font-size: 1.3rem; padding: 2px; width: 100%; 
     }
     #teamNameInput:focus { border-color: var(--cor-dourado); outline: none; }
 
     .tier-select { background: #111; color: var(--cor-dourado); border: 1px solid #555; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; min-width: 150px; }
     
-    .btn-action { background: var(--cor-dourado); border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 4px; color: #111; transition: 0.2s; display:flex; align-items:center; gap:5px; }
+    .btn-action { background: var(--cor-dourado); border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 4px; color: #111; display:flex; align-items:center; gap:5px; transition: 0.2s; }
     .btn-action:hover { background: #fff; }
     .btn-save { background: #28a745; color: #fff; } .btn-save:hover { background: #34ce57; color:#fff; }
     .btn-import { background: #444; color: #fff; border:1px solid #666; } .btn-import:hover { background: #555; color:#fff;}
 
-    /* ABAS (TABS) */
+    /* ABAS (POKEMON SLOTS) */
     .tabs-wrapper { display: flex; align-items: flex-end; gap: 5px; margin-bottom: 0; padding-left: 5px; }
     .tab-slot {
         background: #222; border: 1px solid #444; border-bottom: none; border-radius: 8px 8px 0 0;
-        width: 65px; height: 45px; cursor: pointer; display: flex; justify-content: center; align-items: center;
+        width: 60px; height: 45px; cursor: pointer; display: flex; justify-content: center; align-items: center;
         opacity: 0.6; position: relative; transition: 0.2s;
     }
-    .tab-slot:hover { opacity: 0.9; background: #2a2a2a; }
     .tab-slot.active { opacity: 1; background: rgba(30, 30, 30, 0.95); border-color: var(--cor-dourado); border-bottom: 1px solid rgba(30,30,30,0.95); height: 50px; z-index: 10; margin-bottom: -1px; }
     .tab-icon { width: 35px; height: 35px; object-fit: contain; pointer-events: none; }
     .tab-close { position: absolute; top: 0; right: 3px; font-size: 14px; color: #888; display: none; }
@@ -145,13 +161,13 @@
     /* EDITOR CONTAINER */
     .editor-container-wrapper {
         background: rgba(30, 30, 30, 0.95); border: 1px solid var(--cor-dourado); border-radius: 0 8px 8px 8px; 
-        padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); min-height: 550px;
+        padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); min-height: 550px; width: 100%;
     }
-    .poke-editor { display: none; animation: fadeIn 0.3s ease; }
-    .poke-editor.active { display: block; }
+    .poke-editor { display: none; width: 100%; }
+    .poke-editor.active { display: block; animation: fadeIn 0.3s; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* LAYOUT INTERNO */
+    /* LAYOUT INTERNO DO EDITOR */
     .header-row { margin-bottom: 20px; border-bottom: 1px solid #444; padding-bottom: 10px; }
     .header-row h4 { margin: 0; color: var(--cor-dourado); font-size: 1.2rem; }
 
@@ -163,10 +179,10 @@
     }
     .poke-sprite-large { width: 130px; height: 130px; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5)); }
 
-    /* STATS */
+    /* STATS BARS */
     .base-stats-panel { 
         background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; border: 1px solid #444; 
-        font-size: 0.85rem; flex-grow: 1; min-width: 230px; 
+        font-size: 0.85rem; flex-grow: 1; min-width: 250px; 
     }
     .stat-bar-row { display: flex; align-items: center; margin-bottom: 5px; gap: 8px; }
     .stat-name { width: 30px; font-weight: bold; color: #888; }
@@ -177,7 +193,8 @@
     .bar-hp { background: #FF5959; } .bar-atk { background: #F5AC78; } .bar-def { background: #FAE078; }
     .bar-spa { background: #9DB7F5; } .bar-spd { background: #A7DB8D; } .bar-spe { background: #FA92B2; }
 
-    .inputs-area { flex-grow: 1; min-width: 320px; display: flex; flex-direction: column; gap: 12px; }
+    /* INPUTS */
+    .inputs-area { flex-grow: 1; min-width: 400px; display: flex; flex-direction: column; gap: 12px; }
     .row { display: flex; gap: 12px; } .col { flex: 1; } .col-small { width: 80px; flex:none; } .col-mini { width: 60px; flex:none; }
 
     .input-wrapper { position: relative; width: 100%; }
@@ -185,22 +202,22 @@
     .clear-x:hover { color: #ff4d4d; }
     .input-wrapper input:not(:placeholder-shown) + .clear-x { display: block; }
 
-    label { display: block; font-size: 0.75rem; color: #888; margin-bottom: 3px; }
-    input[type="text"], input[type="number"], select {
-        background: #252525; border: 1px solid #444; color: #fff;
-        padding: 8px 25px 8px 10px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 0.95rem; height: 38px;
-    }
-    input:focus, select:focus { border-color: var(--cor-dourado); outline: none; background: #303030; }
-
     .input-with-icon { display: flex; align-items: center; gap: 8px; width: 100%; }
     .item-icon-img { width: 32px; height: 32px; object-fit: contain; opacity: 0.3; transition: 0.3s; }
     .item-icon-img.active { opacity: 1; }
+
+    label { display: block; font-size: 0.75rem; color: #888; margin-bottom: 3px; }
+    input[type="text"], input[type="number"], select {
+        background: #252525; border: 1px solid #444; color: #fff;
+        padding: 8px 25px 8px 10px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 0.9rem; height: 34px;
+    }
+    input:focus, select:focus { border-color: var(--cor-dourado); outline: none; background: #303030; }
 
     .iv-section { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; border: 1px solid #444; }
     .iv-grid { display: flex; gap: 10px; justify-content: space-between; }
     .iv-box { text-align: center; width: 100%; }
     .iv-box label { font-size: 0.7rem; color: #666; }
-    .iv-box input { text-align: center; background: #151515; padding: 5px; }
+    .iv-box input { text-align: center; font-size: 0.9rem; background: #1a1a1a; padding: 5px; }
 
     .stats-box { margin-top: 15px; }
     .ev-header { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; color: #aaa; }
@@ -229,7 +246,7 @@
   <div class="modal-overlay" id="ioModal">
     <div class="modal-content">
       <h3 style="margin-top:0; color:var(--cor-dourado)">Importar / Exportar (Texto)</h3>
-      <p style="color:#aaa; font-size:0.9rem;">Copie para salvar ou cole um time do Showdown para importar.</p>
+      <p style="color:#aaa; font-size:0.9rem;">Copie o texto abaixo para salvar seu time, ou cole um time do Showdown aqui para carregar.</p>
       <textarea id="ioText" class="modal-textarea" spellcheck="false"></textarea>
       <div class="modal-buttons">
         <button class="btn-action" style="background:#444;" onclick="document.getElementById('ioModal').style.display='none'">Fechar</button>
@@ -241,8 +258,16 @@
 
   <header>
     <h1><a href="feed.html"><img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder</a></h1>
-    <div class="menu-toggle"><span></span><span></span><span></span></div>
+    <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
   </header>
+
+  <nav id="dropdownMenu">
+    <a href="feed.html">🏠 Início (Feed)</a>
+    <a href="https://www.humblepixelmon.com.br">🌐 Site Oficial</a>
+    <a href="#">🗡️ Tiers 1.12</a>
+    <a href="#">🛡️ Tiers 1.16</a>
+    <a href="#">📝 Notas de Atualização</a>
+  </nav>
 
   <div class="main-container">
     
@@ -255,7 +280,7 @@
     </aside>
 
     <main class="builder-area">
-        <div class="builder-content">
+        <div class="builder-wrapper">
             <div class="toolbar">
                 <div class="toolbar-left">
                     <input type="text" id="teamNameInput" placeholder="Nome do Time" onchange="saveCurrentTeamToStorage()">
@@ -263,12 +288,22 @@
                 <div class="toolbar-controls">
                     <select id="teamTier" class="tier-select" onchange="carregarDados(this.value)">
                         <option value="" disabled selected>Selecionar Tier</option>
-                        <option value="AG">AG</option><option value="LC">LC</option><option value="Monotype">Monotype</option>
-                        <option value="NU">NU</option><option value="National_Dex">National Dex</option>
-                        <option value="National_Dex_Monotype">NatDex Monotype</option><option value="National_Dex_RU">NatDex RU</option>
-                        <option value="National_Dex_UU">NatDex UU</option><option value="National_Dex_Ubers">NatDex Ubers</option>
-                        <option value="OU">OU</option><option value="PU">PU</option><option value="RU">RU</option>
-                        <option value="UU">UU</option><option value="Uber">Uber</option><option value="Ubers_UU">Ubers UU</option><option value="ZU">ZU</option>
+                        <option value="AG">AG</option>
+                        <option value="LC">LC</option>
+                        <option value="Monotype">Monotype</option>
+                        <option value="NU">NU</option>
+                        <option value="National_Dex">National Dex</option>
+                        <option value="National_Dex_Monotype">NatDex Monotype</option>
+                        <option value="National_Dex_RU">NatDex RU</option>
+                        <option value="National_Dex_UU">NatDex UU</option>
+                        <option value="National_Dex_Ubers">NatDex Ubers</option>
+                        <option value="OU">OU</option>
+                        <option value="PU">PU</option>
+                        <option value="RU">RU</option>
+                        <option value="UU">UU</option>
+                        <option value="Uber">Uber</option>
+                        <option value="Ubers_UU">Ubers UU</option>
+                        <option value="ZU">ZU</option>
                     </select>
                     <button class="btn-action btn-import" onclick="openIOModal()">📥 Texto</button>
                     <button class="btn-action btn-save" onclick="saveCurrentTeamToStorage()">💾 Salvar</button>
@@ -286,40 +321,45 @@
   </div>
 
   <script>
-    // --- DADOS E CONSTANTES ---
+    // --- GERAIS ---
+    const menuBtn = document.getElementById("menuBtn");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    menuBtn.addEventListener("click", () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); });
+    
+    document.addEventListener("click", (e) => {
+      if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+        menuBtn.classList.remove("active"); dropdownMenu.classList.remove("active");
+      }
+    });
+
     const MAX_EVS = 508; const MAX_SLOTS = 6;
     const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
     const NATURES_INFO = { "Adamant": "+Atk, -SpA", "Bashful": "Neutral", "Bold": "+Def, -Atk", "Brave": "+Atk, -Spe", "Calm": "+SpD, -Atk", "Careful": "+SpD, -SpA", "Docile": "Neutral", "Gentle": "+SpD, -Def", "Hardy": "Neutral", "Hasty": "+Spe, -Def", "Impish": "+Def, -SpA", "Jolly": "+Spe, -SpA", "Lax": "+Def, -SpD", "Lonely": "+Atk, -Def", "Mild": "+SpA, -Def", "Modest": "+SpA, -Atk", "Naive": "+Spe, -SpD", "Naughty": "+Atk, -SpD", "Quiet": "+SpA, -Spe", "Quirky": "Neutral", "Rash": "+SpA, -SpD", "Relaxed": "+Def, -Spe", "Sassy": "+SpD, -Spe", "Serious": "Neutral", "Timid": "+Spe, -Atk" };
-    const IMG_PATH = "img/official-artwork/"; const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
+    const IMG_PATH = "img/official-artwork/"; 
+    const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
     const ITEM_ICON_BASE = "https://play.pokemonshowdown.com/sprites/itemicons/";
 
     let pokemonIdMap = {}; let todosItens = [];
     let slotCounter = 0; let slotBaseStats = {}; 
     let allTeams = []; let currentTeamIndex = null;
 
-    // Helpers
     function formatToApiName(name) { return name.trim().toLowerCase().replace(/ /g, '-').replace(/\./g, '').replace(/'/g, '').replace(/:/g, '').replace(/♀/g, '-f').replace(/♂/g, '-m'); }
     function formatItemToShowdown(name) { return name.toLowerCase().replace(/[^a-z0-9]/g, ''); }
     function formatText(str) { if (!str) return ''; return str.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '); }
 
-    // --- INICIALIZAÇÃO ---
+    // --- INIT ---
     window.onload = async function() { 
         await initItens(); 
-        loadAllTeams(); // Carrega sidebar
-        
-        // Se tiver times, carrega o primeiro. Se não, cria um novo em branco.
-        if (allTeams.length > 0) {
-            editTeam(0);
-        } else {
-            createNewTeam();
-        }
+        loadAllTeams(); 
+        if(allTeams.length > 0) editTeam(0); 
+        else createNewTeam();
     };
 
     async function initItens() {
         try { const r = await fetch('builder/itens.json'); if (r.ok) { todosItens = await r.json(); atualizarListaItens(null); } } catch (e) {}
     }
 
-    // --- SIDEBAR (CRUD) ---
+    // --- SIDEBAR & TIMES ---
     function loadAllTeams() {
         const data = localStorage.getItem('humbleTeamsList');
         if (data) allTeams = JSON.parse(data); else allTeams = [];
@@ -336,11 +376,9 @@
             div.onclick = (e) => { if(!e.target.closest('.btn-delete-card')) editTeam(index); };
 
             let iconsHtml = '';
-            // Pega os 6 primeiros slots válidos para mostrar ícone
             team.slots.slice(0,6).forEach(s => {
                 if(s.name) {
                     const apiName = formatToApiName(s.name);
-                    // Tenta ID mapeado ou nome direto
                     let src = pokemonIdMap[s.name] ? `${IMG_PATH}${pokemonIdMap[s.name]}.png` : `${IMG_PATH}${apiName}.png`; 
                     iconsHtml += `<img src="${src}" onerror="this.src='${IMG_ERROR}'">`;
                 }
@@ -361,36 +399,44 @@
         document.getElementById('teamNameInput').value = "";
         document.getElementById('teamTier').value = "";
         resetBuilderUI();
-        addNewSlot(); // 1 slot vazio
-        renderSidebar(); // Tira seleção da sidebar
+        addNewSlot(); 
+        renderSidebar();
     }
 
-    function editTeam(index) {
+    function resetBuilderUI() {
+        document.getElementById('tabsContainer').innerHTML = "";
+        document.getElementById('editorsContainer').innerHTML = "";
+        slotCounter = 0; slotBaseStats = {};
+    }
+
+    async function editTeam(index) {
         currentTeamIndex = index;
         const team = allTeams[index];
-        renderSidebar(); // Atualiza destaque
+        renderSidebar(); 
 
         document.getElementById('teamNameInput').value = team.title || "";
         document.getElementById('teamTier').value = team.tier || "";
-        carregarDados(team.tier); // Carrega JSON da tier
+        await carregarDados(team.tier);
 
         resetBuilderUI();
 
         if (team.slots && team.slots.length > 0) {
-            team.slots.forEach(s => {
+            for (const s of team.slots) {
                 const id = addNewSlot();
                 const ed = document.getElementById(`editor-${id}`);
+                ed.querySelector('.p-name').value = s.name;
                 
-                // Preenche tudo
-                const nInp = ed.querySelector('.p-name'); nInp.value = s.name; updateImage(id, nInp);
-                const iInp = ed.querySelector('.p-item'); iInp.value = s.item; updateItemIcon(id, iInp);
+                await updatePokemon(id, ed.querySelector('.p-name')); 
                 
+                ed.querySelector('.p-item').value = s.item;
+                updateItemIcon(id, ed.querySelector('.p-item'));
+
                 ed.querySelector('.p-ability').value = s.ability;
                 ed.querySelector('.p-nature').value = s.nature;
                 ed.querySelector('.p-level').value = s.level;
                 ed.querySelector('.p-gender').value = s.gender || '-';
                 ed.querySelector('.p-shiny').value = s.shiny || 'No';
-
+                
                 STATS.forEach(stat => {
                     updateEV(id, stat, s.evs[stat] || 0);
                     ed.querySelector(`.p-iv-${stat.toLowerCase()}`).value = s.ivs[stat] || 31;
@@ -399,8 +445,8 @@
                 const movesInp = ed.querySelectorAll('.p-move');
                 s.moves.forEach((m, i) => { if(movesInp[i]) movesInp[i].value = m; });
                 
-                setTimeout(() => recalcStats(id), 300); // Garante calculo apos API
-            });
+                recalcStats(id);
+            }
             switchTab(1);
         } else {
             addNewSlot();
@@ -408,7 +454,6 @@
     }
 
     function saveCurrentTeamToStorage() {
-        // Coleta dados da tela direita
         const teamData = {
             title: document.getElementById('teamNameInput').value || "Novo Time",
             tier: document.getElementById('teamTier').value,
@@ -418,7 +463,7 @@
         document.querySelectorAll('.poke-editor').forEach(ed => {
             const id = ed.id.split('-')[1];
             const name = ed.querySelector('.p-name').value;
-            // Salva o slot mesmo se vazio para manter a posição
+            
             const slot = {
                 name: name,
                 item: ed.querySelector('.p-item').value,
@@ -445,7 +490,7 @@
         }
 
         localStorage.setItem('humbleTeamsList', JSON.stringify(allTeams));
-        renderSidebar(); // Atualiza a lista lateral
+        renderSidebar();
     }
 
     function deleteTeam(index, event) {
@@ -453,30 +498,31 @@
         if(confirm("Tem certeza que deseja deletar?")) {
             allTeams.splice(index, 1);
             localStorage.setItem('humbleTeamsList', JSON.stringify(allTeams));
-            // Se deletou o atual, cria novo
             if (currentTeamIndex === index) createNewTeam();
             else if (currentTeamIndex > index) currentTeamIndex--;
             loadAllTeams();
         }
     }
 
-    function resetBuilderUI() {
-        document.getElementById('tabsContainer').innerHTML = "";
-        document.getElementById('editorsContainer').innerHTML = "";
-        slotCounter = 0;
-        slotBaseStats = {};
-    }
-
-    // --- FUNÇÕES DE LÓGICA DO BUILDER ---
-    function carregarDados(tier) { 
+    // --- FUNÇÕES DE LÓGICA ---
+    async function carregarDados(tier) { 
         if(!tier) return;
+        const isLC = (tier === 'LC');
+        document.querySelectorAll('.p-level').forEach(input => {
+            if(isLC) { input.max = 5; if(input.value > 5 || input.value == 100) input.value = 5; } else { input.max = 100; }
+        });
+
         const dl = document.getElementById('list-pokemon'); dl.innerHTML = "";
-        fetch(`tiers_1.16/${tier}.json`).then(r => r.json()).then(d => {
-            Object.keys(d).forEach(n => {
-                const o = document.createElement('option'); o.value = n; dl.appendChild(o);
-                if(d[n].id) pokemonIdMap[n] = d[n].id;
-            });
-        }).catch(e=>{});
+        try {
+            const r = await fetch(`tiers_1.16/${tier}.json`);
+            if (r.ok) {
+                const d = await r.json();
+                Object.keys(d).forEach(n => {
+                    const o = document.createElement('option'); o.value = n; dl.appendChild(o);
+                    if(d[n].id) pokemonIdMap[n] = d[n].id;
+                });
+            }
+        } catch(e){}
         atualizarListaItens(tier);
     }
     
@@ -513,16 +559,10 @@
             if(tabs.length > 0) switchTab(tabs[tabs.length-1].id.split('-')[1]);
             else addNewSlot();
         }
-        updateAddBtnVisibility(); 
+        updateAddBtnVisibility();
+        saveCurrentTeamToStorage();
     }
-    
-    function switchTab(id){ 
-        document.querySelectorAll('.tab-slot').forEach(t=>t.classList.remove('active')); 
-        document.querySelectorAll('.poke-editor').forEach(e=>e.classList.remove('active')); 
-        document.getElementById(`tab-${id}`)?.classList.add('active'); 
-        document.getElementById(`editor-${id}`)?.classList.add('active'); 
-    }
-    
+    function switchTab(id){ document.querySelectorAll('.tab-slot').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.poke-editor').forEach(e=>e.classList.remove('active')); document.getElementById(`tab-${id}`)?.classList.add('active'); document.getElementById(`editor-${id}`)?.classList.add('active'); }
     function updateAddBtnVisibility(){ document.getElementById('addSlotBtn').classList.toggle('hidden', document.querySelectorAll('.tab-slot').length >= MAX_SLOTS); }
 
     function generateEditorHTML(id) {
@@ -538,24 +578,27 @@
             </div>
             <div class="inputs-area">
                 <div class="row">
-                    <div class="col"><label>Pokémon</label><input type="text" class="p-name" list="list-pokemon" onchange="updatePokemon('${id}',this)"></div>
-                    <div class="col"><label>Item</label><div class="input-wrapper"><input type="text" class="p-item" list="list-items" oninput="updateItemIcon('${id}',this)"><span class="clear-x" onclick="clearItem('${id}')">×</span></div><img id="item-icon-${id}" class="item-icon-img" style="position:absolute; right:35px; top:32px;"></div>
+                    <div class="col"><label>Pokémon</label><input type="text" class="p-name" list="list-pokemon" onchange="updatePokemon('${id}',this);saveCurrentTeamToStorage()"></div>
+                    <div class="col"><label>Item</label><div class="input-wrapper"><input type="text" class="p-item" list="list-items" oninput="updateItemIcon('${id}',this);saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearItem('${id}')">×</span></div><img id="item-icon-${id}" class="item-icon-img" style="position:absolute; right:35px; top:32px;"></div>
                 </div>
                 <div class="row">
-                    <datalist id="abilities-${id}"></datalist><div class="col"><label>Ability</label><input type="text" class="p-ability" list="abilities-${id}"></div>
-                    <div class="col"><label>Nature</label><select class="p-nature" onchange="recalcStats('${id}')"><option value="" disabled>Nature</option>${nOpts}</select></div>
-                    <div class="col-small"><label>Level</label><input type="number" class="p-level" value="100" onchange="recalcStats('${id}')"></div>
-                    <div class="col-mini"><label>Gender</label><select class="p-gender"><option value="-">-</option><option value="M">M</option><option value="F">F</option></select></div>
-                    <div class="col-mini"><label>Shiny</label><select class="p-shiny"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+                    <datalist id="abilities-${id}"></datalist><div class="col"><label>Ability</label><input type="text" class="p-ability" list="abilities-${id}" onchange="saveCurrentTeamToStorage()"></div><div class="col"><label>Nature</label><select class="p-nature" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"><option value="" disabled>Nature</option>${nOpts}</select></div><div class="col-small"><label>Level</label><input type="number" class="p-level" value="100" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"></div><div class="col-mini"><label>Gender</label><select class="p-gender" onchange="saveCurrentTeamToStorage()"><option value="-">-</option><option value="M">M</option><option value="F">F</option></select></div><div class="col-mini"><label>Shiny</label><select class="p-shiny" onchange="saveCurrentTeamToStorage()"><option value="No">No</option><option value="Yes">Yes</option></select></div>
                 </div>
-                <div class="iv-section"><div class="iv-grid">${STATS.map(s=>`<div class="iv-box"><label>${s}</label><input type="text" class="p-iv-${s.toLowerCase()}" value="31" onchange="recalcStats('${id}')"></div>`).join('')}</div></div>
+                <div class="iv-section"><div class="iv-grid">${STATS.map(s=>`<div class="iv-box"><label>${s}</label><input type="text" class="p-iv-${s.toLowerCase()}" value="31" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"></div>`).join('')}</div></div>
             </div>
         </div>
-        <div class="stats-box"><div class="ev-header"><span>EVs</span><span id="remain-${id}" class="ev-remaining">Restam: 508</span></div>${STATS.map(s=>`<div class="stat-row"><span class="stat-label">${s}</span><input type="range" min="0" max="252" oninput="updateEV('${id}','${s}',this.value)" id="range-${id}-${s}"><input type="number" class="ev-num" min="0" max="252" onchange="updateEV('${id}','${s}',this.value)" id="num-${id}-${s}"></div>`).join('')}</div><datalist id="moves-${id}"></datalist><div style="margin-top:20px;"><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 1"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 2"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 3"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 4"><span class="clear-x" onclick="clearInput(this)">×</span></div></div>`;
+        <div class="stats-box"><div class="ev-header"><span>EVs</span><span id="remain-${id}" class="ev-remaining">Restam: 508</span></div>${STATS.map(s=>`<div class="stat-row"><span class="stat-label">${s}</span><input type="range" min="0" max="252" oninput="updateEV('${id}','${s}',this.value)" id="range-${id}-${s}"><input type="number" class="ev-num" min="0" max="252" onchange="updateEV('${id}','${s}',this.value)" id="num-${id}-${s}"></div>`).join('')}</div>
+        <datalist id="moves-${id}"></datalist>
+        <div style="margin-top:20px;">
+            <div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 1" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div>
+            <div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 2" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div>
+            <div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 3" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div>
+            <div class="input-wrapper"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 4" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div>
+        </div>`;
     }
 
-    function clearItem(id) { const i=document.getElementById(`editor-${id}`).querySelector('.p-item'); i.value=""; updateItemIcon(id,i); }
-    function clearInput(btn) { btn.previousElementSibling.value=""; }
+    function clearItem(id) { const i=document.getElementById(`editor-${id}`).querySelector('.p-item'); i.value=""; updateItemIcon(id,i); saveCurrentTeamToStorage(); }
+    function clearInput(btn) { btn.previousElementSibling.value=""; saveCurrentTeamToStorage(); }
 
     async function updatePokemon(id, el) {
         const val = el.value; if(val.length<2) return;
@@ -571,7 +614,6 @@
                 const d = await r.json();
                 slotBaseStats[id] = { hp:d.stats[0].base_stat, atk:d.stats[1].base_stat, def:d.stats[2].base_stat, spa:d.stats[3].base_stat, spd:d.stats[4].base_stat, spe:d.stats[5].base_stat };
                 recalcStats(id);
-                
                 const abilList = document.getElementById(`abilities-${id}`); abilList.innerHTML="";
                 d.abilities.forEach(a=>{ const o=document.createElement('option'); o.value=formatText(a.ability.name); abilList.appendChild(o); });
                 const moveList = document.getElementById(`moves-${id}`); moveList.innerHTML="";
@@ -597,6 +639,7 @@
         const remain = 508 - (total+val);
         document.getElementById(`remain-${id}`).innerText = "Restam: "+remain;
         recalcStats(id);
+        saveCurrentTeamToStorage();
     }
 
     function recalcStats(id) {
@@ -629,7 +672,6 @@
         document.getElementById(`bst-${id}`).innerText = total;
     }
 
-    // Modal Import/Export
     function openIOModal() {
         let txt = ""; 
         const tier = document.getElementById('teamTier').value;
@@ -649,12 +691,9 @@
                 
                 let evs = []; STATS.forEach(s => { const v = document.getElementById(`num-${ed.id.split('-')[1]}-${s}`).value; if(v>0) evs.push(`${v} ${s}`); });
                 if(evs.length) txt += `EVs: ${evs.join(' / ')}\n`;
-                
                 const nature = ed.querySelector('.p-nature').value; if(nature) txt += `${nature} Nature\n`;
-                
                 let ivs = []; STATS.forEach(s => { const v = ed.querySelector(`.p-iv-${s.toLowerCase()}`).value; if(v!=31) ivs.push(`${v} ${s}`); });
                 if(ivs.length) txt += `IVs: ${ivs.join(' / ')}\n`;
-
                 ed.querySelectorAll('.p-move').forEach(m => { if(m.value) txt += `- ${m.value}\n`; });
                 txt += "\n";
             }
@@ -704,6 +743,7 @@
             setTimeout(() => recalcStats(id), 500);
         });
         document.getElementById('ioModal').style.display='none';
+        saveCurrentTeamToStorage();
     }
   </script>
 </body>
