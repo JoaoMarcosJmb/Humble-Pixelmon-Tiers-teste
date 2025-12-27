@@ -312,22 +312,21 @@
     };
 
     // --- FONTES DE IMAGEM ---
-    // Usamos PokeAPI para imagens 100% corretas baseadas no ID numérico
     const POKEAPI_IMG = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
     const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
     const ITEM_ICON_BASE = "https://play.pokemonshowdown.com/sprites/itemicons/";
 
     // Variáveis Globais
-    let pokemonIdMap = {}; // Guarda QUEM está permitido na Tier (vindo do seu JSON)
+    let pokemonIdMap = {}; 
     let todosItens = [];
     let slotCounter = 0; 
     let slotBaseStats = {}; 
     let allTeams = []; 
     let currentTeamIndex = null;
 
-    // --- FUNÇÕES DE FORMATAÇÃO (CRUCIAIS PARA VALIDAR) ---
+    // --- FUNÇÕES DE FORMATAÇÃO ---
     
-    // Transforma "Iron Valiant" -> "iron-valiant" (Padrão do seu JSON)
+    // Padrão universal de nomes (para API e Validação)
     function formatToApiName(name) { 
         if(!name) return "";
         return name.trim().toLowerCase()
@@ -377,10 +376,11 @@
                 team.slots.slice(0,6).forEach(s => {
                     if(s.name) {
                         const apiName = formatToApiName(s.name);
-                        // Tenta achar imagem via ID se tivermos o mapa carregado, ou fallback para nome
                         let src = `${POKEAPI_IMG}${apiName}.png`;
-                        if(pokemonIdMap[apiName]) src = `${POKEAPI_IMG}${pokemonIdMap[apiName]}.png`;
-                        
+                        // Tenta usar o ID do mapa se disponivel para maior precisão
+                        if(pokemonIdMap[apiName] && typeof pokemonIdMap[apiName] !== 'boolean') {
+                            src = `${POKEAPI_IMG}${pokemonIdMap[apiName]}.png`;
+                        }
                         iconsHtml += `<img src="${src}" onerror="this.src='${IMG_ERROR}'">`;
                     }
                 });
@@ -422,7 +422,9 @@
                 const ed = document.getElementById(`editor-${id}`);
                 ed.querySelector('.p-name').value = s.name;
                 
-                await updatePokemon(id, ed.querySelector('.p-name'), false); 
+                // --- CORREÇÃO AQUI: Mudei 'false' para 'true' ---
+                // Isso força o site a buscar os Stats na API ao carregar o time salvo
+                await updatePokemon(id, ed.querySelector('.p-name'), true); 
                 
                 ed.querySelector('.p-item').value = s.item;
                 updateItemIcon(id, ed.querySelector('.p-item'));
@@ -489,7 +491,7 @@
         }
     }
 
-    // --- CARREGAMENTO DO JSON LOCAL (AQUI É A LEI DO SERVIDOR) ---
+    // --- CARREGAMENTO DO JSON LOCAL ---
     async function carregarDados(tier) { 
         if(!tier) return;
         const isLC = (tier === 'LC');
@@ -502,28 +504,28 @@
         });
 
         const dl = document.getElementById('list-pokemon'); dl.innerHTML = "";
-        pokemonIdMap = {}; // Reseta o mapa da tier
+        pokemonIdMap = {}; 
 
         try {
-            // LÊ O SEU ARQUIVO LOCAL
             const r = await fetch(`tiers_1.16/${tier}.json`);
             if (r.ok) {
                 const d = await r.json();
                 
-                // Preenche a lista de sugestões E o mapa de validação
                 Object.keys(d).forEach(chaveJson => {
-                    const nomeExibicao = formatText(chaveJson); // Deixa bonito: "flutter-mane" -> "Flutter Mane"
-                    
+                    const nomeExibicao = formatText(chaveJson);
                     const o = document.createElement('option'); 
                     o.value = nomeExibicao; 
                     dl.appendChild(o);
 
-                    // Salva no mapa de permissão
-                    // chaveJson é o ID "técnico" (ex: flutter-mane)
+                    // --- CORREÇÃO DE VALIDAÇÃO ---
+                    // Normaliza a chave para o formato API ("flutter-mane")
+                    // Assim, a validação funciona mesmo se no JSON estiver "Flutter Mane"
+                    const chaveNormalizada = formatToApiName(chaveJson);
+
                     if(d[chaveJson].id) {
-                        pokemonIdMap[chaveJson] = d[chaveJson].id; 
+                        pokemonIdMap[chaveNormalizada] = d[chaveJson].id; 
                     } else {
-                        pokemonIdMap[chaveJson] = true; // Se não tiver ID no json, salva que existe
+                        pokemonIdMap[chaveNormalizada] = true;
                     }
                 });
             }
@@ -539,7 +541,7 @@
         });
     }
     
-    // --- VALIDAÇÃO (CORRIGIDA) ---
+    // --- VALIDAÇÃO ---
     function validateTeam() {
         const tier = document.getElementById('teamTier').value;
         if(!tier) { alert("Selecione uma Tier."); return; }
@@ -548,11 +550,10 @@
         document.querySelectorAll('.poke-editor').forEach((ed, i) => {
             const name = ed.querySelector('.p-name').value.trim();
             if(name) {
-                // 1. Converte o nome que o usuário digitou ("Flutter Mane") 
-                // para o formato do seu JSON ("flutter-mane")
+                // Converte o que o usuário digitou para formato-api (ex: Flutter Mane -> flutter-mane)
                 const searchName = formatToApiName(name);
 
-                // 2. Verifica APENAS no mapa carregado do seu JSON local
+                // Verifica se existe no mapa (que agora também está salvo em formato-api)
                 if(!pokemonIdMap[searchName]) {
                     errors.push(`Pokémon #${i+1} (${name}) não permitido em ${tier}.`);
                 }
@@ -623,13 +624,12 @@
         const val = el.value; 
         if(val.length < 2) return;
         
-        // Formato para API E para Validar no JSON Local
         const apiName = formatToApiName(val);
         const img = document.getElementById(`img-${id}`); 
         const tabImg = document.getElementById(`tab-img-${id}`);
         
         if(!fetchData) {
-            // Se for carregamento ao abrir a página (sem fetch)
+            // Se NÃO for buscar dados, pelo menos tenta carregar a imagem
             let src = `${POKEAPI_IMG}${apiName}.png`;
             if(pokemonIdMap[apiName] && typeof pokemonIdMap[apiName] !== 'boolean') {
                  src = `${POKEAPI_IMG}${pokemonIdMap[apiName]}.png`;
@@ -639,7 +639,7 @@
             return;
         }
 
-        // FETCH NA API (Apenas para Stats e Imagem, não valida Tier!)
+        // FETCH NA API (Busca Status, Types, Imagem, Moves)
         try {
             const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${apiName}`);
             
@@ -651,7 +651,7 @@
                 img.src = newSrc; 
                 tabImg.src = newSrc;
 
-                // Status Base
+                // Status Base (CORREÇÃO: É aqui que os números são preenchidos)
                 slotBaseStats[id] = { hp:d.stats[0].base_stat, atk:d.stats[1].base_stat, def:d.stats[2].base_stat, spa:d.stats[3].base_stat, spd:d.stats[4].base_stat, spe:d.stats[5].base_stat };
                 recalcStats(id);
                 
