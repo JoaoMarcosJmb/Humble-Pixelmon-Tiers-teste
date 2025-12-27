@@ -80,12 +80,13 @@
     }
     .btn-action:hover { background: #fff; box-shadow: 0 0 10px var(--cor-dourado); }
 
-    /* --- ABAS DE NAVEGAÇÃO (SHOWDOWN STYLE) --- */
-    .team-tabs {
+    /* --- ÁREA DE ABAS DINÂMICAS --- */
+    .tabs-wrapper {
         display: flex;
-        gap: 8px;
-        margin-bottom: 0; /* Colado no editor */
-        padding: 0 5px;
+        align-items: flex-end;
+        gap: 5px;
+        margin-bottom: 0;
+        padding-left: 5px;
     }
 
     .tab-slot {
@@ -93,15 +94,15 @@
         border: 1px solid #444;
         border-bottom: none;
         border-radius: 8px 8px 0 0;
-        width: 80px;
-        height: 60px;
+        width: 70px;
+        height: 50px;
         cursor: pointer;
         display: flex;
         justify-content: center;
         align-items: center;
-        position: relative;
         opacity: 0.6;
         transition: all 0.2s;
+        position: relative;
     }
 
     .tab-slot:hover { opacity: 0.9; background: #2a2a2a; }
@@ -109,55 +110,62 @@
     /* Aba Ativa */
     .tab-slot.active {
         opacity: 1;
-        background: rgba(25, 25, 25, 0.95); /* Mesma cor do editor */
+        background: rgba(25, 25, 25, 0.95);
         border-color: var(--cor-dourado);
-        border-bottom: 1px solid rgba(25, 25, 25, 0.95); /* Esconde a borda de baixo para fundir */
+        border-bottom: 1px solid rgba(25, 25, 25, 0.95); /* Fundir com o editor */
+        height: 55px; /* Destaque de altura */
         z-index: 10;
-        height: 65px; /* Um pouco maior pra dar destaque */
-        margin-bottom: -1px; /* Sobrepõe a borda do container */
+        margin-bottom: -1px;
     }
 
-    .tab-img {
+    .tab-icon {
         width: 40px; height: 40px; object-fit: contain;
-        filter: drop-shadow(0 2px 2px rgba(0,0,0,0.8));
     }
-    .tab-number {
-        position: absolute; top: 2px; left: 5px; font-size: 0.7rem; color: #555;
+
+    /* Botão de Adicionar (+) */
+    .add-tab-btn {
+        width: 40px; height: 40px;
+        background: #222;
+        border: 1px dashed #666;
+        border-radius: 8px 8px 0 0; /* Formato de aba também */
+        color: #888;
+        font-size: 1.5rem;
+        cursor: pointer;
+        display: flex; justify-content: center; align-items: center;
+        transition: 0.2s;
+        margin-bottom: 5px; /* Alinhamento visual */
     }
+    .add-tab-btn:hover { background: #333; color: var(--cor-dourado); border-color: var(--cor-dourado); }
+    .add-tab-btn.hidden { display: none; }
 
     /* --- EDITOR CONTAINER --- */
-    /* Removemos o Grid, agora é um container único que troca o conteúdo */
     .editor-container-wrapper {
         background: rgba(25, 25, 25, 0.95);
         border: 1px solid var(--cor-dourado);
-        border-radius: 0 8px 8px 8px; /* Canto superior esquerdo reto por causa da aba */
+        border-radius: 0 8px 8px 8px; 
         padding: 20px;
         box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         min-height: 500px;
     }
 
-    /* Cada editor (Slot 1, Slot 2...) */
     .poke-editor {
-        display: none; /* Escondido por padrão */
+        display: none;
         animation: fadeIn 0.3s ease;
     }
-    .poke-editor.active {
-        display: block; /* Só o ativo aparece */
-    }
+    .poke-editor.active { display: block; }
 
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(5px); }
         to { opacity: 1; transform: translateY(0); }
     }
     
-    /* Cabeçalho de dentro do editor */
     .header-row {
         display: flex; justify-content: space-between; align-items: center;
         border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px;
     }
     .header-row h4 { margin: 0; color: var(--cor-dourado); font-size: 1.2rem; }
 
-    /* Layout Interno do Card (Grande) */
+    /* Layout Interno */
     .editor-layout {
         display: flex;
         gap: 20px;
@@ -182,7 +190,6 @@
     .col { flex: 1; }
     .col-small { width: 80px; flex: none; }
     
-    /* INPUT COM ÍCONE */
     .input-with-icon { display: flex; align-items: center; gap: 8px; }
     .item-icon-img { width: 30px; height: 30px; object-fit: contain; opacity: 0.3; transition: opacity 0.3s; }
     .item-icon-img.active { opacity: 1; }
@@ -270,10 +277,13 @@
       </div>
     </div>
 
-    <div class="team-tabs" id="tabsContainer">
-        </div>
+    <div class="tabs-wrapper">
+        <div id="tabsContainer" style="display:flex; gap:5px;">
+            </div>
+        <button id="addSlotBtn" class="add-tab-btn" onclick="addNewSlot()">+</button>
+    </div>
 
-    <div class="editor-container-wrapper" id="teamContainer">
+    <div class="editor-container-wrapper" id="editorsContainer">
         </div>
 
     <div class="export-area" id="exportSection">
@@ -293,17 +303,22 @@
       }
     });
 
+    // --- CONFIGURAÇÕES ---
     const MAX_EVS = 508;
-    const TOTAL_SLOTS = 6;
+    const MAX_SLOTS = 6;
     const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
     const NATURES = ["Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful", "Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly", "Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty", "Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious", "Timid"];
     
     const IMG_PATH = "img/official-artwork/"; 
     const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
+    // Ícone de interrogação ou vazio para aba nova
+    const TAB_ICON_DEFAULT = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiM1NTUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48Y2lyY2xlIGN4PSIxMiIgY3k9“MTIiIHI9IjEwIi8+PHBhdGggZD0iTTkuMDkgOWEzIDMgMCAwIDEgNS44MyAxYzAgMi0zIDMtMyAzIi8+PGxpbmUgeDE9IjEyIiB5MT0iMTciIHgyPSIxMi4wMSIgeTI9“MTciLz48L3N2Zz4="; 
+
     const ITEM_ICON_BASE = "https://play.pokemonshowdown.com/sprites/itemicons/";
     
     const pokemonIdMap = {};
     let todosItens = [];
+    let slotCounter = 0; // Contador global de IDs únicos para slots
 
     function formatToApiName(name) { return name.trim().toLowerCase().replace(/ /g, '-').replace(/\./g, '').replace(/'/g, '').replace(/:/g, '').replace(/♀/g, '-f').replace(/♂/g, '-m'); }
     function formatItemToShowdown(name) { return name.toLowerCase().replace(/[^a-z0-9]/g, ''); }
@@ -345,50 +360,65 @@
         });
     }
 
-    // --- 4. RENDERIZAR ABAS E EDITORES ---
-    function renderSlots() {
-      const tabsContainer = document.getElementById('tabsContainer');
-      const editorContainer = document.getElementById('teamContainer');
-      const natureOptions = NATURES.map(n => `<option value="${n}">${n}</option>`).join('');
+    // --- LÓGICA DE ADICIONAR SLOT DINÂMICO ---
+    function addNewSlot() {
+        const currentSlots = document.querySelectorAll('.tab-slot').length;
+        if (currentSlots >= MAX_SLOTS) return; // Limite atingido
 
-      for (let i = 1; i <= TOTAL_SLOTS; i++) {
-        // 1. CRIAR ABA
+        slotCounter++; // ID único (nunca repete, mesmo deletando)
+        const newId = slotCounter;
+
+        // 1. Criar Aba
+        const tabsContainer = document.getElementById('tabsContainer');
         const tab = document.createElement('div');
-        tab.className = `tab-slot ${i === 1 ? 'active' : ''}`; // Slot 1 começa ativo
-        tab.id = `tab-${i}`;
-        tab.onclick = () => switchTab(i);
-        tab.innerHTML = `
-            <span class="tab-number">#${i}</span>
-            <img src="${IMG_ERROR}" id="tab-img-${i}" class="tab-img" onerror="this.src='${IMG_ERROR}'">
-        `;
+        tab.className = 'tab-slot';
+        tab.id = `tab-${newId}`;
+        tab.onclick = () => switchTab(newId);
+        // Usa uma interrogação ou pokebola vazia como padrão
+        tab.innerHTML = `<img src="${IMG_ERROR}" id="tab-img-${newId}" class="tab-icon">`;
         tabsContainer.appendChild(tab);
 
-        // 2. CRIAR EDITOR (ESCONDIDO)
-        const div = document.createElement('div');
-        div.className = `poke-editor ${i === 1 ? 'active' : ''}`; // Slot 1 começa visível
-        div.id = `poke-${i}`;
-        
-        div.innerHTML = `
+        // 2. Criar Editor
+        const editorsContainer = document.getElementById('editorsContainer');
+        const editor = document.createElement('div');
+        editor.className = 'poke-editor';
+        editor.id = `editor-${newId}`;
+        editor.innerHTML = generateEditorHTML(newId);
+        editorsContainer.appendChild(editor);
+
+        // 3. Ativar o novo slot
+        switchTab(newId);
+
+        // 4. Esconder botão (+) se chegou a 6
+        if (document.querySelectorAll('.tab-slot').length >= MAX_SLOTS) {
+            document.getElementById('addSlotBtn').classList.add('hidden');
+        }
+    }
+
+    // HTML do Editor (Reutilizável)
+    function generateEditorHTML(id) {
+        const natureOptions = NATURES.map(n => `<option value="${n}">${n}</option>`).join('');
+        return `
           <div class="header-row">
-            <h4>Editando: Slot #${i}</h4>
+            <h4>Pokémon Set</h4>
           </div>
           
           <div class="editor-layout">
             <div class="visual-large-box">
-               <img src="${IMG_ERROR}" id="img-${i}" class="poke-sprite-large" onerror="this.src='${IMG_ERROR}'">
+               <img src="${IMG_ERROR}" id="img-${id}" class="poke-sprite-large" onerror="this.src='${IMG_ERROR}'">
             </div>
 
             <div class="inputs-area">
                 <div class="row">
                     <div class="col">
                         <label>Pokémon</label>
-                        <input type="text" class="p-name" list="list-pokemon" placeholder="Pokémon" onchange="updateImage('${i}', this)">
+                        <input type="text" class="p-name" list="list-pokemon" placeholder="Pokémon" onchange="updateImage('${id}', this)">
                     </div>
                     <div class="col">
                         <label>Item</label>
                         <div class="input-with-icon">
-                            <input type="text" class="p-item" list="list-items" placeholder="Item" oninput="updateItemIcon('${i}', this)">
-                            <img id="item-icon-${i}" class="item-icon-img" src="">
+                            <input type="text" class="p-item" list="list-items" placeholder="Item" oninput="updateItemIcon('${id}', this)">
+                            <img id="item-icon-${id}" class="item-icon-img" src="">
                         </div>
                     </div>
                 </div>
@@ -423,15 +453,15 @@
           <div class="stats-box">
             <div class="ev-header">
               <span>EVs</span>
-              <span id="remain-${i}" class="ev-remaining">Restam: 508</span>
+              <span id="remain-${id}" class="ev-remaining">Restam: 508</span>
             </div>
             ${STATS.map(stat => `
               <div class="stat-row">
                 <span class="stat-label">${stat}</span>
                 <input type="range" min="0" max="252" value="0" step="4" 
-                       oninput="updateEV('${i}', '${stat}', this.value)" id="range-${i}-${stat}">
+                       oninput="updateEV('${id}', '${stat}', this.value)" id="range-${id}-${stat}">
                 <input type="number" class="ev-num p-ev-${stat.toLowerCase()}" min="0" max="252" value="0" step="4" 
-                       onchange="updateEV('${i}', '${stat}', this.value)" id="num-${i}-${stat}">
+                       onchange="updateEV('${id}', '${stat}', this.value)" id="num-${id}-${stat}">
               </div>
             `).join('')}
           </div>
@@ -443,26 +473,28 @@
             <input type="text" class="move-input p-move" list="list-moves" placeholder="- Move 4">
           </div>
         `;
-        editorContainer.appendChild(div);
-      }
     }
 
-    // --- FUNÇÃO DE TROCA DE ABA ---
-    function switchTab(slotId) {
+    function switchTab(id) {
         // Remove active de todos
         document.querySelectorAll('.tab-slot').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.poke-editor').forEach(e => e.classList.remove('active'));
 
-        // Ativa o selecionado
-        document.getElementById(`tab-${slotId}`).classList.add('active');
-        document.getElementById(`poke-${slotId}`).classList.add('active');
+        // Ativa o específico
+        const tab = document.getElementById(`tab-${id}`);
+        const editor = document.getElementById(`editor-${id}`);
+        
+        if (tab && editor) {
+            tab.classList.add('active');
+            editor.classList.add('active');
+        }
     }
 
-    // --- IMAGENS (ATUALIZA EDITOR E ABA) ---
-    async function updateImage(slotId, inputElement) {
+    // --- IMAGENS E UPDATE ---
+    async function updateImage(id, inputElement) {
       const pokeName = inputElement.value;
-      const imgEditor = document.getElementById(`img-${slotId}`);
-      const imgTab = document.getElementById(`tab-img-${slotId}`); // Imagem da aba
+      const imgEditor = document.getElementById(`img-${id}`);
+      const imgTab = document.getElementById(`tab-img-${id}`); 
       
       const fallback = () => { imgEditor.src = IMG_ERROR; imgTab.src = IMG_ERROR; };
 
@@ -475,15 +507,13 @@
           const apiName = formatToApiName(pokeName);
           imgSrc = `${IMG_PATH}${apiName}.png`;
       }
-
-      // Atualiza ambas as imagens
       imgEditor.src = imgSrc;
       imgTab.src = imgSrc;
     }
 
-    function updateItemIcon(slotId, inputElement) {
+    function updateItemIcon(id, inputElement) {
         const itemName = inputElement.value;
-        const iconElement = document.getElementById(`item-icon-${slotId}`);
+        const iconElement = document.getElementById(`item-icon-${id}`);
         if (!itemName || itemName.length < 2) { iconElement.src = ""; iconElement.classList.remove('active'); return; }
         const showdownName = formatItemToShowdown(itemName);
         iconElement.src = `${ITEM_ICON_BASE}${showdownName}.png`;
@@ -491,37 +521,43 @@
         iconElement.onerror = function() { this.src = ""; this.classList.remove('active'); };
     }
 
-    function updateEV(slotId, statName, newValue) {
+    function updateEV(id, statName, newValue) {
       let val = parseInt(newValue) || 0;
       if (val > 252) val = 252; if (val < 0) val = 0;
       let currentTotal = 0;
-      STATS.forEach(s => { if (s !== statName) currentTotal += parseInt(document.getElementById(`num-${slotId}-${s}`).value) || 0; });
+      STATS.forEach(s => { if (s !== statName) currentTotal += parseInt(document.getElementById(`num-${id}-${s}`).value) || 0; });
       let available = MAX_EVS - currentTotal;
       if (val > available) val = available;
-      document.getElementById(`range-${slotId}-${statName}`).value = val;
-      document.getElementById(`num-${slotId}-${statName}`).value = val;
+      document.getElementById(`range-${id}-${statName}`).value = val;
+      document.getElementById(`num-${id}-${statName}`).value = val;
       let remaining = MAX_EVS - (currentTotal + val);
-      let remainLabel = document.getElementById(`remain-${slotId}`);
+      let remainLabel = document.getElementById(`remain-${id}`);
       remainLabel.innerText = `Restam: ${remaining}`;
       remainLabel.style.color = remaining === 0 ? "#d1a720" : "#4dff88";
     }
 
+    // --- EXPORTAR DINÂMICO ---
     function gerarTextoShowdown() {
       let fullText = "";
       const selectedTier = document.getElementById('teamTier').value;
       if (selectedTier) fullText += `=== [Gen 9] ${selectedTier} ===\n\n`;
 
+      // Seleciona todos os editores criados
+      const editors = document.querySelectorAll('.poke-editor');
       let hasData = false;
-      for (let i = 1; i <= TOTAL_SLOTS; i++) {
-        let slot = document.getElementById(`poke-${i}`);
-        let name = slot.querySelector('.p-name').value.trim();
-        if (!name) continue;
+
+      editors.forEach(editor => {
+        // Extrai o ID do elemento (ex: "editor-1" -> "1")
+        const id = editor.id.split('-')[1];
+
+        let name = editor.querySelector('.p-name').value.trim();
+        if (!name) return; // Pula slots vazios
         hasData = true;
 
-        let item = slot.querySelector('.p-item').value.trim();
-        let ability = slot.querySelector('.p-ability').value.trim();
-        let nature = slot.querySelector('.p-nature').value;
-        let level = slot.querySelector('.p-level').value;
+        let item = editor.querySelector('.p-item').value.trim();
+        let ability = editor.querySelector('.p-ability').value.trim();
+        let nature = editor.querySelector('.p-nature').value;
+        let level = editor.querySelector('.p-level').value;
         
         fullText += `${name}${item ? ' @ ' + item : ''}\n`;
         if (ability) fullText += `Ability: ${ability}\n`;
@@ -529,7 +565,7 @@
 
         let evList = [];
         STATS.forEach(s => {
-          let val = document.getElementById(`num-${i}-${s}`).value;
+          let val = document.getElementById(`num-${id}-${s}`).value;
           if (val > 0) evList.push(`${val} ${s}`);
         });
         if (evList.length > 0) fullText += `EVs: ${evList.join(' / ')}\n`;
@@ -537,22 +573,26 @@
 
         let ivList = []; let hasCustomIV = false;
         STATS.forEach(s => {
-           let ivVal = slot.querySelector(`.p-iv-${s.toLowerCase()}`).value;
+           let ivVal = editor.querySelector(`.p-iv-${s.toLowerCase()}`).value;
            if (ivVal != 31) { ivList.push(`${ivVal} ${s}`); hasCustomIV = true; }
         });
         if (hasCustomIV) fullText += `IVs: ${ivList.join(' / ')}\n`;
 
-        let moves = slot.querySelectorAll('.p-move');
+        let moves = editor.querySelectorAll('.p-move');
         moves.forEach(m => { if (m.value.trim()) fullText += `- ${m.value.trim()}\n`; });
         fullText += "\n"; 
-      }
+      });
 
       if (!hasData) { alert("Preencha pelo menos um Pokémon."); return; }
       document.getElementById('finalOutput').value = fullText;
       document.getElementById('exportSection').scrollIntoView({behavior: "smooth"});
     }
 
-    window.onload = function() { renderSlots(); initItens(); };
+    // Inicializa com 1 slot
+    window.onload = function() { 
+        initItens(); 
+        addNewSlot(); // Começa com 1
+    };
   </script>
 </body>
 </html>
