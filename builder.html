@@ -2,12 +2,12 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Humble Builder - Final Layout</title>
+  <title>Humble Builder - Ultimate</title>
   
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
   <style>
-    /* --- CSS VARIÁVEIS --- */
+    /* --- CSS GERAL --- */
     :root { 
       --cor-dourado: #d1a720; 
       --cor-fundo: #1a1a1a; 
@@ -52,7 +52,6 @@
     nav a { color: var(--cor-dourado); font-weight: 500; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; }
 
     /* --- LAYOUT --- */
-    /* Aumentei um pouco o max-width para caber o novo layout lado a lado */
     .builder-wrapper { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
     /* TOOLBAR */
@@ -82,17 +81,29 @@
 
     /* --- ABAS --- */
     .tabs-wrapper { display: flex; align-items: flex-end; gap: 5px; margin-bottom: 0; padding-left: 5px; }
+    
     .tab-slot {
         background: #222; border: 1px solid #444; border-bottom: none; border-radius: 8px 8px 0 0;
         width: 70px; height: 50px; cursor: pointer; display: flex; justify-content: center; align-items: center;
         opacity: 0.6; transition: all 0.2s; position: relative;
     }
     .tab-slot:hover { opacity: 0.9; background: #2a2a2a; }
+    
     .tab-slot.active {
         opacity: 1; background: rgba(25, 25, 25, 0.95); border-color: var(--cor-dourado);
         border-bottom: 1px solid rgba(25, 25, 25, 0.95); height: 55px; z-index: 10; margin-bottom: -1px;
     }
-    .tab-icon { width: 40px; height: 40px; object-fit: contain; }
+    
+    .tab-icon { width: 40px; height: 40px; object-fit: contain; pointer-events: none; }
+
+    /* BOTÃO FECHAR (X) */
+    .tab-close {
+        position: absolute; top: 2px; right: 4px; font-size: 14px; color: #888;
+        cursor: pointer; line-height: 1; padding: 2px; border-radius: 50%;
+        display: none; z-index: 20;
+    }
+    .tab-slot:hover .tab-close { display: block; }
+    .tab-close:hover { color: #ff4d4d; background: rgba(255,255,255,0.1); }
 
     .add-tab-btn {
         width: 40px; height: 40px; background: #222; border: 1px dashed #666; border-radius: 8px 8px 0 0;
@@ -114,38 +125,26 @@
     .header-row { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px; }
     .header-row h4 { margin: 0; color: var(--cor-dourado); font-size: 1.2rem; }
 
+    /* Layout Lado a Lado */
     .editor-layout { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
     
-    /* --- ALTERAÇÃO NO LAYOUT DA ESQUERDA (LADO A LADO) --- */
-    .left-panel {
-        display: flex;
-        flex-direction: row; /* Mudou de column para row */
-        gap: 15px;
-        flex-shrink: 0;
-    }
+    .left-panel { display: flex; flex-direction: row; gap: 15px; flex-shrink: 0; }
 
     .visual-large-box {
-        width: 150px; height: 150px; /* Tamanho fixo para não distorcer */
+        width: 150px; height: 150px; 
         background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 10px;
-        display: flex; justify-content: center; align-items: center;
-        flex: none;
+        display: flex; justify-content: center; align-items: center; flex: none;
     }
     .poke-sprite-large { width: 120px; height: 120px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); }
 
-    /* PAINEL DE BARRAS COM BASE STATS */
+    /* Painel de Barras */
     .base-stats-panel {
         background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; border: 1px solid #333;
-        font-size: 0.8rem;
-        flex-grow: 1; /* Ocupa o espaço restante */
-        min-width: 220px; /* Largura mínima para caber os novos números */
+        font-size: 0.8rem; flex-grow: 1; min-width: 220px;
     }
     .stat-bar-row { display: flex; align-items: center; margin-bottom: 4px; gap: 5px; }
-    
     .stat-name { width: 30px; font-weight: bold; color: #888; }
-    
-    /* NOVO: Estilo para o número do Base Stat */
     .stat-val-base { width: 30px; text-align: center; color: #aaa; font-size: 0.75rem; }
-    
     .stat-val-final { width: 35px; text-align: right; color: #fff; font-weight: bold; }
     
     .bar-track { flex-grow: 1; background: #333; height: 6px; border-radius: 3px; overflow: hidden; }
@@ -222,7 +221,6 @@
     .modal-buttons { display: flex; justify-content: flex-end; gap: 15px; }
     .btn-secondary { background: transparent; color: #ccc; border: 1px solid #555; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
     .btn-secondary:hover { border-color: #fff; color: #fff; }
-    
     .btn-primary { background: var(--cor-dourado); color: #000; border: none; padding: 10px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; }
     .btn-primary:hover { background: #fff; }
 
@@ -232,8 +230,6 @@
 
   <datalist id="list-pokemon"></datalist>
   <datalist id="list-items"></datalist>
-  <datalist id="list-abilities"></datalist>
-  <datalist id="list-moves"></datalist>
 
   <div class="modal-overlay" id="ioModal">
     <div class="modal-content">
@@ -242,7 +238,7 @@
         <span class="modal-close" onclick="closeModal()">×</span>
       </div>
       <p style="color:#aaa; font-size:0.9rem; margin-top:-10px; margin-bottom:15px;">
-        Copie o texto abaixo para salvar seu time, ou cole um time do Showdown aqui para carregar.
+        Copie o texto para salvar, ou cole um time do Showdown para carregar.
       </p>
       <textarea id="ioText" class="modal-textarea" spellcheck="false"></textarea>
       <div class="modal-buttons">
@@ -304,7 +300,7 @@
   </div>
 
   <script>
-    // --- VARIÁVEIS GLOBAIS ---
+    // --- GERAIS ---
     const menuBtn = document.getElementById("menuBtn");
     const dropdownMenu = document.getElementById("dropdownMenu");
     menuBtn.addEventListener("click", () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); });
@@ -341,21 +337,12 @@
 
     function formatToApiName(name) { return name.trim().toLowerCase().replace(/ /g, '-').replace(/\./g, '').replace(/'/g, '').replace(/:/g, '').replace(/♀/g, '-f').replace(/♂/g, '-m'); }
     function formatItemToShowdown(name) { return name.toLowerCase().replace(/[^a-z0-9]/g, ''); }
+    function formatText(str) { if (!str) return ''; return str.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '); }
 
     window.onload = function() { 
         initItens(); 
         addNewSlot(); 
-        populateStaticDatalists();
     };
-
-    function populateStaticDatalists() {
-        const abilities = ["Levitate", "Intimidate", "Overgrow", "Blaze", "Torrent", "Pressure", "Static", "Sturdy"];
-        const moves = ["Earthquake", "Thunderbolt", "Ice Beam", "Protect", "Toxic", "Surf", "Psychic", "Flamethrower"];
-        const listAbil = document.getElementById('list-abilities');
-        abilities.forEach(a => { const opt = document.createElement('option'); opt.value = a; listAbil.appendChild(opt); });
-        const listMoves = document.getElementById('list-moves');
-        moves.forEach(m => { const opt = document.createElement('option'); opt.value = m; listMoves.appendChild(opt); });
-    }
 
     async function initItens() {
         try {
@@ -388,7 +375,7 @@
         });
     }
 
-    // --- SLOTS & UI ---
+    // --- SLOTS MANAGEMENT ---
     function addNewSlot() {
         if (document.querySelectorAll('.tab-slot').length >= MAX_SLOTS) return;
         slotCounter++; const id = slotCounter;
@@ -396,7 +383,12 @@
         const tab = document.createElement('div');
         tab.className = 'tab-slot'; tab.id = `tab-${id}`;
         tab.onclick = () => switchTab(id);
-        tab.innerHTML = `<img src="${IMG_ERROR}" id="tab-img-${id}" class="tab-icon">`;
+        
+        // NOVO: BOTÃO DE REMOVER (X)
+        tab.innerHTML = `
+            <span class="tab-close" onclick="removeSlot(${id}, event)">×</span>
+            <img src="${IMG_ERROR}" id="tab-img-${id}" class="tab-icon">
+        `;
         document.getElementById('tabsContainer').appendChild(tab);
 
         const editor = document.createElement('div');
@@ -404,12 +396,39 @@
         editor.innerHTML = generateEditorHTML(id);
         document.getElementById('editorsContainer').appendChild(editor);
 
-        // Inicializa Stats vazios
         slotBaseStats[id] = { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 };
 
         switchTab(id);
         updateAddBtnVisibility();
         return id;
+    }
+
+    function removeSlot(id, event) {
+        if (event) event.stopPropagation(); // Impede o clique na aba ao clicar no X
+
+        const tab = document.getElementById(`tab-${id}`);
+        const editor = document.getElementById(`editor-${id}`);
+        
+        // Verifica se estava ativo
+        const wasActive = tab.classList.contains('active');
+        
+        tab.remove();
+        editor.remove();
+        delete slotBaseStats[id];
+
+        // Se deletou o ativo, muda o foco para outro
+        if (wasActive) {
+            const remainingTabs = document.querySelectorAll('.tab-slot');
+            if (remainingTabs.length > 0) {
+                // Pega o ID da última aba (simula comportamento do navegador)
+                const lastId = remainingTabs[remainingTabs.length - 1].id.split('-')[1];
+                switchTab(lastId);
+            } else {
+                // Se não sobrou nenhum, cria um novo
+                addNewSlot();
+            }
+        }
+        updateAddBtnVisibility();
     }
 
     function updateAddBtnVisibility() {
@@ -421,8 +440,10 @@
     function switchTab(id) {
         document.querySelectorAll('.tab-slot').forEach(t => t.classList.remove('active'));
         document.querySelectorAll('.poke-editor').forEach(e => e.classList.remove('active'));
-        document.getElementById(`tab-${id}`)?.classList.add('active');
-        document.getElementById(`editor-${id}`)?.classList.add('active');
+        const tab = document.getElementById(`tab-${id}`);
+        const ed = document.getElementById(`editor-${id}`);
+        if(tab) tab.classList.add('active');
+        if(ed) ed.classList.add('active');
     }
 
     function generateEditorHTML(id) {
@@ -438,7 +459,6 @@
             
             <div class="left-panel">
                 <div class="visual-large-box"><img src="${IMG_ERROR}" id="img-${id}" class="poke-sprite-large" onerror="this.src='${IMG_ERROR}'"></div>
-                
                 <div class="base-stats-panel" id="stats-panel-${id}">
                     ${STATS.map(stat => `
                         <div class="stat-bar-row">
@@ -458,7 +478,8 @@
                     <div class="col"><label>Item</label><div class="input-with-icon"><input type="text" class="p-item" list="list-items" placeholder="Item" oninput="updateItemIcon('${id}', this)"><img id="item-icon-${id}" class="item-icon-img" src=""></div></div>
                 </div>
                 <div class="row">
-                    <div class="col"><label>Ability</label><input type="text" class="p-ability" list="list-abilities" placeholder="Ability"></div>
+                    <datalist id="abilities-${id}"></datalist>
+                    <div class="col"><label>Ability</label><input type="text" class="p-ability" list="abilities-${id}" placeholder="Ability"></div>
                     <div class="col"><label>Nature</label><select class="p-nature" onchange="recalcStats('${id}')"><option value="" disabled selected>Nature</option>${natureOptions}</select></div>
                     <div class="col-small"><label>Level</label><input type="number" class="p-level" value="100" min="1" max="100" onchange="recalcStats('${id}')"></div>
                     <div class="col-mini"><label>Gender</label><select class="p-gender"><option value="-">-</option><option value="M">M</option><option value="F">F</option></select></div>
@@ -473,16 +494,18 @@
           <div class="stats-box"><div class="ev-header"><span>EVs</span><span id="remain-${id}" class="ev-remaining">Restam: 508</span></div>
             ${STATS.map(s => `<div class="stat-row"><span class="stat-label">${s}</span><input type="range" min="0" max="252" value="0" step="4" oninput="updateEV('${id}', '${s}', this.value)" id="range-${id}-${s}"><input type="number" class="ev-num p-ev-${s.toLowerCase()}" min="0" max="252" value="0" step="4" onchange="updateEV('${id}', '${s}', this.value)" id="num-${id}-${s}"></div>`).join('')}
           </div>
+          
+          <datalist id="moves-${id}"></datalist>
           <div style="margin-top:20px;">
-            <input type="text" class="move-input p-move" list="list-moves" placeholder="- Move 1">
-            <input type="text" class="move-input p-move" list="list-moves" placeholder="- Move 2">
-            <input type="text" class="move-input p-move" list="list-moves" placeholder="- Move 3">
-            <input type="text" class="move-input p-move" list="list-moves" placeholder="- Move 4">
+            <input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 1">
+            <input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 2">
+            <input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 3">
+            <input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 4">
           </div>
         `;
     }
 
-    // --- IMAGENS E DADOS (API) ---
+    // --- LÓGICA DE DADOS ---
     async function updatePokemon(id, inputElement) {
         const pokeName = inputElement.value;
         const imgEditor = document.getElementById(`img-${id}`);
@@ -505,14 +528,23 @@
             if (response.ok) {
                 const data = await response.json();
                 slotBaseStats[id] = {
-                    hp: data.stats[0].base_stat,
-                    atk: data.stats[1].base_stat,
-                    def: data.stats[2].base_stat,
-                    spa: data.stats[3].base_stat,
-                    spd: data.stats[4].base_stat,
-                    spe: data.stats[5].base_stat
+                    hp: data.stats[0].base_stat, atk: data.stats[1].base_stat, def: data.stats[2].base_stat,
+                    spa: data.stats[3].base_stat, spd: data.stats[4].base_stat, spe: data.stats[5].base_stat
                 };
                 recalcStats(id);
+
+                // Preencher listas de moves e abilities
+                const abilList = document.getElementById(`abilities-${id}`);
+                abilList.innerHTML = "";
+                data.abilities.forEach(a => {
+                    const opt = document.createElement('option'); opt.value = formatText(a.ability.name); abilList.appendChild(opt);
+                });
+
+                const moveList = document.getElementById(`moves-${id}`);
+                moveList.innerHTML = "";
+                data.moves.forEach(m => {
+                    const opt = document.createElement('option'); opt.value = formatText(m.move.name); moveList.appendChild(opt);
+                });
             }
         } catch (e) { console.log("PokeAPI Stats Error", e); }
     }
@@ -541,7 +573,6 @@
         recalcStats(id);
     }
 
-    // --- CÁLCULO DE STATS ---
     function recalcStats(id) {
         const base = slotBaseStats[id] || { hp:0, atk:0, def:0, spa:0, spd:0, spe:0 };
         const editor = document.getElementById(`editor-${id}`);
@@ -559,14 +590,12 @@
         }
 
         let totalBST = 0;
-
         STATS.forEach(stat => {
             const key = stat.toLowerCase();
             const iv = parseInt(editor.querySelector(`.p-iv-${key}`).value) || 0;
             const ev = parseInt(document.getElementById(`num-${id}-${stat}`).value) || 0;
             const b = base[key];
             
-            // PREENCHE O BASE STAT NOVO
             document.getElementById(`base-${id}-${key}`).innerText = b;
 
             let final = 0;
@@ -587,7 +616,7 @@
         document.getElementById(`bst-${id}`).innerText = totalBST;
     }
 
-    // --- IMPORT / EXPORT ---
+    // --- IMPORT / EXPORT / CLIPBOARD ---
     function openIOModal() {
         let fullText = "";
         const tier = document.getElementById('teamTier').value;
@@ -643,20 +672,14 @@
 
     function copyToClipboard() {
         const copyText = document.getElementById("ioText");
-        if (!copyText.value) { alert("Nada para copiar."); return; }
         copyText.select();
         copyText.setSelectionRange(0, 99999);
-        navigator.clipboard.writeText(copyText.value).then(() => {
-            alert("Texto copiado!");
-        }).catch(err => {
-            document.execCommand("copy");
-            alert("Texto copiado!");
-        });
+        navigator.clipboard.writeText(copyText.value).then(() => alert("Copiado!")).catch(() => document.execCommand("copy"));
     }
 
     function processImport() {
         const text = document.getElementById('ioText').value;
-        if (!text.trim()) { alert("Cole um time para importar."); return; }
+        if (!text.trim()) { alert("Cole um time."); return; }
 
         document.getElementById('tabsContainer').innerHTML = '';
         document.getElementById('editorsContainer').innerHTML = '';
