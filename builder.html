@@ -280,32 +280,69 @@
   </div>
 
 <script>
+    /* --- CONFIGURAÇÕES GERAIS --- */
     const menuBtn = document.getElementById("menuBtn");
     const dropdownMenu = document.getElementById("dropdownMenu");
-    menuBtn.addEventListener("click", () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); });
+    
+    // Toggle do Menu
+    menuBtn.addEventListener("click", () => { 
+        menuBtn.classList.toggle("active"); 
+        dropdownMenu.classList.toggle("active"); 
+    });
     document.addEventListener("click", (e) => {
       if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
         menuBtn.classList.remove("active"); dropdownMenu.classList.remove("active");
       }
     });
 
-    const MAX_EVS = 508; const MAX_SLOTS = 6;
+    const MAX_EVS = 508; 
+    const MAX_SLOTS = 6;
     const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
-    const NATURES_INFO = { "Adamant": "+Atk, -SpA", "Bashful": "Neutral", "Bold": "+Def, -Atk", "Brave": "+Atk, -Spe", "Calm": "+SpD, -Atk", "Careful": "+SpD, -SpA", "Docile": "Neutral", "Gentle": "+SpD, -Def", "Hardy": "Neutral", "Hasty": "+Spe, -Def", "Impish": "+Def, -SpA", "Jolly": "+Spe, -SpA", "Lax": "+Def, -SpD", "Lonely": "+Atk, -Def", "Mild": "+SpA, -Def", "Modest": "+SpA, -Atk", "Naive": "+Spe, -SpD", "Naughty": "+Atk, -SpD", "Quiet": "+SpA, -Spe", "Quirky": "Neutral", "Rash": "+SpA, -SpD", "Relaxed": "+Def, -Spe", "Sassy": "+SpD, -Spe", "Serious": "Neutral", "Timid": "+Spe, -Atk" };
     
-    // --- MUDANÇA: Link direto para as artes oficiais no servidor da PokeAPI ---
+    const NATURES_INFO = { 
+        "Adamant": "+Atk, -SpA", "Bashful": "Neutral", "Bold": "+Def, -Atk", 
+        "Brave": "+Atk, -Spe", "Calm": "+SpD, -Atk", "Careful": "+SpD, -SpA", 
+        "Docile": "Neutral", "Gentle": "+SpD, -Def", "Hardy": "Neutral", 
+        "Hasty": "+Spe, -Def", "Impish": "+Def, -SpA", "Jolly": "+Spe, -SpA", 
+        "Lax": "+Def, -SpD", "Lonely": "+Atk, -Def", "Mild": "+SpA, -Def", 
+        "Modest": "+SpA, -Atk", "Naive": "+Spe, -SpD", "Naughty": "+Atk, -SpD", 
+        "Quiet": "+SpA, -Spe", "Quirky": "Neutral", "Rash": "+SpA, -SpD", 
+        "Relaxed": "+Def, -Spe", "Sassy": "+SpD, -Spe", "Serious": "Neutral", 
+        "Timid": "+Spe, -Atk" 
+    };
+
+    // --- FONTES DE IMAGEM ---
+    // Usamos PokeAPI para imagens 100% corretas baseadas no ID numérico
     const POKEAPI_IMG = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
     const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
     const ITEM_ICON_BASE = "https://play.pokemonshowdown.com/sprites/itemicons/";
 
-    let pokemonIdMap = {}; let todosItens = [];
-    let slotCounter = 0; let slotBaseStats = {}; 
-    let allTeams = []; let currentTeamIndex = null;
+    // Variáveis Globais
+    let pokemonIdMap = {}; // Guarda QUEM está permitido na Tier (vindo do seu JSON)
+    let todosItens = [];
+    let slotCounter = 0; 
+    let slotBaseStats = {}; 
+    let allTeams = []; 
+    let currentTeamIndex = null;
 
-    function formatToApiName(name) { return name.trim().toLowerCase().replace(/ /g, '-').replace(/\./g, '').replace(/'/g, '').replace(/:/g, '').replace(/♀/g, '-f').replace(/♂/g, '-m'); }
+    // --- FUNÇÕES DE FORMATAÇÃO (CRUCIAIS PARA VALIDAR) ---
+    
+    // Transforma "Iron Valiant" -> "iron-valiant" (Padrão do seu JSON)
+    function formatToApiName(name) { 
+        if(!name) return "";
+        return name.trim().toLowerCase()
+            .replace(/ /g, '-')
+            .replace(/\./g, '')
+            .replace(/'/g, '')
+            .replace(/:/g, '')
+            .replace(/♀/g, '-f')
+            .replace(/♂/g, '-m'); 
+    }
+    
     function formatItemToShowdown(name) { return name.toLowerCase().replace(/[^a-z0-9]/g, ''); }
     function formatText(str) { if (!str) return ''; return str.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '); }
 
+    // --- INICIALIZAÇÃO ---
     window.onload = async function() { 
         await initItens(); 
         loadAllTeams();
@@ -314,9 +351,13 @@
     };
 
     async function initItens() {
-        try { const r = await fetch('builder/itens.json'); if (r.ok) { todosItens = await r.json(); atualizarListaItens(null); } } catch (e) {}
+        try { 
+            const r = await fetch('builder/itens.json'); 
+            if (r.ok) { todosItens = await r.json(); atualizarListaItens(null); } 
+        } catch (e) { console.warn("Erro itens", e); }
     }
 
+    // --- GERENCIAMENTO DE TIMES ---
     function loadAllTeams() {
         const data = localStorage.getItem('humbleTeamsList');
         if (data) allTeams = JSON.parse(data); else allTeams = [];
@@ -331,20 +372,19 @@
             div.className = `sidebar-card ${currentTeamIndex === index ? 'active' : ''}`;
             div.onclick = (e) => { if(!e.target.closest('.btn-delete-card')) editTeam(index); };
             
-            // Renderiza ícones na sidebar (Tenta usar o ID salvo, se não tiver, usa placeholder)
             let iconsHtml = '';
-            team.slots.slice(0,6).forEach(s => {
-                if(s.name) {
-                    // Tenta adivinhar a imagem pelo nome/mapa, mas na sidebar é menos crítico
-                    const apiName = formatToApiName(s.name);
-                    let idRef = pokemonIdMap[s.name] || apiName; 
-                    // Se tivermos um ID numérico no mapa, usamos ele, senão tenta o nome
-                    let src = `${POKEAPI_IMG}${idRef}.png`; 
-                    if (!pokemonIdMap[s.name]) src = `${POKEAPI_IMG}${apiName}.png`; // Fallback tentativo
-
-                    iconsHtml += `<img src="${src}" onerror="this.src='${IMG_ERROR}'">`;
-                }
-            });
+            if(team.slots) {
+                team.slots.slice(0,6).forEach(s => {
+                    if(s.name) {
+                        const apiName = formatToApiName(s.name);
+                        // Tenta achar imagem via ID se tivermos o mapa carregado, ou fallback para nome
+                        let src = `${POKEAPI_IMG}${apiName}.png`;
+                        if(pokemonIdMap[apiName]) src = `${POKEAPI_IMG}${pokemonIdMap[apiName]}.png`;
+                        
+                        iconsHtml += `<img src="${src}" onerror="this.src='${IMG_ERROR}'">`;
+                    }
+                });
+            }
             div.innerHTML = `<div class="card-title">${team.title || 'Novo Time'}</div><div class="card-meta">[${team.tier || 'Format'}]</div><div class="card-icons">${iconsHtml}</div><button class="btn-delete-card" onclick="deleteTeam(${index}, event)">×</button>`;
             container.appendChild(div);
         });
@@ -382,7 +422,7 @@
                 const ed = document.getElementById(`editor-${id}`);
                 ed.querySelector('.p-name').value = s.name;
                 
-                await updatePokemon(id, ed.querySelector('.p-name')); 
+                await updatePokemon(id, ed.querySelector('.p-name'), false); 
                 
                 ed.querySelector('.p-item').value = s.item;
                 updateItemIcon(id, ed.querySelector('.p-item'));
@@ -449,6 +489,7 @@
         }
     }
 
+    // --- CARREGAMENTO DO JSON LOCAL (AQUI É A LEI DO SERVIDOR) ---
     async function carregarDados(tier) { 
         if(!tier) return;
         const isLC = (tier === 'LC');
@@ -461,18 +502,32 @@
         });
 
         const dl = document.getElementById('list-pokemon'); dl.innerHTML = "";
-        pokemonIdMap = {}; 
+        pokemonIdMap = {}; // Reseta o mapa da tier
 
         try {
+            // LÊ O SEU ARQUIVO LOCAL
             const r = await fetch(`tiers_1.16/${tier}.json`);
             if (r.ok) {
                 const d = await r.json();
-                Object.keys(d).forEach(n => {
-                    const o = document.createElement('option'); o.value = n; dl.appendChild(o);
-                    if(d[n].id) pokemonIdMap[n] = d[n].id;
+                
+                // Preenche a lista de sugestões E o mapa de validação
+                Object.keys(d).forEach(chaveJson => {
+                    const nomeExibicao = formatText(chaveJson); // Deixa bonito: "flutter-mane" -> "Flutter Mane"
+                    
+                    const o = document.createElement('option'); 
+                    o.value = nomeExibicao; 
+                    dl.appendChild(o);
+
+                    // Salva no mapa de permissão
+                    // chaveJson é o ID "técnico" (ex: flutter-mane)
+                    if(d[chaveJson].id) {
+                        pokemonIdMap[chaveJson] = d[chaveJson].id; 
+                    } else {
+                        pokemonIdMap[chaveJson] = true; // Se não tiver ID no json, salva que existe
+                    }
                 });
             }
-        } catch(e){}
+        } catch(e){ console.error("Erro ao carregar Tier Local", e); }
         atualizarListaItens(tier);
     }
     
@@ -484,7 +539,7 @@
         });
     }
     
-    // --- VALIDAÇÃO ---
+    // --- VALIDAÇÃO (CORRIGIDA) ---
     function validateTeam() {
         const tier = document.getElementById('teamTier').value;
         if(!tier) { alert("Selecione uma Tier."); return; }
@@ -493,7 +548,14 @@
         document.querySelectorAll('.poke-editor').forEach((ed, i) => {
             const name = ed.querySelector('.p-name').value.trim();
             if(name) {
-                if(!pokemonIdMap[name]) errors.push(`Pokémon #${i+1} (${name}) não permitido em ${tier}.`);
+                // 1. Converte o nome que o usuário digitou ("Flutter Mane") 
+                // para o formato do seu JSON ("flutter-mane")
+                const searchName = formatToApiName(name);
+
+                // 2. Verifica APENAS no mapa carregado do seu JSON local
+                if(!pokemonIdMap[searchName]) {
+                    errors.push(`Pokémon #${i+1} (${name}) não permitido em ${tier}.`);
+                }
                 
                 const item = ed.querySelector('.p-item').value.trim();
                 const itemObj = todosItens.find(it => it.name === item);
@@ -547,13 +609,13 @@
 
     function generateEditorHTML(id) {
         const nOpts = Object.keys(NATURES_INFO).map(n=>`<option value="${n}">${n}</option>`).join('');
-        return `<div class="editor-layout"><div class="left-panel"><div class="visual-large-box"><img src="${IMG_ERROR}" id="img-${id}" class="poke-sprite-large"></div><div class="base-stats-panel" id="stats-panel-${id}">${STATS.map(s=>`<div class="stat-bar-row"><span class="stat-name">${s}</span><span class="stat-val-base" id="base-${id}-${s.toLowerCase()}">0</span><div class="bar-track"><div class="bar-fill bar-${s.toLowerCase()}" id="bar-${id}-${s.toLowerCase()}"></div></div><span class="stat-val-final" id="val-${id}-${s.toLowerCase()}">0</span></div>`).join('')}<div style="text-align:right;">Total: <span id="bst-${id}">0</span></div></div></div><div class="inputs-area"><div class="row"><div class="col"><label>Pokémon</label><input type="text" class="p-name" list="list-pokemon" onchange="updatePokemon('${id}',this);saveCurrentTeamToStorage()"></div><div class="col"><label>Item</label><div class="input-wrapper"><input type="text" class="p-item" list="list-items" oninput="updateItemIcon('${id}',this);saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearItem('${id}')">×</span></div><img id="item-icon-${id}" class="item-icon-img" style="position:absolute; right:35px; top:32px;"></div></div><div class="row"><datalist id="abilities-${id}"></datalist><div class="col"><label>Ability</label><input type="text" class="p-ability" list="abilities-${id}" onchange="saveCurrentTeamToStorage()"></div><div class="col"><label>Nature</label><select class="p-nature" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"><option value="" disabled>Nature</option>${nOpts}</select></div><div class="col-small"><label>Level</label><input type="number" class="p-level" value="100" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"></div><div class="col-mini"><label>Gender</label><select class="p-gender" onchange="saveCurrentTeamToStorage()"><option value="-">-</option><option value="M">M</option><option value="F">F</option></select></div><div class="col-mini"><label>Shiny</label><select class="p-shiny" onchange="saveCurrentTeamToStorage()"><option value="No">No</option><option value="Yes">Yes</option></select></div></div><div class="iv-section"><div class="iv-grid">${STATS.map(s=>`<div class="iv-box"><label>${s}</label><input type="text" class="p-iv-${s.toLowerCase()}" value="31" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"></div>`).join('')}</div></div></div></div><div class="stats-box"><div class="ev-header"><span>EVs</span><span id="remain-${id}" class="ev-remaining">508</span></div>${STATS.map(s=>`<div class="stat-row"><span class="stat-label">${s}</span><input type="range" min="0" max="252" oninput="updateEV('${id}','${s}',this.value)" id="range-${id}-${s}"><input type="number" class="ev-num" min="0" max="252" onchange="updateEV('${id}','${s}',this.value)" id="num-${id}-${s}"></div>`).join('')}</div><datalist id="moves-${id}"></datalist><div style="margin-top:20px;"><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 1" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 2" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 3" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 4" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div></div>`;
+        return `<div class="editor-layout"><div class="left-panel"><div class="visual-large-box"><img src="${IMG_ERROR}" id="img-${id}" class="poke-sprite-large"></div><div class="base-stats-panel" id="stats-panel-${id}">${STATS.map(s=>`<div class="stat-bar-row"><span class="stat-name">${s}</span><span class="stat-val-base" id="base-${id}-${s.toLowerCase()}">0</span><div class="bar-track"><div class="bar-fill bar-${s.toLowerCase()}" id="bar-${id}-${s.toLowerCase()}"></div></div><span class="stat-val-final" id="val-${id}-${s.toLowerCase()}">0</span></div>`).join('')}<div style="text-align:right;">Total: <span id="bst-${id}">0</span></div></div></div><div class="inputs-area"><div class="row"><div class="col"><label>Pokémon</label><input type="text" class="p-name" list="list-pokemon" onchange="updatePokemon('${id}',this,true);saveCurrentTeamToStorage()"></div><div class="col"><label>Item</label><div class="input-wrapper"><input type="text" class="p-item" list="list-items" oninput="updateItemIcon('${id}',this);saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearItem('${id}')">×</span></div><img id="item-icon-${id}" class="item-icon-img" style="position:absolute; right:35px; top:32px;"></div></div><div class="row"><datalist id="abilities-${id}"></datalist><div class="col"><label>Ability</label><input type="text" class="p-ability" list="abilities-${id}" onchange="saveCurrentTeamToStorage()"></div><div class="col"><label>Nature</label><select class="p-nature" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"><option value="" disabled>Nature</option>${nOpts}</select></div><div class="col-small"><label>Level</label><input type="number" class="p-level" value="100" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"></div><div class="col-mini"><label>Gender</label><select class="p-gender" onchange="saveCurrentTeamToStorage()"><option value="-">-</option><option value="M">M</option><option value="F">F</option></select></div><div class="col-mini"><label>Shiny</label><select class="p-shiny" onchange="saveCurrentTeamToStorage()"><option value="No">No</option><option value="Yes">Yes</option></select></div></div><div class="iv-section"><div class="iv-grid">${STATS.map(s=>`<div class="iv-box"><label>${s}</label><input type="text" class="p-iv-${s.toLowerCase()}" value="31" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"></div>`).join('')}</div></div></div></div><div class="stats-box"><div class="ev-header"><span>EVs</span><span id="remain-${id}" class="ev-remaining">508</span></div>${STATS.map(s=>`<div class="stat-row"><span class="stat-label">${s}</span><input type="range" min="0" max="252" oninput="updateEV('${id}','${s}',this.value)" id="range-${id}-${s}"><input type="number" class="ev-num" min="0" max="252" onchange="updateEV('${id}','${s}',this.value)" id="num-${id}-${s}"></div>`).join('')}</div><datalist id="moves-${id}"></datalist><div style="margin-top:20px;"><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 1" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 2" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 3" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 4" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div></div>`;
     }
 
     function clearItem(id) { const i=document.getElementById(`editor-${id}`).querySelector('.p-item'); i.value=""; updateItemIcon(id,i); saveCurrentTeamToStorage(); }
     function clearInput(btn) { btn.previousElementSibling.value=""; saveCurrentTeamToStorage(); }
 
-    async function updatePokemon(id, el) {
+    async function updatePokemon(id, el, fetchData = true) {
         if (el.value) {
             el.value = el.value.toLowerCase().replace(/(?:^|\s|-)\S/g, function(a) { return a.toUpperCase(); });
         }
@@ -561,27 +623,35 @@
         const val = el.value; 
         if(val.length < 2) return;
         
+        // Formato para API E para Validar no JSON Local
         const apiName = formatToApiName(val);
         const img = document.getElementById(`img-${id}`); 
         const tabImg = document.getElementById(`tab-img-${id}`);
         
-        // Busca dados na API
+        if(!fetchData) {
+            // Se for carregamento ao abrir a página (sem fetch)
+            let src = `${POKEAPI_IMG}${apiName}.png`;
+            if(pokemonIdMap[apiName] && typeof pokemonIdMap[apiName] !== 'boolean') {
+                 src = `${POKEAPI_IMG}${pokemonIdMap[apiName]}.png`;
+            }
+            img.src = src;
+            tabImg.src = src;
+            return;
+        }
+
+        // FETCH NA API (Apenas para Stats e Imagem, não valida Tier!)
         try {
-            console.log(`Buscando dados na PokeAPI para: ${apiName}`);
             const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${apiName}`);
             
             if(r.ok) {
                 const d = await r.json();
                 
-                // --- ATUALIZAÇÃO DA IMAGEM PELA API ---
-                // Agora pegamos o ID direto da PokeAPI (d.id). 100% garantido.
+                // Imagem segura via API ID
                 const newSrc = `${POKEAPI_IMG}${d.id}.png`;
-                
                 img.src = newSrc; 
                 tabImg.src = newSrc;
-                console.log(`Imagem carregada via API: ${newSrc}`);
 
-                // Atualiza Stats e Inputs
+                // Status Base
                 slotBaseStats[id] = { hp:d.stats[0].base_stat, atk:d.stats[1].base_stat, def:d.stats[2].base_stat, spa:d.stats[3].base_stat, spd:d.stats[4].base_stat, spe:d.stats[5].base_stat };
                 recalcStats(id);
                 
@@ -589,11 +659,9 @@
                 d.abilities.forEach(a=>{ const o=document.createElement('option'); o.value=formatText(a.ability.name); abilList.appendChild(o); });
                 const moveList = document.getElementById(`moves-${id}`); moveList.innerHTML="";
                 d.moves.forEach(m=>{ const o=document.createElement('option'); o.value=formatText(m.move.name); moveList.appendChild(o); });
-            } else {
-                console.warn(`Pokémon não encontrado na API: ${apiName}`);
             }
         } catch(e){
-            console.error("Erro ao conectar na PokeAPI", e);
+            console.error("Erro API (Stats/Img)", e);
         }
     }
 
@@ -714,7 +782,7 @@
             name = name.trim();
             if (name.includes('(') && name.includes(')')) { const m = name.match(/\(([^)]+)\)/); if (m) name = m[1]; }
 
-            const nInp = ed.querySelector('.p-name'); nInp.value = name; updatePokemon(id, nInp); 
+            const nInp = ed.querySelector('.p-name'); nInp.value = name; updatePokemon(id, nInp, true); 
             const iInp = ed.querySelector('.p-item'); iInp.value = item; updateItemIcon(id, iInp);
 
             let mIdx = 0; const mInps = ed.querySelectorAll('.p-move');
