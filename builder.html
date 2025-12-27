@@ -2,10 +2,9 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Humble Team Builder - Pro</title>
+  <title>Humble Team Builder - Compacto</title>
   
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
-  <link rel="shortcut icon" type="image/png" href="img/mike_anotando2.png">
   
   <style>
     /* --- CSS VARIÁVEIS --- */
@@ -16,7 +15,6 @@
       --cor-input: #252525; 
       --cor-borda: #444;
       --cor-sucesso: #4dff88;
-      --cor-alerta: #ff4d4d;
     }
 
     body { 
@@ -30,7 +28,7 @@
       color: var(--cor-texto); 
     }
     
-    /* --- HEADER E NAVEGAÇÃO (Restaurados) --- */
+    /* --- HEADER --- */
     header { 
       position: fixed; top: 0; left: 0; right: 0; width: 100%; padding: 10px 20px; 
       display: flex; justify-content: space-between; align-items: center; 
@@ -45,13 +43,10 @@
     /* Menu Hamburguer */
     .menu-toggle { display: flex; flex-direction: column; width: 30px; gap: 6px; cursor: pointer; z-index: 1100; }
     .menu-toggle span { display: block; height: 3px; background: var(--cor-texto); border-radius: 4px; transition: 0.3s; }
-    
-    /* Animação do Menu */
     .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
     .menu-toggle.active span:nth-child(2) { opacity: 0; }
     .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
 
-    /* Dropdown Navigation */
     nav { 
       position: absolute; top: 60px; right: 20px; background: rgba(30, 25, 20, 0.98); 
       border: 1px solid var(--cor-dourado); border-radius: 8px; 
@@ -60,9 +55,8 @@
     }
     nav.active { display: flex; }
     nav a { color: var(--cor-dourado); font-weight: 500; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; }
-    nav a:hover { color: #fff; padding-left: 5px; }
 
-    /* --- LAYOUT BUILDER --- */
+    /* --- LAYOUT --- */
     .builder-wrapper { max-width: 1400px; margin: 0 auto; padding: 20px; }
 
     .toolbar {
@@ -73,7 +67,7 @@
     .editor-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); 
-      gap: 25px;
+      gap: 20px;
     }
 
     /* --- CARD DE POKEMON --- */
@@ -91,72 +85,87 @@
         display: flex; justify-content: space-between; align-items: center;
         border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 15px;
     }
-    .header-row h4 { margin: 0; color: var(--cor-dourado); font-size: 1.1rem; }
-    .slot-badge { background: #111; color: #666; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; }
+    .header-row h4 { margin: 0; color: var(--cor-dourado); font-size: 1rem; }
+    .slot-badge { background: #111; color: #666; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; }
 
-    /* --- VISUAL DA IMAGEM --- */
-    .poke-visual-container {
-      display: flex; justify-content: center; align-items: center;
-      margin-bottom: 15px; height: 120px; position: relative;
+    /* --- VISUAL COMPACTO (Side by Side) --- */
+    .compact-header {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 15px;
+      align-items: flex-start;
+    }
+
+    .visual-small-box {
+      width: 70px;
+      height: 70px;
+      flex-shrink: 0;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid #444;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .poke-sprite-small {
+      width: 55px;
+      height: 55px;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0,0,0,0.6));
     }
     
-    /* Brilho atrás da imagem */
-    .glow-bg {
-        position: absolute; width: 100px; height: 100px;
-        background: radial-gradient(circle, rgba(209,167,32,0.2) 0%, rgba(0,0,0,0) 70%);
-        z-index: 0; pointer-events: none;
+    .header-inputs {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
-
-    .poke-sprite-preview {
-      width: 120px; height: 120px; object-fit: contain; z-index: 1;
-      filter: drop-shadow(0 5px 5px rgba(0,0,0,0.5)); transition: transform 0.3s;
-    }
-    .poke-sprite-preview:hover { transform: scale(1.15); }
-    img[src=""], img[src="#"] { opacity: 0; }
 
     /* --- INPUTS --- */
-    .row { display: flex; gap: 10px; margin-bottom: 10px; }
+    .row { display: flex; gap: 10px; }
     .col { flex: 1; }
-    .col-small { width: 80px; flex: none; }
+    .col-small { width: 70px; flex: none; }
     
-    label { display: block; font-size: 0.75rem; color: #888; margin-bottom: 3px; margin-left: 2px; }
+    label { display: block; font-size: 0.7rem; color: #888; margin-bottom: 2px; margin-left: 2px; }
 
     input[type="text"], input[type="number"], select {
       background: var(--cor-input); border: 1px solid var(--cor-borda); color: #fff;
-      padding: 8px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 0.9rem;
+      padding: 6px 8px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 0.85rem; height: 32px;
     }
     input:focus, select:focus { border-color: var(--cor-dourado); outline: none; background: #303030; }
 
-    /* --- IVS (Compacto) --- */
+    /* --- IVS --- */
     .iv-section {
-        background: rgba(0,0,0,0.2); padding: 8px; border-radius: 4px; margin-bottom: 10px; border: 1px solid #333;
+        background: rgba(0,0,0,0.2); padding: 5px; border-radius: 4px; margin-bottom: 10px; border: 1px solid #333;
     }
     .iv-grid { display: flex; gap: 5px; justify-content: space-between; }
     .iv-box { text-align: center; width: 100%; }
-    .iv-box label { font-size: 0.7rem; color: #666; margin-bottom: 2px; }
-    .iv-box input { text-align: center; padding: 4px; font-size: 0.85rem; color: #aaa; background: #1a1a1a; }
-    .iv-box input:focus { color: var(--cor-dourado); border-color: var(--cor-dourado); }
+    .iv-box label { font-size: 0.65rem; color: #666; margin-bottom: 1px; }
+    .iv-box input { text-align: center; padding: 2px; font-size: 0.8rem; color: #aaa; background: #1a1a1a; height: 25px; }
+    .iv-box input:focus { color: var(--cor-dourado); }
 
-    /* --- EVS (Sliders) --- */
-    .stats-box { margin-bottom: 15px; }
-    .ev-header { display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; color: #aaa; }
+    /* --- EVS --- */
+    .stats-box { margin-bottom: 10px; }
+    .ev-header { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 5px; color: #aaa; }
     
-    .stat-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-    .stat-label { width: 30px; font-weight: bold; font-size: 0.8rem; color: #888; }
+    .stat-row { display: flex; align-items: center; gap: 8px; margin-bottom: 3px; }
+    .stat-label { width: 25px; font-weight: bold; font-size: 0.75rem; color: #888; }
     
     input[type=range] {
-      -webkit-appearance: none; width: 100%; height: 5px; background: #333; border-radius: 3px; outline: none;
+      -webkit-appearance: none; width: 100%; height: 4px; background: #333; border-radius: 3px; outline: none;
     }
     input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none; width: 12px; height: 12px; background: var(--cor-dourado); border-radius: 50%; cursor: pointer;
+      -webkit-appearance: none; width: 10px; height: 10px; background: var(--cor-dourado); border-radius: 50%; cursor: pointer;
     }
-    .ev-num { width: 40px !important; text-align: center; padding: 4px !important; font-size: 0.85rem !important; }
+    .ev-num { width: 35px !important; text-align: center; padding: 2px !important; font-size: 0.8rem !important; height: 25px !important; }
 
     /* --- MOVES --- */
-    .move-input { border-left: 3px solid #555 !important; margin-bottom: 5px; }
+    .move-input { border-left: 3px solid #555 !important; margin-bottom: 4px; height: 30px !important; }
     .move-input:focus { border-left-color: var(--cor-dourado) !important; }
 
-    /* --- BOTOES E EXPORT --- */
+    /* --- BOTOES --- */
     .btn-action {
       background: var(--cor-dourado); border: none; padding: 10px 25px; font-weight: bold;
       cursor: pointer; border-radius: 4px; color: #111; font-size: 0.95rem; transition: 0.2s;
@@ -164,7 +173,7 @@
     .btn-action:hover { background: #fff; box-shadow: 0 0 10px var(--cor-dourado); }
 
     .export-area { margin-top: 30px; background: #222; padding: 20px; border-radius: 8px; border: 1px dashed #555; }
-    textarea { width: 100%; height: 200px; background: #111; color: var(--cor-dourado); border: 1px solid #444; padding: 10px; font-family: monospace; resize: vertical; }
+    textarea { width: 100%; height: 150px; background: #111; color: var(--cor-dourado); border: 1px solid #444; padding: 10px; font-family: monospace; resize: vertical; }
 
   </style>
 </head>
@@ -176,7 +185,6 @@
     <option value="Scizor"><option value="Rotom-Wash"><option value="Landorus-Therian"><option value="Ferrothorn"><option value="Toxapex">
     <option value="Corviknight"><option value="Dragapult"><option value="Grimmsnarl"><option value="Swampert"><option value="Blaziken">
     <option value="Zacian"><option value="Rayquaza"><option value="Kyogre"><option value="Groudon"><option value="Ditto">
-    <option value="Mewtwo"><option value="Arceus"><option value="Darkrai"><option value="Volcarona"><option value="Gliscor">
   </datalist>
 
   <datalist id="list-items">
@@ -200,7 +208,7 @@
   <header>
     <h1>
         <a href="feed.html">
-            <img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder <span style="font-size:0.8rem; color:#666; margin-left:10px;">PRO</span>
+            <img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder <span style="font-size:0.8rem; color:#666; margin-left:10px;">LITE</span>
         </a>
     </h1>
     <div class="menu-toggle" id="menuBtn">
@@ -220,7 +228,6 @@
     <div class="toolbar">
       <div>
         <h2 style="margin:0; color:#fff;">Criar Time</h2>
-        <small style="color:#aaa;">Monte seu time para o torneio</small>
       </div>
       <button class="btn-action" onclick="gerarTextoShowdown()">💾 Gerar Texto</button>
     </div>
@@ -234,7 +241,7 @@
   </div>
 
   <script>
-    // --- 1. SCRIPT DO MENU (Restaurado) ---
+    // --- 1. SCRIPT DO MENU ---
     const menuBtn = document.getElementById("menuBtn");
     const dropdownMenu = document.getElementById("dropdownMenu");
 
@@ -250,7 +257,7 @@
       }
     });
 
-    // --- 2. CONFIGURAÇÕES DO BUILDER ---
+    // --- 2. CONFIGURAÇÕES ---
     const MAX_EVS = 508;
     const TOTAL_SLOTS = 6;
     const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
@@ -264,10 +271,9 @@
     const IMG_PATH = "img/official-artwork/"; 
     const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
 
-    // Cache para API
+    // Cache
     const pokeCache = {};
 
-    // Helper: Formata nome para API
     function formatToApiName(name) {
       return name.trim().toLowerCase()
         .replace(/ /g, '-')
@@ -278,10 +284,9 @@
         .replace(/♂/g, '-m');
     }
 
-    // --- 3. RENDERIZAR SLOTS (COM IVS, LEVEL, NATURE) ---
+    // --- 3. RENDERIZAR SLOTS (LAYOUT COMPACTO) ---
     function renderSlots() {
       const container = document.getElementById('teamContainer');
-      
       const natureOptions = NATURES.map(n => `<option value="${n}">${n}</option>`).join('');
 
       for (let i = 1; i <= TOTAL_SLOTS; i++) {
@@ -295,37 +300,21 @@
             <span class="slot-badge">#${i}</span>
           </div>
           
-          <div class="poke-visual-container">
-            <div class="glow-bg"></div>
-            <img src="${IMG_ERROR}" id="img-${i}" class="poke-sprite-preview" onerror="this.src='${IMG_ERROR}'">
-          </div>
+          <div class="compact-header">
+            <div class="visual-small-box">
+               <img src="${IMG_ERROR}" id="img-${i}" class="poke-sprite-small" onerror="this.src='${IMG_ERROR}'">
+            </div>
 
-          <div class="row">
-            <div class="col">
-              <label>Pokémon</label>
-              <input type="text" class="p-name" list="list-pokemon" placeholder="Garchomp" onchange="updateImage('${i}', this.value)">
-            </div>
-            <div class="col">
-              <label>Item</label>
-              <input type="text" class="p-item" list="list-items" placeholder="Leftovers">
-            </div>
-          </div>
-          
-          <div class="row">
-            <div class="col">
-                <label>Ability</label>
-                <input type="text" class="p-ability" list="list-abilities" placeholder="Ability">
-            </div>
-            <div class="col">
-                <label>Nature</label>
-                <select class="p-nature">
-                    <option value="" disabled selected>Nature...</option>
-                    ${natureOptions}
-                </select>
-            </div>
-            <div class="col-small">
-                <label>Level</label>
-                <input type="number" class="p-level" value="100" min="1" max="100">
+            <div class="header-inputs">
+                <div class="row">
+                    <div class="col"><input type="text" class="p-name" list="list-pokemon" placeholder="Pokémon" onchange="updateImage('${i}', this.value)"></div>
+                    <div class="col"><input type="text" class="p-item" list="list-items" placeholder="Item"></div>
+                </div>
+                <div class="row">
+                    <div class="col"><input type="text" class="p-ability" list="list-abilities" placeholder="Ability"></div>
+                    <div class="col"><select class="p-nature"><option value="" disabled selected>Nature</option>${natureOptions}</select></div>
+                    <div class="col-small"><input type="number" class="p-level" value="100" min="1" max="100" title="Level"></div>
+                </div>
             </div>
           </div>
 
@@ -342,7 +331,7 @@
 
           <div class="stats-box">
             <div class="ev-header">
-              <span>EVs (Effort Values)</span>
+              <span>EVs</span>
               <span id="remain-${i}" class="ev-remaining">Restam: 508</span>
             </div>
             ${STATS.map(stat => `
@@ -367,7 +356,7 @@
       }
     }
 
-    // --- 4. API IMAGEM (Consulta ID, Carrega Local) ---
+    // --- 4. API IMAGEM ---
     async function updateImage(slotId, pokeName) {
       const imgElement = document.getElementById(`img-${slotId}`);
       if (!pokeName || pokeName.length < 2) { imgElement.src = IMG_ERROR; return; }
@@ -388,7 +377,7 @@
       }
     }
 
-    // --- 5. LOGICA EVS (Limite 508) ---
+    // --- 5. LOGICA EVS ---
     function updateEV(slotId, statName, newValue) {
       let val = parseInt(newValue) || 0;
       if (val > 252) val = 252; if (val < 0) val = 0;
@@ -413,7 +402,7 @@
       remainLabel.style.color = remaining === 0 ? "#d1a720" : "#4dff88";
     }
 
-    // --- 6. GERAR TEXTO EXPORTÁVEL (Inclui IVs, Level, Nature) ---
+    // --- 6. EXPORTAR ---
     function gerarTextoShowdown() {
       let fullText = "";
       let hasData = false;
@@ -429,16 +418,10 @@
         let nature = slot.querySelector('.p-nature').value;
         let level = slot.querySelector('.p-level').value;
         
-        // Linha 1: Nome @ Item
         fullText += `${name}${item ? ' @ ' + item : ''}\n`;
-        
-        // Ability
         if (ability) fullText += `Ability: ${ability}\n`;
-        
-        // Level (só mostra se não for 100)
         if (level && level != 100) fullText += `Level: ${level}\n`;
 
-        // EVs
         let evList = [];
         STATS.forEach(s => {
           let val = document.getElementById(`num-${i}-${s}`).value;
@@ -446,10 +429,8 @@
         });
         if (evList.length > 0) fullText += `EVs: ${evList.join(' / ')}\n`;
 
-        // Nature
         if (nature) fullText += `${nature} Nature\n`;
 
-        // IVs (Verifica se algum é diferente de 31)
         let ivList = [];
         let hasCustomIV = false;
         STATS.forEach(s => {
@@ -461,7 +442,6 @@
         });
         if (hasCustomIV) fullText += `IVs: ${ivList.join(' / ')}\n`;
 
-        // Moves
         let moves = slot.querySelectorAll('.p-move');
         moves.forEach(m => {
           if (m.value.trim()) fullText += `- ${m.value.trim()}\n`;
