@@ -38,10 +38,7 @@
 
     .menu-toggle { display: flex; flex-direction: column; width: 30px; gap: 6px; cursor: pointer; z-index: 1100; }
     .menu-toggle span { display: block; height: 3px; background: var(--cor-texto); border-radius: 4px; transition: 0.3s; }
-    .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
-    .menu-toggle.active span:nth-child(2) { opacity: 0; }
-    .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
-
+    
     nav { 
       position: absolute; top: 60px; right: 20px; background: rgba(30, 25, 20, 0.98); 
       border: 1px solid var(--cor-dourado); border-radius: 8px; 
@@ -194,8 +191,7 @@
     label { display: block; font-size: 0.75rem; color: #888; margin-bottom: 2px; }
     input[type="text"], input[type="number"], select {
         background: var(--cor-input); border: 1px solid var(--cor-borda); color: #fff;
-        padding: 6px 25px 6px 10px; /* Padding extra na direita pro X */
-        border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 0.9rem; height: 34px;
+        padding: 6px 25px 6px 10px; border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 0.9rem; height: 34px;
     }
     input:focus, select:focus { border-color: var(--cor-dourado); outline: none; background: #303030; }
 
@@ -231,12 +227,17 @@
 
   <div class="modal-overlay" id="ioModal">
     <div class="modal-content">
-      <h3 style="margin-top:0; color:var(--cor-dourado)">Importar / Exportar (Texto)</h3>
+      <div class="modal-header">
+        <h3 class="modal-title">Importar / Exportar Time</h3>
+        <span class="modal-close" onclick="closeModal()">×</span>
+      </div>
+      <p style="color:#aaa; font-size:0.9rem; margin-top:-10px; margin-bottom:15px;">
+        Copie o texto abaixo para salvar seu time, ou cole um time do Showdown aqui para carregar.
+      </p>
       <textarea id="ioText" class="modal-textarea" spellcheck="false"></textarea>
       <div class="modal-buttons">
-        <button class="btn-action" style="background:#444;" onclick="document.getElementById('ioModal').style.display='none'">Fechar</button>
-        <button class="btn-action" style="background:#444;" onclick="copyToClipboard()">Copiar</button>
-        <button class="btn-action" onclick="processImport()">Carregar</button>
+        <button class="btn-secondary" onclick="copyToClipboard()">Copiar Texto</button>
+        <button class="btn-primary" onclick="processImport()">Salvar (Importar)</button>
       </div>
     </div>
   </div>
@@ -261,8 +262,7 @@
             <h2 style="color:var(--cor-dourado); margin:0;">Meus Times</h2>
             <button class="btn-new-team" onclick="createNewTeam()">+ Novo Time</button>
         </div>
-        <div id="savedTeamsContainer">
-            </div>
+        <div id="savedTeamsContainer"></div>
         <p id="noTeamsMsg" style="color:#666; text-align:center; display:none;">Nenhum time salvo. Crie um novo!</p>
     </div>
 
@@ -271,7 +271,7 @@
             <div class="toolbar-left">
                 <button class="btn-action btn-back" onclick="showTeamList()">⬅ Voltar</button>
                 <div style="display:flex; flex-direction:column;">
-                    <input type="text" id="teamNameInput" placeholder="Nome do Time (ex: Chuva)" style="background:transparent; border:none; border-bottom:1px solid #555; color:#fff; font-size:1.1rem; padding:2px;">
+                    <input type="text" id="teamNameInput" placeholder="Nome do Time" style="background:transparent; border:none; border-bottom:1px solid #555; color:#fff; font-size:1.1rem; padding:2px;">
                 </div>
             </div>
             
@@ -306,6 +306,11 @@
     const menuBtn = document.getElementById("menuBtn");
     const dropdownMenu = document.getElementById("dropdownMenu");
     menuBtn.addEventListener("click", () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); });
+    document.addEventListener("click", (e) => {
+      if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+        menuBtn.classList.remove("active"); dropdownMenu.classList.remove("active");
+      }
+    });
 
     const MAX_EVS = 508; const MAX_SLOTS = 6;
     const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
@@ -384,19 +389,16 @@
         currentTeamIndex = null;
         document.getElementById('teamNameInput').value = "";
         document.getElementById('teamTier').value = "";
-        
         document.getElementById('tabsContainer').innerHTML = "";
         document.getElementById('editorsContainer').innerHTML = "";
         slotCounter = 0;
         addNewSlot(); 
-        
         showBuilder();
     }
 
     function editTeam(index) {
         currentTeamIndex = index;
         const team = allTeams[index];
-        
         document.getElementById('teamNameInput').value = team.title || "";
         document.getElementById('teamTier').value = team.tier || "";
         carregarDados(team.tier);
@@ -448,7 +450,7 @@
         document.querySelectorAll('.poke-editor').forEach(ed => {
             const id = ed.id.split('-')[1];
             const name = ed.querySelector('.p-name').value;
-            if(!name) return; 
+            if(!name) return;
 
             const slot = {
                 name: name,
@@ -521,6 +523,7 @@
         updateAddBtnVisibility();
         return id;
     }
+    
     function removeSlot(id,e){ 
         if(e)e.stopPropagation(); 
         const tab = document.getElementById(`tab-${id}`);
@@ -534,34 +537,25 @@
         }
         updateAddBtnVisibility(); 
     }
+    
     function switchTab(id){ document.querySelectorAll('.tab-slot').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.poke-editor').forEach(e=>e.classList.remove('active')); document.getElementById(`tab-${id}`)?.classList.add('active'); document.getElementById(`editor-${id}`)?.classList.add('active'); }
     function updateAddBtnVisibility(){ document.getElementById('addSlotBtn').classList.toggle('hidden', document.querySelectorAll('.tab-slot').length >= MAX_SLOTS); }
 
     function generateEditorHTML(id) {
         const nOpts = Object.keys(NATURES_INFO).map(n=>`<option value="${n}">${n}</option>`).join('');
-        return `<div class="editor-layout"><div class="left-panel"><div class="visual-large-box"><img src="${IMG_ERROR}" id="img-${id}" class="poke-sprite-large"></div><div class="base-stats-panel" id="stats-panel-${id}">${STATS.map(s=>`<div class="stat-bar-row"><span class="stat-name">${s}</span><span class="stat-val-base" id="base-${id}-${s.toLowerCase()}">0</span><div class="bar-track"><div class="bar-fill bar-${s.toLowerCase()}" id="bar-${id}-${s.toLowerCase()}"></div></div><span class="stat-val-final" id="val-${id}-${s.toLowerCase()}">0</span></div>`).join('')}<div style="text-align:right;">Total: <span id="bst-${id}">0</span></div></div></div><div class="inputs-area"><div class="row"><div class="col"><label>Pokémon</label><input type="text" class="p-name" list="list-pokemon" onchange="updatePokemon('${id}',this)"></div><div class="col"><label>Item</label><div class="input-wrapper"><input type="text" class="p-item" list="list-items" oninput="updateItemIcon('${id}',this)"><span class="clear-x" onclick="clearItem('${id}')">×</span></div><img id="item-icon-${id}" class="item-icon-img" style="position:absolute; right:35px; top:32px;"></div></div><div class="row"><datalist id="abilities-${id}"></datalist><div class="col"><label>Ability</label><input type="text" class="p-ability" list="abilities-${id}"></div><div class="col"><label>Nature</label><select class="p-nature" onchange="recalcStats('${id}')"><option value="" disabled>Nature</option>${nOpts}</select></div><div class="col-small"><label>Level</label><input type="number" class="p-level" value="100" onchange="recalcStats('${id}')"></div><div class="col-mini"><label>Gender</label><select class="p-gender"><option value="-">-</option><option value="M">M</option><option value="F">F</option></select></div><div class="col-mini"><label>Shiny</label><select class="p-shiny"><option value="No">No</option><option value="Yes">Yes</option></select></div></div><div class="iv-section"><div class="iv-grid">${STATS.map(s=>`<div class="iv-box"><label>${s}</label><input type="text" class="p-iv-${s.toLowerCase()}" value="31" onchange="recalcStats('${id}')"></div>`).join('')}</div></div></div></div><div class="stats-box"><div class="ev-header"><span>EVs</span><span id="remain-${id}" class="ev-remaining">508</span></div>${STATS.map(s=>`<div class="stat-row"><span class="stat-label">${s}</span><input type="range" min="0" max="252" oninput="updateEV('${id}','${s}',this.value)" id="range-${id}-${s}"><input type="number" class="ev-num" min="0" max="252" onchange="updateEV('${id}','${s}',this.value)" id="num-${id}-${s}"></div>`).join('')}</div><datalist id="moves-${id}"></datalist><div style="margin-top:20px;"><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 1"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 2"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 3"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 4"><span class="clear-x" onclick="clearInput(this)">×</span></div></div>`;
+        return `<div class="editor-layout"><div class="left-panel"><div class="visual-large-box"><img src="${IMG_ERROR}" id="img-${id}" class="poke-sprite-large"></div><div class="base-stats-panel" id="stats-panel-${id}">${STATS.map(s=>`<div class="stat-bar-row"><span class="stat-name">${s}</span><span class="stat-val-base" id="base-${id}-${s.toLowerCase()}">0</span><div class="bar-track"><div class="bar-fill bar-${s.toLowerCase()}" id="bar-${id}-${s.toLowerCase()}"></div></div><span class="stat-val-final" id="val-${id}-${s.toLowerCase()}">0</span></div>`).join('')}<div style="text-align:right;">Total: <span id="bst-${id}">0</span></div></div></div><div class="inputs-area"><div class="row"><div class="col"><label>Pokémon</label><input type="text" class="p-name" list="list-pokemon" onchange="updatePokemon('${id}',this)"></div><div class="col"><label>Item</label><div class="input-wrapper"><input type="text" class="p-item" list="list-items" oninput="updateItemIcon('${id}',this)"><span class="clear-x" onclick="clearItem('${id}')">×</span></div><img id="item-icon-${id}" class="item-icon-img" style="position:absolute; right:35px; top:32px;"></div></div><div class="row"><datalist id="abilities-${id}"></datalist><div class="col"><label>Ability</label><input type="text" class="p-ability" list="abilities-${id}"></div><div class="col"><label>Nature</label><select class="p-nature" onchange="recalcStats('${id}')"><option value="" disabled>Nature</option>${nOpts}</select></div><div class="col-small"><label>Level</label><input type="number" class="p-level" value="100" onchange="recalcStats('${id}')"></div><div class="col-mini"><label>Gender</label><select class="p-gender"><option value="-">-</option><option value="M">M</option><option value="F">F</option></select></div><div class="col-mini"><label>Shiny</label><select class="p-shiny"><option value="No">No</option><option value="Yes">Yes</option></select></div></div><div class="iv-section"><div class="iv-grid">${STATS.map(s=>`<div class="iv-box"><label>${s}</label><input type="text" class="p-iv-${s.toLowerCase()}" value="31" onchange="recalcStats('${id}')"></div>`).join('')}</div></div></div></div><div class="stats-box"><div class="ev-header"><span>EVs</span><span id="remain-${id}" class="ev-remaining">Restam: 508</span></div>${STATS.map(s=>`<div class="stat-row"><span class="stat-label">${s}</span><input type="range" min="0" max="252" oninput="updateEV('${id}','${s}',this.value)" id="range-${id}-${s}"><input type="number" class="ev-num" min="0" max="252" onchange="updateEV('${id}','${s}',this.value)" id="num-${id}-${s}"></div>`).join('')}</div><datalist id="moves-${id}"></datalist><div style="margin-top:20px;"><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 1"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 2"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 3"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 4"><span class="clear-x" onclick="clearInput(this)">×</span></div></div>`;
     }
 
-    function clearItem(id) {
-        const editor = document.getElementById(`editor-${id}`);
-        const input = editor.querySelector('.p-item');
-        input.value = "";
-        updateItemIcon(id, input);
-    }
-    function clearInput(btn) { btn.previousElementSibling.value = ""; }
+    function clearItem(id) { const i=document.getElementById(`editor-${id}`).querySelector('.p-item'); i.value=""; updateItemIcon(id,i); }
+    function clearInput(btn) { btn.previousElementSibling.value=""; }
 
     async function updatePokemon(id, el) {
         const val = el.value; if(val.length<2) return;
         const apiName = formatToApiName(val);
         const img = document.getElementById(`img-${id}`); const tabImg = document.getElementById(`tab-img-${id}`);
         
-        if (pokemonIdMap[val]) {
-            img.src = `${IMG_PATH}${pokemonIdMap[val]}.png`;
-            tabImg.src = `${IMG_PATH}${pokemonIdMap[val]}.png`;
-        } else {
-            img.src = `${IMG_PATH}${apiName}.png`;
-            tabImg.src = `${IMG_PATH}${apiName}.png`;
-        }
+        if (pokemonIdMap[val]) { img.src = `${IMG_PATH}${pokemonIdMap[val]}.png`; tabImg.src = `${IMG_PATH}${pokemonIdMap[val]}.png`; } 
+        else { img.src = `${IMG_PATH}${apiName}.png`; tabImg.src = `${IMG_PATH}${apiName}.png`; }
         
         try {
             const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${apiName}`);
@@ -572,7 +566,6 @@
                 
                 const abilList = document.getElementById(`abilities-${id}`); abilList.innerHTML="";
                 d.abilities.forEach(a=>{ const o=document.createElement('option'); o.value=formatText(a.ability.name); abilList.appendChild(o); });
-                
                 const moveList = document.getElementById(`moves-${id}`); moveList.innerHTML="";
                 d.moves.forEach(m=>{ const o=document.createElement('option'); o.value=formatText(m.move.name); moveList.appendChild(o); });
             }
@@ -607,14 +600,12 @@
             const parts = NATURES_INFO[nature].split(', ');
             parts.forEach(p => { 
                 const type = p.substring(1).toLowerCase(); 
-                if(p.startsWith('+')) mods[type]=1.1; 
-                if(p.startsWith('-')) mods[type]=0.9; 
+                if(p.startsWith('+')) mods[type]=1.1; if(p.startsWith('-')) mods[type]=0.9; 
             });
         }
         let total=0;
         STATS.forEach(s => {
-            const k = s.toLowerCase();
-            const b = base[k];
+            const k = s.toLowerCase(); const b = base[k];
             document.getElementById(`base-${id}-${k}`).innerText = b;
             const iv = parseInt(document.getElementById(`editor-${id}`).querySelector(`.p-iv-${k}`).value)||0;
             const ev = parseInt(document.getElementById(`num-${id}-${s}`).value)||0;
@@ -630,7 +621,6 @@
         document.getElementById(`bst-${id}`).innerText = total;
     }
 
-    // Modal Import/Export (Copia/Cola Texto)
     function openIOModal() {
         let txt = ""; 
         const tier = document.getElementById('teamTier').value;
@@ -644,18 +634,13 @@
                 if(gender !== '-') line1 += ` (${gender})`;
                 if(item) line1 += ` @ ${item}`;
                 txt += `${line1}\n`;
-                
-                const ability = ed.querySelector('.p-ability').value;
-                if(ability) txt += `Ability: ${ability}\n`;
-                
-                const shiny = ed.querySelector('.p-shiny').value;
-                if(shiny === 'Yes') txt += `Shiny: Yes\n`;
+                const ability = ed.querySelector('.p-ability').value; if(ability) txt += `Ability: ${ability}\n`;
+                const shiny = ed.querySelector('.p-shiny').value; if(shiny === 'Yes') txt += `Shiny: Yes\n`;
                 
                 let evs = []; STATS.forEach(s => { const v = document.getElementById(`num-${ed.id.split('-')[1]}-${s}`).value; if(v>0) evs.push(`${v} ${s}`); });
                 if(evs.length) txt += `EVs: ${evs.join(' / ')}\n`;
                 
-                const nature = ed.querySelector('.p-nature').value;
-                if(nature) txt += `${nature} Nature\n`;
+                const nature = ed.querySelector('.p-nature').value; if(nature) txt += `${nature} Nature\n`;
                 
                 let ivs = []; STATS.forEach(s => { const v = ed.querySelector(`.p-iv-${s.toLowerCase()}`).value; if(v!=31) ivs.push(`${v} ${s}`); });
                 if(ivs.length) txt += `IVs: ${ivs.join(' / ')}\n`;
@@ -670,42 +655,27 @@
     function copyToClipboard() { navigator.clipboard.writeText(document.getElementById('ioText').value); alert("Copiado!"); }
     
     function processImport() {
-        const text = document.getElementById('ioText').value;
-        if (!text.trim()) { alert("Cole um time para importar."); return; }
-
-        document.getElementById('tabsContainer').innerHTML = '';
-        document.getElementById('editorsContainer').innerHTML = '';
-        slotCounter = 0;
-
-        const blocks = text.split(/\r?\n\r?\n/);
+        const text = document.getElementById('ioText').value; if (!text.trim()) { alert("Cole um time."); return; }
+        document.getElementById('tabsContainer').innerHTML = ""; document.getElementById('editorsContainer').innerHTML = "";
+        slotCounter = 0; const blocks = text.split(/\r?\n\r?\n/);
         blocks.forEach(block => {
             if (!block.trim() || block.startsWith("===")) return;
             const id = addNewSlot();
-            if (!id) return;
-
-            const lines = block.split('\n');
-            const firstLine = lines[0].trim();
+            const lines = block.split('\n'); const firstLine = lines[0].trim();
             let name = firstLine, item = "";
             if (firstLine.includes('@')) { const p = firstLine.split('@'); name = p[0].trim(); item = p[1].trim(); }
             
             const ed = document.getElementById(`editor-${id}`);
-            
             if (name.includes('(M)')) { ed.querySelector('.p-gender').value = 'M'; name = name.replace('(M)', ''); }
             else if (name.includes('(F)')) { ed.querySelector('.p-gender').value = 'F'; name = name.replace('(F)', ''); }
             name = name.trim();
+            if (name.includes('(') && name.includes(')')) { const m = name.match(/\(([^)]+)\)/); if (m) name = m[1]; }
 
-            if (name.includes('(') && name.includes(')')) {
-                const m = name.match(/\(([^)]+)\)/);
-                if (m) name = m[1];
-            }
-
-            const nInp = ed.querySelector('.p-name'); nInp.value = name; 
-            updateImage(id, nInp); 
-            
+            const nInp = ed.querySelector('.p-name'); nInp.value = name; updateImage(id, nInp); 
             const iInp = ed.querySelector('.p-item'); iInp.value = item; updateItemIcon(id, iInp);
 
             let mIdx = 0; const mInps = ed.querySelectorAll('.p-move');
-            for (let i = 1; i < lines.length; i++) {
+            for(let i=1; i<lines.length; i++) {
                 const l = lines[i].trim();
                 if (l.startsWith('Ability:')) ed.querySelector('.p-ability').value = l.replace('Ability:', '').trim();
                 else if (l.includes('Nature')) ed.querySelector('.p-nature').value = l.split(' ')[0];
@@ -713,18 +683,17 @@
                 else if (l.startsWith('Shiny:')) ed.querySelector('.p-shiny').value = l.includes('Yes') ? 'Yes' : 'No';
                 else if (l.startsWith('EVs:')) {
                     const p = l.replace('EVs:', '').split('/');
-                    p.forEach(x => { x = x.trim(); const v = parseInt(x); STATS.forEach(s => { if (x.includes(s)) updateEV(id, s, v); }); });
+                    p.forEach(x => { x=x.trim(); const v=parseInt(x); STATS.forEach(s=>{ if(x.includes(s)) updateEV(id,s,v); }); });
                 }
                 else if (l.startsWith('IVs:')) {
                     const p = l.replace('IVs:', '').split('/');
-                    p.forEach(x => { x = x.trim(); const v = parseInt(x); STATS.forEach(s => { if (x.includes(s)) ed.querySelector(`.p-iv-${s.toLowerCase()}`).value = v; }); });
+                    p.forEach(x => { x=x.trim(); const v=parseInt(x); STATS.forEach(s=>{ if(x.includes(s)) ed.querySelector(`.p-iv-${s.toLowerCase()}`).value = v; }); });
                 }
-                else if (l.startsWith('-')) { if (mIdx < 4) { mInps[mIdx].value = l.replace('-', '').trim(); mIdx++; } }
+                else if (l.startsWith('-')) { if(mIdx<4) { mInps[mIdx].value = l.replace('-','').trim(); mIdx++; } }
             }
             setTimeout(() => recalcStats(id), 500);
         });
         document.getElementById('ioModal').style.display='none';
-        saveCurrentTeamToStorage();
     }
   </script>
 </body>
