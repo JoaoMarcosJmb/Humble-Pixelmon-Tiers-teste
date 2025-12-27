@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Feed de Times - Humble</title>
+  <link rel="icon" type="image/png" href="img/mike_anotando2.png">
+  
+  <style>
+    /* --- SEU CSS PADRÃO (Mantido) --- */
+    :root { --cor-dourado: #d1a720; --cor-fundo: #1a1a1a; --cor-texto: #f5f5f5; --cor-card: rgba(30, 30, 30, 0.95); }
+    body { font-family: "Segoe UI", Arial, sans-serif; background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)), url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed; background-size: cover; margin: 0; padding: 0; min-height: 100vh; color: var(--cor-texto); padding-top: 80px; /* Espaço para o header fixo */ }
+    
+    /* Header e Menu (Exatamente iguais ao seu) */
+    header { position: fixed; top: 0; left: 0; right: 0; width: 100%; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(20, 20, 20, 0.9); border-bottom: 2px solid var(--cor-dourado); box-shadow: 0 2px 8px rgba(0,0,0,0.6); z-index: 1000; box-sizing: border-box; }
+    header h1 { font-size: 1.6rem; margin: 0; display: flex; align-items: center; gap: 12px; color: var(--cor-dourado); }
+    header h1 img { height: 40px; cursor: pointer; }
+    header a { text-decoration: none; color: inherit; }
+    .menu-toggle { position: relative; display: flex; flex-direction: column; justify-content: space-between; width: 30px; height: 22px; cursor: pointer; z-index: 1100; }
+    .menu-toggle span { display: block; height: 4px; background: var(--cor-texto); border-radius: 4px; transition: 0.3s; }
+    .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .menu-toggle.active span:nth-child(2) { opacity: 0; }
+    .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+    nav { position: absolute; top: 65px; right: 10px; background: rgba(30, 25, 20, 0.95); border: 1px solid var(--cor-dourado); border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); display: none; flex-direction: column; padding: 15px; gap: 12px; z-index: 1200; width: 200px; }
+    nav.active { display: flex; }
+    nav a { color: var(--cor-dourado); text-decoration: none; font-size: 1rem; transition: color 0.2s; }
+    nav a:hover { color: var(--cor-texto); }
+
+    /* --- CSS NOVO: ESTILO DO FEED --- */
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .feed-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .btn-criar {
+      background-color: var(--cor-dourado);
+      color: #000;
+      padding: 10px 20px;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 5px;
+      border: 1px solid #ffd700;
+      transition: 0.3s;
+    }
+    .btn-criar:hover { background-color: #fff; box-shadow: 0 0 10px var(--cor-dourado); }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .team-card {
+      background: var(--cor-card);
+      border: 1px solid #444;
+      border-radius: 10px;
+      padding: 15px;
+      transition: transform 0.2s, border-color 0.2s;
+      position: relative;
+    }
+
+    .team-card:hover {
+      transform: translateY(-5px);
+      border-color: var(--cor-dourado);
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #444;
+      padding-bottom: 5px;
+    }
+
+    .team-title { font-size: 1.2rem; font-weight: bold; color: var(--cor-dourado); }
+    .team-author { font-size: 0.9rem; color: #aaa; }
+
+    /* Exibição dos 6 Pokemon */
+    .poke-icons {
+      display: flex;
+      justify-content: space-between;
+      margin: 15px 0;
+    }
+    .poke-icons img {
+      width: 40px; 
+      height: 30px; 
+      object-fit: contain; /* Ajusta sprite */
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+
+    .btn-ver {
+      background: transparent;
+      border: 1px solid var(--cor-dourado);
+      color: var(--cor-texto);
+      padding: 5px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+    .btn-ver:hover { background: var(--cor-dourado); color: #000; }
+
+    .like-area { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+    .like-icon { font-size: 1.2rem; color: #888; transition: 0.2s; }
+    .like-area:hover .like-icon { color: #ff4d4d; }
+    .like-area.liked .like-icon { color: #ff4d4d; }
+
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1><a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a> Humble Teams</h1>
+    <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
+  </header>
+
+  <nav id="dropdownMenu">
+    <a href="index.html">🏠 Início</a>
+    <a href="builder.html">🔨 Criar Novo Time</a>
+    <a href="#">🏆 Top Rankings</a>
+  </nav>
+
+  <div class="container">
+    <div class="feed-header">
+      <h2>Times da Comunidade</h2>
+      <a href="builder.html" class="btn-criar">+ Publicar Time</a>
+    </div>
+
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="card-header">
+          <div>
+            <div class="team-title">Chuva Ofensiva</div>
+            <div class="team-author">por Joaomarcosjmb</div>
+          </div>
+          <span style="font-size: 0.8rem; background: #333; padding: 2px 6px; border-radius: 4px;">Gen 9 OU</span>
+        </div>
+        <div class="poke-icons">
+          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/pelipper.png">
+          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/barraskewda.png">
+          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/zapdos.png">
+          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/ferrothorn.png">
+          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/seismitoad.png">
+          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/scizor.png">
+        </div>
+        <div class="card-footer">
+          <a href="builder.html" class="btn-ver">Ver Detalhes</a>
+          <div class="like-area" onclick="toggleLike(this)">
+            <span class="like-icon">❤</span> <span class="like-count">12</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="team-card">
+        <div class="card-header">
+          <div>
+            <div class="team-title">Hyper Offense</div>
+            <div class="team-author">por AshKetchum</div>
+          </div>
+          <span style="font-size: 0.8rem; background: #333; padding: 2px 6px; border-radius: 4px;">NatDex</span>
+        </div>
+        <div class="poke-icons">
+          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/dragapult.png">
+          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/garchomp.png">
+          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/lucario.png">
+          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/dragonite.png">
+          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/gengar.png">
+          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/rotom-wash.png">
+        </div>
+        <div class="card-footer">
+          <a href="#" class="btn-ver">Ver Detalhes</a>
+          <div class="like-area" onclick="toggleLike(this)">
+            <span class="like-icon">❤</span> <span class="like-count">5</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Menu Script
+    const menuBtn = document.getElementById("menuBtn");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    menuBtn.addEventListener("click", () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); });
+    
+    // Like Script (Visual Apenas)
+    function toggleLike(element) {
+      element.classList.toggle('liked');
+      let countSpan = element.querySelector('.like-count');
+      let count = parseInt(countSpan.innerText);
+      if(element.classList.contains('liked')) {
+        countSpan.innerText = count + 1;
+      } else {
+        countSpan.innerText = count - 1;
+      }
+    }
+  </script>
+</body>
+</html>
