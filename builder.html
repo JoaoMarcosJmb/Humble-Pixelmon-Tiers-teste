@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Humble Builder - Stats Edition</title>
+  <title>Humble Builder - Final Layout</title>
   
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
@@ -52,7 +52,8 @@
     nav a { color: var(--cor-dourado); font-weight: 500; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; }
 
     /* --- LAYOUT --- */
-    .builder-wrapper { max-width: 1100px; margin: 0 auto; padding: 20px; }
+    /* Aumentei um pouco o max-width para caber o novo layout lado a lado */
+    .builder-wrapper { max-width: 1200px; margin: 0 auto; padding: 20px; }
 
     /* TOOLBAR */
     .toolbar {
@@ -115,32 +116,41 @@
 
     .editor-layout { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
     
-    /* Área da Esquerda (Imagem e Stats) */
+    /* --- ALTERAÇÃO NO LAYOUT DA ESQUERDA (LADO A LADO) --- */
     .left-panel {
-        display: flex; flex-direction: column; gap: 10px; width: 220px; flex-shrink: 0;
+        display: flex;
+        flex-direction: row; /* Mudou de column para row */
+        gap: 15px;
+        flex-shrink: 0;
     }
 
     .visual-large-box {
-        width: 100%; height: 150px; 
+        width: 150px; height: 150px; /* Tamanho fixo para não distorcer */
         background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 10px;
         display: flex; justify-content: center; align-items: center;
-        position: relative;
+        flex: none;
     }
     .poke-sprite-large { width: 120px; height: 120px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)); }
 
-    /* NOVA ÁREA DE STATS (BARRAS) */
+    /* PAINEL DE BARRAS COM BASE STATS */
     .base-stats-panel {
         background: rgba(0,0,0,0.2); padding: 10px; border-radius: 6px; border: 1px solid #333;
         font-size: 0.8rem;
+        flex-grow: 1; /* Ocupa o espaço restante */
+        min-width: 220px; /* Largura mínima para caber os novos números */
     }
     .stat-bar-row { display: flex; align-items: center; margin-bottom: 4px; gap: 5px; }
+    
     .stat-name { width: 30px; font-weight: bold; color: #888; }
-    .stat-val-final { width: 30px; text-align: right; color: #fff; font-weight: bold; }
+    
+    /* NOVO: Estilo para o número do Base Stat */
+    .stat-val-base { width: 30px; text-align: center; color: #aaa; font-size: 0.75rem; }
+    
+    .stat-val-final { width: 35px; text-align: right; color: #fff; font-weight: bold; }
     
     .bar-track { flex-grow: 1; background: #333; height: 6px; border-radius: 3px; overflow: hidden; }
     .bar-fill { height: 100%; width: 0%; transition: width 0.3s; }
     
-    /* Cores das barras */
     .bar-hp { background: #FF5959; }
     .bar-atk { background: #F5AC78; }
     .bar-def { background: #FAE078; }
@@ -327,8 +337,6 @@
     let pokemonIdMap = {};
     let todosItens = [];
     let slotCounter = 0;
-    
-    // Armazena Base Stats de cada slot: { "1": {hp:100, atk:50...}, "2": ...}
     let slotBaseStats = {}; 
 
     function formatToApiName(name) { return name.trim().toLowerCase().replace(/ /g, '-').replace(/\./g, '').replace(/'/g, '').replace(/:/g, '').replace(/♀/g, '-f').replace(/♂/g, '-m'); }
@@ -435,6 +443,7 @@
                     ${STATS.map(stat => `
                         <div class="stat-bar-row">
                             <span class="stat-name">${stat}</span>
+                            <span class="stat-val-base" id="base-${id}-${stat.toLowerCase()}">0</span>
                             <div class="bar-track"><div class="bar-fill bar-${stat.toLowerCase()}" id="bar-${id}-${stat.toLowerCase()}"></div></div>
                             <span class="stat-val-final" id="val-${id}-${stat.toLowerCase()}">0</span>
                         </div>
@@ -491,7 +500,6 @@
         imgEditor.src = imgSrc;
         imgTab.src = imgSrc;
 
-        // BUSCA STATS NA POKEAPI
         try {
             const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${apiName}`);
             if (response.ok) {
@@ -526,13 +534,11 @@
         if (val > MAX_EVS - total) val = MAX_EVS - total;
         document.getElementById(`range-${id}-${stat}`).value = val;
         document.getElementById(`num-${id}-${stat}`).value = val;
-        
         const rem = MAX_EVS - (total + val);
         const lbl = document.getElementById(`remain-${id}`);
         lbl.innerText = `Restam: ${rem}`;
         lbl.style.color = rem === 0 ? "#d1a720" : "#4dff88";
-        
-        recalcStats(id); // Recalcula stats finais ao mexer nos EVs
+        recalcStats(id);
     }
 
     // --- CÁLCULO DE STATS ---
@@ -542,13 +548,11 @@
         const level = parseInt(editor.querySelector('.p-level').value) || 100;
         const nature = editor.querySelector('.p-nature').value;
         
-        // Determina modificadores da Nature
         let mods = { atk:1, def:1, spa:1, spd:1, spe:1 };
         if (NATURES_INFO[nature] && NATURES_INFO[nature] !== "Neutral") {
-            // Ex: "+Atk, -SpA"
-            const parts = NATURES_INFO[nature].split(', '); // ["+Atk", "-SpA"]
+            const parts = NATURES_INFO[nature].split(', ');
             parts.forEach(p => {
-                const type = p.substring(1).toLowerCase(); // "atk"
+                const type = p.substring(1).toLowerCase();
                 if (p.startsWith('+')) mods[type] = 1.1;
                 if (p.startsWith('-')) mods[type] = 0.9;
             });
@@ -562,28 +566,24 @@
             const ev = parseInt(document.getElementById(`num-${id}-${stat}`).value) || 0;
             const b = base[key];
             
+            // PREENCHE O BASE STAT NOVO
+            document.getElementById(`base-${id}-${key}`).innerText = b;
+
             let final = 0;
             if (b > 0) {
                 if (stat === 'HP') {
-                    // Formula HP: ( (2*Base + IV + EV/4) * Level / 100 ) + Level + 10
-                    if (b === 1) final = 1; // Shedinja
+                    if (b === 1) final = 1;
                     else final = Math.floor( ((2*b + iv + Math.floor(ev/4)) * level) / 100 ) + level + 10;
                 } else {
-                    // Formula Outros: ( ( (2*Base + IV + EV/4) * Level / 100 ) + 5 ) * Nature
                     final = Math.floor( (Math.floor( ((2*b + iv + Math.floor(ev/4)) * level) / 100 ) + 5) * mods[key] );
                 }
             }
 
-            // Atualiza Texto Final
             document.getElementById(`val-${id}-${key}`).innerText = final;
-            
-            // Atualiza Barra (Base Stat visual, max ~255)
             const width = Math.min((b / 255) * 100, 100);
             document.getElementById(`bar-${id}-${key}`).style.width = `${width}%`;
-            
             totalBST += final;
         });
-        
         document.getElementById(`bst-${id}`).innerText = totalBST;
     }
 
@@ -649,7 +649,7 @@
         navigator.clipboard.writeText(copyText.value).then(() => {
             alert("Texto copiado!");
         }).catch(err => {
-            document.execCommand("copy"); // Fallback
+            document.execCommand("copy");
             alert("Texto copiado!");
         });
     }
@@ -685,7 +685,7 @@
             }
 
             const nInp = ed.querySelector('.p-name'); nInp.value = name; 
-            updateImage(id, nInp); // Isso dispara o fetch dos stats
+            updateImage(id, nInp); 
             
             const iInp = ed.querySelector('.p-item'); iInp.value = item; updateItemIcon(id, iInp);
 
@@ -706,7 +706,6 @@
                 }
                 else if (l.startsWith('-')) { if (mIdx < 4) { mInps[mIdx].value = l.replace('-', '').trim(); mIdx++; } }
             }
-            // Força recalculo após preencher tudo
             setTimeout(() => recalcStats(id), 500);
         });
         closeModal();
