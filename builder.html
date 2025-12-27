@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>Humble Builder - Manager</title>
-  
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
   <style>
@@ -16,27 +15,22 @@
       --cor-input: #2a2a2a; 
       --cor-borda: #444;
     }
-    
     * { box-sizing: border-box; }
     
     body { 
       font-family: "Segoe UI", Arial, sans-serif; 
-      background: var(--cor-fundo); 
-      margin: 0; padding: 0; 
-      color: var(--cor-texto); 
-      height: 100vh; 
-      overflow: hidden; 
+      background: var(--cor-fundo); margin: 0; padding: 0; 
+      color: var(--cor-texto); height: 100vh; overflow: hidden; 
       display: flex; flex-direction: column;
     }
     
-    /* --- HEADER --- */
+    /* HEADER */
     header { 
       height: 60px; padding: 0 20px; flex-shrink: 0;
       display: flex; justify-content: space-between; align-items: center; 
       background: rgba(20, 20, 20, 0.98); border-bottom: 2px solid var(--cor-dourado); 
       z-index: 1000;
     }
-    
     header h1 { font-size: 1.4rem; color: var(--cor-dourado); display: flex; gap: 10px; margin: 0; align-items: center; }
     header h1 img { height: 35px; }
     header a { text-decoration: none; color: inherit; display:flex; align-items:center; gap:10px; }
@@ -44,52 +38,25 @@
     .menu-toggle { display: flex; flex-direction: column; width: 30px; gap: 6px; cursor: pointer; }
     .menu-toggle span { display: block; height: 3px; background: var(--cor-texto); border-radius: 4px; }
 
-    /* --- MENU DROPDOWN --- */
-    nav { 
-      position: absolute; top: 60px; right: 20px; background: rgba(30, 25, 20, 0.98); 
-      border: 1px solid var(--cor-dourado); border-radius: 8px; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.8); display: none; 
-      flex-direction: column; padding: 15px; gap: 12px; z-index: 1200; width: 220px; 
-    }
-    nav.active { display: flex; }
-    nav a { color: var(--cor-dourado); font-weight: 500; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; text-decoration: none; }
+    /* LAYOUT PRINCIPAL */
+    .main-container { display: flex; flex-grow: 1; overflow: hidden; width: 100%; }
 
-    /* --- LAYOUT PRINCIPAL (DIVIDIDO) --- */
-    .main-container {
-        display: flex;
-        flex-grow: 1;
-        overflow: hidden;
-        width: 100%;
-    }
-
-    /* --- SIDEBAR (ESQUERDA) --- */
+    /* SIDEBAR */
     .sidebar {
-        width: 300px;
-        background: #181818;
-        border-right: 1px solid #333;
-        display: flex; flex-direction: column;
-        flex-shrink: 0;
+        width: 300px; background: #181818; border-right: 1px solid #333;
+        display: flex; flex-direction: column; flex-shrink: 0;
     }
-
-    .sidebar-header {
-        padding: 15px; border-bottom: 1px solid #333; background: #202020;
-    }
-    
+    .sidebar-header { padding: 15px; border-bottom: 1px solid #333; background: #202020; }
     .btn-new-team {
         width: 100%; padding: 12px; background: #28a745; color: white; border: none; 
-        border-radius: 4px; font-weight: bold; cursor: pointer; transition:0.2s; font-size: 1rem;
+        border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1rem;
     }
     .btn-new-team:hover { background: #218838; }
 
-    .team-list {
-        flex-grow: 1; overflow-y: auto; padding: 10px;
-    }
-    /* Scrollbar */
+    .team-list { flex-grow: 1; overflow-y: auto; padding: 10px; }
     .team-list::-webkit-scrollbar { width: 6px; }
-    .team-list::-webkit-scrollbar-track { background: #222; }
     .team-list::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
 
-    /* CARTÃO DO TIME NA LISTA */
     .sidebar-card {
         background: #2a2a2a; border: 1px solid #444; border-radius: 6px;
         padding: 10px; margin-bottom: 8px; cursor: pointer; position: relative; transition: 0.2s;
@@ -108,20 +75,14 @@
     }
     .btn-delete-card:hover { color: #ff4d4d; }
 
-    /* --- ÁREA DO BUILDER (DIREITA) --- */
+    /* BUILDER AREA */
     .builder-area {
         flex-grow: 1;
-        background: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,30,20,0.95)), 
-                    url("https://i.imgur.com/vATNRmF.png");
-        background-size: cover;
-        overflow-y: auto;
-        padding: 20px;
-        display: flex; flex-direction: column;
+        background: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,30,20,0.95)), url("https://i.imgur.com/vATNRmF.png");
+        background-size: cover; overflow-y: auto; padding: 20px; display: flex; flex-direction: column;
     }
-    
     .builder-wrapper { width: 100%; max-width: 1200px; margin: 0 auto; }
 
-    /* BARRA DE FERRAMENTAS */
     .toolbar {
       display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;
       background: rgba(30,30,30,0.95); padding: 12px 20px; border-radius: 8px; border: 1px solid var(--cor-borda);
@@ -137,13 +98,11 @@
     #teamNameInput:focus { border-color: var(--cor-dourado); outline: none; }
 
     .tier-select { background: #111; color: var(--cor-dourado); border: 1px solid #555; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; min-width: 150px; }
-    
-    .btn-action { background: var(--cor-dourado); border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 4px; color: #111; display:flex; align-items:center; gap:5px; transition: 0.2s; }
-    .btn-action:hover { background: #fff; }
-    .btn-save { background: #28a745; color: #fff; } .btn-save:hover { background: #34ce57; color:#fff; }
-    .btn-import { background: #444; color: #fff; border:1px solid #666; } .btn-import:hover { background: #555; color:#fff;}
+    .btn-action { background: var(--cor-dourado); border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 4px; color: #111; display:flex; align-items:center; gap:5px; }
+    .btn-save { background: #28a745; color: #fff; }
+    .btn-import { background: #444; color: #fff; border:1px solid #666; }
 
-    /* ABAS (POKEMON SLOTS) */
+    /* TABS */
     .tabs-wrapper { display: flex; align-items: flex-end; gap: 5px; margin-bottom: 0; padding-left: 5px; }
     .tab-slot {
         background: #222; border: 1px solid #444; border-bottom: none; border-radius: 8px 8px 0 0;
@@ -158,7 +117,7 @@
     .add-tab-btn { width: 40px; height: 40px; background: #222; border: 1px dashed #666; border-radius: 8px 8px 0 0; color: #888; font-size: 1.5rem; cursor: pointer; display: flex; justify-content: center; align-items: center; }
     .add-tab-btn.hidden { display: none; }
 
-    /* EDITOR CONTAINER */
+    /* EDITOR */
     .editor-container-wrapper {
         background: rgba(30, 30, 30, 0.95); border: 1px solid var(--cor-dourado); border-radius: 0 8px 8px 8px; 
         padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); min-height: 550px; width: 100%;
@@ -167,7 +126,6 @@
     .poke-editor.active { display: block; animation: fadeIn 0.3s; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-    /* LAYOUT INTERNO DO EDITOR */
     .header-row { margin-bottom: 20px; border-bottom: 1px solid #444; padding-bottom: 10px; }
     .header-row h4 { margin: 0; color: var(--cor-dourado); font-size: 1.2rem; }
 
@@ -179,7 +137,7 @@
     }
     .poke-sprite-large { width: 130px; height: 130px; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5)); }
 
-    /* STATS BARS */
+    /* STATS */
     .base-stats-panel { 
         background: rgba(0,0,0,0.2); padding: 12px; border-radius: 8px; border: 1px solid #444; 
         font-size: 0.85rem; flex-grow: 1; min-width: 250px; 
@@ -193,9 +151,13 @@
     .bar-hp { background: #FF5959; } .bar-atk { background: #F5AC78; } .bar-def { background: #FAE078; }
     .bar-spa { background: #9DB7F5; } .bar-spd { background: #A7DB8D; } .bar-spe { background: #FA92B2; }
 
-    /* INPUTS */
     .inputs-area { flex-grow: 1; min-width: 400px; display: flex; flex-direction: column; gap: 12px; }
-    .row { display: flex; gap: 12px; } .col { flex: 1; } .col-small { width: 80px; flex:none; } .col-mini { width: 60px; flex:none; }
+    
+    /* CORREÇÃO CSS: LARGURA DAS COLUNAS MINI */
+    .row { display: flex; gap: 12px; } 
+    .col { flex: 1; } 
+    .col-small { width: 90px; flex:none; } /* Aumentei para caber level */
+    .col-mini { width: 85px; flex:none; } /* Aumentei para caber Gender/Shiny */
 
     .input-wrapper { position: relative; width: 100%; }
     .clear-x { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: #666; cursor: pointer; display: none; z-index: 5; }
@@ -236,6 +198,12 @@
     .modal-textarea { width: 100%; height: 300px; background: #222; color: #fff; border: 1px solid #444; padding: 15px; font-family: monospace; font-size: 0.9rem; resize: vertical; }
     .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px; }
 
+    /* Scrollbars */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #222; }
+    ::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--cor-dourado); }
+
   </style>
 </head>
 <body>
@@ -246,7 +214,6 @@
   <div class="modal-overlay" id="ioModal">
     <div class="modal-content">
       <h3 style="margin-top:0; color:var(--cor-dourado)">Importar / Exportar (Texto)</h3>
-      <p style="color:#aaa; font-size:0.9rem;">Copie o texto abaixo para salvar seu time, ou cole um time do Showdown aqui para carregar.</p>
       <textarea id="ioText" class="modal-textarea" spellcheck="false"></textarea>
       <div class="modal-buttons">
         <button class="btn-action" style="background:#444;" onclick="document.getElementById('ioModal').style.display='none'">Fechar</button>
@@ -270,13 +237,11 @@
   </nav>
 
   <div class="main-container">
-    
     <aside class="sidebar">
         <div class="sidebar-header">
             <button class="btn-new-team" onclick="createNewTeam()">+ Novo Time</button>
         </div>
-        <div class="team-list" id="teamListContainer">
-            </div>
+        <div class="team-list" id="teamListContainer"></div>
     </aside>
 
     <main class="builder-area">
@@ -288,22 +253,12 @@
                 <div class="toolbar-controls">
                     <select id="teamTier" class="tier-select" onchange="carregarDados(this.value)">
                         <option value="" disabled selected>Selecionar Tier</option>
-                        <option value="AG">AG</option>
-                        <option value="LC">LC</option>
-                        <option value="Monotype">Monotype</option>
-                        <option value="NU">NU</option>
-                        <option value="National_Dex">National Dex</option>
-                        <option value="National_Dex_Monotype">NatDex Monotype</option>
-                        <option value="National_Dex_RU">NatDex RU</option>
-                        <option value="National_Dex_UU">NatDex UU</option>
-                        <option value="National_Dex_Ubers">NatDex Ubers</option>
-                        <option value="OU">OU</option>
-                        <option value="PU">PU</option>
-                        <option value="RU">RU</option>
-                        <option value="UU">UU</option>
-                        <option value="Uber">Uber</option>
-                        <option value="Ubers_UU">Ubers UU</option>
-                        <option value="ZU">ZU</option>
+                        <option value="AG">AG</option><option value="LC">LC</option><option value="Monotype">Monotype</option>
+                        <option value="NU">NU</option><option value="National_Dex">National Dex</option>
+                        <option value="National_Dex_Monotype">NatDex Monotype</option><option value="National_Dex_RU">NatDex RU</option>
+                        <option value="National_Dex_UU">NatDex UU</option><option value="National_Dex_Ubers">NatDex Ubers</option>
+                        <option value="OU">OU</option><option value="PU">PU</option><option value="RU">RU</option>
+                        <option value="UU">UU</option><option value="Uber">Uber</option><option value="Ubers_UU">Ubers UU</option><option value="ZU">ZU</option>
                     </select>
                     <button class="btn-action btn-import" onclick="openIOModal()">📥 Texto</button>
                     <button class="btn-action btn-save" onclick="saveCurrentTeamToStorage()">💾 Salvar</button>
@@ -321,11 +276,9 @@
   </div>
 
   <script>
-    // --- GERAIS ---
     const menuBtn = document.getElementById("menuBtn");
     const dropdownMenu = document.getElementById("dropdownMenu");
     menuBtn.addEventListener("click", () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); });
-    
     document.addEventListener("click", (e) => {
       if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
         menuBtn.classList.remove("active"); dropdownMenu.classList.remove("active");
@@ -335,8 +288,7 @@
     const MAX_EVS = 508; const MAX_SLOTS = 6;
     const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
     const NATURES_INFO = { "Adamant": "+Atk, -SpA", "Bashful": "Neutral", "Bold": "+Def, -Atk", "Brave": "+Atk, -Spe", "Calm": "+SpD, -Atk", "Careful": "+SpD, -SpA", "Docile": "Neutral", "Gentle": "+SpD, -Def", "Hardy": "Neutral", "Hasty": "+Spe, -Def", "Impish": "+Def, -SpA", "Jolly": "+Spe, -SpA", "Lax": "+Def, -SpD", "Lonely": "+Atk, -Def", "Mild": "+SpA, -Def", "Modest": "+SpA, -Atk", "Naive": "+Spe, -SpD", "Naughty": "+Atk, -SpD", "Quiet": "+SpA, -Spe", "Quirky": "Neutral", "Rash": "+SpA, -SpD", "Relaxed": "+Def, -Spe", "Sassy": "+SpD, -Spe", "Serious": "Neutral", "Timid": "+Spe, -Atk" };
-    const IMG_PATH = "img/official-artwork/"; 
-    const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
+    const IMG_PATH = "img/official-artwork/"; const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
     const ITEM_ICON_BASE = "https://play.pokemonshowdown.com/sprites/itemicons/";
 
     let pokemonIdMap = {}; let todosItens = [];
@@ -347,10 +299,9 @@
     function formatItemToShowdown(name) { return name.toLowerCase().replace(/[^a-z0-9]/g, ''); }
     function formatText(str) { if (!str) return ''; return str.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '); }
 
-    // --- INIT ---
     window.onload = async function() { 
         await initItens(); 
-        loadAllTeams(); 
+        loadAllTeams();
         if(allTeams.length > 0) editTeam(0); 
         else createNewTeam();
     };
@@ -359,7 +310,6 @@
         try { const r = await fetch('builder/itens.json'); if (r.ok) { todosItens = await r.json(); atualizarListaItens(null); } } catch (e) {}
     }
 
-    // --- SIDEBAR & TIMES ---
     function loadAllTeams() {
         const data = localStorage.getItem('humbleTeamsList');
         if (data) allTeams = JSON.parse(data); else allTeams = [];
@@ -369,12 +319,10 @@
     function renderSidebar() {
         const container = document.getElementById('teamListContainer');
         container.innerHTML = "";
-        
         allTeams.forEach((team, index) => {
             const div = document.createElement('div');
             div.className = `sidebar-card ${currentTeamIndex === index ? 'active' : ''}`;
             div.onclick = (e) => { if(!e.target.closest('.btn-delete-card')) editTeam(index); };
-
             let iconsHtml = '';
             team.slots.slice(0,6).forEach(s => {
                 if(s.name) {
@@ -383,13 +331,7 @@
                     iconsHtml += `<img src="${src}" onerror="this.src='${IMG_ERROR}'">`;
                 }
             });
-
-            div.innerHTML = `
-                <div class="card-title">${team.title || 'Novo Time'}</div>
-                <div class="card-meta">[${team.tier || 'Format'}]</div>
-                <div class="card-icons">${iconsHtml}</div>
-                <button class="btn-delete-card" onclick="deleteTeam(${index}, event)">×</button>
-            `;
+            div.innerHTML = `<div class="card-title">${team.title || 'Novo Time'}</div><div class="card-meta">[${team.tier || 'Format'}]</div><div class="card-icons">${iconsHtml}</div><button class="btn-delete-card" onclick="deleteTeam(${index}, event)">×</button>`;
             container.appendChild(div);
         });
     }
@@ -413,7 +355,6 @@
         currentTeamIndex = index;
         const team = allTeams[index];
         renderSidebar(); 
-
         document.getElementById('teamNameInput').value = team.title || "";
         document.getElementById('teamTier').value = team.tier || "";
         await carregarDados(team.tier);
@@ -425,12 +366,10 @@
                 const id = addNewSlot();
                 const ed = document.getElementById(`editor-${id}`);
                 ed.querySelector('.p-name').value = s.name;
-                
                 await updatePokemon(id, ed.querySelector('.p-name')); 
                 
                 ed.querySelector('.p-item').value = s.item;
                 updateItemIcon(id, ed.querySelector('.p-item'));
-
                 ed.querySelector('.p-ability').value = s.ability;
                 ed.querySelector('.p-nature').value = s.nature;
                 ed.querySelector('.p-level').value = s.level;
@@ -441,16 +380,12 @@
                     updateEV(id, stat, s.evs[stat] || 0);
                     ed.querySelector(`.p-iv-${stat.toLowerCase()}`).value = s.ivs[stat] || 31;
                 });
-
                 const movesInp = ed.querySelectorAll('.p-move');
                 s.moves.forEach((m, i) => { if(movesInp[i]) movesInp[i].value = m; });
-                
                 recalcStats(id);
             }
             switchTab(1);
-        } else {
-            addNewSlot();
-        }
+        } else { addNewSlot(); }
     }
 
     function saveCurrentTeamToStorage() {
@@ -459,11 +394,9 @@
             tier: document.getElementById('teamTier').value,
             slots: []
         };
-
         document.querySelectorAll('.poke-editor').forEach(ed => {
             const id = ed.id.split('-')[1];
             const name = ed.querySelector('.p-name').value;
-            
             const slot = {
                 name: name,
                 item: ed.querySelector('.p-item').value,
@@ -482,13 +415,8 @@
             teamData.slots.push(slot);
         });
 
-        if (currentTeamIndex === null) {
-            allTeams.push(teamData); 
-            currentTeamIndex = allTeams.length - 1; 
-        } else {
-            allTeams[currentTeamIndex] = teamData; 
-        }
-
+        if (currentTeamIndex === null) { allTeams.push(teamData); currentTeamIndex = allTeams.length - 1; } 
+        else { allTeams[currentTeamIndex] = teamData; }
         localStorage.setItem('humbleTeamsList', JSON.stringify(allTeams));
         renderSidebar();
     }
@@ -504,12 +432,23 @@
         }
     }
 
-    // --- FUNÇÕES DE LÓGICA ---
     async function carregarDados(tier) { 
         if(!tier) return;
         const isLC = (tier === 'LC');
+        
+        // CORREÇÃO: Aplica a regra para todos os inputs de nível existentes
         document.querySelectorAll('.p-level').forEach(input => {
-            if(isLC) { input.max = 5; if(input.value > 5 || input.value == 100) input.value = 5; } else { input.max = 100; }
+            if(isLC) { 
+                input.max = 5; 
+                if(input.value > 5 || input.value == 100) input.value = 5; 
+            } else { 
+                input.max = 100; 
+                // Se saiu de LC, opcionalmente volta pro 100
+                if(input.value == 5) input.value = 100;
+            }
+            // Recalcula stats se o nível mudou
+            const id = input.closest('.poke-editor').id.split('-')[1];
+            recalcStats(id);
         });
 
         const dl = document.getElementById('list-pokemon'); dl.innerHTML = "";
@@ -542,6 +481,14 @@
         document.getElementById('tabsContainer').appendChild(tab);
         const ed = document.createElement('div'); ed.className='poke-editor'; ed.id=`editor-${id}`; ed.innerHTML=generateEditorHTML(id);
         document.getElementById('editorsContainer').appendChild(ed);
+        
+        // CORREÇÃO: Aplica nível 5 se a tier atual for LC ao criar
+        const currentTier = document.getElementById('teamTier').value;
+        if(currentTier === 'LC') {
+             ed.querySelector('.p-level').value = 5;
+             ed.querySelector('.p-level').max = 5;
+        }
+
         slotBaseStats[id] = {hp:0,atk:0,def:0,spa:0,spd:0,spe:0};
         switchTab(id);
         updateAddBtnVisibility();
@@ -567,34 +514,7 @@
 
     function generateEditorHTML(id) {
         const nOpts = Object.keys(NATURES_INFO).map(n=>`<option value="${n}">${n}</option>`).join('');
-        return `
-        <div class="editor-layout">
-            <div class="left-panel">
-                <div class="visual-large-box"><img src="${IMG_ERROR}" id="img-${id}" class="poke-sprite-large"></div>
-                <div class="base-stats-panel" id="stats-panel-${id}">
-                    ${STATS.map(s=>`<div class="stat-bar-row"><span class="stat-name">${s}</span><span class="stat-val-base" id="base-${id}-${s.toLowerCase()}">0</span><div class="bar-track"><div class="bar-fill bar-${s.toLowerCase()}" id="bar-${id}-${s.toLowerCase()}"></div></div><span class="stat-val-final" id="val-${id}-${s.toLowerCase()}">0</span></div>`).join('')}
-                    <div style="text-align:right; margin-top:5px; color:#aaa;">Total: <span id="bst-${id}">0</span></div>
-                </div>
-            </div>
-            <div class="inputs-area">
-                <div class="row">
-                    <div class="col"><label>Pokémon</label><input type="text" class="p-name" list="list-pokemon" onchange="updatePokemon('${id}',this);saveCurrentTeamToStorage()"></div>
-                    <div class="col"><label>Item</label><div class="input-wrapper"><input type="text" class="p-item" list="list-items" oninput="updateItemIcon('${id}',this);saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearItem('${id}')">×</span></div><img id="item-icon-${id}" class="item-icon-img" style="position:absolute; right:35px; top:32px;"></div>
-                </div>
-                <div class="row">
-                    <datalist id="abilities-${id}"></datalist><div class="col"><label>Ability</label><input type="text" class="p-ability" list="abilities-${id}" onchange="saveCurrentTeamToStorage()"></div><div class="col"><label>Nature</label><select class="p-nature" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"><option value="" disabled>Nature</option>${nOpts}</select></div><div class="col-small"><label>Level</label><input type="number" class="p-level" value="100" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"></div><div class="col-mini"><label>Gender</label><select class="p-gender" onchange="saveCurrentTeamToStorage()"><option value="-">-</option><option value="M">M</option><option value="F">F</option></select></div><div class="col-mini"><label>Shiny</label><select class="p-shiny" onchange="saveCurrentTeamToStorage()"><option value="No">No</option><option value="Yes">Yes</option></select></div>
-                </div>
-                <div class="iv-section"><div class="iv-grid">${STATS.map(s=>`<div class="iv-box"><label>${s}</label><input type="text" class="p-iv-${s.toLowerCase()}" value="31" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"></div>`).join('')}</div></div>
-            </div>
-        </div>
-        <div class="stats-box"><div class="ev-header"><span>EVs</span><span id="remain-${id}" class="ev-remaining">Restam: 508</span></div>${STATS.map(s=>`<div class="stat-row"><span class="stat-label">${s}</span><input type="range" min="0" max="252" oninput="updateEV('${id}','${s}',this.value)" id="range-${id}-${s}"><input type="number" class="ev-num" min="0" max="252" onchange="updateEV('${id}','${s}',this.value)" id="num-${id}-${s}"></div>`).join('')}</div>
-        <datalist id="moves-${id}"></datalist>
-        <div style="margin-top:20px;">
-            <div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 1" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div>
-            <div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 2" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div>
-            <div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 3" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div>
-            <div class="input-wrapper"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 4" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div>
-        </div>`;
+        return `<div class="editor-layout"><div class="left-panel"><div class="visual-large-box"><img src="${IMG_ERROR}" id="img-${id}" class="poke-sprite-large"></div><div class="base-stats-panel" id="stats-panel-${id}">${STATS.map(s=>`<div class="stat-bar-row"><span class="stat-name">${s}</span><span class="stat-val-base" id="base-${id}-${s.toLowerCase()}">0</span><div class="bar-track"><div class="bar-fill bar-${s.toLowerCase()}" id="bar-${id}-${s.toLowerCase()}"></div></div><span class="stat-val-final" id="val-${id}-${s.toLowerCase()}">0</span></div>`).join('')}<div style="text-align:right;">Total: <span id="bst-${id}">0</span></div></div></div><div class="inputs-area"><div class="row"><div class="col"><label>Pokémon</label><input type="text" class="p-name" list="list-pokemon" onchange="updatePokemon('${id}',this);saveCurrentTeamToStorage()"></div><div class="col"><label>Item</label><div class="input-wrapper"><input type="text" class="p-item" list="list-items" oninput="updateItemIcon('${id}',this);saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearItem('${id}')">×</span></div><img id="item-icon-${id}" class="item-icon-img" style="position:absolute; right:35px; top:32px;"></div></div><div class="row"><datalist id="abilities-${id}"></datalist><div class="col"><label>Ability</label><input type="text" class="p-ability" list="abilities-${id}" onchange="saveCurrentTeamToStorage()"></div><div class="col"><label>Nature</label><select class="p-nature" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"><option value="" disabled>Nature</option>${nOpts}</select></div><div class="col-small"><label>Level</label><input type="number" class="p-level" value="100" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"></div><div class="col-mini"><label>Gender</label><select class="p-gender" onchange="saveCurrentTeamToStorage()"><option value="-">-</option><option value="M">M</option><option value="F">F</option></select></div><div class="col-mini"><label>Shiny</label><select class="p-shiny" onchange="saveCurrentTeamToStorage()"><option value="No">No</option><option value="Yes">Yes</option></select></div></div><div class="iv-section"><div class="iv-grid">${STATS.map(s=>`<div class="iv-box"><label>${s}</label><input type="text" class="p-iv-${s.toLowerCase()}" value="31" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"></div>`).join('')}</div></div></div></div><div class="stats-box"><div class="ev-header"><span>EVs</span><span id="remain-${id}" class="ev-remaining">508</span></div>${STATS.map(s=>`<div class="stat-row"><span class="stat-label">${s}</span><input type="range" min="0" max="252" oninput="updateEV('${id}','${s}',this.value)" id="range-${id}-${s}"><input type="number" class="ev-num" min="0" max="252" onchange="updateEV('${id}','${s}',this.value)" id="num-${id}-${s}"></div>`).join('')}</div><datalist id="moves-${id}"></datalist><div style="margin-top:20px;"><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 1" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 2" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 3" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div><div class="input-wrapper"><input type="text" class="move-input p-move" list="moves-${id}" placeholder="- Move 4" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div></div>`;
     }
 
     function clearItem(id) { const i=document.getElementById(`editor-${id}`).querySelector('.p-item'); i.value=""; updateItemIcon(id,i); saveCurrentTeamToStorage(); }
@@ -691,9 +611,12 @@
                 
                 let evs = []; STATS.forEach(s => { const v = document.getElementById(`num-${ed.id.split('-')[1]}-${s}`).value; if(v>0) evs.push(`${v} ${s}`); });
                 if(evs.length) txt += `EVs: ${evs.join(' / ')}\n`;
+                
                 const nature = ed.querySelector('.p-nature').value; if(nature) txt += `${nature} Nature\n`;
+                
                 let ivs = []; STATS.forEach(s => { const v = ed.querySelector(`.p-iv-${s.toLowerCase()}`).value; if(v!=31) ivs.push(`${v} ${s}`); });
                 if(ivs.length) txt += `IVs: ${ivs.join(' / ')}\n`;
+
                 ed.querySelectorAll('.p-move').forEach(m => { if(m.value) txt += `- ${m.value}\n`; });
                 txt += "\n";
             }
