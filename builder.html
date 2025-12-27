@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Humble Builder - Import Edition</title>
+  <title>Humble Builder - Final</title>
   
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
@@ -14,7 +14,6 @@
       --cor-texto: #f5f5f5; 
       --cor-input: #252525; 
       --cor-borda: #444;
-      --cor-sucesso: #4dff88;
     }
 
     body { 
@@ -23,9 +22,7 @@
                   url("https://i.imgur.com/vATNRmF.png"); 
       background-size: cover; 
       background-attachment: fixed;
-      margin: 0; 
-      padding-top: 80px; 
-      color: var(--cor-texto); 
+      margin: 0; padding-top: 80px; color: var(--cor-texto); 
     }
     
     /* --- HEADER --- */
@@ -54,9 +51,10 @@
     nav.active { display: flex; }
     nav a { color: var(--cor-dourado); font-weight: 500; transition: 0.2s; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 5px; }
 
-    /* --- LAYOUT PRINCIPAL --- */
+    /* --- LAYOUT --- */
     .builder-wrapper { max-width: 1000px; margin: 0 auto; padding: 20px; }
 
+    /* TOOLBAR LIMPA */
     .toolbar {
       display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
       background: rgba(30,30,30,0.8); padding: 15px; border-radius: 8px; border: 1px solid var(--cor-borda);
@@ -64,27 +62,24 @@
     }
     .toolbar-title h2 { margin: 0; color: #fff; font-size: 1.5rem; }
     .toolbar-title small { color: #aaa; }
-    .toolbar-controls { display: flex; gap: 10px; align-items: center; height: 42px; }
+    .toolbar-controls { display: flex; gap: 15px; align-items: center; height: 42px; }
 
     .tier-select {
         background: #111; color: var(--cor-dourado); border: 1px solid var(--cor-dourado);
         padding: 0 15px; border-radius: 5px; font-weight: bold; cursor: pointer;
-        font-size: 0.95rem; min-width: 150px; height: 100%; box-sizing: border-box;
+        font-size: 0.95rem; min-width: 180px; height: 100%; box-sizing: border-box;
     }
+    .tier-select:focus { outline: none; box-shadow: 0 0 8px rgba(209, 167, 32, 0.3); }
+
     .btn-action {
-      background: var(--cor-dourado); border: none; padding: 0 20px; font-weight: bold;
-      cursor: pointer; border-radius: 4px; color: #111; font-size: 0.9rem; transition: 0.2s;
-      height: 100%; display: flex; align-items: center;
+      background: var(--cor-dourado); border: none; padding: 0 25px; font-weight: bold;
+      cursor: pointer; border-radius: 4px; color: #111; font-size: 0.95rem; transition: 0.2s;
+      height: 100%; display: flex; align-items: center; gap: 8px;
     }
-    .btn-action:hover { background: #fff; box-shadow: 0 0 10px var(--cor-dourado); }
-    
-    /* Estilo diferente para o botão de Importar */
-    .btn-import { background: #333; color: #fff; border: 1px solid #666; }
-    .btn-import:hover { background: #555; border-color: #fff; }
+    .btn-action:hover { background: #fff; box-shadow: 0 0 15px rgba(209, 167, 32, 0.5); }
 
-    /* --- ABAS DINÂMICAS --- */
+    /* --- ABAS --- */
     .tabs-wrapper { display: flex; align-items: flex-end; gap: 5px; margin-bottom: 0; padding-left: 5px; }
-
     .tab-slot {
         background: #222; border: 1px solid #444; border-bottom: none; border-radius: 8px 8px 0 0;
         width: 70px; height: 50px; cursor: pointer; display: flex; justify-content: center; align-items: center;
@@ -127,11 +122,10 @@
 
     .inputs-area { flex-grow: 1; min-width: 300px; display: flex; flex-direction: column; gap: 15px; }
 
-    /* --- INPUTS --- */
+    /* Inputs */
     .row { display: flex; gap: 15px; }
     .col { flex: 1; }
     .col-small { width: 80px; flex: none; }
-    
     .input-with-icon { display: flex; align-items: center; gap: 8px; }
     .item-icon-img { width: 30px; height: 30px; object-fit: contain; opacity: 0.3; transition: opacity 0.3s; }
     .item-icon-img.active { opacity: 1; }
@@ -160,29 +154,37 @@
     .move-input { border-left: 4px solid #555 !important; margin-bottom: 8px; height: 38px !important; }
     .move-input:focus { border-left-color: var(--cor-dourado) !important; }
 
-    .export-area { margin-top: 30px; background: #222; padding: 20px; border-radius: 8px; border: 1px dashed #555; }
-    textarea { width: 100%; height: 150px; background: #111; color: var(--cor-dourado); border: 1px solid #444; padding: 10px; font-family: monospace; resize: vertical; }
-
-    /* --- MODAL DE IMPORTAÇÃO --- */
+    /* --- MODAL UNIFICADO --- */
     .modal-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0,0,0,0.85); z-index: 2000;
         display: none; justify-content: center; align-items: center;
+        backdrop-filter: blur(5px);
     }
     .modal-content {
         background: #1a1a1a; border: 2px solid var(--cor-dourado);
-        padding: 20px; border-radius: 10px; width: 90%; max-width: 600px;
-        box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        padding: 25px; border-radius: 12px; width: 90%; max-width: 700px;
+        box-shadow: 0 0 30px rgba(0,0,0,0.9);
     }
-    .modal-title { margin-top: 0; color: var(--cor-dourado); }
+    .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .modal-title { margin: 0; color: var(--cor-dourado); font-size: 1.4rem; }
+    .modal-close { cursor: pointer; color: #888; font-size: 1.5rem; transition: 0.2s; }
+    .modal-close:hover { color: #fff; }
+
     .modal-textarea {
-        width: 100%; height: 200px; background: #222; color: #fff;
-        border: 1px solid #444; padding: 10px; box-sizing: border-box;
-        margin-bottom: 15px; font-family: monospace;
+        width: 100%; height: 300px; background: #222; color: #fff;
+        border: 1px solid #444; padding: 15px; box-sizing: border-box;
+        margin-bottom: 20px; font-family: "Consolas", monospace; font-size: 0.9rem;
+        resize: vertical;
     }
-    .modal-buttons { display: flex; justify-content: flex-end; gap: 10px; }
-    .btn-cancel { background: #444; color: #fff; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
-    .btn-confirm { background: var(--cor-dourado); color: #000; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+    .modal-textarea:focus { border-color: var(--cor-dourado); outline: none; }
+
+    .modal-buttons { display: flex; justify-content: flex-end; gap: 15px; }
+    .btn-secondary { background: transparent; color: #ccc; border: 1px solid #555; padding: 10px 20px; border-radius: 5px; cursor: pointer; }
+    .btn-secondary:hover { border-color: #fff; color: #fff; }
+    
+    .btn-primary { background: var(--cor-dourado); color: #000; border: none; padding: 10px 25px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+    .btn-primary:hover { background: #fff; }
 
   </style>
 </head>
@@ -190,20 +192,40 @@
 
   <datalist id="list-pokemon"></datalist>
   <datalist id="list-items"></datalist>
-  <datalist id="list-abilities"></datalist> <datalist id="list-moves"></datalist> <div class="modal-overlay" id="importModal">
+  <datalist id="list-abilities">
+    <option value="Intimidate"><option value="Levitate"><option value="Rough Skin"><option value="Pressure"><option value="Swift Swim">
+    <option value="Chlorophyll"><option value="Sand Stream"><option value="Drizzle"><option value="Regenerator"><option value="Beast Boost">
+    <option value="Technician"><option value="Mold Breaker"><option value="Prankster"><option value="Magic Bounce"><option value="Libero">
+  </datalist>
+  <datalist id="list-moves">
+    <option value="Earthquake"><option value="Thunderbolt"><option value="Ice Beam"><option value="Flamethrower"><option value="Protect">
+    <option value="Toxic"><option value="Scald"><option value="U-turn"><option value="Stealth Rock"><option value="Defog"><option value="Roost">
+    <option value="Swords Dance"><option value="Calm Mind"><option value="Close Combat"><option value="Shadow Ball"><option value="Volt Switch">
+  </datalist>
+
+  <div class="modal-overlay" id="ioModal">
     <div class="modal-content">
-      <h3 class="modal-title">Importar do Showdown</h3>
-      <p style="color:#ccc; font-size:0.9rem;">Cole o texto do seu time abaixo. Isso substituirá o time atual.</p>
-      <textarea id="importText" class="modal-textarea" placeholder="Garchomp @ Leftovers..."></textarea>
+      <div class="modal-header">
+        <h3 class="modal-title">Importar / Exportar Time</h3>
+        <span class="modal-close" onclick="closeModal()">×</span>
+      </div>
+      <p style="color:#aaa; font-size:0.9rem; margin-top:-10px; margin-bottom:15px;">
+        Copie o texto abaixo para salvar seu time, ou cole um time do Showdown aqui para carregar.
+      </p>
+      <textarea id="ioText" class="modal-textarea" spellcheck="false"></textarea>
       <div class="modal-buttons">
-        <button class="btn-cancel" onclick="closeImportModal()">Cancelar</button>
-        <button class="btn-confirm" onclick="processImport()">Importar Time</button>
+        <button class="btn-secondary" onclick="copyToClipboard()">Copiar Texto</button>
+        <button class="btn-primary" onclick="processImport()">Salvar (Importar)</button>
       </div>
     </div>
   </div>
 
   <header>
-    <h1><a href="feed.html"><img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder</a></h1>
+    <h1>
+        <a href="feed.html">
+            <img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder
+        </a>
+    </h1>
     <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
   </header>
 
@@ -219,10 +241,9 @@
     <div class="toolbar">
       <div class="toolbar-title">
         <h2>Criar Time</h2>
-        <small>Selecione a Tier para carregar dados</small>
+        <small>Selecione a Tier e monte sua estratégia</small>
       </div>
       <div class="toolbar-controls">
-        <button class="btn-action btn-import" onclick="openImportModal()">📥 Importar</button>
         <select id="teamTier" class="tier-select" onchange="carregarDados(this.value)">
             <option value="" disabled selected>Selecionar Tier</option>
             <option value="AG">AG</option>
@@ -236,7 +257,10 @@
             <option value="NFE">NFE</option>
             <option value="LC">LC</option>
         </select>
-        <button class="btn-action" onclick="gerarTextoShowdown()">💾 Exportar</button>
+        
+        <button class="btn-action" onclick="openIOModal()">
+            💾 Import / Export
+        </button>
       </div>
     </div>
 
@@ -246,15 +270,20 @@
     </div>
 
     <div class="editor-container-wrapper" id="editorsContainer"></div>
-
-    <div class="export-area" id="exportSection">
-      <h3 style="color:var(--cor-dourado); margin-top:0;">Resultado (Showdown Format):</h3>
-      <textarea id="finalOutput" readonly placeholder="Seu time aparecerá aqui..."></textarea>
-    </div>
   </div>
 
   <script>
-    // --- VARIÁVEIS E CONFIG ---
+    // --- GERAIS ---
+    const menuBtn = document.getElementById("menuBtn");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    menuBtn.addEventListener("click", () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); });
+    
+    document.addEventListener("click", (e) => {
+      if (!dropdownMenu.contains(e.target) && !menuBtn.contains(e.target)) {
+        menuBtn.classList.remove("active"); dropdownMenu.classList.remove("active");
+      }
+    });
+
     const MAX_EVS = 508;
     const MAX_SLOTS = 6;
     const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
@@ -267,46 +296,27 @@
     let todosItens = [];
     let slotCounter = 0;
 
-    // --- MENU ---
-    const menuBtn = document.getElementById("menuBtn");
-    const dropdownMenu = document.getElementById("dropdownMenu");
-    menuBtn.addEventListener("click", () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); });
-
-    // --- UTILS ---
     function formatToApiName(name) { return name.trim().toLowerCase().replace(/ /g, '-').replace(/\./g, '').replace(/'/g, '').replace(/:/g, '').replace(/♀/g, '-f').replace(/♂/g, '-m'); }
     function formatItemToShowdown(name) { return name.toLowerCase().replace(/[^a-z0-9]/g, ''); }
 
-    // --- INICIALIZAÇÃO ---
     window.onload = function() { 
         initItens(); 
-        addNewSlot(); // Começa com 1 slot vazio
-        populateStaticDatalists();
+        addNewSlot(); 
     };
-
-    function populateStaticDatalists() {
-        // Popula abilities/moves se quiser (opcional, pode ser via JSON depois)
-        const abilities = ["Levitate", "Intimidate", "Overgrow", "Blaze", "Torrent", "Pressure", "Static", "Sturdy"];
-        const moves = ["Earthquake", "Thunderbolt", "Ice Beam", "Protect", "Toxic", "Surf", "Psychic", "Flamethrower"];
-        
-        const listAbil = document.getElementById('list-abilities');
-        abilities.forEach(a => { const opt = document.createElement('option'); opt.value = a; listAbil.appendChild(opt); });
-        
-        const listMoves = document.getElementById('list-moves');
-        moves.forEach(m => { const opt = document.createElement('option'); opt.value = m; listMoves.appendChild(opt); });
-    }
 
     async function initItens() {
         try {
             const response = await fetch('builder/itens.json');
-            if (!response.ok) throw new Error('Erro');
-            todosItens = await response.json();
-            atualizarListaItens(null); 
-        } catch (error) { console.error(error); }
+            if (response.ok) {
+                todosItens = await response.json();
+                atualizarListaItens(null);
+            }
+        } catch (e) { console.log("Erro itens:", e); }
     }
 
-    function carregarDados(tierSelecionada) {
-        carregarPokemonDaTier(tierSelecionada);
-        atualizarListaItens(tierSelecionada);
+    function carregarDados(tier) {
+        carregarPokemonDaTier(tier);
+        atualizarListaItens(tier);
     }
 
     async function carregarPokemonDaTier(tier) {
@@ -314,48 +324,43 @@
         datalist.innerHTML = ""; 
         try {
             const response = await fetch(`tiers_1.16/${tier}.json`);
-            if (!response.ok) throw new Error('Tier não encontrada');
-            const data = await response.json();
-            Object.keys(data).forEach(nome => {
-                const option = document.createElement('option'); option.value = nome; datalist.appendChild(option);
-                if (data[nome].id) pokemonIdMap[nome] = data[nome].id;
-            });
-            alert(`Tier ${tier} carregada!`);
-        } catch (error) { console.log("Erro ao carregar Tier JSON (pode estar offline)"); }
+            if (response.ok) {
+                const data = await response.json();
+                Object.keys(data).forEach(nome => {
+                    const opt = document.createElement('option'); opt.value = nome; datalist.appendChild(opt);
+                    if (data[nome].id) pokemonIdMap[nome] = data[nome].id;
+                });
+            }
+        } catch (e) { alert("Erro ao carregar Tier. Verifique se o arquivo JSON existe."); }
     }
 
-    function atualizarListaItens(tierAtual) {
-        const datalist = document.getElementById('list-items'); datalist.innerHTML = ""; 
-        todosItens.forEach(item => {
-            if (tierAtual && item.ban && item.ban.includes(tierAtual)) return; 
-            const option = document.createElement('option'); option.value = item.name; datalist.appendChild(option);
+    function atualizarListaItens(tier) {
+        const dl = document.getElementById('list-items'); dl.innerHTML = ""; 
+        todosItens.forEach(i => {
+            if (tier && i.ban && i.ban.includes(tier)) return; 
+            const opt = document.createElement('option'); opt.value = i.name; dl.appendChild(opt);
         });
     }
 
-    // --- SLOT MANAGEMENT ---
+    // --- SLOTS & TABS ---
     function addNewSlot() {
         if (document.querySelectorAll('.tab-slot').length >= MAX_SLOTS) return;
-        slotCounter++;
-        const newId = slotCounter;
+        slotCounter++; const id = slotCounter;
 
-        // Aba
         const tab = document.createElement('div');
-        tab.className = 'tab-slot';
-        tab.id = `tab-${newId}`;
-        tab.onclick = () => switchTab(newId);
-        tab.innerHTML = `<img src="${IMG_ERROR}" id="tab-img-${newId}" class="tab-icon">`;
+        tab.className = 'tab-slot'; tab.id = `tab-${id}`;
+        tab.onclick = () => switchTab(id);
+        tab.innerHTML = `<img src="${IMG_ERROR}" id="tab-img-${id}" class="tab-icon">`;
         document.getElementById('tabsContainer').appendChild(tab);
 
-        // Editor
         const editor = document.createElement('div');
-        editor.className = 'poke-editor';
-        editor.id = `editor-${newId}`;
-        editor.innerHTML = generateEditorHTML(newId);
+        editor.className = 'poke-editor'; editor.id = `editor-${id}`;
+        editor.innerHTML = generateEditorHTML(id);
         document.getElementById('editorsContainer').appendChild(editor);
 
-        switchTab(newId);
+        switchTab(id);
         updateAddBtnVisibility();
-        return newId; // Retorna ID para uso no import
+        return id;
     }
 
     function updateAddBtnVisibility() {
@@ -372,7 +377,7 @@
     }
 
     function generateEditorHTML(id) {
-        const natureOptions = NATURES.map(n => `<option value="${n}">${n}</option>`).join('');
+        const nOpts = NATURES.map(n => `<option value="${n}">${n}</option>`).join('');
         return `
           <div class="header-row"><h4>Pokémon Set</h4></div>
           <div class="editor-layout">
@@ -384,16 +389,16 @@
                 </div>
                 <div class="row">
                     <div class="col"><label>Ability</label><input type="text" class="p-ability" list="list-abilities" placeholder="Ability"></div>
-                    <div class="col"><label>Nature</label><select class="p-nature"><option value="" disabled selected>Nature</option>${natureOptions}</select></div>
+                    <div class="col"><label>Nature</label><select class="p-nature"><option value="" disabled selected>Nature</option>${nOpts}</select></div>
                     <div class="col-small"><label>Level</label><input type="number" class="p-level" value="100" min="1" max="100"></div>
                 </div>
                 <div class="iv-section"><div class="iv-grid">
-                    ${STATS.map(stat => `<div class="iv-box"><label>${stat}</label><input type="text" class="p-iv-${stat.toLowerCase()}" value="31"></div>`).join('')}
+                    ${STATS.map(s => `<div class="iv-box"><label>${s}</label><input type="text" class="p-iv-${s.toLowerCase()}" value="31"></div>`).join('')}
                 </div></div>
             </div>
           </div>
           <div class="stats-box"><div class="ev-header"><span>EVs</span><span id="remain-${id}" class="ev-remaining">Restam: 508</span></div>
-            ${STATS.map(stat => `<div class="stat-row"><span class="stat-label">${stat}</span><input type="range" min="0" max="252" value="0" step="4" oninput="updateEV('${id}', '${stat}', this.value)" id="range-${id}-${stat}"><input type="number" class="ev-num p-ev-${stat.toLowerCase()}" min="0" max="252" value="0" step="4" onchange="updateEV('${id}', '${stat}', this.value)" id="num-${id}-${stat}"></div>`).join('')}
+            ${STATS.map(s => `<div class="stat-row"><span class="stat-label">${s}</span><input type="range" min="0" max="252" value="0" step="4" oninput="updateEV('${id}', '${s}', this.value)" id="range-${id}-${s}"><input type="number" class="ev-num p-ev-${s.toLowerCase()}" min="0" max="252" value="0" step="4" onchange="updateEV('${id}', '${s}', this.value)" id="num-${id}-${s}"></div>`).join('')}
           </div>
           <div style="margin-top:20px;">
             <input type="text" class="move-input p-move" list="list-moves" placeholder="- Move 1">
@@ -404,25 +409,23 @@
         `;
     }
 
-    // --- IMAGENS E CÁLCULOS ---
+    // --- IMAGENS ---
     function updateImage(id, input) {
         const val = input.value;
         const img = document.getElementById(`img-${id}`);
         const tabImg = document.getElementById(`tab-img-${id}`);
-        const fallback = () => { img.src = IMG_ERROR; tabImg.src = IMG_ERROR; };
-        if (!val || val.length < 2) { fallback(); return; }
+        if (!val || val.length < 2) { img.src = IMG_ERROR; tabImg.src = IMG_ERROR; return; }
         
         let src = "";
         if (pokemonIdMap[val]) src = `${IMG_PATH}${pokemonIdMap[val]}.png`;
         else src = `${IMG_PATH}${formatToApiName(val)}.png`;
-        
         img.src = src; tabImg.src = src;
     }
 
     function updateItemIcon(id, input) {
         const val = input.value;
         const icon = document.getElementById(`item-icon-${id}`);
-        if (!val || val.length < 2) { icon.src = ""; icon.classList.remove('active'); return; }
+        if (!val || val.length < 2) { icon.src=""; icon.classList.remove('active'); return; }
         icon.src = `${ITEM_ICON_BASE}${formatItemToShowdown(val)}.png`;
         icon.classList.add('active');
         icon.onerror = function() { this.src=""; this.classList.remove('active'); }
@@ -438,126 +441,25 @@
         document.getElementById(`range-${id}-${stat}`).value = val;
         document.getElementById(`num-${id}-${stat}`).value = val;
         
-        const remain = MAX_EVS - (total + val);
+        const rem = MAX_EVS - (total + val);
         const lbl = document.getElementById(`remain-${id}`);
-        lbl.innerText = `Restam: ${remain}`;
-        lbl.style.color = remain === 0 ? "#d1a720" : "#4dff88";
+        lbl.innerText = `Restam: ${rem}`;
+        lbl.style.color = rem === 0 ? "#d1a720" : "#4dff88";
     }
 
-    // --- MODAL & IMPORTAÇÃO ---
-    function openImportModal() { document.getElementById('importModal').style.display = 'flex'; }
-    function closeImportModal() { document.getElementById('importModal').style.display = 'none'; }
-
-    function processImport() {
-        const text = document.getElementById('importText').value;
-        if (!text.trim()) return;
-
-        // Limpar slots atuais
-        document.getElementById('tabsContainer').innerHTML = '';
-        document.getElementById('editorsContainer').innerHTML = '';
-        slotCounter = 0;
-
-        // Separar times por quebra de linha dupla
-        const blocks = text.split(/\r?\n\r?\n/);
-        
-        blocks.forEach(block => {
-            if (!block.trim()) return;
-            // Cria slot
-            const id = addNewSlot();
-            if (!id) return; // Limite atingido
-
-            // Parsing do bloco
-            const lines = block.split('\n');
-            const firstLine = lines[0].trim();
-            
-            // Nome @ Item
-            let name = firstLine;
-            let item = "";
-            if (firstLine.includes('@')) {
-                const parts = firstLine.split('@');
-                name = parts[0].trim();
-                item = parts[1].trim();
-            }
-
-            // Tratamento de Nickname e Gênero: "Nick (Species) (M)"
-            // Simplificado: Se tem parenteses, o que tá dentro (se não for M/F) é a especie.
-            // Para Pixelmon simples: Remove (M)/(F) e assume que o resto é nome.
-            name = name.replace(/\(M\)/g, '').replace(/\(F\)/g, '').trim();
-            // Se tiver "Apelido (Especie)", pega Especie
-            if (name.includes('(') && name.includes(')')) {
-                const match = name.match(/\(([^)]+)\)/);
-                if (match) name = match[1];
-            }
-
-            // Preenche inputs
-            const editor = document.getElementById(`editor-${id}`);
-            const nameInput = editor.querySelector('.p-name');
-            nameInput.value = name;
-            updateImage(id, nameInput); // Atualiza imagem
-
-            const itemInput = editor.querySelector('.p-item');
-            itemInput.value = item;
-            updateItemIcon(id, itemInput); // Atualiza icone
-
-            let moveIndex = 0;
-            const moveInputs = editor.querySelectorAll('.p-move');
-
-            for (let i = 1; i < lines.length; i++) {
-                const line = lines[i].trim();
-                
-                if (line.startsWith('Ability:')) {
-                    editor.querySelector('.p-ability').value = line.replace('Ability:', '').trim();
-                } else if (line.includes('Nature')) {
-                    const nature = line.split(' ')[0];
-                    editor.querySelector('.p-nature').value = nature;
-                } else if (line.startsWith('Level:')) {
-                    editor.querySelector('.p-level').value = line.replace('Level:', '').trim();
-                } else if (line.startsWith('EVs:')) {
-                    // EVs: 252 Atk / 4 SpD / 252 Spe
-                    const parts = line.replace('EVs:', '').split('/');
-                    parts.forEach(p => {
-                        p = p.trim();
-                        const val = parseInt(p);
-                        STATS.forEach(s => {
-                            if (p.includes(s)) {
-                                updateEV(id, s, val); // Atualiza slider e valor
-                            }
-                        });
-                    });
-                } else if (line.startsWith('IVs:')) {
-                    const parts = line.replace('IVs:', '').split('/');
-                    parts.forEach(p => {
-                        p = p.trim();
-                        const val = parseInt(p);
-                        STATS.forEach(s => {
-                            if (p.includes(s)) {
-                                editor.querySelector(`.p-iv-${s.toLowerCase()}`).value = val;
-                            }
-                        });
-                    });
-                } else if (line.startsWith('-')) {
-                    if (moveIndex < 4) {
-                        moveInputs[moveIndex].value = line.replace('-', '').trim();
-                        moveIndex++;
-                    }
-                }
-            }
-        });
-
-        closeImportModal();
-        updateAddBtnVisibility();
-    }
-
-    // --- EXPORTAR ---
-    function gerarTextoShowdown() {
+    // --- MODAL LÓGICA (IMPORT/EXPORT UNIFICADO) ---
+    function openIOModal() {
+        // GERA O TEXTO ATUAL (EXPORT)
         let fullText = "";
         const tier = document.getElementById('teamTier').value;
         if (tier) fullText += `=== [Gen 9] ${tier} ===\n\n`;
 
+        let hasContent = false;
         document.querySelectorAll('.poke-editor').forEach(ed => {
             const id = ed.id.split('-')[1];
             const name = ed.querySelector('.p-name').value.trim();
-            if (!name) return;
+            if (!name) return; // Pula vazios
+            hasContent = true;
             
             const item = ed.querySelector('.p-item').value.trim();
             const ability = ed.querySelector('.p-ability').value.trim();
@@ -588,9 +490,101 @@
             });
             fullText += "\n";
         });
+
+        if (!hasContent) fullText = ""; // Se não tiver nada, limpa o modal
+
+        document.getElementById('ioText').value = fullText;
+        document.getElementById('ioModal').style.display = 'flex';
+    }
+
+    function closeModal() { document.getElementById('ioModal').style.display = 'none'; }
+
+    // --- FUNÇÃO ADICIONADA: COPIAR PARA ÁREA DE TRANSFERÊNCIA ---
+    function copyToClipboard() {
+        const copyText = document.getElementById("ioText");
+        if (!copyText.value) { alert("Nada para copiar."); return; }
         
-        document.getElementById('finalOutput').value = fullText;
-        document.getElementById('exportSection').scrollIntoView({behavior: "smooth"});
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); /* Para mobile */
+        
+        try {
+            document.execCommand("copy");
+            alert("Time copiado com sucesso!");
+        } catch (err) {
+            alert("Erro ao copiar. Tente selecionar e copiar manualmente.");
+        }
+    }
+
+    function processImport() {
+        const text = document.getElementById('ioText').value;
+        if (!text.trim()) { alert("Cole um time para importar."); return; }
+
+        // Limpa tudo
+        document.getElementById('tabsContainer').innerHTML = '';
+        document.getElementById('editorsContainer').innerHTML = '';
+        slotCounter = 0;
+
+        const blocks = text.split(/\r?\n\r?\n/);
+        blocks.forEach(block => {
+            if (!block.trim() || block.startsWith("===")) return; // Ignora cabeçalho
+            
+            const id = addNewSlot();
+            if (!id) return;
+
+            const lines = block.split('\n');
+            const firstLine = lines[0].trim();
+            
+            let name = firstLine;
+            let item = "";
+            if (firstLine.includes('@')) {
+                const p = firstLine.split('@');
+                name = p[0].trim();
+                item = p[1].trim();
+            }
+            // Limpeza de nome (M/F, Nicknames)
+            name = name.replace(/\(M\)/g, '').replace(/\(F\)/g, '').trim();
+            if (name.includes('(') && name.includes(')')) {
+                const m = name.match(/\(([^)]+)\)/);
+                if (m) name = m[1]; // Pega a espécie se for apelido
+            }
+
+            const ed = document.getElementById(`editor-${id}`);
+            const nInp = ed.querySelector('.p-name');
+            nInp.value = name; updateImage(id, nInp);
+            
+            const iInp = ed.querySelector('.p-item');
+            iInp.value = item; updateItemIcon(id, iInp);
+
+            let mIdx = 0;
+            const mInps = ed.querySelectorAll('.p-move');
+
+            for (let i = 1; i < lines.length; i++) {
+                const l = lines[i].trim();
+                if (l.startsWith('Ability:')) ed.querySelector('.p-ability').value = l.replace('Ability:', '').trim();
+                else if (l.includes('Nature')) ed.querySelector('.p-nature').value = l.split(' ')[0];
+                else if (l.startsWith('Level:')) ed.querySelector('.p-level').value = l.replace('Level:', '').trim();
+                else if (l.startsWith('EVs:')) {
+                    const p = l.replace('EVs:', '').split('/');
+                    p.forEach(x => {
+                        x = x.trim();
+                        const v = parseInt(x);
+                        STATS.forEach(s => { if (x.includes(s)) updateEV(id, s, v); });
+                    });
+                }
+                else if (l.startsWith('IVs:')) {
+                    const p = l.replace('IVs:', '').split('/');
+                    p.forEach(x => {
+                        x = x.trim();
+                        const v = parseInt(x);
+                        STATS.forEach(s => { if (x.includes(s)) ed.querySelector(`.p-iv-${s.toLowerCase()}`).value = v; });
+                    });
+                }
+                else if (l.startsWith('-')) {
+                    if (mIdx < 4) { mInps[mIdx].value = l.replace('-', '').trim(); mIdx++; }
+                }
+            }
+        });
+        closeModal();
     }
   </script>
 </body>
