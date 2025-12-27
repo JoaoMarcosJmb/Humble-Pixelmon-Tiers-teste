@@ -1,185 +1,657 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="dark" data-color="red">
 <head>
-  <meta charset="UTF-8">
-  <title>Team Builder - Humble</title>
-  <link rel="icon" type="image/png" href="img/mike_anotando2.png">
-  
-  <style>
-    /* --- REPETE O CSS PADRÃO (Mesmo da página anterior) --- */
-    :root { --cor-dourado: #d1a720; --cor-fundo: #1a1a1a; --cor-texto: #f5f5f5; }
-    body { font-family: "Segoe UI", Arial, sans-serif; background: linear-gradient(135deg, rgba(20,20,20,0.9), rgba(40,30,20,0.9)), url("https://i.imgur.com/vATNRmF.png"); background-size: cover; margin: 0; padding-top: 80px; color: var(--cor-texto); }
-    header { position: fixed; top: 0; left: 0; right: 0; width: 100%; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(20, 20, 20, 0.9); border-bottom: 2px solid var(--cor-dourado); box-shadow: 0 2px 8px rgba(0,0,0,0.6); z-index: 1000; box-sizing: border-box; }
-    header h1 { font-size: 1.6rem; color: var(--cor-dourado); display: flex; gap: 10px; margin: 0; }
-    header h1 img { height: 40px; }
-    header a { text-decoration: none; }
-    .menu-toggle { display: flex; flex-direction: column; width: 30px; gap: 5px; cursor: pointer; }
-    .menu-toggle span { height: 4px; background: #fff; border-radius: 4px; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PixelLog v16.5 - Builder Edition</title>
     
-    /* --- CSS DO BUILDER --- */
-    .builder-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      padding: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
 
-    .import-section {
-      width: 100%;
-      background: rgba(0,0,0,0.5);
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px dashed var(--cor-dourado);
-    }
+    <style>
+        /* --- ESTILOS GERAIS --- */
+        :root {
+            --bg-b: #101014; --bg-s: #18181b; --bg-c: #09090b;
+            --tx-1: #f4f4f5; --tx-2: #a1a1aa; --bd: #27272a;
+            --ac: #ef4444; --ac-h: #dc2626;
+            
+            --tg-cheat: #450a0a; --tg-lag: #2e1065; --tg-rare: #422006; --tg-lp: #064e3b; --tg-custom: #374151;
+            --c-info: #3b82f6; --c-warn: #eab308; --c-err: #ef4444; --c-chat: #fca5a5;
+        }
 
-    .import-area {
-      width: 100%;
-      height: 100px;
-      background: #222;
-      color: #fff;
-      border: 1px solid #444;
-      padding: 10px;
-      font-family: monospace;
-      resize: vertical;
-    }
+        [data-color="blue"] { --ac: #3b82f6; --ac-h: #2563eb; --c-chat: #93c5fd; }
+        [data-color="green"] { --ac: #22c55e; --ac-h: #16a34a; --c-chat: #86efac; }
+        [data-color="yellow"] { --ac: #eab308; --ac-h: #ca8a04; --c-chat: #fde047; }
+        
+        [data-theme="light"] {
+            --bg-b: #f4f4f5; --bg-s: #ffffff; --bg-c: #ffffff;
+            --tx-1: #18181b; --tx-2: #52525b; --bd: #e4e4e7;
+        }
 
-    .team-display {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      width: 100%;
-      justify-content: center;
-    }
+        * { box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; margin: 0; display: flex; height: 100vh; background: var(--bg-b); color: var(--tx-1); overflow: hidden; }
+        
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-s); }
+        ::-webkit-scrollbar-thumb { background: var(--bd); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--ac); }
 
-    /* O Cartão Detalhado do Pokémon */
-    .poke-slot {
-      background: rgba(40, 40, 40, 0.95);
-      border: 1px solid #555;
-      width: 300px;
-      border-radius: 8px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
+        /* Layout */
+        .app { display: flex; width: 100%; height: 100%; }
+        .sidebar { width: 320px; background: var(--bg-s); border-right: 1px solid var(--bd); padding: 16px; display: flex; flex-direction: column; gap: 14px; z-index: 10; }
+        .main { flex: 1; display: flex; flex-direction: column; background: var(--bg-c); position: relative; }
 
-    .poke-header {
-      background: #333;
-      padding: 10px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      border-bottom: 2px solid var(--cor-dourado);
-    }
-    
-    .poke-sprite {
-      width: 60px;
-      height: 60px;
-      object-fit: contain; /* Garante que o gif não estique */
-    }
+        /* Componentes */
+        .brand { color: var(--ac); font-weight: 800; font-size: 1.2rem; display: flex; align-items: center; gap: 8px; }
+        .brand span { color: var(--tx-1); }
 
-    .poke-info h3 { margin: 0; font-size: 1.1rem; color: var(--cor-dourado); }
-    .poke-item { font-size: 0.8rem; color: #bbb; display: flex; align-items: center; gap: 5px; }
-    .small-icon { width: 20px; height: 20px; }
+        .drop-box { 
+            border: 2px dashed var(--bd); border-radius: 8px; padding: 20px; text-align: center; 
+            color: var(--tx-2); cursor: pointer; transition: 0.2s; position: relative;
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+        }
+        .drop-box:hover { border-color: var(--ac); color: var(--ac); background: rgba(125,125,125,0.05); }
+        .drop-box input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
 
-    .poke-stats {
-      padding: 10px;
-      font-size: 0.85rem;
-      background: rgba(0,0,0,0.2);
-    }
+        input[type="text"], select { background: var(--bg-b); border: 1px solid var(--bd); color: var(--tx-1); padding: 8px; border-radius: 6px; width: 100%; outline: none; font-size: 0.9rem; }
+        input:focus { border-color: var(--ac); }
 
-    .moves-list {
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
+        .btn-filter { 
+            display: flex; align-items: center; justify-content: space-between; padding: 8px 10px; 
+            border-radius: 6px; cursor: pointer; user-select: none; font-size: 0.85rem; border: 1px solid transparent;
+            background: var(--bg-b); transition: 0.2s;
+        }
+        .btn-filter:hover { background: var(--bd); }
+        .btn-filter.active { background: rgba(125,125,125,0.1); border-color: var(--ac); font-weight: 600; }
 
-    .move {
-      background: #2a2a2a;
-      padding: 5px 10px;
-      border-radius: 4px;
-      font-size: 0.9rem;
-      border-left: 3px solid #888;
-    }
-    /* Cores de exemplo para tipos */
-    .type-water { border-color: #6890F0; }
-    .type-grass { border-color: #78C850; }
-    .type-fire { border-color: #F08030; }
+        .btn { background: var(--bd); border: none; color: var(--tx-1); padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; }
+        .btn-pri { background: var(--ac); color: white; }
+        .btn-pri:hover { filter: brightness(1.1); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+        .btn-danger { color: #ef4444; border: 1px solid #ef4444; background: transparent; }
+        .btn-danger:hover { background: #ef4444; color: white; }
+        .btn-ghost { background: transparent; color: var(--tx-2); }
+        .btn-ghost:hover { color: var(--tx-1); background: var(--bd); }
+        .btn:hover:not(.btn-pri):not(.btn-danger):not(.btn-ghost) { background: var(--tx-2); color: var(--bg-b); }
 
-    .btn-action {
-      background: var(--cor-dourado);
-      border: none;
-      padding: 10px 20px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-  </style>
+        /* Logs */
+        .header { height: 48px; border-bottom: 1px solid var(--bd); display: flex; align-items: center; justify-content: space-between; padding: 0 16px; background: var(--bg-s); }
+        .log-container { flex: 1; overflow: auto; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+        
+        .row { display: flex; border-bottom: 1px solid rgba(125,125,125,0.05); padding: 6px 0; gap: 10px; align-items: flex-start; cursor: pointer; }
+        .row:hover { background: rgba(125,125,125,0.05); }
+        .row.focus { background: rgba(125,125,125,0.1); outline: 1px solid var(--bd); }
+        
+        .r-strip { width: 4px; min-height: 20px; border-radius: 0 2px 2px 0; margin-top: 2px; }
+        .r-INFO .r-strip { background: var(--c-info); opacity: 0.5; }
+        .r-WARN .r-strip { background: var(--c-warn); }
+        .r-ERROR .r-strip { background: var(--c-err); }
+        .r-CHAT .r-strip { background: var(--c-chat); }
+        .r-TIME .r-strip { background: var(--bd); }
+
+        .r-time { color: var(--tx-2); min-width: 80px; text-align: right; user-select: none; font-size: 0.9em; margin-top: 2px; }
+        .r-msg { color: var(--tx-1); white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; flex: 1; padding-right: 10px; line-height: 1.6; }
+
+        /* Badges */
+        .bdg { padding: 1px 5px; border-radius: 4px; font-size: 0.75em; font-weight: 700; border: 1px solid rgba(125,125,125,0.2); display: inline-flex; align-items: center; gap: 4px; margin-right: 6px; vertical-align: text-bottom; user-select: none; }
+        .bdg-mod { background: var(--bd); color: var(--tx-2); cursor: pointer; }
+        .bdg-mod:hover { color: var(--tx-1); border-color: var(--tx-2); }
+        
+        .bdg-cheat { background: var(--tg-cheat); color: #fca5a5; border-color: var(--c-err); animation: pulse 2s infinite; }
+        .bdg-lag { background: var(--tg-lag); color: #ddd6fe; border-color: #8b5cf6; }
+        .bdg-rare { background: var(--tg-rare); color: #fdba74; border-color: #f97316; }
+        .bdg-custom { background: var(--tg-custom); color: var(--tx-1); border-color: var(--tx-2); }
+        .bdg-lp { background: var(--tg-lp); color: #6ee7b7; border-color: #10b981; }
+
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 4px rgba(0,0,0,0); } 100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); } }
+
+        /* Modals */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(4px); z-index: 50; display: none; place-items: center; }
+        .modal { background: var(--bg-s); border: 1px solid var(--bd); width: 450px; max-width: 90%; padding: 24px; border-radius: 12px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.5); max-height: 80vh; }
+        
+        .modal-body { overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; }
+        
+        .builder-row { display: grid; grid-template-columns: 80px 1fr 30px; gap: 8px; align-items: center; }
+        .builder-row input { font-size: 0.8em; padding: 6px; }
+
+        .highlight { background: rgba(234, 179, 8, 0.2); color: #fde047; padding: 0 2px; border-radius: 2px; }
+        .theme-ball { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+        .theme-ball:hover { transform: scale(1.1); }
+    </style>
 </head>
 <body>
 
-  <header>
-    <h1><img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder</h1>
-    <div class="menu-toggle"><span></span><span></span><span></span></div>
-  </header>
+<div class="app">
+    <div class="sidebar">
+        <div class="brand">
+            <i class="ph-fill ph-bug-droid"></i>
+            <span>PixelLog</span>
+        </div>
 
-  <div class="builder-container">
-    
-    <div class="import-section">
-      <h3>Importar do Showdown</h3>
-      <p style="font-size: 0.9rem; color:#aaa;">Cole o texto do "Import/Export" aqui:</p>
-      <textarea class="import-area" placeholder="Pelipper @ Damp Rock..."></textarea>
-      <button class="btn-action">Carregar Time</button>
+        <div class="drop-box">
+            <i class="ph ph-file-arrow-up" style="font-size: 2em; color: var(--ac)"></i>
+            <div>
+                <strong style="color:var(--tx-1)">Arraste Logs</strong>
+            </div>
+            <input type="file" id="fileInput" multiple accept=".log,.txt">
+        </div>
+
+        <div>
+            <label style="font-size:0.7em; font-weight:700; color:var(--tx-2); text-transform:uppercase">Filtrar por Mod</label>
+            <select id="selMod" onchange="App.runSearch()" style="margin-top:4px">
+                <option value="ALL">Todos os Módulos</option>
+            </select>
+        </div>
+
+        <div>
+            <label style="font-size:0.7em; font-weight:700; color:var(--tx-2); text-transform:uppercase">Busca</label>
+            <div style="position:relative; margin-top:4px;">
+                <input type="text" id="searchInput" placeholder="Buscar..." onkeyup="if(event.key==='Enter') App.runSearch()">
+                <i class="ph ph-magnifying-glass" style="position:absolute; right:10px; top:8px; color:var(--tx-2)"></i>
+            </div>
+            <div style="font-size:0.75em; color:var(--tx-2); margin-top:6px; display:flex; gap:6px; align-items:center">
+                <input type="checkbox" id="fuzzyToggle" checked> <label for="fuzzyToggle" style="margin:0; cursor:pointer">Busca Aproximada</label>
+            </div>
+        </div>
+
+        <div style="display: grid; gap: 6px;">
+            <div class="btn-filter" onclick="UI.toggleFilter('chat', this)">
+                <div style="display:flex; align-items:center"><i class="ph-fill ph-chat-circle-text" style="color:var(--c-chat)"></i> Chat</div>
+            </div>
+            <div class="btn-filter" onclick="UI.toggleFilter('error', this)">
+                <div style="display:flex; align-items:center"><i class="ph-fill ph-warning-octagon" style="color:var(--c-err)"></i> Erros & Warns</div>
+            </div>
+            <div class="btn-filter" onclick="UI.toggleFilter('cheat', this)">
+                <div style="display:flex; align-items:center"><i class="ph-fill ph-skull" style="color:var(--c-err)"></i> Cheats</div>
+            </div>
+            <div class="btn-filter" onclick="UI.toggleFilter('lag', this)">
+                <div style="display:flex; align-items:center"><i class="ph-fill ph-lightning" style="color:#a78bfa"></i> Lag</div>
+            </div>
+        </div>
+
+        <div style="margin-top: auto; display: grid; gap: 8px;">
+            <button class="btn btn-pri" onclick="App.runSearch()">FILTRAR</button>
+            
+            <button class="btn" onclick="Builder.open()"><i class="ph-fill ph-wrench"></i> Builder (Editor)</button>
+            
+            <div style="display:flex; gap:8px">
+                <button class="btn" style="flex:1" onclick="UI.openSettings()"><i class="ph ph-gear"></i></button>
+                <button class="btn" style="flex:1" onclick="App.reset()"><i class="ph ph-broom"></i></button>
+            </div>
+            
+            <button class="btn" onclick="window.location.href='../index.html'" style="justify-content:center">
+                <i class="ph-bold ph-arrow-left"></i> Voltar ao Menu
+            </button>
+        </div>
     </div>
 
-    <div class="team-display">
-      
-      <div class="poke-slot">
-        <div class="poke-header">
-          <img class="poke-sprite" src="https://play.pokemonshowdown.com/sprites/xyani/pelipper.gif">
-          <div class="poke-info">
-            <h3>Pelipper (M)</h3>
-            <div class="poke-item">
-              <img src="https://www.serebii.net/itemdex/sprites/damprock.png" class="small-icon"> Damp Rock
+    <div class="main">
+        <div class="header">
+            <span id="resultsInfo" style="font-size:0.8em; font-weight:600; color:var(--tx-2)">0 LINHAS</span>
+            <div style="display:flex; gap:8px">
+                <button class="btn" onclick="UI.zoom(-1)" style="padding:4px 8px"><i class="ph-bold ph-minus"></i></button>
+                <button class="btn" onclick="UI.zoom(1)" style="padding:4px 8px"><i class="ph-bold ph-plus"></i></button>
             </div>
-          </div>
         </div>
-        <div class="poke-stats">
-          Ability: <strong>Drizzle</strong><br>
-          EVs: 248 HP / 252 Def / 8 SpD
-        </div>
-        <div class="moves-list">
-          <div class="move type-water">Scald</div>
-          <div class="move type-flying">Roost</div>
-          <div class="move type-grass">U-turn</div>
-          <div class="move type-flying">Hurricane</div>
-        </div>
-      </div>
+        
+        <div id="logContainer" class="log-container"></div>
 
-      <div class="poke-slot">
-        <div class="poke-header">
-          <img class="poke-sprite" src="https://play.pokemonshowdown.com/sprites/xyani/swampert-mega.gif">
-          <div class="poke-info">
-            <h3>Swampert-Mega</h3>
-            <div class="poke-item">Swampertite</div>
-          </div>
+        <div id="loader" class="overlay">
+            <div class="modal" style="text-align:center">
+                <i class="ph-duotone ph-spinner-gap" style="font-size:3em; color:var(--ac); animation:spin 1s linear infinite; margin:0 auto"></i>
+                <h3 style="margin:0; color:var(--tx-1)">Processando</h3>
+                <div id="loaderMsg" style="color:var(--tx-2); font-size:0.9em">Analisando...</div>
+                <div style="height:4px; background:var(--bg-b); width:100%; border-radius:2px; overflow:hidden; margin-top:8px">
+                    <div id="progressFill" style="height:100%; background:var(--ac); width:0%"></div>
+                </div>
+            </div>
         </div>
-        <div class="poke-stats">
-          Ability: <strong>Swift Swim</strong><br>
-          EVs: 252 Atk / 4 SpD / 252 Spe
-        </div>
-        <div class="moves-list">
-          <div class="move type-water">Waterfall</div>
-          <div class="move type-ground">Earthquake</div>
-          <div class="move type-ice">Ice Punch</div>
-          <div class="move type-water">Flip Turn</div>
-        </div>
-      </div>
 
-      </div>
-  </div>
+        <div id="settingsModal" class="overlay" onclick="if(event.target===this) this.style.display='none'">
+            <div class="modal">
+                <h3>Configurações</h3>
+                <div>
+                    <label style="display:block;margin-bottom:5px;font-size:0.8em;color:var(--tx-2)">COR DO TEMA</label>
+                    <div style="display:flex; gap:10px; justify-content:center">
+                        <div class="theme-ball" style="background:#ef4444" onclick="UI.setColor('red')"></div>
+                        <div class="theme-ball" style="background:#3b82f6" onclick="UI.setColor('blue')"></div>
+                        <div class="theme-ball" style="background:#22c55e" onclick="UI.setColor('green')"></div>
+                        <div class="theme-ball" style="background:#eab308" onclick="UI.setColor('yellow')"></div>
+                    </div>
+                </div>
+                <div>
+                    <label style="display:block;margin-bottom:5px;font-size:0.8em;color:var(--tx-2)">MODO</label>
+                    <div style="display:flex; gap:10px; justify-content:center">
+                        <button class="btn" onclick="UI.setTheme('dark')">Dark</button>
+                        <button class="btn" onclick="UI.setTheme('light')">Light</button>
+                    </div>
+                </div>
+                <hr style="width:100%; border-color:var(--bd)">
+                <button class="btn btn-danger" onclick="App.nukeDB()"><i class="ph-bold ph-trash"></i> Resetar Banco de Dados</button>
+                <button class="btn" onclick="document.getElementById('settingsModal').style.display='none'">Fechar</button>
+            </div>
+        </div>
 
+        <div id="builderModal" class="overlay" onclick="if(event.target===this) document.getElementById('builderModal').style.display='none'">
+            <div class="modal" style="width:500px">
+                <h3 style="margin:0; display:flex; align-items:center; gap:8px"><i class="ph-fill ph-wrench" style="color:var(--ac)"></i> Builder de Filtros</h3>
+                <p style="font-size:0.8em; color:var(--tx-2); margin:0">Crie regras para etiquetar linhas automaticamente. Use palavras separadas por <code>|</code>.</p>
+                
+                <div class="modal-body" id="builderList"></div>
+
+                <button class="btn btn-ghost" onclick="Builder.addRow()"><i class="ph-bold ph-plus"></i> Adicionar Nova Regra</button>
+                
+                <div style="display:flex; gap:8px; margin-top:10px">
+                    <button class="btn btn-pri" style="flex:1" onclick="Builder.save()">Salvar e Recarregar</button>
+                    <button class="btn" style="flex:1" onclick="Builder.restoreDefaults()">Restaurar Padrões</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    /**
+     * PIXELLOG v16.5 - BUILDER EDITION
+     * - Fix: Reset completo.
+     * - Feat: Builder Visual para criar tags/regex sem mexer no código.
+     */
+
+    const DEFAULT_TAGS = [
+        { id: 't-CHEAT', label: 'CHEAT', pattern: 'cheat|xray|killaura|hack|burlou|nuker|baritone|meteor|failed to attack' },
+        { id: 't-LAG',   label: 'LAG',   pattern: "can't keep up|overloaded|last tick took|tps|lag" },
+        { id: 't-RARE',  label: 'RARE',  pattern: 'legendary|lendário|spawnou|apareceu|ultrabeast|shiny|boss' }
+    ];
+
+    const State = {
+        logs: [], filtered: [], lastFiles: null,
+        filters: { chat: false, error: false, cheat: false, lag: false },
+        tags: [], 
+        worker: null, fuse: null, zoom: 13, lastRenderIdx: 0
+    };
+
+    const Builder = {
+        open() {
+            const list = document.getElementById('builderList');
+            list.innerHTML = '';
+            State.tags.forEach(t => Builder.renderRow(t.label, t.pattern, t.id));
+            document.getElementById('builderModal').style.display = 'grid';
+        },
+
+        renderRow(label, pattern, id) {
+            const list = document.getElementById('builderList');
+            const div = document.createElement('div');
+            div.className = 'builder-row';
+            div.dataset.id = id || 'custom-' + Date.now();
+            div.innerHTML = `
+                <input type="text" class="b-label" value="${label}" placeholder="TAG (Ex: DUPE)">
+                <input type="text" class="b-pattern" value="${pattern}" placeholder="Palavras (ex: dupe|clonou)">
+                <button class="btn btn-danger" style="padding:6px" onclick="this.parentElement.remove()"><i class="ph-bold ph-trash"></i></button>
+            `;
+            list.appendChild(div);
+        },
+
+        addRow() {
+            Builder.renderRow('', '', '');
+        },
+
+        save() {
+            const rows = document.querySelectorAll('.builder-row');
+            const newTags = [];
+            rows.forEach((r, idx) => {
+                const label = r.querySelector('.b-label').value.toUpperCase().trim();
+                const pattern = r.querySelector('.b-pattern').value.trim();
+                if(label && pattern) {
+                    // Preserva IDs originais para cores funcionarem, senão gera custom
+                    let id = r.dataset.id;
+                    if(!id.startsWith('t-') && !id.startsWith('custom-')) id = 'custom-' + idx;
+                    // Se o label for CHEAT, força o ID t-CHEAT para manter a cor vermelha
+                    if(label === 'CHEAT') id = 't-CHEAT';
+                    if(label === 'LAG') id = 't-LAG';
+                    if(label === 'RARE') id = 't-RARE';
+                    
+                    newTags.push({ id, label, pattern });
+                }
+            });
+
+            localStorage.setItem('px_tags', JSON.stringify(newTags));
+            State.tags = newTags;
+            document.getElementById('builderModal').style.display = 'none';
+            if(State.lastFiles) App.reloadFile(); // Reanalisa com novas tags
+            else alert("Configurações salvas! Carregue um log para testar.");
+        },
+
+        restoreDefaults() {
+            if(confirm("Voltar para as regras originais?")) {
+                localStorage.removeItem('px_tags');
+                State.tags = JSON.parse(JSON.stringify(DEFAULT_TAGS));
+                Builder.open();
+            }
+        }
+    };
+
+    const UI = {
+        els: {
+            container: document.getElementById('logContainer'),
+            loader: document.getElementById('loader'),
+            prog: document.getElementById('progressFill'),
+            msg: document.getElementById('loaderMsg'),
+            info: document.getElementById('resultsInfo')
+        },
+
+        toggleFilter(type, btn) {
+            State.filters[type] = !State.filters[type];
+            btn.classList.toggle('active');
+            btn.style.borderColor = btn.classList.contains('active') ? 'var(--ac)' : 'transparent';
+            App.runSearch();
+        },
+
+        renderChunk(start = 0) {
+            if (start >= State.filtered.length) return;
+            const chunk = 100;
+            const end = Math.min(start + chunk, State.filtered.length);
+            const frag = document.createDocumentFragment();
+
+            for (let i = start; i < end; i++) {
+                const l = State.filtered[i];
+                const el = document.createElement('div');
+                
+                let badges = '';
+                if(l.mod && !l.isChat && l.mod !== 'TIME' && l.mod !== 'SYS') {
+                    let cls = 'bdg-mod';
+                    if(l.mod === 'LuckPerms') cls = 'bdg-lp';
+                    badges += `<span class="bdg ${cls}" onclick="App.selectModFilter('${l.mod}')">${l.mod}</span>`;
+                }
+                
+                l.tags.forEach(tId => {
+                    const tagDef = State.tags.find(x => x.id === tId);
+                    if(tagDef) {
+                        let cls = 'bdg-custom';
+                        if(tId === 't-CHEAT') cls = 'bdg-cheat';
+                        else if(tId === 't-LAG') cls = 'bdg-lag';
+                        else if(tId === 't-RARE') cls = 'bdg-rare';
+                        badges += `<span class="bdg ${cls}">${tagDef.label}</span>`;
+                    }
+                });
+
+                if(l.chatType) badges += `<span class="bdg" style="color:var(--ac); border-color:var(--ac)">${l.chatType}</span>`;
+
+                el.className = `row r-${l.lvl}`;
+                el.innerHTML = `
+                    <div class="r-strip"></div>
+                    <div class="r-time">${l.timeShort}</div>
+                    <div class="r-msg">${badges}${this.highlight(l.msg)}</div>
+                `;
+                el.onclick = () => el.classList.toggle('focus');
+                frag.appendChild(el);
+            }
+            UI.els.container.appendChild(frag);
+            State.lastRenderIdx = end;
+        },
+
+        highlight(text) {
+            const term = document.getElementById('searchInput').value;
+            let clean = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\\n/g, '\n');
+            if(!term || term.length < 3) return clean;
+            const regex = new RegExp(`(${term})`, 'gi');
+            return clean.replace(regex, '<span class="highlight">$1</span>');
+        },
+
+        showLoader(show, msg = '') {
+            UI.els.loader.style.display = show ? 'grid' : 'none';
+            if(msg) UI.els.msg.innerText = msg;
+        },
+
+        zoom(d) { State.zoom += d; UI.els.container.style.fontSize = `${State.zoom}px`; },
+        openSettings() { document.getElementById('settingsModal').style.display = 'flex'; },
+        setTheme(t) { document.documentElement.dataset.theme = t; localStorage.setItem('px_th', t); },
+        setColor(c) { document.documentElement.dataset.color = c; localStorage.setItem('px_col', c); }
+    };
+
+    const App = {
+        init() {
+            const th = localStorage.getItem('px_th');
+            const col = localStorage.getItem('px_col');
+            const savedTags = localStorage.getItem('px_tags');
+
+            if(th) UI.setTheme(th);
+            if(col) UI.setColor(col);
+            
+            if(savedTags) State.tags = JSON.parse(savedTags);
+            else State.tags = JSON.parse(JSON.stringify(DEFAULT_TAGS));
+
+            UI.els.container.addEventListener('scroll', () => {
+                if (UI.els.container.scrollTop + UI.els.container.clientHeight >= UI.els.container.scrollHeight - 500) {
+                    UI.renderChunk(State.lastRenderIdx);
+                }
+            });
+            document.getElementById('fileInput').addEventListener('change', this.handleFile);
+            
+            // DB Init
+            const req = indexedDB.open("PixelLogV16", 1);
+            req.onupgradeneeded = e => {
+                const db = e.target.result;
+                if(!db.objectStoreNames.contains("logs")) db.createObjectStore("logs", {keyPath: "id"});
+            };
+            req.onsuccess = e => { App.db = e.target.result; App.loadDB(); };
+        },
+
+        async handleFile(e) {
+            State.lastFiles = e.target.files;
+            if (!State.lastFiles.length) return;
+            App.reloadFile();
+        },
+
+        async reloadFile() {
+            if (!State.lastFiles) return;
+            UI.showLoader(true, "Lendo arquivos...");
+            let content = "";
+            for (const file of State.lastFiles) content += await App.readFile(file) + "\n";
+            App.processLogs(content);
+        },
+
+        readFile(file) {
+            return new Promise(resolve => {
+                const reader = new FileReader();
+                reader.onload = e => resolve(e.target.result);
+                reader.readAsText(file, "windows-1252");
+            });
+        },
+
+        processLogs(text) {
+            UI.showLoader(true, "Analisando...");
+            
+            const workerCode = `
+                self.onmessage = function(e) {
+                    const lines = e.data.text.split(/\\r?\\n/);
+                    const total = lines.length;
+                    const parsed = [];
+                    const rxV1 = /^\\[([^\\]]+)\\]\\s+\\[([^\\]]+)\\]\\s+\\[([^\\]]+)\\]:\\s+(.*)$/;
+                    const rxV2 = /^\\[([^\\]]+)\\]\\s+\\[([^\\]]+)\\]:\\s+(.*)$/;
+                    const rxLP = /^\\[LP\\]\\s+(.*)$/;
+                    const rxTime = /^(\\d{2}:\\d{2}:\\d{2})$/;
+                    
+                    const tags = e.data.tags.map(t => ({ id: t.id, rx: new RegExp(t.pattern, 'i') }));
+                    let lastTime = "--:--"; 
+
+                    for(let i=0; i < total; i++) {
+                        const line = lines[i];
+                        if(!line.trim()) continue;
+                        let entry = null;
+                        let m = line.match(rxV1);
+                        let isV2 = false;
+                        if (!m) { m = line.match(rxV2); isV2 = true; }
+                        
+                        if(m) {
+                            let time = m[1];
+                            let lvl = 'INFO';
+                            let mod = 'SYS';
+                            let msg = '';
+
+                            if (isV2) {
+                                const threadInfo = m[2];
+                                msg = m[3];
+                                mod = 'Client';
+                                if(threadInfo.includes('WARN')) lvl = 'WARN';
+                                else if(threadInfo.includes('ERROR') || threadInfo.includes('FATAL')) lvl = 'ERROR';
+                            } else {
+                                if(m[2].includes('WARN')) lvl = 'WARN';
+                                else if(m[2].includes('ERROR')) lvl = 'ERROR';
+                                mod = m[3].replace(/\\/$/, '');
+                                msg = m[4];
+                            }
+
+                            if (!msg || !msg.trim() || msg.trim() === '\\n') continue;
+                            let isChat = false; let chatType = '';
+                            if(msg.includes('[CHAT]') || mod === 'CHAT' || mod.includes('NewChatGui')) {
+                                lvl = 'CHAT'; isChat = true;
+                                if(msg.includes('[!]')) chatType = 'ALERT';
+                                else if(msg.includes('?')) chatType = 'GLOBAL';
+                                else if(msg.includes('[+]')) chatType = 'JOIN';
+                                else if(msg.includes('[-]')) chatType = 'QUIT';
+                            }
+
+                            entry = {
+                                id: i, time: time, timeShort: time.split(' ')[1] ? time.split(' ')[1].split('.')[0] : time,
+                                lvl: lvl, mod: mod, msg: msg, 
+                                isChat: isChat, chatType: chatType, tags: []
+                            };
+                            lastTime = entry.timeShort;
+                        } else if (line.match(rxLP)) {
+                            const mLP = line.match(rxLP);
+                            entry = { id: i, time: lastTime, timeShort: lastTime, lvl: 'INFO', mod: 'LuckPerms', msg: mLP[1], isChat: false, chatType: '', tags: [] };
+                        } else if (line.match(rxTime)) {
+                            const mTime = line.match(rxTime);
+                            lastTime = mTime[1];
+                            entry = { id: i, time: lastTime, timeShort: lastTime, lvl: 'TIME', mod: 'TIME', msg: '--- Marco Temporal ---', isChat: false, chatType: '', tags: [] };
+                        } else {
+                            if (!line || !line.trim()) continue;
+                            entry = { id: i, time: '', timeShort: '', lvl: 'ERROR', mod: 'SYS', msg: line, isChat: false, tags: [] };
+                            if(/exception|at /i.test(line)) entry.tags.push('t-ERROR');
+                        }
+
+                        if(entry) {
+                            for(const t of tags) if(t.rx.test(entry.msg)) entry.tags.push(t.id);
+                            parsed.push(entry);
+                        }
+                        if(i % 5000 === 0) self.postMessage({type: 'progress', val: (i/total)*100});
+                    }
+                    self.postMessage({type: 'done', data: parsed});
+                };
+            `;
+            const blob = new Blob([workerCode], {type: 'text/javascript'});
+            State.worker = new Worker(URL.createObjectURL(blob));
+            State.worker.postMessage({ text, tags: State.tags }); // Envia tags dinâmicas
+            
+            State.worker.onmessage = (e) => {
+                if(e.data.type === 'progress') UI.els.prog.style.width = `${e.data.val}%`;
+                else if(e.data.type === 'done') App.storeDB(e.data.data);
+            };
+        },
+
+        storeDB(data) {
+            UI.showLoader(true, "Salvando...");
+            const tx = App.db.transaction(["logs"], "readwrite");
+            store = tx.objectStore("logs");
+            store.clear().onsuccess = () => {
+                data.forEach(d => store.add(d));
+                tx.oncomplete = () => { UI.showLoader(false); App.loadDB(); };
+            };
+        },
+
+        loadDB() {
+            if(!App.db) return;
+            const tx = App.db.transaction(["logs"], "readonly");
+            tx.objectStore("logs").getAll().onsuccess = e => {
+                State.logs = e.target.result;
+                App.populateMods();
+                App.initFuse();
+            };
+        },
+
+        populateMods() {
+            const mods = new Set();
+            State.logs.forEach(l => { if(l.mod && l.mod !== 'SYS' && l.mod !== 'TIME' && !l.isChat) mods.add(l.mod); });
+            const sel = document.getElementById('selMod');
+            sel.innerHTML = '<option value="ALL">Todos os Módulos</option>';
+            [...mods].sort().forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m; opt.innerText = m; sel.appendChild(opt);
+            });
+        },
+
+        initFuse() {
+            UI.showLoader(true, "Indexando...");
+            setTimeout(() => {
+                State.fuse = new Fuse(State.logs, { keys: ['msg', 'mod'], threshold: 0.3, ignoreLocation: true });
+                App.runSearch();
+                UI.showLoader(false);
+            }, 100);
+        },
+
+        runSearch() {
+            const query = document.getElementById('searchInput').value;
+            const modFilter = document.getElementById('selMod').value;
+            const useFuzzy = document.getElementById('fuzzyToggle').checked;
+            const f = State.filters;
+            let res = State.logs;
+
+            if(query) {
+                if(useFuzzy && State.fuse) res = State.fuse.search(query).map(r => r.item);
+                else res = res.filter(l => l.msg.toLowerCase().includes(query.toLowerCase()));
+            }
+
+            if (modFilter !== 'ALL') res = res.filter(l => l.mod === modFilter);
+
+            if(f.chat || f.error || f.cheat || f.lag) {
+                res = res.filter(l => {
+                    if(f.chat && l.isChat) return true;
+                    if(f.error && (l.lvl === 'ERROR' || l.lvl === 'WARN')) return true;
+                    if(f.cheat && l.tags.includes('t-CHEAT')) return true;
+                    if(f.lag && l.tags.includes('t-LAG')) return true;
+                    return false;
+                });
+            }
+
+            State.filtered = res;
+            UI.els.info.innerText = `${res.length} REGISTROS`;
+            UI.els.container.innerHTML = '';
+            UI.renderChunk(0);
+        },
+
+        selectModFilter(m) {
+            document.getElementById('selMod').value = m;
+            App.runSearch();
+        },
+
+        reset() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('fileInput').value = '';
+            document.getElementById('selMod').value = 'ALL';
+            document.getElementById('fuzzyToggle').checked = true;
+            State.filters = { chat:false, error:false, cheat:false, lag:false };
+            document.querySelectorAll('.btn-filter').forEach(b => {
+                b.classList.remove('active'); b.style.borderColor = 'transparent';
+            });
+            UI.els.container.scrollTop = 0;
+            this.runSearch();
+        },
+
+        nukeDB() {
+            if(confirm("Isso apagará TODO o histórico e resetará o app. Continuar?")) {
+                const req = indexedDB.deleteDatabase("PixelLogV16");
+                req.onsuccess = () => location.reload();
+                req.onerror = () => alert("Erro ao deletar DB.");
+            }
+        }
+    };
+
+    const style = document.createElement("style");
+    style.innerText = "@keyframes spin { to { transform: rotate(360deg); } }";
+    document.head.appendChild(style);
+    window.onload = () => App.init();
+</script>
 </body>
 </html>
