@@ -547,6 +547,11 @@
     function clearInput(btn) { btn.previousElementSibling.value=""; saveCurrentTeamToStorage(); }
 
     async function updatePokemon(id, el) {
+      // --- NOVO: Capitaliza a primeira letra de cada palavra ---
+        if (el.value) {
+            // Isso transforma "pikachu" em "Pikachu" e "iron valiant" em "Iron Valiant"
+            el.value = el.value.toLowerCase().replace(/(?:^|\s|-)\S/g, function(a) { return a.toUpperCase(); });
+        }
         const val = el.value; if(val.length<2) return;
         const apiName = formatToApiName(val);
         const img = document.getElementById(`img-${id}`); const tabImg = document.getElementById(`tab-img-${id}`);
