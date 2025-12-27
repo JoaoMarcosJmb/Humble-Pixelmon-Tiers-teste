@@ -2,326 +2,291 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Editor de Time - Humble</title>
+  <title>Humble Team Builder - Completo</title>
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
   <style>
-    /* --- CSS GERAL (MANTIDO) --- */
-    :root { --cor-dourado: #d1a720; --cor-fundo: #1a1a1a; --cor-texto: #f5f5f5; --cor-input: #2a2a2a; }
-    body { font-family: "Segoe UI", Arial, sans-serif; background: linear-gradient(135deg, rgba(20,20,20,0.9), rgba(40,30,20,0.9)), url("https://i.imgur.com/vATNRmF.png"); background-size: cover; margin: 0; padding-top: 80px; color: var(--cor-texto); }
-    header { position: fixed; top: 0; left: 0; right: 0; width: 100%; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(20, 20, 20, 0.9); border-bottom: 2px solid var(--cor-dourado); box-shadow: 0 2px 8px rgba(0,0,0,0.6); z-index: 1000; box-sizing: border-box; }
-    header h1 { font-size: 1.6rem; color: var(--cor-dourado); display: flex; gap: 10px; margin: 0; }
-    header h1 img { height: 40px; }
-    header a { text-decoration: none; color: inherit; }
-    .menu-toggle { display: flex; flex-direction: column; width: 30px; gap: 5px; cursor: pointer; }
-    .menu-toggle span { height: 4px; background: #fff; border-radius: 4px; }
-
-    /* --- CSS DO EDITOR --- */
-    .builder-wrapper {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
+    /* --- CSS GERAL --- */
+    :root { 
+      --cor-dourado: #d1a720; 
+      --cor-fundo: #1a1a1a; 
+      --cor-texto: #f5f5f5; 
+      --cor-input: #2a2a2a; 
+      --cor-alerta: #ff4d4d;
+      --cor-sucesso: #4dff88;
     }
+    body { font-family: "Segoe UI", Arial, sans-serif; background: linear-gradient(135deg, rgba(20,20,20,0.9), rgba(40,30,20,0.9)), url("https://i.imgur.com/vATNRmF.png"); background-size: cover; margin: 0; padding-top: 80px; color: var(--cor-texto); }
+    
+    /* Header (Padrão) */
+    header { position: fixed; top: 0; left: 0; right: 0; width: 100%; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(20, 20, 20, 0.95); border-bottom: 2px solid var(--cor-dourado); z-index: 1000; box-sizing: border-box; }
+    header h1 { font-size: 1.6rem; color: var(--cor-dourado); display: flex; gap: 10px; margin: 0; align-items: center; }
+    header h1 img { height: 40px; }
+
+    /* --- LAYOUT DO BUILDER --- */
+    .builder-wrapper { max-width: 1400px; margin: 0 auto; padding: 20px; }
 
     .toolbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      background: rgba(0,0,0,0.5);
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid #444;
+      display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
+      background: rgba(0,0,0,0.6); padding: 15px; border-radius: 8px; border: 1px solid #444;
     }
 
     .editor-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Responsivo */
+      grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); /* Responsivo: encaixa quantos der */
       gap: 20px;
     }
 
-    /* CARD DE EDIÇÃO */
+    /* CARD DE POKEMON */
     .poke-editor {
-      background: rgba(35, 35, 35, 0.95);
+      background: rgba(30, 30, 30, 0.95);
       border: 1px solid #555;
-      border-top: 3px solid var(--cor-dourado);
+      border-top: 4px solid var(--cor-dourado);
       border-radius: 8px;
       padding: 15px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+      position: relative;
     }
 
-    .poke-editor h4 { margin: 0 0 10px 0; color: var(--cor-dourado); border-bottom: 1px solid #444; padding-bottom: 5px; }
+    .poke-editor h4 { margin: 0 0 10px 0; color: var(--cor-dourado); display: flex; justify-content: space-between; }
+    .slot-number { font-size: 0.8em; color: #666; background: #111; padding: 2px 8px; border-radius: 4px; }
 
-    /* Inputs Estilizados */
-    input[type="text"], input[type="number"], select {
-      background: var(--cor-input);
-      border: 1px solid #555;
-      color: #fff;
-      padding: 8px;
-      border-radius: 4px;
-      width: 100%;
-      box-sizing: border-box; /* Garante que padding não estoure a largura */
-      font-size: 0.9rem;
+    /* Inputs */
+    .input-group { margin-bottom: 10px; }
+    input[type="text"], input[type="number"] {
+      background: var(--cor-input); border: 1px solid #555; color: #fff; padding: 8px;
+      border-radius: 4px; width: 100%; box-sizing: border-box; font-size: 0.9rem;
     }
+    input:focus { border-color: var(--cor-dourado); outline: none; }
     
-    input[type="text"]:focus { border-color: var(--cor-dourado); outline: none; }
-
     .row { display: flex; gap: 10px; }
     .col { flex: 1; }
 
-    /* Área de Stats (EVs) */
-    .stats-container {
-      background: rgba(0,0,0,0.2);
-      padding: 10px;
-      border-radius: 4px;
-      margin-top: 5px;
+    /* ÁREA DE EVs */
+    .stats-box {
+      background: rgba(0,0,0,0.3); padding: 10px; border-radius: 6px; margin: 10px 0; border: 1px solid #444;
     }
-
-    .stat-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 5px;
-      font-size: 0.85rem;
+    .ev-header {
+      display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 10px; color: #aaa;
     }
+    .ev-remaining { color: var(--cor-sucesso); font-weight: bold; }
+    .ev-remaining.alert { color: var(--cor-alerta); }
 
-    .stat-label { width: 40px; font-weight: bold; color: #aaa; }
+    .stat-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 0.85rem; }
+    .stat-label { width: 35px; font-weight: bold; color: #888; }
     
     /* Slider Customizado */
     input[type=range] {
-      -webkit-appearance: none;
-      width: 100%;
-      height: 6px;
-      background: #444;
-      border-radius: 3px;
-      outline: none;
+      -webkit-appearance: none; width: 100%; height: 6px; background: #444; border-radius: 3px; outline: none;
     }
     input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      width: 16px;
-      height: 16px;
-      background: var(--cor-dourado);
-      border-radius: 50%;
-      cursor: pointer;
+      -webkit-appearance: none; width: 14px; height: 14px; background: var(--cor-dourado); border-radius: 50%; cursor: pointer; transition: 0.2s;
     }
-
-    .ev-number { width: 50px !important; text-align: center; }
-
-    /* Área de Moves */
-    .moves-container {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      margin-top: 10px;
-    }
+    input[type=range]:disabled::-webkit-slider-thumb { background: #555; cursor: not-allowed; }
     
-    .move-input {
-      border-left: 3px solid #666 !important;
-    }
+    .ev-num { width: 45px !important; text-align: center; padding: 4px !important; }
 
-    /* Área de Exportação */
-    .export-area {
-      width: 100%;
-      margin-top: 30px;
-      background: #222;
-      padding: 20px;
-      border-radius: 8px;
-    }
-    textarea {
-      width: 100%;
-      height: 150px;
-      background: #111;
-      color: var(--cor-dourado);
-      border: 1px solid #444;
-      padding: 10px;
-      font-family: monospace;
-    }
+    /* Moves */
+    .moves-box { display: flex; flex-direction: column; gap: 6px; }
+    .move-input { border-left: 3px solid #666 !important; }
 
+    /* Botão e Export */
     .btn-action {
-      background: var(--cor-dourado);
-      border: none;
-      padding: 12px 25px;
-      font-weight: bold;
-      cursor: pointer;
-      border-radius: 4px;
-      font-size: 1rem;
-      transition: 0.2s;
+      background: var(--cor-dourado); border: none; padding: 12px 25px; font-weight: bold;
+      cursor: pointer; border-radius: 4px; font-size: 1rem; color: #111; transition: 0.2s;
     }
-    .btn-action:hover { background: #fff; }
+    .btn-action:hover { background: #fff; box-shadow: 0 0 15px rgba(209, 167, 32, 0.4); }
+
+    .export-area { margin-top: 30px; background: #222; padding: 20px; border-radius: 8px; border: 1px dashed #666; }
+    textarea { width: 100%; height: 200px; background: #111; color: var(--cor-dourado); border: 1px solid #444; padding: 10px; font-family: monospace; resize: vertical; }
 
   </style>
 </head>
 <body>
 
+  <datalist id="list-pokemon">
+    <option value="Garchomp"><option value="Pikachu"><option value="Charizard"><option value="Lucario">
+    <option value="Greninja"><option value="Snorlax"><option value="Gengar"><option value="Dragonite">
+    <option value="Metagross"><option value="Tyranitar"><option value="Scizor"><option value="Rotom-Wash">
+    <option value="Landorus-Therian"><option value="Ferrothorn"><option value="Toxapex"><option value="Corviknight">
+    <option value="Dragapult"><option value="Grimmsnarl"><option value="Swampert"><option value="Blaziken">
+  </datalist>
+
+  <datalist id="list-items">
+    <option value="Leftovers"><option value="Life Orb"><option value="Choice Scarf"><option value="Choice Band">
+    <option value="Choice Specs"><option value="Focus Sash"><option value="Rocky Helmet"><option value="Heavy-Duty Boots">
+    <option value="Assault Vest"><option value="Sitrus Berry"><option value="Weakness Policy"><option value="Remains">
+  </datalist>
+
+  <datalist id="list-abilities">
+    <option value="Intimidate"><option value="Levitate"><option value="Rough Skin"><option value="Pressure">
+    <option value="Swift Swim"><option value="Chlorophyll"><option value="Sand Stream"><option value="Drizzle">
+    <option value="Regenerator"><option value="Beast Boost"><option value="Technician"><option value="Mold Breaker">
+  </datalist>
+
+  <datalist id="list-moves">
+    <option value="Earthquake"><option value="Thunderbolt"><option value="Ice Beam"><option value="Flamethrower">
+    <option value="Protect"><option value="Toxic"><option value="Scald"><option value="U-turn">
+    <option value="Stealth Rock"><option value="Defog"><option value="Roost"><option value="Swords Dance">
+    <option value="Calm Mind"><option value="Close Combat"><option value="Shadow Ball"><option value="Volt Switch">
+  </datalist>
+
   <header>
-    <h1><img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder</h1>
-    <div class="menu-toggle"><span></span><span></span><span></span></div>
+    <h1><img src="https://i.imgur.com/XOEcuO8.png" alt="Logo"> Humble Builder</h1>
+    <div style="color: #aaa; font-size: 0.9rem;">v2.0</div>
   </header>
 
   <div class="builder-wrapper">
-    
     <div class="toolbar">
-      <h2 style="margin:0;">Editar Time</h2>
-      <button class="btn-action" onclick="gerarTextoShowdown()">💾 Gerar Texto para Enviar</button>
+      <div>
+        <h2 style="margin:0; color:#fff;">Montar Time</h2>
+        <small style="color:#aaa;">Preencha os 6 Pokémon abaixo</small>
+      </div>
+      <button class="btn-action" onclick="gerarTextoShowdown()">💾 Gerar Texto (Export)</button>
     </div>
 
-    <form id="teamForm">
-      <div class="editor-grid">
-        
-        <div class="poke-editor" id="poke1">
-          <h4>Pokémon 1</h4>
-          <div class="row">
-            <div class="col"><input type="text" class="p-name" placeholder="Pokémon (ex: Garchomp)"></div>
-            <div class="col"><input type="text" class="p-item" placeholder="Item (ex: Leftovers)"></div>
-          </div>
-          <input type="text" class="p-ability" placeholder="Ability (ex: Rough Skin)">
-
-          <div class="stats-container">
-            <div style="font-size:0.8rem; margin-bottom:5px; color:#888;">EVs (Effort Values)</div>
-            
-            <div class="stat-row">
-              <span class="stat-label">HP</span>
-              <input type="range" min="0" max="252" value="0" oninput="updateVal(this)">
-              <input type="number" class="ev-hp ev-number" min="0" max="252" value="0" onchange="updateSlider(this)">
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">Atk</span>
-              <input type="range" min="0" max="252" value="0" oninput="updateVal(this)">
-              <input type="number" class="ev-atk ev-number" min="0" max="252" value="0" onchange="updateSlider(this)">
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">Def</span>
-              <input type="range" min="0" max="252" value="0" oninput="updateVal(this)">
-              <input type="number" class="ev-def ev-number" min="0" max="252" value="0" onchange="updateSlider(this)">
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">SpA</span>
-              <input type="range" min="0" max="252" value="0" oninput="updateVal(this)">
-              <input type="number" class="ev-spa ev-number" min="0" max="252" value="0" onchange="updateSlider(this)">
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">SpD</span>
-              <input type="range" min="0" max="252" value="0" oninput="updateVal(this)">
-              <input type="number" class="ev-spd ev-number" min="0" max="252" value="0" onchange="updateSlider(this)">
-            </div>
-            <div class="stat-row">
-              <span class="stat-label">Spe</span>
-              <input type="range" min="0" max="252" value="0" oninput="updateVal(this)">
-              <input type="number" class="ev-spe ev-number" min="0" max="252" value="0" onchange="updateSlider(this)">
-            </div>
-          </div>
-
-          <div class="moves-container">
-            <input type="text" class="move-input p-move1" placeholder="- Move 1">
-            <input type="text" class="move-input p-move2" placeholder="- Move 2">
-            <input type="text" class="move-input p-move3" placeholder="- Move 3">
-            <input type="text" class="move-input p-move4" placeholder="- Move 4">
-          </div>
-        </div>
-
-        <div class="poke-editor" id="poke2">
-          <h4>Pokémon 2</h4>
-          <div class="row">
-            <div class="col"><input type="text" class="p-name" placeholder="Pokémon"></div>
-            <div class="col"><input type="text" class="p-item" placeholder="Item"></div>
-          </div>
-          <input type="text" class="p-ability" placeholder="Ability">
-
-          <div class="stats-container">
-            <div style="text-align:center; padding:20px; color:#666;">
-               <small>(Copie os sliders do código acima para ter controle total aqui)</small>
-             </div>
-          </div>
-
-          <div class="moves-container">
-            <input type="text" class="move-input p-move1" placeholder="- Move 1">
-            <input type="text" class="move-input p-move2" placeholder="- Move 2">
-            <input type="text" class="move-input p-move3" placeholder="- Move 3">
-            <input type="text" class="move-input p-move4" placeholder="- Move 4">
-          </div>
-        </div>
-
-        </div>
-    </form>
+    <div class="editor-grid" id="teamContainer"></div>
 
     <div class="export-area" id="exportSection">
-      <h3 style="color:var(--cor-dourado)">Resultado (Importable)</h3>
-      <p style="font-size:0.9rem; color:#ccc;">Copie este texto para salvar seu time ou enviar no Discord:</p>
-      <textarea id="finalOutput" readonly></textarea>
+      <h3 style="color:var(--cor-dourado); margin-top:0;">Resultado para Copiar:</h3>
+      <textarea id="finalOutput" readonly placeholder="Seu time aparecerá aqui..."></textarea>
     </div>
-
   </div>
 
   <script>
-    // Sincroniza Slider com Input numérico
-    function updateVal(slider) {
-      let numberInput = slider.nextElementSibling;
-      numberInput.value = slider.value;
+    // Configurações
+    const MAX_EVS = 508;
+    const TOTAL_SLOTS = 6;
+    const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
+
+    // 1. GERAÇÃO DOS 6 SLOTS AUTOMATICAMENTE
+    function renderSlots() {
+      const container = document.getElementById('teamContainer');
+      
+      for (let i = 1; i <= TOTAL_SLOTS; i++) {
+        const div = document.createElement('div');
+        div.className = 'poke-editor';
+        div.id = `poke-${i}`;
+        div.innerHTML = `
+          <h4>Pokémon <span class="slot-number">#${i}</span></h4>
+          
+          <div class="row">
+            <div class="col"><input type="text" class="p-name" list="list-pokemon" placeholder="Nome (ex: Garchomp)"></div>
+            <div class="col"><input type="text" class="p-item" list="list-items" placeholder="Item"></div>
+          </div>
+          <div class="input-group">
+            <input type="text" class="p-ability" list="list-abilities" placeholder="Habilidade (Ability)">
+          </div>
+
+          <div class="stats-box">
+            <div class="ev-header">
+              <span>EVs</span>
+              <span id="remain-${i}" class="ev-remaining">Restam: 508</span>
+            </div>
+            ${STATS.map(stat => `
+              <div class="stat-row">
+                <span class="stat-label">${stat}</span>
+                <input type="range" min="0" max="252" value="0" step="4" 
+                       oninput="updateEV('${i}', '${stat}', this.value)" id="range-${i}-${stat}">
+                <input type="number" class="ev-num p-ev-${stat.toLowerCase()}" min="0" max="252" value="0" step="4" 
+                       onchange="updateEV('${i}', '${stat}', this.value)" id="num-${i}-${stat}">
+              </div>
+            `).join('')}
+          </div>
+
+          <div class="moves-box">
+            <input type="text" class="move-input p-move" list="list-moves" placeholder="- Move 1">
+            <input type="text" class="move-input p-move" list="list-moves" placeholder="- Move 2">
+            <input type="text" class="move-input p-move" list="list-moves" placeholder="- Move 3">
+            <input type="text" class="move-input p-move" list="list-moves" placeholder="- Move 4">
+          </div>
+        `;
+        container.appendChild(div);
+      }
     }
-    function updateSlider(numberInput) {
-      let slider = numberInput.previousElementSibling;
-      slider.value = numberInput.value;
-    }
 
-    // Lógica para Gerar o Texto do Showdown
-    function gerarTextoShowdown() {
-      const slots = document.querySelectorAll('.poke-editor');
-      let fullTeamText = "";
+    // 2. LOGICA MATEMÁTICA DOS EVS (LIMITADOR 508)
+    function updateEV(slotId, statName, newValue) {
+      let val = parseInt(newValue) || 0;
+      
+      // Limite individual de 252 (Regra do jogo)
+      if (val > 252) val = 252;
+      if (val < 0) val = 0;
 
-      slots.forEach(slot => {
-        // Pega valores
-        let name = slot.querySelector('.p-name').value;
-        if(!name) return; // Pula se não tiver nome
-
-        let item = slot.querySelector('.p-item').value;
-        let ability = slot.querySelector('.p-ability').value;
-        
-        // Formata primeira linha: Pikachu @ Light Ball
-        fullTeamText += `${name}${item ? ' @ ' + item : ''}\n`;
-        
-        if(ability) fullTeamText += `Ability: ${ability}\n`;
-
-        // Pega EVs
-        let evs = [];
-        let hp = slot.querySelector('.ev-hp')?.value || 0;
-        let atk = slot.querySelector('.ev-atk')?.value || 0;
-        let def = slot.querySelector('.ev-def')?.value || 0;
-        let spa = slot.querySelector('.ev-spa')?.value || 0;
-        let spd = slot.querySelector('.ev-spd')?.value || 0;
-        let spe = slot.querySelector('.ev-spe')?.value || 0;
-
-        if(hp > 0) evs.push(`${hp} HP`);
-        if(atk > 0) evs.push(`${atk} Atk`);
-        if(def > 0) evs.push(`${def} Def`);
-        if(spa > 0) evs.push(`${spa} SpA`);
-        if(spd > 0) evs.push(`${spd} SpD`);
-        if(spe > 0) evs.push(`${spe} Spe`);
-
-        if(evs.length > 0) fullTeamText += `EVs: ${evs.join(' / ')}\n`;
-
-        // Pega Moves
-        let m1 = slot.querySelector('.p-move1').value;
-        let m2 = slot.querySelector('.p-move2').value;
-        let m3 = slot.querySelector('.p-move3').value;
-        let m4 = slot.querySelector('.p-move4').value;
-
-        if(m1) fullTeamText += `- ${m1}\n`;
-        if(m2) fullTeamText += `- ${m2}\n`;
-        if(m3) fullTeamText += `- ${m3}\n`;
-        if(m4) fullTeamText += `- ${m4}\n`;
-
-        fullTeamText += "\n"; // Linha em branco entre pokemons
+      // Calcular quanto já foi gasto nos OUTROS atributos
+      let currentTotal = 0;
+      STATS.forEach(s => {
+        if (s !== statName) {
+          let numInput = document.getElementById(`num-${slotId}-${s}`);
+          currentTotal += parseInt(numInput.value) || 0;
+        }
       });
 
-      // Joga no textarea
-      document.getElementById('finalOutput').value = fullTeamText;
+      // Verificar se o novo valor estoura o limite de 508
+      let available = MAX_EVS - currentTotal;
       
-      // Rola a tela até o resultado
+      if (val > available) {
+        val = available; // Trava no máximo possível
+      }
+
+      // Atualiza os inputs visuais (Slider e Numero)
+      document.getElementById(`range-${slotId}-${statName}`).value = val;
+      document.getElementById(`num-${slotId}-${statName}`).value = val;
+
+      // Atualiza o texto de "Restam: X"
+      let newTotal = currentTotal + val;
+      let remaining = MAX_EVS - newTotal;
+      let remainLabel = document.getElementById(`remain-${slotId}`);
+      remainLabel.innerText = `Restam: ${remaining}`;
+      
+      // Muda cor se chegar a 0
+      if(remaining === 0) {
+        remainLabel.style.color = "#d1a720"; // Dourado quando completo
+        remainLabel.innerText = "EVs Completos!";
+      } else {
+        remainLabel.style.color = "#4dff88"; // Verde enquanto tem sobra
+      }
+    }
+
+    // 3. GERAR TEXTO FINAL
+    function gerarTextoShowdown() {
+      let fullText = "";
+
+      for (let i = 1; i <= TOTAL_SLOTS; i++) {
+        let slot = document.getElementById(`poke-${i}`);
+        
+        let name = slot.querySelector('.p-name').value.trim();
+        if (!name) continue; // Pula slot vazio
+
+        let item = slot.querySelector('.p-item').value.trim();
+        let ability = slot.querySelector('.p-ability').value.trim();
+        let moves = slot.querySelectorAll('.p-move');
+
+        // Cabeçalho: Pokemon @ Item
+        fullText += `${name}${item ? ' @ ' + item : ''}\n`;
+        if (ability) fullText += `Ability: ${ability}\n`;
+
+        // EVs
+        let evList = [];
+        STATS.forEach(s => {
+          let val = document.getElementById(`num-${i}-${s}`).value;
+          if (val > 0) evList.push(`${val} ${s}`);
+        });
+        if (evList.length > 0) fullText += `EVs: ${evList.join(' / ')}\n`;
+
+        // Moves
+        moves.forEach(m => {
+          if (m.value.trim()) fullText += `- ${m.value.trim()}\n`;
+        });
+
+        fullText += "\n"; // Espaço entre pokemons
+      }
+
+      document.getElementById('finalOutput').value = fullText;
       document.getElementById('exportSection').scrollIntoView({behavior: "smooth"});
     }
-  </script>
 
+    // Inicializa ao carregar
+    renderSlots();
+
+  </script>
 </body>
 </html>
