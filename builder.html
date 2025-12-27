@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Humble Team Builder - Tier Edition</title>
+  <title>Humble Builder - Tier Edition</title>
   
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
@@ -59,7 +59,7 @@
     /* --- LAYOUT --- */
     .builder-wrapper { max-width: 1400px; margin: 0 auto; padding: 20px; }
 
-    /* TOOLBAR (Agora com Seletor de Tier) */
+    /* TOOLBAR CORRIGIDA */
     .toolbar {
       display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
       background: rgba(30,30,30,0.8); padding: 15px; border-radius: 8px; border: 1px solid var(--cor-borda);
@@ -69,21 +69,34 @@
     .toolbar-title h2 { margin: 0; color: #fff; font-size: 1.5rem; }
     .toolbar-title small { color: #aaa; }
 
-    .toolbar-controls { display: flex; gap: 15px; align-items: center; }
+    .toolbar-controls { display: flex; gap: 10px; align-items: center; height: 42px; }
 
-    /* Estilo do Seletor de Tier */
+    /* SELETOR DE TIER CORRIGIDO */
     .tier-select {
         background: #111;
         color: var(--cor-dourado);
         border: 1px solid var(--cor-dourado);
-        padding: 10px 15px;
+        padding: 0 15px;
         border-radius: 5px;
         font-weight: bold;
         cursor: pointer;
-        font-size: 1rem;
-        min-width: 150px;
+        font-size: 0.95rem;
+        min-width: 180px;
+        height: 100%; /* Ocupa a altura do pai */
+        box-sizing: border-box;
     }
-    .tier-select option { background: #222; color: #fff; }
+    .tier-select:focus { outline: none; box-shadow: 0 0 5px var(--cor-dourado); }
+    .tier-select option { background: #222; color: #fff; padding: 10px; }
+
+    /* BOTÃO GERAR TEXTO */
+    .btn-action {
+      background: var(--cor-dourado); border: none; padding: 0 25px; font-weight: bold;
+      cursor: pointer; border-radius: 4px; color: #111; font-size: 0.95rem; transition: 0.2s;
+      height: 100%; /* Mesma altura do select */
+      display: flex; align-items: center;
+    }
+    .btn-action:hover { background: #fff; box-shadow: 0 0 10px var(--cor-dourado); }
+
 
     .editor-grid {
       display: grid;
@@ -150,7 +163,7 @@
     .iv-box input { text-align: center; padding: 2px; font-size: 0.8rem; color: #aaa; background: #1a1a1a; height: 25px; }
     .iv-box input:focus { color: var(--cor-dourado); }
 
-    /* --- EVS --- */
+    /* --- EVS (CORRIGIDO) --- */
     .stats-box { margin-bottom: 10px; }
     .ev-header { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 5px; color: #aaa; }
     
@@ -163,18 +176,19 @@
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none; width: 10px; height: 10px; background: var(--cor-dourado); border-radius: 50%; cursor: pointer;
     }
-    .ev-num { width: 35px !important; text-align: center; padding: 2px !important; font-size: 0.8rem !important; height: 25px !important; }
+    
+    /* FIX: Input Numérico do EV aumentado para não cortar */
+    .ev-num { 
+      width: 50px !important; 
+      text-align: center; 
+      padding: 0px !important; 
+      font-size: 0.85rem !important; 
+      height: 25px !important; 
+    }
 
     /* --- MOVES --- */
     .move-input { border-left: 3px solid #555 !important; margin-bottom: 4px; height: 30px !important; }
     .move-input:focus { border-left-color: var(--cor-dourado) !important; }
-
-    /* --- BOTOES --- */
-    .btn-action {
-      background: var(--cor-dourado); border: none; padding: 10px 25px; font-weight: bold;
-      cursor: pointer; border-radius: 4px; color: #111; font-size: 0.95rem; transition: 0.2s;
-    }
-    .btn-action:hover { background: #fff; box-shadow: 0 0 10px var(--cor-dourado); }
 
     .export-area { margin-top: 30px; background: #222; padding: 20px; border-radius: 8px; border: 1px dashed #555; }
     textarea { width: 100%; height: 150px; background: #111; color: var(--cor-dourado); border: 1px solid #444; padding: 10px; font-family: monospace; resize: vertical; }
@@ -183,23 +197,20 @@
 </head>
 <body>
 
-  <datalist id="list-pokemon">
-    <option value="Garchomp"><option value="Pikachu"><option value="Charizard"><option value="Lucario"><option value="Greninja">
-    <option value="Snorlax"><option value="Gengar"><option value="Dragonite"><option value="Metagross"><option value="Tyranitar">
-    <option value="Scizor"><option value="Rotom-Wash"><option value="Landorus-Therian"><option value="Ferrothorn"><option value="Toxapex">
-    <option value="Corviknight"><option value="Dragapult"><option value="Grimmsnarl"><option value="Swampert"><option value="Blaziken">
-    <option value="Zacian"><option value="Rayquaza"><option value="Kyogre"><option value="Groudon"><option value="Ditto">
-  </datalist>
+  <datalist id="list-pokemon"></datalist>
+
   <datalist id="list-items">
     <option value="Leftovers"><option value="Life Orb"><option value="Choice Scarf"><option value="Choice Band"><option value="Choice Specs">
     <option value="Focus Sash"><option value="Rocky Helmet"><option value="Heavy-Duty Boots"><option value="Assault Vest"><option value="Sitrus Berry">
     <option value="Weakness Policy"><option value="Black Sludge"><option value="Eviolite"><option value="Expert Belt">
   </datalist>
+
   <datalist id="list-abilities">
     <option value="Intimidate"><option value="Levitate"><option value="Rough Skin"><option value="Pressure"><option value="Swift Swim">
     <option value="Chlorophyll"><option value="Sand Stream"><option value="Drizzle"><option value="Regenerator"><option value="Beast Boost">
     <option value="Technician"><option value="Mold Breaker"><option value="Prankster"><option value="Magic Bounce"><option value="Libero">
   </datalist>
+
   <datalist id="list-moves">
     <option value="Earthquake"><option value="Thunderbolt"><option value="Ice Beam"><option value="Flamethrower"><option value="Protect">
     <option value="Toxic"><option value="Scald"><option value="U-turn"><option value="Stealth Rock"><option value="Defog"><option value="Roost">
@@ -209,7 +220,7 @@
   <header>
     <h1>
         <a href="feed.html">
-            <img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder <span style="font-size:0.8rem; color:#666; margin-left:10px;">TIER</span>
+            <img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder
         </a>
     </h1>
     <div class="menu-toggle" id="menuBtn">
@@ -229,22 +240,22 @@
     <div class="toolbar">
       <div class="toolbar-title">
         <h2>Criar Time</h2>
-        <small>Selecione a Tier do torneio</small>
+        <small>Selecione a Tier para carregar os Pokémon permitidos</small>
       </div>
       
       <div class="toolbar-controls">
-        <select id="teamTier" class="tier-select">
+        <select id="teamTier" class="tier-select" onchange="carregarTier(this.value)">
             <option value="" disabled selected>Selecionar Tier</option>
-            <option value="AG">AG (Anything Goes)</option>
+            <option value="AG">AG</option>
             <option value="Uber">Uber</option>
-            <option value="OU">OU (OverUsed)</option>
-            <option value="UU">UU (UnderUsed)</option>
-            <option value="RU">RU (RarelyUsed)</option>
-            <option value="NU">NU (NeverUsed)</option>
+            <option value="OU">OU</option>
+            <option value="UU">UU</option>
+            <option value="RU">RU</option>
+            <option value="NU">NU</option>
             <option value="PU">PU</option>
             <option value="ZU">ZU</option>
-            <option value="NFE">NFE (Not Fully Evolved)</option>
-            <option value="LC">LC (Little Cup)</option>
+            <option value="NFE">NFE</option>
+            <option value="LC">LC</option>
         </select>
 
         <button class="btn-action" onclick="gerarTextoShowdown()">💾 Gerar Texto</button>
@@ -255,7 +266,7 @@
 
     <div class="export-area" id="exportSection">
       <h3 style="color:var(--cor-dourado); margin-top:0;">Resultado (Showdown Format):</h3>
-      <textarea id="finalOutput" readonly placeholder="Seu time formatado aparecerá aqui..."></textarea>
+      <textarea id="finalOutput" readonly placeholder="Selecione uma Tier e monte seu time..."></textarea>
     </div>
   </div>
 
@@ -285,10 +296,12 @@
         "Naive", "Naughty", "Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious", "Timid"
     ];
     
-    // Configurações de Imagem
+    // Caminho da Imagem
     const IMG_PATH = "img/official-artwork/"; 
     const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
-    const pokeCache = {};
+    
+    // Cache de IDs (ex: "arcanine-hisui" -> 10230)
+    const pokemonIdMap = {};
 
     function formatToApiName(name) {
       return name.trim().toLowerCase()
@@ -300,7 +313,47 @@
         .replace(/♂/g, '-m');
     }
 
-    // --- 3. RENDERIZAR SLOTS (COMPACTO) ---
+    // --- 3. FUNÇÃO NOVA: CARREGAR JSON DA TIER ---
+    async function carregarTier(tierSelecionada) {
+        const datalist = document.getElementById('list-pokemon');
+        datalist.innerHTML = ""; // Limpa a lista atual
+        
+        // Caminho do JSON (Baseado na sua estrutura)
+        const jsonPath = `tiers_1.16/${tierSelecionada}.json`;
+        
+        console.log(`Carregando Tier: ${jsonPath}`);
+
+        try {
+            const response = await fetch(jsonPath);
+            if (!response.ok) throw new Error('Não foi possível carregar o arquivo da Tier.');
+            
+            const data = await response.json();
+            
+            // O formato do seu JSON é: "nome-do-poke": { "id": 123, "tier": "OU" }
+            const nomesPokemon = Object.keys(data);
+            
+            // Popula o Datalist e o Mapa de IDs
+            nomesPokemon.forEach(nome => {
+                // Cria a opção para o autocomplete
+                const option = document.createElement('option');
+                option.value = nome; // O valor que aparece na lista
+                datalist.appendChild(option);
+
+                // Salva o ID no nosso mapa para usar na imagem depois
+                if (data[nome].id) {
+                    pokemonIdMap[nome] = data[nome].id;
+                }
+            });
+
+            alert(`Tier ${tierSelecionada} carregada! ${nomesPokemon.length} Pokémon disponíveis.`);
+
+        } catch (error) {
+            console.error(error);
+            alert(`Erro ao carregar a tier ${tierSelecionada}. Verifique se o arquivo tiers_1.16/${tierSelecionada}.json existe.`);
+        }
+    }
+
+    // --- 4. RENDERIZAR SLOTS ---
     function renderSlots() {
       const container = document.getElementById('teamContainer');
       const natureOptions = NATURES.map(n => `<option value="${n}">${n}</option>`).join('');
@@ -372,28 +425,25 @@
       }
     }
 
-    // --- 4. API IMAGEM ---
+    // --- 5. ATUALIZAR IMAGEM (USANDO O MAPA DE IDs DO JSON) ---
     async function updateImage(slotId, pokeName) {
       const imgElement = document.getElementById(`img-${slotId}`);
       if (!pokeName || pokeName.length < 2) { imgElement.src = IMG_ERROR; return; }
-      const apiName = formatToApiName(pokeName);
       
-      if (pokeCache[apiName]) { imgElement.src = `${IMG_PATH}${pokeCache[apiName]}.png`; return; }
-
-      try {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${apiName}`);
-        if (!response.ok) throw new Error('404');
-        const data = await response.json();
-        const dexId = data.id;
-        pokeCache[apiName] = dexId;
-        imgElement.src = `${IMG_PATH}${dexId}.png`;
-      } catch (error) {
-        console.error(error);
-        imgElement.src = IMG_ERROR;
+      // Tenta pegar do mapa carregado pelo JSON da Tier primeiro
+      if (pokemonIdMap[pokeName]) {
+          const id = pokemonIdMap[pokeName];
+          imgElement.src = `${IMG_PATH}${id}.png`;
+          return;
       }
+
+      // Se não achar no JSON (ex: digitou nome manual), tenta formatar e buscar
+      // (Mantive isso como fallback caso o JSON falhe ou não tenha sido carregado)
+      const apiName = formatToApiName(pokeName);
+      imgElement.src = `${IMG_PATH}${apiName}.png`; // Tenta nome direto se não tiver ID map
     }
 
-    // --- 5. LOGICA EVS ---
+    // --- 6. LOGICA EVS ---
     function updateEV(slotId, statName, newValue) {
       let val = parseInt(newValue) || 0;
       if (val > 252) val = 252; if (val < 0) val = 0;
@@ -418,11 +468,10 @@
       remainLabel.style.color = remaining === 0 ? "#d1a720" : "#4dff88";
     }
 
-    // --- 6. EXPORTAR (AGORA COM TIER NO CABEÇALHO) ---
+    // --- 7. EXPORTAR ---
     function gerarTextoShowdown() {
       let fullText = "";
       
-      // Pega a Tier Selecionada
       const tierSelect = document.getElementById('teamTier');
       const selectedTier = tierSelect.value;
 
