@@ -279,7 +279,7 @@
     </main>
   </div>
 
- <script>
+<script>
     const menuBtn = document.getElementById("menuBtn");
     const dropdownMenu = document.getElementById("dropdownMenu");
     menuBtn.addEventListener("click", () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); });
@@ -293,8 +293,8 @@
     const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
     const NATURES_INFO = { "Adamant": "+Atk, -SpA", "Bashful": "Neutral", "Bold": "+Def, -Atk", "Brave": "+Atk, -Spe", "Calm": "+SpD, -Atk", "Careful": "+SpD, -SpA", "Docile": "Neutral", "Gentle": "+SpD, -Def", "Hardy": "Neutral", "Hasty": "+Spe, -Def", "Impish": "+Def, -SpA", "Jolly": "+Spe, -SpA", "Lax": "+Def, -SpD", "Lonely": "+Atk, -Def", "Mild": "+SpA, -Def", "Modest": "+SpA, -Atk", "Naive": "+Spe, -SpD", "Naughty": "+Atk, -SpD", "Quiet": "+SpA, -Spe", "Quirky": "Neutral", "Rash": "+SpA, -SpD", "Relaxed": "+Def, -Spe", "Sassy": "+SpD, -Spe", "Serious": "Neutral", "Timid": "+Spe, -Atk" };
     
-    // --- ATENÇÃO AQUI: Verifique se suas imagens estão nessa pasta mesmo ---
-    const IMG_PATH = "img/official-artwork/"; 
+    // --- MUDANÇA: Link direto para as artes oficiais no servidor da PokeAPI ---
+    const POKEAPI_IMG = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
     const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
     const ITEM_ICON_BASE = "https://play.pokemonshowdown.com/sprites/itemicons/";
 
@@ -330,11 +330,18 @@
             const div = document.createElement('div');
             div.className = `sidebar-card ${currentTeamIndex === index ? 'active' : ''}`;
             div.onclick = (e) => { if(!e.target.closest('.btn-delete-card')) editTeam(index); };
+            
+            // Renderiza ícones na sidebar (Tenta usar o ID salvo, se não tiver, usa placeholder)
             let iconsHtml = '';
             team.slots.slice(0,6).forEach(s => {
                 if(s.name) {
+                    // Tenta adivinhar a imagem pelo nome/mapa, mas na sidebar é menos crítico
                     const apiName = formatToApiName(s.name);
-                    let src = pokemonIdMap[s.name] ? `${IMG_PATH}${pokemonIdMap[s.name]}.png` : `${IMG_PATH}${apiName}.png`; 
+                    let idRef = pokemonIdMap[s.name] || apiName; 
+                    // Se tivermos um ID numérico no mapa, usamos ele, senão tenta o nome
+                    let src = `${POKEAPI_IMG}${idRef}.png`; 
+                    if (!pokemonIdMap[s.name]) src = `${POKEAPI_IMG}${apiName}.png`; // Fallback tentativo
+
                     iconsHtml += `<img src="${src}" onerror="this.src='${IMG_ERROR}'">`;
                 }
             });
@@ -365,7 +372,7 @@
         document.getElementById('teamNameInput').value = team.title || "";
         document.getElementById('teamTier').value = team.tier || "";
         
-        await carregarDados(team.tier); // Carrega Tier antes
+        await carregarDados(team.tier); 
 
         resetBuilderUI();
 
@@ -446,7 +453,6 @@
         if(!tier) return;
         const isLC = (tier === 'LC');
         
-        // Aplica regra LC
         document.querySelectorAll('.p-level').forEach(input => {
             if(isLC) { input.max = 5; if(input.value > 5 || input.value == 100) input.value = 5; } 
             else { input.max = 100; if(input.value == 5) input.value = 100; }
@@ -455,7 +461,7 @@
         });
 
         const dl = document.getElementById('list-pokemon'); dl.innerHTML = "";
-        pokemonIdMap = {}; // Limpa mapa ao trocar de tier
+        pokemonIdMap = {}; 
 
         try {
             const r = await fetch(`tiers_1.16/${tier}.json`);
@@ -463,7 +469,6 @@
                 const d = await r.json();
                 Object.keys(d).forEach(n => {
                     const o = document.createElement('option'); o.value = n; dl.appendChild(o);
-                    // Captura o ID aqui para usar na imagem depois
                     if(d[n].id) pokemonIdMap[n] = d[n].id;
                 });
             }
@@ -488,7 +493,6 @@
         document.querySelectorAll('.poke-editor').forEach((ed, i) => {
             const name = ed.querySelector('.p-name').value.trim();
             if(name) {
-                // Se o nome não estiver no mapa (vindo do JSON da Tier), é invalido
                 if(!pokemonIdMap[name]) errors.push(`Pokémon #${i+1} (${name}) não permitido em ${tier}.`);
                 
                 const item = ed.querySelector('.p-item').value.trim();
@@ -512,7 +516,6 @@
         const ed = document.createElement('div'); ed.className='poke-editor'; ed.id=`editor-${id}`; ed.innerHTML=generateEditorHTML(id);
         document.getElementById('editorsContainer').appendChild(ed);
         
-        // LC Rule
         const tier = document.getElementById('teamTier').value;
         if(tier === 'LC') { 
             ed.querySelector('.p-level').value = 5; 
@@ -551,7 +554,6 @@
     function clearInput(btn) { btn.previousElementSibling.value=""; saveCurrentTeamToStorage(); }
 
     async function updatePokemon(id, el) {
-        // 1. AJUSTE VISUAL: Capitaliza a primeira letra de cada palavra
         if (el.value) {
             el.value = el.value.toLowerCase().replace(/(?:^|\s|-)\S/g, function(a) { return a.toUpperCase(); });
         }
@@ -559,34 +561,27 @@
         const val = el.value; 
         if(val.length < 2) return;
         
-        // Cria o "nome de api" (tudo minúsculo, com traços)
         const apiName = formatToApiName(val);
-        
         const img = document.getElementById(`img-${id}`); 
         const tabImg = document.getElementById(`tab-img-${id}`);
         
-        // 2. LÓGICA DA IMAGEM BLINDADA (CORRIGIDA)
-        let imageName = apiName; 
-
-        // Se o Pokémon existe no mapa da Tier, pegamos o ID (que pode ser número)
-        if (pokemonIdMap[val]) { 
-            imageName = pokemonIdMap[val];
-        }
-
-        // --- CORREÇÃO AQUI ---
-        // Converte para String() antes do toLowerCase() para funcionar com IDs numéricos (ex: 979)
-        const finalSrc = `${IMG_PATH}${String(imageName).toLowerCase()}.png`;
-
-        img.src = finalSrc; 
-        tabImg.src = finalSrc; 
-
-        console.log("Tentando carregar imagem:", finalSrc);
-        
-        // Busca dados na API (Stats, Abilities, etc)
+        // Busca dados na API
         try {
+            console.log(`Buscando dados na PokeAPI para: ${apiName}`);
             const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${apiName}`);
+            
             if(r.ok) {
                 const d = await r.json();
+                
+                // --- ATUALIZAÇÃO DA IMAGEM PELA API ---
+                // Agora pegamos o ID direto da PokeAPI (d.id). 100% garantido.
+                const newSrc = `${POKEAPI_IMG}${d.id}.png`;
+                
+                img.src = newSrc; 
+                tabImg.src = newSrc;
+                console.log(`Imagem carregada via API: ${newSrc}`);
+
+                // Atualiza Stats e Inputs
                 slotBaseStats[id] = { hp:d.stats[0].base_stat, atk:d.stats[1].base_stat, def:d.stats[2].base_stat, spa:d.stats[3].base_stat, spd:d.stats[4].base_stat, spe:d.stats[5].base_stat };
                 recalcStats(id);
                 
@@ -594,8 +589,12 @@
                 d.abilities.forEach(a=>{ const o=document.createElement('option'); o.value=formatText(a.ability.name); abilList.appendChild(o); });
                 const moveList = document.getElementById(`moves-${id}`); moveList.innerHTML="";
                 d.moves.forEach(m=>{ const o=document.createElement('option'); o.value=formatText(m.move.name); moveList.appendChild(o); });
+            } else {
+                console.warn(`Pokémon não encontrado na API: ${apiName}`);
             }
-        } catch(e){}
+        } catch(e){
+            console.error("Erro ao conectar na PokeAPI", e);
+        }
     }
 
     function updateItemIcon(id, input) {
@@ -609,30 +608,19 @@
 
     function updateEV(id, stat, val) {
         let v = parseInt(val) || 0;
-        if (v < 0) v = 0; // Impede negativos
-
-        // 1. Soma os EVs dos OUTROS status para saber quanto já foi gasto
+        if (v < 0) v = 0; 
         let usedByOthers = 0;
         STATS.forEach(s => {
             if (s !== stat) {
                 usedByOthers += parseInt(document.getElementById(`num-${id}-${s}`).value) || 0;
             }
         });
-
-        // 2. Calcula o teto máximo permitido (Mínimo entre 252 E o que sobrou dos 508)
         const remainingGlobal = 508 - usedByOthers;
         const maxAllowed = Math.min(252, remainingGlobal);
-
-        // 3. Se o valor digitado for maior que o permitido, trava no máximo
         if (v > maxAllowed) v = maxAllowed;
-
-        // 4. Atualiza os inputs (Range e Texto) com o valor corrigido
         document.getElementById(`range-${id}-${stat}`).value = v;
         document.getElementById(`num-${id}-${stat}`).value = v;
-        
-        // 5. Atualiza o texto de "Restam: X"
         document.getElementById(`remain-${id}`).innerText = "Restam: " + (508 - (usedByOthers + v));
-
         recalcStats(id);
         saveCurrentTeamToStorage();
     }
@@ -644,14 +632,11 @@
         
         let mods = { atk:1, def:1, spa:1, spd:1, spe:1 };
 
-        // Lógica de Nature Corrigida (Mais robusta contra espaços)
         if(NATURES_INFO[nature] && NATURES_INFO[nature]!=="Neutral") {
-            // Divide por vírgula primeiro
             const parts = NATURES_INFO[nature].split(','); 
             parts.forEach(p => { 
-                p = p.trim(); // Remove espaços extras
+                p = p.trim(); 
                 const type = p.substring(1).toLowerCase(); 
-                
                 if(p.startsWith('+')) mods[type] = 1.1; 
                 if(p.startsWith('-')) mods[type] = 0.9; 
             });
@@ -663,15 +648,13 @@
             document.getElementById(`base-${id}-${k}`).innerText = b;
             
             const iv = parseInt(document.getElementById(`editor-${id}`).querySelector(`.p-iv-${k}`).value)||0;
-            const ev = parseInt(document.getElementById(`num-${id}-${s}`).value)||0; // Usa o valor já validado
+            const ev = parseInt(document.getElementById(`num-${id}-${s}`).value)||0; 
             
             let final = 0;
             if(b > 0) {
-                // Cálculo de HP (Gen 3+)
                 if(s === 'HP') {
                     final = b === 1 ? 1 : Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + level + 10;
                 } else {
-                    // Cálculo de Outros Status com Multiplicador de Nature
                     const rawStat = Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + 5;
                     final = Math.floor(rawStat * mods[k]);
                 }
