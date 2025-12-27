@@ -579,13 +579,32 @@
         icon.onerror = function() { this.src=""; this.classList.remove('active'); }
     }
 
-    function updateEV(id,stat,val) {
-        val = parseInt(val)||0;
-        document.getElementById(`range-${id}-${stat}`).value = val;
-        document.getElementById(`num-${id}-${stat}`).value = val;
-        let total=0; STATS.forEach(s=>{ if(s!==stat) total+=parseInt(document.getElementById(`num-${id}-${s}`).value)||0; });
-        const remain = 508 - (total+val);
-        document.getElementById(`remain-${id}`).innerText = "Restam: "+remain;
+function updateEV(id, stat, val) {
+        let v = parseInt(val) || 0;
+        if (v < 0) v = 0; // Impede negativos
+
+        // 1. Soma os EVs dos OUTROS status para saber quanto já foi gasto
+        let usedByOthers = 0;
+        STATS.forEach(s => {
+            if (s !== stat) {
+                usedByOthers += parseInt(document.getElementById(`num-${id}-${s}`).value) || 0;
+            }
+        });
+
+        // 2. Calcula o teto máximo permitido (Mínimo entre 252 E o que sobrou dos 508)
+        const remainingGlobal = 508 - usedByOthers;
+        const maxAllowed = Math.min(252, remainingGlobal);
+
+        // 3. Se o valor digitado for maior que o permitido, trava no máximo
+        if (v > maxAllowed) v = maxAllowed;
+
+        // 4. Atualiza os inputs (Range e Texto) com o valor corrigido
+        document.getElementById(`range-${id}-${stat}`).value = v;
+        document.getElementById(`num-${id}-${stat}`).value = v;
+        
+        // 5. Atualiza o texto de "Restam: X"
+        document.getElementById(`remain-${id}`).innerText = "Restam: " + (508 - (usedByOthers + v));
+
         recalcStats(id);
         saveCurrentTeamToStorage();
     }
@@ -594,14 +613,49 @@
         const base = slotBaseStats[id] || {hp:0,atk:0,def:0,spa:0,spd:0,spe:0};
         const level = parseInt(document.getElementById(`editor-${id}`).querySelector('.p-level').value) || 100;
         const nature = document.getElementById(`editor-${id}`).querySelector('.p-nature').value;
+        
         let mods = { atk:1, def:1, spa:1, spd:1, spe:1 };
+
+        // Lógica de Nature Corrigida (Mais robusta contra espaços)
         if(NATURES_INFO[nature] && NATURES_INFO[nature]!=="Neutral") {
-            const parts = NATURES_INFO[nature].split(', ');
+            // Divide por vírgula primeiro
+            const parts = NATURES_INFO[nature].split(','); 
             parts.forEach(p => { 
-                const type = p.substring(1).toLowerCase(); 
-                if(p.startsWith('+')) mods[type]=1.1; if(p.startsWith('-')) mods[type]=0.9; 
+                p = p.trim(); // Remove espaços extras (CRUCIAL PARA FUNCIONAR)
+                const type = p.substring(1).toLowerCase(); // Pega "atk", "spa", etc.
+                
+                if(p.startsWith('+')) mods[type] = 1.1; 
+                if(p.startsWith('-')) mods[type] = 0.9; 
             });
         }
+
+        let total=0;
+        STATS.forEach(s => {
+            const k = s.toLowerCase(); const b = base[k];
+            document.getElementById(`base-${id}-${k}`).innerText = b;
+            
+            const iv = parseInt(document.getElementById(`editor-${id}`).querySelector(`.p-iv-${k}`).value)||0;
+            const ev = parseInt(document.getElementById(`num-${id}-${s}`).value)||0; // Usa o valor já validado
+            
+            let final = 0;
+            if(b > 0) {
+                // Cálculo de HP (Gen 3+)
+                if(s === 'HP') {
+                    final = b === 1 ? 1 : Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + level + 10;
+                } else {
+                    // Cálculo de Outros Status com Multiplicador de Nature
+                    // Math.floor na ordem correta da fórmula oficial
+                    const rawStat = Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + 5;
+                    final = Math.floor(rawStat * mods[k]);
+                }
+            }
+            
+            document.getElementById(`val-${id}-${k}`).innerText = final;
+            document.getElementById(`bar-${id}-${k}`).style.width = Math.min((b/255)*100, 100)+"%";
+            total += final;
+        });
+        document.getElementById(`bst-${id}`).innerText = total;
+    }
         let total=0;
         STATS.forEach(s => {
             const k = s.toLowerCase(); const b = base[k];
