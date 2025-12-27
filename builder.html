@@ -547,7 +547,8 @@
     function clearInput(btn) { btn.previousElementSibling.value=""; saveCurrentTeamToStorage(); }
 
 async function updatePokemon(id, el) {
-        // 1. Formata o texto do input para ter a primeira letra maiúscula (Visual)
+        // 1. AJUSTE VISUAL: Capitaliza a primeira letra de cada palavra no Input
+        // Ex: transforma "iron valiant" em "Iron Valiant" apenas para o usuário ver
         if (el.value) {
             el.value = el.value.toLowerCase().replace(/(?:^|\s|-)\S/g, function(a) { return a.toUpperCase(); });
         }
@@ -555,25 +556,31 @@ async function updatePokemon(id, el) {
         const val = el.value; 
         if(val.length < 2) return;
         
+        // Cria o "nome de api" (tudo minúsculo, com traços)
         const apiName = formatToApiName(val);
+        
         const img = document.getElementById(`img-${id}`); 
         const tabImg = document.getElementById(`tab-img-${id}`);
         
-        // --- CORREÇÃO AQUI ---
-        // Se o Pokémon existe no JSON da Tier, pega o ID dele.
-        // O .toLowerCase() garante que 'Gengar' vire 'gengar.png' para bater com o arquivo.
+        // 2. LÓGICA DA IMAGEM BLINDADA
+        let imageName = apiName; // Começa assumindo que o nome do arquivo é o nome da API (ex: pikachu)
+
+        // Se o Pokémon existe no mapa da Tier, tentamos pegar o ID dele de lá
         if (pokemonIdMap[val]) { 
-            const safeId = pokemonIdMap[val].toLowerCase(); // <--- O SEGREDO ESTÁ AQUI
-            img.src = `${IMG_PATH}${safeId}.png`; 
-            tabImg.src = `${IMG_PATH}${safeId}.png`; 
-        } 
-        else { 
-            // apiName já é minúsculo por padrão, então aqui funciona normal
-            img.src = `${IMG_PATH}${apiName}.png`; 
-            tabImg.src = `${IMG_PATH}${apiName}.png`; 
+            imageName = pokemonIdMap[val];
         }
+
+        // 3. SEGURANÇA FINAL: Força TUDO para minúsculo antes de criar o link
+        // Isso garante que se o mapa mandou "Gengar", a gente procura "gengar.png"
+        const finalSrc = `${IMG_PATH}${imageName.toLowerCase()}.png`;
+
+        img.src = finalSrc; 
+        tabImg.src = finalSrc; 
+
+        // Dica: Abra o console (F12) se a imagem não aparecer para ver qual link ele tentou carregar
+        console.log("Tentando carregar imagem:", finalSrc);
         
-        // Tenta buscar dados na API (Stats, Abilities, etc)
+        // Busca dados na API (Stats, Abilities, etc)
         try {
             const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${apiName}`);
             if(r.ok) {
