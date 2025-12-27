@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Humble Builder - Full</title>
+  <title>Humble Builder - Final</title>
   
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
@@ -142,13 +142,13 @@
     .col { flex: 1; }
     .col-small { width: 70px; flex: none; }
     
-    /* INPUT COM ÍCONE (NOVO) */
+    /* INPUT COM ÍCONE */
     .input-with-icon {
         display: flex; align-items: center; gap: 8px;
     }
     .item-icon-img {
         width: 28px; height: 28px; object-fit: contain;
-        opacity: 0.5; /* Opaco quando vazio */
+        opacity: 0.3; /* Transparente quando vazio */
         transition: opacity 0.3s;
     }
     .item-icon-img.active { opacity: 1; }
@@ -186,11 +186,8 @@
     }
     
     .ev-num { 
-      width: 50px !important; 
-      text-align: center; 
-      padding: 0px !important; 
-      font-size: 0.85rem !important; 
-      height: 25px !important; 
+      width: 50px !important; text-align: center; padding: 0px !important; 
+      font-size: 0.85rem !important; height: 25px !important; 
     }
 
     /* --- MOVES --- */
@@ -220,14 +217,8 @@
   </datalist>
 
   <header>
-    <h1>
-        <a href="feed.html">
-            <img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder
-        </a>
-    </h1>
-    <div class="menu-toggle" id="menuBtn">
-        <span></span><span></span><span></span>
-    </div>
+    <h1><a href="feed.html"><img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder</a></h1>
+    <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
   </header>
 
   <nav id="dropdownMenu">
@@ -244,7 +235,6 @@
         <h2>Criar Time</h2>
         <small>Selecione a Tier para carregar dados</small>
       </div>
-      
       <div class="toolbar-controls">
         <select id="teamTier" class="tier-select" onchange="carregarDados(this.value)">
             <option value="" disabled selected>Selecionar Tier</option>
@@ -259,7 +249,6 @@
             <option value="NFE">NFE</option>
             <option value="LC">LC</option>
         </select>
-
         <button class="btn-action" onclick="gerarTextoShowdown()">💾 Gerar Texto</button>
       </div>
     </div>
@@ -291,22 +280,18 @@
     const MAX_EVS = 508;
     const TOTAL_SLOTS = 6;
     const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
-    const NATURES = [
-        "Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful", "Docile", "Gentle", 
-        "Hardy", "Hasty", "Impish", "Jolly", "Lax", "Lonely", "Mild", "Modest", 
-        "Naive", "Naughty", "Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious", "Timid"
-    ];
+    const NATURES = ["Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful", "Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly", "Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty", "Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious", "Timid"];
     
     // Caminhos
     const IMG_PATH = "img/official-artwork/"; 
     const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
-    // Link base para itens do Showdown
     const ITEM_ICON_BASE = "https://play.pokemonshowdown.com/sprites/itemicons/";
     
     // Dados Globais
     const pokemonIdMap = {};
     let todosItens = [];
 
+    // Helper: Formata nome para arquivo de API (Pokemon)
     function formatToApiName(name) {
       return name.trim().toLowerCase()
         .replace(/ /g, '-')
@@ -317,7 +302,7 @@
         .replace(/♂/g, '-m');
     }
 
-    // Formata item para o padrão Showdown (ex: "Choice Scarf" -> "choicescarf")
+    // Helper: Formata nome para Showdown (Itens) - Remove tudo que não for letra/numero
     function formatItemToShowdown(name) {
         return name.toLowerCase().replace(/[^a-z0-9]/g, '');
     }
@@ -381,7 +366,7 @@
         });
     }
 
-    // --- 4. RENDERIZAR SLOTS (COM ÍCONE DE ITEM) ---
+    // --- 4. RENDERIZAR SLOTS (COM CORREÇÃO DE EVENTOS) ---
     function renderSlots() {
       const container = document.getElementById('teamContainer');
       const natureOptions = NATURES.map(n => `<option value="${n}">${n}</option>`).join('');
@@ -391,6 +376,8 @@
         div.className = 'poke-editor';
         div.id = `poke-${i}`;
         
+        // NOTA: Os eventos oninput e onchange agora passam 'this' (o elemento) em vez de 'this.value'.
+        // Isso previne que nomes com aspas (ex: King's Rock) quebrem o HTML.
         div.innerHTML = `
           <div class="header-row">
             <h4>Pokémon</h4>
@@ -405,11 +392,11 @@
             <div class="header-inputs">
                 <div class="row">
                     <div class="col">
-                        <input type="text" class="p-name" list="list-pokemon" placeholder="Pokémon" onchange="updateImage('${i}', this.value)">
+                        <input type="text" class="p-name" list="list-pokemon" placeholder="Pokémon" onchange="updateImage('${i}', this)">
                     </div>
                     <div class="col">
                         <div class="input-with-icon">
-                            <input type="text" class="p-item" list="list-items" placeholder="Item" onchange="updateItemIcon('${i}', this.value)">
+                            <input type="text" class="p-item" list="list-items" placeholder="Item" oninput="updateItemIcon('${i}', this)">
                             <img id="item-icon-${i}" class="item-icon-img" src="">
                         </div>
                     </div>
@@ -460,9 +447,13 @@
       }
     }
 
-    // --- 5. LÓGICA DE IMAGENS ---
-    async function updateImage(slotId, pokeName) {
+    // --- 5. LÓGICA DE IMAGENS ATUALIZADA ---
+    
+    // Agora recebe o elemento INPUT inteiro, não só o texto
+    async function updateImage(slotId, inputElement) {
+      const pokeName = inputElement.value; // Pega o valor com segurança
       const imgElement = document.getElementById(`img-${slotId}`);
+      
       if (!pokeName || pokeName.length < 2) { imgElement.src = IMG_ERROR; return; }
       
       if (pokemonIdMap[pokeName]) {
@@ -475,8 +466,10 @@
     }
 
     // Atualiza Ícone do Item (Showdown Source)
-    function updateItemIcon(slotId, itemName) {
+    function updateItemIcon(slotId, inputElement) {
+        const itemName = inputElement.value; // Pega o valor com segurança
         const iconElement = document.getElementById(`item-icon-${slotId}`);
+        
         if (!itemName || itemName.length < 2) { 
             iconElement.src = ""; 
             iconElement.classList.remove('active');
@@ -487,9 +480,8 @@
         iconElement.src = `${ITEM_ICON_BASE}${showdownName}.png`;
         iconElement.classList.add('active');
         
-        // Handler de erro caso imagem não exista
         iconElement.onerror = function() {
-            this.src = ""; // Oculta se falhar
+            this.src = ""; 
             this.classList.remove('active');
         };
     }
