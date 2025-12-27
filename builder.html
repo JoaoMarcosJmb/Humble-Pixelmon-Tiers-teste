@@ -279,7 +279,7 @@
     </main>
   </div>
 
-  <script>
+ <script>
     const menuBtn = document.getElementById("menuBtn");
     const dropdownMenu = document.getElementById("dropdownMenu");
     menuBtn.addEventListener("click", () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); });
@@ -292,7 +292,10 @@
     const MAX_EVS = 508; const MAX_SLOTS = 6;
     const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
     const NATURES_INFO = { "Adamant": "+Atk, -SpA", "Bashful": "Neutral", "Bold": "+Def, -Atk", "Brave": "+Atk, -Spe", "Calm": "+SpD, -Atk", "Careful": "+SpD, -SpA", "Docile": "Neutral", "Gentle": "+SpD, -Def", "Hardy": "Neutral", "Hasty": "+Spe, -Def", "Impish": "+Def, -SpA", "Jolly": "+Spe, -SpA", "Lax": "+Def, -SpD", "Lonely": "+Atk, -Def", "Mild": "+SpA, -Def", "Modest": "+SpA, -Atk", "Naive": "+Spe, -SpD", "Naughty": "+Atk, -SpD", "Quiet": "+SpA, -Spe", "Quirky": "Neutral", "Rash": "+SpA, -SpD", "Relaxed": "+Def, -Spe", "Sassy": "+SpD, -Spe", "Serious": "Neutral", "Timid": "+Spe, -Atk" };
-    const IMG_PATH = "img/official-artwork/"; const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
+    
+    // --- ATENÇÃO AQUI: Verifique se suas imagens estão nessa pasta mesmo ---
+    const IMG_PATH = "img/official-artwork/"; 
+    const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
     const ITEM_ICON_BASE = "https://play.pokemonshowdown.com/sprites/itemicons/";
 
     let pokemonIdMap = {}; let todosItens = [];
@@ -460,6 +463,7 @@
                 const d = await r.json();
                 Object.keys(d).forEach(n => {
                     const o = document.createElement('option'); o.value = n; dl.appendChild(o);
+                    // Captura o ID aqui para usar na imagem depois
                     if(d[n].id) pokemonIdMap[n] = d[n].id;
                 });
             }
@@ -546,9 +550,8 @@
     function clearItem(id) { const i=document.getElementById(`editor-${id}`).querySelector('.p-item'); i.value=""; updateItemIcon(id,i); saveCurrentTeamToStorage(); }
     function clearInput(btn) { btn.previousElementSibling.value=""; saveCurrentTeamToStorage(); }
 
-async function updatePokemon(id, el) {
-        // 1. AJUSTE VISUAL: Capitaliza a primeira letra de cada palavra no Input
-        // Ex: transforma "iron valiant" em "Iron Valiant" apenas para o usuário ver
+    async function updatePokemon(id, el) {
+        // 1. AJUSTE VISUAL: Capitaliza a primeira letra de cada palavra
         if (el.value) {
             el.value = el.value.toLowerCase().replace(/(?:^|\s|-)\S/g, function(a) { return a.toUpperCase(); });
         }
@@ -562,22 +565,21 @@ async function updatePokemon(id, el) {
         const img = document.getElementById(`img-${id}`); 
         const tabImg = document.getElementById(`tab-img-${id}`);
         
-        // 2. LÓGICA DA IMAGEM BLINDADA
-        let imageName = apiName; // Começa assumindo que o nome do arquivo é o nome da API (ex: pikachu)
+        // 2. LÓGICA DA IMAGEM BLINDADA (CORRIGIDA)
+        let imageName = apiName; 
 
-        // Se o Pokémon existe no mapa da Tier, tentamos pegar o ID dele de lá
+        // Se o Pokémon existe no mapa da Tier, pegamos o ID (que pode ser número)
         if (pokemonIdMap[val]) { 
             imageName = pokemonIdMap[val];
         }
 
-        // 3. SEGURANÇA FINAL: Força TUDO para minúsculo antes de criar o link
-        // Isso garante que se o mapa mandou "Gengar", a gente procura "gengar.png"
-        const finalSrc = `${IMG_PATH}${imageName.toLowerCase()}.png`;
+        // --- CORREÇÃO AQUI ---
+        // Converte para String() antes do toLowerCase() para funcionar com IDs numéricos (ex: 979)
+        const finalSrc = `${IMG_PATH}${String(imageName).toLowerCase()}.png`;
 
         img.src = finalSrc; 
         tabImg.src = finalSrc; 
 
-        // Dica: Abra o console (F12) se a imagem não aparecer para ver qual link ele tentou carregar
         console.log("Tentando carregar imagem:", finalSrc);
         
         // Busca dados na API (Stats, Abilities, etc)
@@ -647,8 +649,8 @@ async function updatePokemon(id, el) {
             // Divide por vírgula primeiro
             const parts = NATURES_INFO[nature].split(','); 
             parts.forEach(p => { 
-                p = p.trim(); // Remove espaços extras (CRUCIAL PARA FUNCIONAR)
-                const type = p.substring(1).toLowerCase(); // Pega "atk", "spa", etc.
+                p = p.trim(); // Remove espaços extras
+                const type = p.substring(1).toLowerCase(); 
                 
                 if(p.startsWith('+')) mods[type] = 1.1; 
                 if(p.startsWith('-')) mods[type] = 0.9; 
@@ -670,7 +672,6 @@ async function updatePokemon(id, el) {
                     final = b === 1 ? 1 : Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + level + 10;
                 } else {
                     // Cálculo de Outros Status com Multiplicador de Nature
-                    // Math.floor na ordem correta da fórmula oficial
                     const rawStat = Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + 5;
                     final = Math.floor(rawStat * mods[k]);
                 }
@@ -730,7 +731,7 @@ async function updatePokemon(id, el) {
             name = name.trim();
             if (name.includes('(') && name.includes(')')) { const m = name.match(/\(([^)]+)\)/); if (m) name = m[1]; }
 
-            const nInp = ed.querySelector('.p-name'); nInp.value = name; updateImage(id, nInp); 
+            const nInp = ed.querySelector('.p-name'); nInp.value = name; updatePokemon(id, nInp); 
             const iInp = ed.querySelector('.p-item'); iInp.value = item; updateItemIcon(id, iInp);
 
             let mIdx = 0; const mInps = ed.querySelectorAll('.p-move');
