@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Humble Builder - Manager Final</title>
+  <title>Humble Builder - Validator</title>
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
   <style>
@@ -52,7 +52,7 @@
     .sidebar-header { padding: 15px; border-bottom: 1px solid #333; background: #202020; }
     .btn-new-team {
         width: 100%; padding: 12px; background: #28a745; color: white; border: none; 
-        border-radius: 4px; font-weight: bold; cursor: pointer; transition:0.2s; font-size: 1rem;
+        border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1rem;
     }
     .btn-new-team:hover { background: #218838; }
 
@@ -102,9 +102,13 @@
     #teamNameInput:focus { border-color: var(--cor-dourado); outline: none; }
 
     .tier-select { background: #111; color: var(--cor-dourado); border: 1px solid #555; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; min-width: 150px; }
+    
     .btn-action { background: var(--cor-dourado); border: none; padding: 10px 20px; font-weight: bold; cursor: pointer; border-radius: 4px; color: #111; display:flex; align-items:center; gap:5px; }
-    .btn-save { background: #28a745; color: #fff; }
-    .btn-import { background: #444; color: #fff; border:1px solid #666; }
+    
+    .btn-save { background: #28a745; color: #fff; } .btn-save:hover { background: #34ce57; }
+    .btn-import { background: #444; color: #fff; border:1px solid #666; } .btn-import:hover { background: #555; }
+    /* BOTÃO VALIDAR (NOVO) */
+    .btn-validate { background: #17a2b8; color: #fff; } .btn-validate:hover { background: #1ebcd3; }
 
     /* TABS */
     .tabs-wrapper { display: flex; align-items: flex-end; gap: 5px; margin-bottom: 0; padding-left: 5px; }
@@ -259,6 +263,7 @@
                         <option value="OU">OU</option><option value="PU">PU</option><option value="RU">RU</option>
                         <option value="UU">UU</option><option value="Uber">Uber</option><option value="Ubers_UU">Ubers UU</option><option value="ZU">ZU</option>
                     </select>
+                    <button class="btn-action btn-validate" onclick="validateTeam()">✓ Validar</button>
                     <button class="btn-action btn-import" onclick="openIOModal()">📥 Texto</button>
                     <button class="btn-action btn-save" onclick="saveCurrentTeamToStorage()">💾 Salvar</button>
                 </div>
@@ -347,8 +352,7 @@
     function resetBuilderUI() {
         document.getElementById('tabsContainer').innerHTML = "";
         document.getElementById('editorsContainer').innerHTML = "";
-        slotCounter = 0;
-        slotBaseStats = {};
+        slotCounter = 0; slotBaseStats = {};
     }
 
     async function editTeam(index) {
@@ -357,7 +361,8 @@
         renderSidebar(); 
         document.getElementById('teamNameInput').value = team.title || "";
         document.getElementById('teamTier').value = team.tier || "";
-        await carregarDados(team.tier);
+        
+        await carregarDados(team.tier); // Carrega Tier antes
 
         resetBuilderUI();
 
@@ -383,6 +388,7 @@
                 });
                 const movesInp = ed.querySelectorAll('.p-move');
                 s.moves.forEach((m, i) => { if(movesInp[i]) movesInp[i].value = m; });
+                
                 recalcStats(id);
             }
             switchTab(1);
@@ -437,21 +443,17 @@
         if(!tier) return;
         const isLC = (tier === 'LC');
         
-        // Aplica regra de nivel para todos os slots existentes
+        // Aplica regra LC
         document.querySelectorAll('.p-level').forEach(input => {
-            if(isLC) { 
-                input.max = 5; 
-                if(input.value > 5 || input.value == 100) input.value = 5; 
-            } else { 
-                input.max = 100; 
-                if(input.value == 5) input.value = 100; // Volta para 100 se sair de LC
-            }
-            // Força recalculo visual dos stats
+            if(isLC) { input.max = 5; if(input.value > 5 || input.value == 100) input.value = 5; } 
+            else { input.max = 100; if(input.value == 5) input.value = 100; }
             const id = input.closest('.poke-editor').id.split('-')[1];
             recalcStats(id);
         });
 
         const dl = document.getElementById('list-pokemon'); dl.innerHTML = "";
+        pokemonIdMap = {}; // Limpa mapa ao trocar de tier
+
         try {
             const r = await fetch(`tiers_1.16/${tier}.json`);
             if (r.ok) {
@@ -472,6 +474,30 @@
             const o = document.createElement('option'); o.value = i.name; dl.appendChild(o);
         });
     }
+    
+    // --- VALIDAÇÃO ---
+    function validateTeam() {
+        const tier = document.getElementById('teamTier').value;
+        if(!tier) { alert("Selecione uma Tier."); return; }
+        
+        let errors = [];
+        document.querySelectorAll('.poke-editor').forEach((ed, i) => {
+            const name = ed.querySelector('.p-name').value.trim();
+            if(name) {
+                // Se o nome não estiver no mapa (vindo do JSON da Tier), é invalido
+                if(!pokemonIdMap[name]) errors.push(`Pokémon #${i+1} (${name}) não permitido em ${tier}.`);
+                
+                const item = ed.querySelector('.p-item').value.trim();
+                const itemObj = todosItens.find(it => it.name === item);
+                if(itemObj && itemObj.ban && itemObj.ban.includes(tier)) {
+                    errors.push(`Item do #${i+1} (${item}) banido em ${tier}.`);
+                }
+            }
+        });
+
+        if(errors.length > 0) alert("Erros encontrados:\n\n" + errors.join("\n"));
+        else alert("Time Válido!");
+    }
 
     function addNewSlot() {
         if (document.querySelectorAll('.tab-slot').length >= MAX_SLOTS) return;
@@ -482,11 +508,11 @@
         const ed = document.createElement('div'); ed.className='poke-editor'; ed.id=`editor-${id}`; ed.innerHTML=generateEditorHTML(id);
         document.getElementById('editorsContainer').appendChild(ed);
         
-        // Lógica de Nível LC ao criar novo
-        const currentTier = document.getElementById('teamTier').value;
-        if(currentTier === 'LC') {
-             ed.querySelector('.p-level').value = 5;
-             ed.querySelector('.p-level').max = 5;
+        // LC Rule
+        const tier = document.getElementById('teamTier').value;
+        if(tier === 'LC') { 
+            ed.querySelector('.p-level').value = 5; 
+            ed.querySelector('.p-level').max = 5; 
         }
 
         slotBaseStats[id] = {hp:0,atk:0,def:0,spa:0,spd:0,spe:0};
@@ -525,6 +551,7 @@
         const apiName = formatToApiName(val);
         const img = document.getElementById(`img-${id}`); const tabImg = document.getElementById(`tab-img-${id}`);
         
+        // Se a Tier foi carregada, usa o ID
         if (pokemonIdMap[val]) { img.src = `${IMG_PATH}${pokemonIdMap[val]}.png`; tabImg.src = `${IMG_PATH}${pokemonIdMap[val]}.png`; } 
         else { img.src = `${IMG_PATH}${apiName}.png`; tabImg.src = `${IMG_PATH}${apiName}.png`; }
         
@@ -609,15 +636,11 @@
                 const ability = ed.querySelector('.p-ability').value; if(ability) txt += `Ability: ${ability}\n`;
                 const shiny = ed.querySelector('.p-shiny').value; if(shiny === 'Yes') txt += `Shiny: Yes\n`;
                 const level = ed.querySelector('.p-level').value; if(level && level!=100) txt += `Level: ${level}\n`;
-                
                 let evs = []; STATS.forEach(s => { const v = document.getElementById(`num-${ed.id.split('-')[1]}-${s}`).value; if(v>0) evs.push(`${v} ${s}`); });
                 if(evs.length) txt += `EVs: ${evs.join(' / ')}\n`;
-                
                 const nature = ed.querySelector('.p-nature').value; if(nature) txt += `${nature} Nature\n`;
-                
                 let ivs = []; STATS.forEach(s => { const v = ed.querySelector(`.p-iv-${s.toLowerCase()}`).value; if(v!=31) ivs.push(`${v} ${s}`); });
                 if(ivs.length) txt += `IVs: ${ivs.join(' / ')}\n`;
-
                 ed.querySelectorAll('.p-move').forEach(m => { if(m.value) txt += `- ${m.value}\n`; });
                 txt += "\n";
             }
