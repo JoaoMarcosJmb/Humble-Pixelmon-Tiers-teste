@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Humble Builder - Final</title>
+  <title>Humble Builder - Ultimate</title>
   
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
@@ -54,7 +54,7 @@
     /* --- LAYOUT --- */
     .builder-wrapper { max-width: 1000px; margin: 0 auto; padding: 20px; }
 
-    /* TOOLBAR LIMPA */
+    /* TOOLBAR */
     .toolbar {
       display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
       background: rgba(30,30,30,0.8); padding: 15px; border-radius: 8px; border: 1px solid var(--cor-borda);
@@ -67,9 +67,10 @@
     .tier-select {
         background: #111; color: var(--cor-dourado); border: 1px solid var(--cor-dourado);
         padding: 0 15px; border-radius: 5px; font-weight: bold; cursor: pointer;
-        font-size: 0.95rem; min-width: 180px; height: 100%; box-sizing: border-box;
+        font-size: 0.95rem; min-width: 200px; height: 100%; box-sizing: border-box;
     }
     .tier-select:focus { outline: none; box-shadow: 0 0 8px rgba(209, 167, 32, 0.3); }
+    .tier-select option { background: #222; color: #fff; }
 
     .btn-action {
       background: var(--cor-dourado); border: none; padding: 0 25px; font-weight: bold;
@@ -125,7 +126,9 @@
     /* Inputs */
     .row { display: flex; gap: 15px; }
     .col { flex: 1; }
-    .col-small { width: 80px; flex: none; }
+    .col-small { width: 80px; flex: none; } /* Level */
+    .col-mini { width: 60px; flex: none; } /* Gender/Shiny */
+    
     .input-with-icon { display: flex; align-items: center; gap: 8px; }
     .item-icon-img { width: 30px; height: 30px; object-fit: contain; opacity: 0.3; transition: opacity 0.3s; }
     .item-icon-img.active { opacity: 1; }
@@ -154,7 +157,7 @@
     .move-input { border-left: 4px solid #555 !important; margin-bottom: 8px; height: 38px !important; }
     .move-input:focus { border-left-color: var(--cor-dourado) !important; }
 
-    /* --- MODAL UNIFICADO --- */
+    /* --- MODAL --- */
     .modal-overlay {
         position: fixed; top: 0; left: 0; width: 100%; height: 100%;
         background: rgba(0,0,0,0.85); z-index: 2000;
@@ -221,11 +224,7 @@
   </div>
 
   <header>
-    <h1>
-        <a href="feed.html">
-            <img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder
-        </a>
-    </h1>
+    <h1><a href="feed.html"><img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder</a></h1>
     <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
   </header>
 
@@ -247,15 +246,21 @@
         <select id="teamTier" class="tier-select" onchange="carregarDados(this.value)">
             <option value="" disabled selected>Selecionar Tier</option>
             <option value="AG">AG</option>
-            <option value="Uber">Uber</option>
-            <option value="OU">OU</option>
-            <option value="UU">UU</option>
-            <option value="RU">RU</option>
-            <option value="NU">NU</option>
-            <option value="PU">PU</option>
-            <option value="ZU">ZU</option>
-            <option value="NFE">NFE</option>
             <option value="LC">LC</option>
+            <option value="Monotype">Monotype</option>
+            <option value="NU">NU</option>
+            <option value="National_Dex">National Dex</option>
+            <option value="National_Dex_Monotype">NatDex Monotype</option>
+            <option value="National_Dex_RU">NatDex RU</option>
+            <option value="National_Dex_UU">NatDex UU</option>
+            <option value="National_Dex_Ubers">NatDex Ubers</option>
+            <option value="OU">OU</option>
+            <option value="PU">PU</option>
+            <option value="RU">RU</option>
+            <option value="UU">UU</option>
+            <option value="Uber">Uber</option>
+            <option value="Ubers_UU">Ubers UU</option>
+            <option value="ZU">ZU</option>
         </select>
         
         <button class="btn-action" onclick="openIOModal()">
@@ -273,7 +278,7 @@
   </div>
 
   <script>
-    // --- GERAIS ---
+    // --- CONFIGURAÇÕES ---
     const menuBtn = document.getElementById("menuBtn");
     const dropdownMenu = document.getElementById("dropdownMenu");
     menuBtn.addEventListener("click", () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); });
@@ -287,7 +292,20 @@
     const MAX_EVS = 508;
     const MAX_SLOTS = 6;
     const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
-    const NATURES = ["Adamant", "Bashful", "Bold", "Brave", "Calm", "Careful", "Docile", "Gentle", "Hardy", "Hasty", "Impish", "Jolly", "Lax", "Lonely", "Mild", "Modest", "Naive", "Naughty", "Quiet", "Quirky", "Rash", "Relaxed", "Sassy", "Serious", "Timid"];
+    
+    // NATURES COM DETALHES
+    const NATURES_INFO = {
+        "Adamant": "+Atk, -SpA", "Bashful": "Neutral", "Bold": "+Def, -Atk",
+        "Brave": "+Atk, -Spe", "Calm": "+SpD, -Atk", "Careful": "+SpD, -SpA",
+        "Docile": "Neutral", "Gentle": "+SpD, -Def", "Hardy": "Neutral",
+        "Hasty": "+Spe, -Def", "Impish": "+Def, -SpA", "Jolly": "+Spe, -SpA",
+        "Lax": "+Def, -SpD", "Lonely": "+Atk, -Def", "Mild": "+SpA, -Def",
+        "Modest": "+SpA, -Atk", "Naive": "+Spe, -SpD", "Naughty": "+Atk, -SpD",
+        "Quiet": "+SpA, -Spe", "Quirky": "Neutral", "Rash": "+SpA, -SpD",
+        "Relaxed": "+Def, -Spe", "Sassy": "+SpD, -Spe", "Serious": "Neutral",
+        "Timid": "+Spe, -Atk"
+    };
+
     const IMG_PATH = "img/official-artwork/"; 
     const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
     const ITEM_ICON_BASE = "https://play.pokemonshowdown.com/sprites/itemicons/";
@@ -314,11 +332,6 @@
         } catch (e) { console.log("Erro itens:", e); }
     }
 
-    function carregarDados(tier) {
-        carregarPokemonDaTier(tier);
-        atualizarListaItens(tier);
-    }
-
     async function carregarPokemonDaTier(tier) {
         const datalist = document.getElementById('list-pokemon');
         datalist.innerHTML = ""; 
@@ -331,7 +344,12 @@
                     if (data[nome].id) pokemonIdMap[nome] = data[nome].id;
                 });
             }
-        } catch (e) { alert("Erro ao carregar Tier. Verifique se o arquivo JSON existe."); }
+        } catch (e) { alert("Erro ao carregar Tier."); }
+    }
+
+    function carregarDados(tier) {
+        carregarPokemonDaTier(tier);
+        atualizarListaItens(tier);
     }
 
     function atualizarListaItens(tier) {
@@ -342,7 +360,7 @@
         });
     }
 
-    // --- SLOTS & TABS ---
+    // --- SLOTS & UI ---
     function addNewSlot() {
         if (document.querySelectorAll('.tab-slot').length >= MAX_SLOTS) return;
         slotCounter++; const id = slotCounter;
@@ -377,7 +395,13 @@
     }
 
     function generateEditorHTML(id) {
-        const nOpts = NATURES.map(n => `<option value="${n}">${n}</option>`).join('');
+        // Natures com Detalhes
+        const natureOptions = Object.keys(NATURES_INFO).map(n => {
+            const info = NATURES_INFO[n];
+            const label = info === "Neutral" ? n : `${n} (${info})`;
+            return `<option value="${n}">${label}</option>`;
+        }).join('');
+
         return `
           <div class="header-row"><h4>Pokémon Set</h4></div>
           <div class="editor-layout">
@@ -389,8 +413,11 @@
                 </div>
                 <div class="row">
                     <div class="col"><label>Ability</label><input type="text" class="p-ability" list="list-abilities" placeholder="Ability"></div>
-                    <div class="col"><label>Nature</label><select class="p-nature"><option value="" disabled selected>Nature</option>${nOpts}</select></div>
+                    <div class="col"><label>Nature</label><select class="p-nature"><option value="" disabled selected>Nature</option>${natureOptions}</select></div>
+                    
                     <div class="col-small"><label>Level</label><input type="number" class="p-level" value="100" min="1" max="100"></div>
+                    <div class="col-mini"><label>Gender</label><select class="p-gender"><option value="-">-</option><option value="M">M</option><option value="F">F</option></select></div>
+                    <div class="col-mini"><label>Shiny</label><select class="p-shiny"><option value="No">No</option><option value="Yes">Yes</option></select></div>
                 </div>
                 <div class="iv-section"><div class="iv-grid">
                     ${STATS.map(s => `<div class="iv-box"><label>${s}</label><input type="text" class="p-iv-${s.toLowerCase()}" value="31"></div>`).join('')}
@@ -415,10 +442,7 @@
         const img = document.getElementById(`img-${id}`);
         const tabImg = document.getElementById(`tab-img-${id}`);
         if (!val || val.length < 2) { img.src = IMG_ERROR; tabImg.src = IMG_ERROR; return; }
-        
-        let src = "";
-        if (pokemonIdMap[val]) src = `${IMG_PATH}${pokemonIdMap[val]}.png`;
-        else src = `${IMG_PATH}${formatToApiName(val)}.png`;
+        let src = pokemonIdMap[val] ? `${IMG_PATH}${pokemonIdMap[val]}.png` : `${IMG_PATH}${formatToApiName(val)}.png`;
         img.src = src; tabImg.src = src;
     }
 
@@ -437,19 +461,16 @@
         let total = 0;
         STATS.forEach(s => { if (s !== stat) total += parseInt(document.getElementById(`num-${id}-${s}`).value) || 0; });
         if (val > MAX_EVS - total) val = MAX_EVS - total;
-        
         document.getElementById(`range-${id}-${stat}`).value = val;
         document.getElementById(`num-${id}-${stat}`).value = val;
-        
         const rem = MAX_EVS - (total + val);
         const lbl = document.getElementById(`remain-${id}`);
         lbl.innerText = `Restam: ${rem}`;
         lbl.style.color = rem === 0 ? "#d1a720" : "#4dff88";
     }
 
-    // --- MODAL LÓGICA (IMPORT/EXPORT UNIFICADO) ---
+    // --- IMPORT / EXPORT ---
     function openIOModal() {
-        // GERA O TEXTO ATUAL (EXPORT)
         let fullText = "";
         const tier = document.getElementById('teamTier').value;
         if (tier) fullText += `=== [Gen 9] ${tier} ===\n\n`;
@@ -458,16 +479,24 @@
         document.querySelectorAll('.poke-editor').forEach(ed => {
             const id = ed.id.split('-')[1];
             const name = ed.querySelector('.p-name').value.trim();
-            if (!name) return; // Pula vazios
+            if (!name) return;
             hasContent = true;
             
             const item = ed.querySelector('.p-item').value.trim();
             const ability = ed.querySelector('.p-ability').value.trim();
             const nature = ed.querySelector('.p-nature').value;
             const level = ed.querySelector('.p-level').value;
+            const gender = ed.querySelector('.p-gender').value;
+            const shiny = ed.querySelector('.p-shiny').value;
 
-            fullText += `${name}${item ? ' @ ' + item : ''}\n`;
+            // Formatação completa
+            let line1 = name;
+            if (gender !== '-') line1 += ` (${gender})`;
+            if (item) line1 += ` @ ${item}`;
+            fullText += `${line1}\n`;
+
             if (ability) fullText += `Ability: ${ability}\n`;
+            if (shiny === "Yes") fullText += `Shiny: Yes\n`;
             if (level && level != 100) fullText += `Level: ${level}\n`;
 
             let evs = [];
@@ -491,97 +520,77 @@
             fullText += "\n";
         });
 
-        if (!hasContent) fullText = ""; // Se não tiver nada, limpa o modal
-
+        if (!hasContent) fullText = "";
         document.getElementById('ioText').value = fullText;
         document.getElementById('ioModal').style.display = 'flex';
     }
 
     function closeModal() { document.getElementById('ioModal').style.display = 'none'; }
 
-    // --- FUNÇÃO ADICIONADA: COPIAR PARA ÁREA DE TRANSFERÊNCIA ---
     function copyToClipboard() {
         const copyText = document.getElementById("ioText");
-        if (!copyText.value) { alert("Nada para copiar."); return; }
-        
         copyText.select();
-        copyText.setSelectionRange(0, 99999); /* Para mobile */
-        
-        try {
-            document.execCommand("copy");
-            alert("Time copiado com sucesso!");
-        } catch (err) {
-            alert("Erro ao copiar. Tente selecionar e copiar manualmente.");
-        }
+        copyText.setSelectionRange(0, 99999);
+        navigator.clipboard.writeText(copyText.value).then(() => {
+            alert("Texto copiado!");
+        }).catch(err => {
+            document.execCommand("copy"); // Fallback
+            alert("Texto copiado!");
+        });
     }
 
     function processImport() {
         const text = document.getElementById('ioText').value;
         if (!text.trim()) { alert("Cole um time para importar."); return; }
 
-        // Limpa tudo
         document.getElementById('tabsContainer').innerHTML = '';
         document.getElementById('editorsContainer').innerHTML = '';
         slotCounter = 0;
 
         const blocks = text.split(/\r?\n\r?\n/);
         blocks.forEach(block => {
-            if (!block.trim() || block.startsWith("===")) return; // Ignora cabeçalho
-            
+            if (!block.trim() || block.startsWith("===")) return;
             const id = addNewSlot();
             if (!id) return;
 
             const lines = block.split('\n');
             const firstLine = lines[0].trim();
             
-            let name = firstLine;
-            let item = "";
-            if (firstLine.includes('@')) {
-                const p = firstLine.split('@');
-                name = p[0].trim();
-                item = p[1].trim();
-            }
-            // Limpeza de nome (M/F, Nicknames)
-            name = name.replace(/\(M\)/g, '').replace(/\(F\)/g, '').trim();
+            let name = firstLine, item = "";
+            if (firstLine.includes('@')) { const p = firstLine.split('@'); name = p[0].trim(); item = p[1].trim(); }
+            
+            const ed = document.getElementById(`editor-${id}`);
+            
+            // Detecta Gênero
+            if (name.includes('(M)')) { ed.querySelector('.p-gender').value = 'M'; name = name.replace('(M)', ''); }
+            else if (name.includes('(F)')) { ed.querySelector('.p-gender').value = 'F'; name = name.replace('(F)', ''); }
+            name = name.trim();
+
+            // Detecta Nickname
             if (name.includes('(') && name.includes(')')) {
                 const m = name.match(/\(([^)]+)\)/);
-                if (m) name = m[1]; // Pega a espécie se for apelido
+                if (m) name = m[1];
             }
 
-            const ed = document.getElementById(`editor-${id}`);
-            const nInp = ed.querySelector('.p-name');
-            nInp.value = name; updateImage(id, nInp);
-            
-            const iInp = ed.querySelector('.p-item');
-            iInp.value = item; updateItemIcon(id, iInp);
+            ed.querySelector('.p-name').value = name; updateImage(id, ed.querySelector('.p-name'));
+            ed.querySelector('.p-item').value = item; updateItemIcon(id, ed.querySelector('.p-item'));
 
-            let mIdx = 0;
-            const mInps = ed.querySelectorAll('.p-move');
-
+            let mIdx = 0; const mInps = ed.querySelectorAll('.p-move');
             for (let i = 1; i < lines.length; i++) {
                 const l = lines[i].trim();
                 if (l.startsWith('Ability:')) ed.querySelector('.p-ability').value = l.replace('Ability:', '').trim();
                 else if (l.includes('Nature')) ed.querySelector('.p-nature').value = l.split(' ')[0];
                 else if (l.startsWith('Level:')) ed.querySelector('.p-level').value = l.replace('Level:', '').trim();
+                else if (l.startsWith('Shiny:')) ed.querySelector('.p-shiny').value = l.replace('Shiny:', '').trim();
                 else if (l.startsWith('EVs:')) {
                     const p = l.replace('EVs:', '').split('/');
-                    p.forEach(x => {
-                        x = x.trim();
-                        const v = parseInt(x);
-                        STATS.forEach(s => { if (x.includes(s)) updateEV(id, s, v); });
-                    });
+                    p.forEach(x => { x = x.trim(); const v = parseInt(x); STATS.forEach(s => { if (x.includes(s)) updateEV(id, s, v); }); });
                 }
                 else if (l.startsWith('IVs:')) {
                     const p = l.replace('IVs:', '').split('/');
-                    p.forEach(x => {
-                        x = x.trim();
-                        const v = parseInt(x);
-                        STATS.forEach(s => { if (x.includes(s)) ed.querySelector(`.p-iv-${s.toLowerCase()}`).value = v; });
-                    });
+                    p.forEach(x => { x = x.trim(); const v = parseInt(x); STATS.forEach(s => { if (x.includes(s)) ed.querySelector(`.p-iv-${s.toLowerCase()}`).value = v; }); });
                 }
-                else if (l.startsWith('-')) {
-                    if (mIdx < 4) { mInps[mIdx].value = l.replace('-', '').trim(); mIdx++; }
-                }
+                else if (l.startsWith('-')) { if (mIdx < 4) { mInps[mIdx].value = l.replace('-', '').trim(); mIdx++; } }
             }
         });
         closeModal();
