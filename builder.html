@@ -389,20 +389,52 @@
                 const movesInp = ed.querySelectorAll('.p-move');
                 s.moves.forEach((m, i) => { if(movesInp[i]) movesInp[i].value = m; });
                 
-                recalcStats(id);
+function recalcStats(id) {
+        const base = slotBaseStats[id] || {hp:0,atk:0,def:0,spa:0,spd:0,spe:0};
+        const level = parseInt(document.getElementById(`editor-${id}`).querySelector('.p-level').value) || 100;
+        const nature = document.getElementById(`editor-${id}`).querySelector('.p-nature').value;
+        
+        let mods = { atk:1, def:1, spa:1, spd:1, spe:1 };
+
+        if(NATURES_INFO[nature] && NATURES_INFO[nature]!=="Neutral") {
+            const parts = NATURES_INFO[nature].split(','); 
+            parts.forEach(p => { 
+                p = p.trim(); 
+                const type = p.substring(1).toLowerCase();
+                
+                if(p.startsWith('+')) mods[type] = 1.1; 
+                if(p.startsWith('-')) mods[type] = 0.9; 
+            });
+        }
+
+        let total=0;
+        STATS.forEach(s => {
+            const k = s.toLowerCase(); const b = base[k];
+            document.getElementById(`base-${id}-${k}`).innerText = b;
+            
+            const iv = parseInt(document.getElementById(`editor-${id}`).querySelector(`.p-iv-${k}`).value)||0;
+            const ev = parseInt(document.getElementById(`num-${id}-${s}`).value)||0;
+            
+            let final = 0;
+            if(b > 0) {
+                if(s === 'HP') {
+                    final = b === 1 ? 1 : Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + level + 10;
+                } else {
+                    const rawStat = Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + 5;
+                    final = Math.floor(rawStat * mods[k]);
+                }
             }
-            switchTab(1);
-        } else { addNewSlot(); }
+            
+            document.getElementById(`val-${id}-${k}`).innerText = final;
+            document.getElementById(`bar-${id}-${k}`).style.width = Math.min((b/255)*100, 100)+"%";
+            total += final;
+        });
+        document.getElementById(`bst-${id}`).innerText = total;
     }
 
-    function saveCurrentTeamToStorage() {
-        const teamData = {
-            title: document.getElementById('teamNameInput').value || "Novo Time",
-            tier: document.getElementById('teamTier').value,
-            slots: []
-        };
-        document.querySelectorAll('.poke-editor').forEach(ed => {
-            const id = ed.id.split('-')[1];
+    function openIOModal() {
+        let txt = ""; 
+        // ... resto do código ...
             const name = ed.querySelector('.p-name').value;
             const slot = {
                 name: name,
