@@ -511,27 +511,33 @@
 window.onload = async function() { 
         await initItens(); 
         
-        // Lógica do Link Mágico (Ler ?import=...)
+        // --- NOVO: Lógica para ler o Link Mágico ---
         const params = new URLSearchParams(window.location.search);
         const importData = params.get('import');
 
         if(importData) {
             try {
+                // 1. Decodifica o código do link de volta para texto
                 const decodedText = decodeURIComponent(escape(atob(importData)));
+                
+                // 2. Coloca o texto no importador e processa
                 document.getElementById('ioText').value = decodedText;
                 
+                // Pequeno atraso para garantir que tudo carregou
                 setTimeout(() => {
                     processImport(); 
+                    // 3. Limpa a URL para ficar bonita (remove o código gigante)
                     window.history.replaceState({}, document.title, window.location.pathname);
                     alert("Time carregado via Link Compartilhado!");
                 }, 500);
             } catch(e) {
                 console.error(e);
-                alert("Link inválido.");
+                alert("O link está quebrado ou inválido.");
+                // Se falhar, carrega o normal
                 loadAllTeams();
             }
         } else {
-            // Carregamento normal
+            // --- COMPORTAMENTO PADRÃO (Se não tiver link) ---
             loadAllTeams();
             if(allTeams.length > 0) editTeam(0); 
             else createNewTeam();
@@ -990,89 +996,11 @@ window.onload = async function() {
         });
         return txt;
     }
-// 1. Função Auxiliar: Gera o texto do time
-    function getTeamAsText() {
-        let txt = ""; 
-        const tier = document.getElementById('teamTier').value;
-        if(tier) txt += `=== [Gen 9] ${tier} ===\n\n`;
-        
-        document.querySelectorAll('.poke-editor').forEach(ed=>{
-            const name = ed.querySelector('.p-name').value;
-            if(name) {
-                let line1 = name;
-                const gender = ed.querySelector('.p-gender').value;
-                const item = ed.querySelector('.p-item').value;
-                if(gender !== '-') line1 += ` (${gender})`;
-                if(item) line1 += ` @ ${item}`;
-                txt += `${line1}\n`;
-                const ability = ed.querySelector('.p-ability').value; if(ability) txt += `Ability: ${ability}\n`;
-                const shiny = ed.querySelector('.p-shiny').value; if(shiny === 'Yes') txt += `Shiny: Yes\n`;
-                const level = ed.querySelector('.p-level').value; if(level && level!=100) txt += `Level: ${level}\n`;
-                
-                let evs = []; 
-                STATS.forEach(s => { 
-                    const id = ed.id.split('-')[1];
-                    const v = document.getElementById(`num-${id}-${s}`).value; 
-                    if(v > 0) evs.push(`${v} ${s}`); 
-                });
-                if(evs.length) txt += `EVs: ${evs.join(' / ')}\n`;
-                
-                const nature = ed.querySelector('.p-nature').value; if(nature) txt += `${nature} Nature\n`;
-                
-                let ivs = []; 
-                STATS.forEach(s => { 
-                    const v = ed.querySelector(`.p-iv-${s.toLowerCase()}`).value; 
-                    if(v != 31) ivs.push(`${v} ${s}`); 
-                });
-                if(ivs.length) txt += `IVs: ${ivs.join(' / ')}\n`;
-                
-                ed.querySelectorAll('.p-move').forEach(m => { if(m.value) txt += `- ${m.value}\n`; });
-                txt += "\n";
-            }
-        });
-        return txt;
-    }
-
-    // 2. Função Atualizada do Modal de Texto
-    function openIOModal() {
-        const txt = getTeamAsText();
+function openIOModal() {
+        const txt = getTeamAsText(); // Usa a nova função
         document.getElementById('ioText').value = txt;
         document.getElementById('ioModal').style.display='flex';
     }
-
-    // 3. Função do Botão LINK
-    function shareTeamLink() {
-        const teamText = getTeamAsText();
-        if(!teamText.trim() || teamText.length < 20) {
-            alert("Monte um time antes de gerar o link!"); 
-            return;
-        }
-        const encoded = btoa(unescape(encodeURIComponent(teamText)));
-        const link = `${window.location.origin}${window.location.pathname}?import=${encoded}`;
-        
-        navigator.clipboard.writeText(link).then(() => {
-            alert("Link copiado para a área de transferência!");
-        });
-    }
-
-    // 4. Função do Botão PUBLICAR
-function publishTeam() {
-        // Verifica se o perfil está visível (significa que está logado)
-        const isLogged = document.getElementById('userProfile').style.display !== 'none';
-        
-        if(!isLogged) {
-            alert("Você precisa estar logado para publicar um time!");
-            return;
-        }
-        
-        const nomeTime = document.getElementById('teamNameInput').value;
-        if(!nomeTime) { alert("Dê um nome ao seu time antes de publicar."); return; }
-
-        // AQUI ENTRARÁ O BANCO DE DADOS DEPOIS
-        alert(`O time "${nomeTime}" está pronto para ser enviado! \n(Integração com BD em breve)`);
-    }
-
-    function copyToClipboard() { navigator.clipboard.writeText(document.getElementById('ioText').value); alert("Copiado!"); }
   function shareTeamLink() {
         const teamText = getTeamAsText();
         if(!teamText.trim() || teamText.length < 20) {
@@ -1101,7 +1029,15 @@ function publishTeam() {
         const nomeTime = document.getElementById('teamNameInput').value;
         if(!nomeTime) { alert("Dê um nome ao seu time antes de publicar."); return; }
 
-
+        // AQUI ENTRARÁ O BANCO DE DADOS DEPOIS
+        alert(`O time "${nomeTime}" está pronto para ser enviado! \n(Integração com BD em breve)`);
+    }
+        });
+        document.getElementById('ioText').value = txt;
+        document.getElementById('ioModal').style.display='flex';
+    }
+    function copyToClipboard() { navigator.clipboard.writeText(document.getElementById('ioText').value); alert("Copiado!"); }
+    
     function processImport() {
         const text = document.getElementById('ioText').value; if (!text.trim()) { alert("Cole um time."); return; }
         document.getElementById('tabsContainer').innerHTML = ""; document.getElementById('editorsContainer').innerHTML = "";
