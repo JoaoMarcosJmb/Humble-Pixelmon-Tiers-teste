@@ -957,7 +957,7 @@
         document.getElementById('ioModal').style.display='flex';
     }
 
-// --- LINK CURTO (Versão Blindada com Proxy) ---
+// --- GERA O LINK PARA O ARQUIVO 'paste.html' ---
     async function shareTeamLink() {
         const teamText = getTeamAsText();
         if(!teamText.trim() || teamText.length < 20) {
@@ -965,38 +965,32 @@
             return;
         }
 
-        // 1. Gera o link longo base
-        const encoded = btoa(unescape(encodeURIComponent(teamText)));
-        const longLink = `${window.location.origin}${window.location.pathname}?import=${encoded}`;
+        // 1. Comprime o texto do time
+        const encoded = LZString.compressToEncodedURIComponent(teamText);
+        
+        // 2. Cria o endereço apontando para 'paste.html' na mesma pasta
+        // Pega o endereço atual, remove o nome do arquivo e adiciona 'paste.html'
+        const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/')) + "/paste.html";
+        const longLink = `${baseUrl}?import=${encoded}`;
 
         const btn = document.querySelector('.btn-share');
         const oldText = btn.innerText;
-        btn.innerText = "⏳ Encurtando...";
+        btn.innerText = "⏳...";
 
         try {
-            // 2. Tenta encurtar usando um Proxy para evitar bloqueio do navegador
-            // Usamos 'api.allorigins.win' para intermediar a conversa com o TinyURL
-            const tinyUrlApi = `https://tinyurl.com/api-create.php?url=${encodeURIComponent(longLink)}`;
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(tinyUrlApi)}`;
-            
-            const response = await fetch(proxyUrl);
-            
+            // 3. Tenta encurtar com TinyURL
+            const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longLink)}`);
             if (response.ok) {
                 const shortLink = await response.text();
-                if (shortLink.startsWith('http')) {
-                    await navigator.clipboard.writeText(shortLink.trim());
-                    alert("Link Curto copiado!\n\n" + shortLink.trim());
-                } else {
-                    throw new Error("Resposta inválida do encurtador");
-                }
+                await navigator.clipboard.writeText(shortLink);
+                alert("Link da PokéPaste copiado!\n\n" + shortLink);
             } else {
-                throw new Error("Falha na conexão");
+                throw new Error("Falha ao encurtar");
             }
         } catch (e) {
-            console.warn("Encurtador falhou:", e);
-            // 3. Se tudo falhar, copia o link longo como garantia
+            // Se falhar, usa o link longo do paste.html
             await navigator.clipboard.writeText(longLink);
-            alert("O encurtador falhou, mas copiamos o link completo para você!");
+            alert("Link copiado! (Versão completa)");
         } finally {
             btn.innerText = oldText;
         }
