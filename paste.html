@@ -8,85 +8,111 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 
   <style>
-    :root { --cor-dourado: #d1a720; --bg-body: #111; }
+    /* --- MESMA IDENTIDADE VISUAL DO BUILDER --- */
+    :root { 
+      --cor-dourado: #d1a720; 
+      --cor-fundo: #111; 
+      --cor-painel: rgba(30, 30, 30, 0.95);
+      --cor-texto: #f5f5f5; 
+      --cor-borda: #444;
+    }
     
+    * { box-sizing: border-box; }
+
     body {
-        font-family: "Segoe UI", sans-serif;
-        background: var(--bg-body);
-        color: #eee;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background-color: var(--cor-fundo);
+        /* Mesmo background do Builder */
+        background-image: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,30,20,0.95)), 
+                          url("https://i.imgur.com/vATNRmF.png");
+        background-size: cover;
+        background-attachment: fixed;
+        color: var(--cor-texto);
         margin: 0; padding: 0;
         min-height: 100vh;
         display: flex; flex-direction: column;
-        background-image: url("https://i.imgur.com/vATNRmF.png");
-        background-size: cover;
-        background-attachment: fixed;
     }
 
+    /* HEADER IDÊNTICO AO BUILDER */
     header {
-        background: rgba(0,0,0,0.9);
-        border-bottom: 2px solid var(--cor-dourado);
-        padding: 15px 20px;
+        height: 60px; padding: 0 20px; flex-shrink: 0;
         display: flex; justify-content: space-between; align-items: center;
+        background: rgba(20, 20, 20, 0.98); 
+        border-bottom: 2px solid var(--cor-dourado);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
     }
-    h1 { margin: 0; color: var(--cor-dourado); font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
-    h1 img { height: 40px; }
+    h1 { 
+        font-size: 1.4rem; color: var(--cor-dourado); margin: 0; 
+        display: flex; gap: 10px; align-items: center; 
+    }
+    h1 img { height: 35px; }
 
-    .action-btn {
-        background: var(--cor-dourado); color: #000; border: none;
-        padding: 10px 20px; font-weight: bold; border-radius: 4px; cursor: pointer;
+    /* BOTÕES PADRÃO */
+    .btn-action {
+        background: var(--cor-dourado); color: #111; border: none;
+        padding: 8px 20px; font-weight: bold; border-radius: 4px; cursor: pointer;
         text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+        font-size: 0.9rem; transition: 0.2s;
     }
-    .action-btn:hover { filter: brightness(1.1); }
+    .btn-action:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
+    .btn-outline {
+        background: transparent; border: 1px solid #666; color: #888;
+        padding: 6px 15px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;
+        transition: 0.2s; margin: 0 auto 30px; display: block;
+    }
+    .btn-outline:hover { border-color: var(--cor-dourado); color: var(--cor-dourado); background: rgba(209, 167, 32, 0.1); }
+
+    /* CONTAINER DOS CARDS */
     .container {
-        max-width: 1200px; margin: 20px auto; width: 100%;
+        max-width: 1200px; margin: 30px auto; width: 100%;
         display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
-        padding: 20px;
+        padding: 20px; flex-grow: 1; align-items: flex-start;
     }
 
-    /* CARD DO POKEMON */
+    /* CARD DO POKEMON (Estilo Painel) */
     .poke-card {
-        background: rgba(30, 30, 30, 0.95);
-        border: 1px solid #444;
-        border-radius: 10px;
-        width: 350px;
+        background: var(--cor-painel);
+        border: 1px solid var(--cor-borda);
+        border-top: 3px solid var(--cor-dourado); /* Detalhe Dourado no Topo */
+        border-radius: 8px;
+        width: 340px;
         padding: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         display: flex; flex-direction: column;
-        position: relative;
-        overflow: hidden;
+        transition: transform 0.2s;
     }
-    .poke-card::before {
-        content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
-        background: var(--cor-dourado);
-    }
+    .poke-card:hover { transform: translateY(-3px); border-color: #666; }
 
-    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-    .poke-name { font-size: 1.4rem; font-weight: bold; color: #fff; margin: 0; }
-    .poke-item-icon { width: 30px; height: 30px; object-fit: contain; }
+    .card-header { 
+        display: flex; justify-content: space-between; align-items: flex-start; 
+        margin-bottom: 12px; border-bottom: 1px solid #333; padding-bottom: 8px;
+    }
+    .poke-name { font-size: 1.3rem; font-weight: bold; color: #fff; margin: 0; text-transform: capitalize; }
+    .poke-item-icon { width: 28px; height: 28px; object-fit: contain; }
 
     .visual-area {
         display: flex; align-items: center; gap: 15px; margin-bottom: 15px;
-        background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px;
+        background: rgba(0,0,0,0.3); border-radius: 6px; padding: 10px; border: 1px solid #333;
     }
-    .main-sprite { width: 90px; height: 90px; object-fit: contain; }
+    .main-sprite { width: 80px; height: 80px; object-fit: contain; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5)); }
     
-    .info-list { font-size: 0.9rem; color: #ccc; line-height: 1.6; }
-    .info-list strong { color: var(--cor-dourado); }
+    .info-list { font-size: 0.85rem; color: #ccc; line-height: 1.5; flex-grow: 1; }
+    .info-list div { margin-bottom: 2px; }
+    .info-list strong { color: var(--cor-dourado); font-weight: normal; }
 
     .moves-grid {
-        display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto;
-        padding-top: 10px; border-top: 1px solid #444;
+        display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: auto;
     }
     .move-tag {
-        background: #333; padding: 6px; text-align: center; border-radius: 4px;
-        font-size: 0.85rem; color: #fff; border: 1px solid #555;
+        background: #252525; padding: 6px; text-align: center; border-radius: 4px;
+        font-size: 0.8rem; color: #ddd; border: 1px solid #444;
     }
 
     .raw-text-area {
-        width: 100%; max-width: 800px; margin: 30px auto; background: #111; 
-        padding: 20px; border: 1px solid #444; color: #aaa; font-family: monospace; 
-        white-space: pre-wrap; display: none;
+        width: 90%; max-width: 800px; margin: 0 auto 30px; background: #151515; 
+        padding: 20px; border: 1px solid var(--cor-dourado); color: #aaa; font-family: monospace; 
+        white-space: pre-wrap; border-radius: 6px; display: none; font-size: 0.9rem;
     }
   </style>
 </head>
@@ -94,17 +120,18 @@
 
 <header>
     <h1><img src="https://i.imgur.com/XOEcuO8.png"> Humble Paste</h1>
-    <a href="#" id="editBtn" class="action-btn">✎ Importar / Editar</a>
+    <a href="#" id="editBtn" class="btn-action">✎ Importar / Editar</a>
 </header>
 
 <div class="container" id="cardsContainer">
-    <h2 style="color:#666">Lendo dados do time...</h2>
+    <h2 style="color:#888; font-weight:normal;">Lendo dados do time...</h2>
 </div>
 
-<button onclick="toggleRaw()" style="display:block; background:none; border:none; color:#555; margin: 0 auto 20px; cursor:pointer;">(Ver Texto Original)</button>
+<button onclick="toggleRaw()" class="btn-outline">(Ver Texto Original)</button>
 <div id="rawText" class="raw-text-area"></div>
 
 <script>
+    // --- LÓGICA DO VISUALIZADOR ---
     const POKEAPI_IMG = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
     const ITEM_ICON = "https://play.pokemonshowdown.com/sprites/itemicons/";
 
@@ -116,21 +143,23 @@
         const code = params.get('import');
 
         if(!code) {
-            document.getElementById('cardsContainer').innerHTML = "<h2 style='color:#ff5555'>Erro: Nenhum código de time encontrado no link.</h2>";
+            document.getElementById('cardsContainer').innerHTML = "<h3 style='color:#ff5555'>Erro: Nenhum código de time encontrado no link.</h3>";
+            document.getElementById('editBtn').style.display = 'none';
             return;
         }
 
         let fullText = "";
         try {
             fullText = LZString.decompressFromEncodedURIComponent(code);
-            if(!fullText) fullText = decodeURIComponent(escape(atob(code))); // Tenta modo antigo se falhar
+            if(!fullText) fullText = decodeURIComponent(escape(atob(code))); // Fallback
         } catch(e) {
             fullText = "Erro ao ler código.";
         }
 
-        // --- CONFIGURAÇÃO DO BOTÃO VOLTAR ---
-        // Se o nome do seu arquivo principal mudar, mude aqui:
-        document.getElementById('editBtn').href = `builder.html?import=${code}`;
+        // --- CONFIGURA O BOTÃO DE VOLTAR ---
+        // IMPORTANTE: Se o nome do seu arquivo principal não for 'builder.html', altere aqui:
+        const builderFile = "builder (14).html"; // <--- NOME DO SEU BUILDER AQUI
+        document.getElementById('editBtn').href = `${builderFile}?import=${code}`;
         
         document.getElementById('rawText').innerText = fullText;
 
@@ -150,13 +179,19 @@
             
             const firstLine = lines[0].split('@');
             let namePart = firstLine[0].trim();
+            
+            // Lógica para pegar nome correto (ignorando apelidos e genero)
             if(namePart.includes('(') && namePart.includes(')')) {
                 const match = namePart.match(/\(([^)]+)\)/);
-                if(match) pokemon.name = match[1];
+                if(match) pokemon.name = match[1]; // Nome real (dentro dos parenteses)
                 else pokemon.name = namePart;
             } else {
                 pokemon.name = namePart; 
             }
+            // Limpa genero do nome que vai para a API
+            pokemon.name = pokemon.name.replace('(M)','').replace('(F)','').trim();
+            
+            // Nome visual (pode ter apelido)
             pokemon.display = namePart.replace('(M)','').replace('(F)','').trim();
 
             if(firstLine[1]) pokemon.item = firstLine[1].trim();
@@ -177,6 +212,11 @@
         const container = document.getElementById('cardsContainer');
         container.innerHTML = "";
 
+        if(team.length === 0) {
+             container.innerHTML = "<h3 style='color:#888'>Nenhum Pokémon encontrado no código.</h3>";
+             return;
+        }
+
         team.forEach(pk => {
             const apiName = toApiName(pk.name);
             const itemSrc = pk.item ? `${ITEM_ICON}${toItemName(pk.item)}.png` : '';
@@ -186,7 +226,7 @@
             card.innerHTML = `
                 <div class="card-header">
                     <span class="poke-name">${pk.display}</span>
-                    ${pk.item ? `<img src="${itemSrc}" class="poke-item-icon" title="${pk.item}">` : ''}
+                    ${pk.item ? `<img src="${itemSrc}" class="poke-item-icon" title="${pk.item}" onerror="this.style.display='none'">` : ''}
                 </div>
                 
                 <div class="visual-area">
