@@ -65,6 +65,7 @@
         padding: 20px; flex-grow: 1; align-items: flex-start;
     }
 
+    /* CARD DESIGN */
     .poke-card {
         background: var(--cor-painel);
         border: 1px solid var(--cor-borda);
@@ -137,13 +138,12 @@
 <div id="rawText" class="raw-text-area"></div>
 
 <script>
-    // --- FONTE DAS IMAGENS ---
     const POKEAPI_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
-    const SHOWDOWN_SPRITES = "https://play.pokemonshowdown.com/sprites/gen5/"; // Fallback confiável
     const ITEM_ICON = "https://play.pokemonshowdown.com/sprites/itemicons/";
     const IMG_FALLBACK = "https://img.pokemondb.net/sprites/items/poke-ball.png";
+    const ITEM_FALLBACK = "https://img.pokemondb.net/sprites/items/berry.png"; // Ícone se item falhar
 
-    // --- CORREÇÕES ESPECÍFICAS (Showdown -> PokéAPI) ---
+    // --- CORREÇÕES DE NOMES (Showdown -> PokéAPI) ---
     const NAME_FIXES = {
         "landorus": "landorus-incarnate", "landorus-t": "landorus-therian",
         "thundurus": "thundurus-incarnate", "thundurus-t": "thundurus-therian",
@@ -166,18 +166,16 @@
     const toApiName = (n) => {
         if(!n) return "unknown";
         let clean = n.trim().toLowerCase()
-            .replace(/ /g,'-')
-            .replace(/[.'":]/g,'')
-            .replace(/♀/g,'-f')
-            .replace(/♂/g,'-m')
-            .replace(/é/g,'e')
-            .replace(/[^a-z0-9-]/g, '');
-
+            .replace(/ /g,'-').replace(/[.'":]/g,'').replace(/♀/g,'-f').replace(/♂/g,'-m')
+            .replace(/é/g,'e').replace(/[^a-z0-9-]/g, '');
         if(NAME_FIXES[clean]) return NAME_FIXES[clean];
         return clean;
     };
     
-    // CORREÇÃO DOS ITENS: Remove tudo que não for letra/número (Choice Scarf -> choicescarf)
+    // --- CORREÇÃO AGRESSIVA PARA ITENS ---
+    // Remove tudo que não for letra ou número.
+    // Ex: "Choice Scarf" -> "choicescarf"
+    // Ex: "Heavy-Duty Boots" -> "heavydutyboots"
     const toItemName = (n) => {
         if(!n) return '';
         return n.toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -201,8 +199,9 @@
             fullText = "Erro ao ler código.";
         }
 
-        // AJUSTE SEU NOME DE ARQUIVO AQUI
+        // SEU ARQUIVO DE EDIÇÃO
         const builderFile = "builder (14).html"; 
+        
         document.getElementById('editBtn').href = `${builderFile}?import=${code}`;
         document.getElementById('rawText').innerText = fullText;
 
@@ -217,16 +216,28 @@
 
         blocks.forEach(block => {
             if(!block.trim() || block.startsWith("===")) return;
+            
             const lines = block.split('\n');
             const pokemon = { moves: [] };
             
-            const firstLine = lines[0].split('@');
-            let namePart = firstLine[0].trim();
+            // PARSER DE NOME E ITEM
+            const firstLine = lines[0];
+            let namePart, itemPart;
+
+            // Se tem @, o item é tudo que vem depois do último @
+            if(firstLine.includes('@')) {
+                const atIndex = firstLine.lastIndexOf('@');
+                namePart = firstLine.substring(0, atIndex).trim();
+                itemPart = firstLine.substring(atIndex + 1).trim();
+            } else {
+                namePart = firstLine.trim();
+                itemPart = "";
+            }
             
             // Remove Gênero (M)/(F)
             namePart = namePart.replace(/\s?[\(\[][MF][\)\]]$/i, '').trim();
             
-            // Apelidos
+            // Lógica de Apelido
             if(namePart.includes('(') && namePart.includes(')')) {
                 const match = namePart.match(/\(([^)]+)\)/);
                 if(match) pokemon.name = match[1];
@@ -236,7 +247,7 @@
             }
             pokemon.display = namePart;
 
-            if(firstLine[1]) pokemon.item = firstLine[1].trim();
+            if(itemPart) pokemon.item = itemPart;
 
             for(let i=1; i<lines.length; i++) {
                 const l = lines[i].trim();
@@ -262,7 +273,8 @@
 
         for (const [index, pk] of team.entries()) {
             const apiName = toApiName(pk.name);
-            const itemSrc = pk.item ? `${ITEM_ICON}${toItemName(pk.item)}.png` : '';
+            const itemNameClean = toItemName(pk.item);
+            const itemSrc = pk.item ? `${ITEM_ICON}${itemNameClean}.png` : '';
             const imgId = `poke-img-${index}`;
 
             const card = document.createElement('div');
@@ -270,7 +282,7 @@
             card.innerHTML = `
                 <div class="card-header">
                     <span class="poke-name">${pk.display}</span>
-                    ${pk.item ? `<img src="${itemSrc}" class="poke-item-icon" title="${pk.item}" onerror="this.style.display='none'">` : ''}
+                    ${pk.item ? `<img src="${itemSrc}" class="poke-item-icon" title="${pk.item}" onerror="this.src='${ITEM_FALLBACK}'">` : ''}
                 </div>
                 
                 <div class="visual-area">
@@ -295,15 +307,10 @@
         }
     }
 
-    // --- BUSCA HÍBRIDA DE IMAGEM (PokeAPI -> Fallback Showdown) ---
     async function fetchPokemonImage(name, imgId) {
-        const imgEl = document.getElementById(imgId);
-        
         try {
-            // 1. Tenta API Oficial (HD)
             let r = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
             
-            // Tentativa de correção se falhar e tiver traço
             if(!r.ok && name.includes('-')) {
                 const baseName = name.substring(0, name.lastIndexOf('-'));
                 if(!NAME_FIXES[baseName]) {
@@ -314,21 +321,12 @@
 
             if(r.ok) {
                 const d = await r.json();
-                imgEl.src = `${POKEAPI_BASE}${d.id}.png`;
-            } else {
-                // 2. Se falhar API, tenta Showdown Sprite (Direto pelo nome)
-                // Isso resolve Landorus e formas obscuras automaticamente
-                throw new Error("Use fallback");
+                const src = `${POKEAPI_BASE}${d.id}.png`;
+                const img = document.getElementById(imgId);
+                if(img) img.src = src;
             }
         } catch(e) {
-            // Fallback para Showdown (Pixel Art mas garantido)
-            // Se o nome for 'landorus-incarnate', o showdown usa 'landorus.png', vamos tentar
-            let showdownName = name;
-            if(showdownName.endsWith('-incarnate')) showdownName = showdownName.replace('-incarnate', '');
-            
-            imgEl.src = `${SHOWDOWN_SPRITES}${showdownName}.png`;
-            
-            // Se ainda assim der erro, o 'onerror' do HTML (pokebola) assume.
+            console.warn("Imagem não encontrada:", name);
         }
     }
 
