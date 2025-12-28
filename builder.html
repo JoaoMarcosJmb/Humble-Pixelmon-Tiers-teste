@@ -242,8 +242,24 @@
   <div class="main-container">
     <aside class="sidebar">
         <div class="sidebar-header">
+            <div id="auth-section" style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333;">
+                
+                <button id="btnLogin" class="btn-new-team" style="background: #4285F4; color: white; display:flex; justify-content:center; align-items:center; gap:10px;">
+                   <span>G</span> Entrar com Google
+                </button>
+
+                <div id="userProfile" style="display:none; align-items: center; gap: 10px; background: #222; padding: 8px; border-radius: 6px; border: 1px solid #333;">
+                    <img id="userPhoto" src="" style="width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--cor-dourado);">
+                    <div style="display: flex; flex-direction: column; overflow: hidden;">
+                        <span id="userName" style="font-size: 0.9rem; font-weight: bold; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Usuário</span>
+                        <div id="btnLogout" style="color: #ff5555; cursor: pointer; font-size: 0.75rem; margin-top: 2px;">Disconnect (Sair)</div>
+                    </div>
+                </div>
+            </div>
+
             <button class="btn-new-team" onclick="createNewTeam()">+ Novo Time</button>
         </div>
+        
         <div class="team-list" id="teamListContainer"></div>
     </aside>
 
