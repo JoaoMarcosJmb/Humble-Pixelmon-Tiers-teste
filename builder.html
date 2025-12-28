@@ -240,19 +240,39 @@
   </nav>
 
   <div class="main-container">
-    <aside class="sidebar">
+<aside class="sidebar">
         <div class="sidebar-header">
             <div id="auth-section" style="margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333;">
                 
-                <button id="btnLogin" class="btn-new-team" style="background: #4285F4; color: white; display:flex; justify-content:center; align-items:center; gap:10px;">
-                   <span>G</span> Entrar com Google
-                </button>
+                <div id="loginForm" style="display:flex; flex-direction:column; gap:8px;">
+                    <input type="email" id="emailInput" placeholder="Seu E-mail" 
+                           style="background:#222; border:1px solid #444; color:#fff; padding:6px; border-radius:4px; width:100%;">
+                    
+                    <input type="password" id="passInput" placeholder="Sua Senha" 
+                           style="background:#222; border:1px solid #444; color:#fff; padding:6px; border-radius:4px; width:100%;">
+                    
+                    <div style="display:flex; gap:5px;">
+                        <button id="btnEmailLogin" class="btn-action" style="flex:1; justify-content:center; font-size:0.8rem; background:var(--cor-dourado); color:#000;">
+                            Entrar
+                        </button>
+                        <button id="btnEmailRegister" class="btn-action" style="flex:1; justify-content:center; font-size:0.8rem; background:#444; color:#fff;">
+                            Cadastrar
+                        </button>
+                    </div>
 
-                <div id="userProfile" style="display:none; align-items: center; gap: 10px; background: #222; padding: 8px; border-radius: 6px; border: 1px solid #333;">
-                    <img id="userPhoto" src="" style="width: 38px; height: 38px; border-radius: 50%; border: 1px solid var(--cor-dourado);">
-                    <div style="display: flex; flex-direction: column; overflow: hidden;">
+                    <div style="text-align:center; font-size:0.7rem; color:#666; margin: 2px 0;">— ou —</div>
+
+                    <button id="btnGoogleLogin" class="btn-new-team" style="background: #4285F4; color: white; display:flex; justify-content:center; align-items:center; gap:10px; font-size:0.9rem;">
+                       <span>G</span> Entrar com Google
+                    </button>
+                </div>
+
+                <div id="userProfile" style="display:none; align-items: center; gap: 10px; background: #2a2a2a; padding: 10px; border-radius: 6px; border: 1px solid var(--cor-dourado);">
+                    <img id="userPhoto" src="" style="width: 38px; height: 38px; border-radius: 50%; border: 1px solid #555; background:#000;">
+                    <div style="display: flex; flex-direction: column; overflow: hidden; flex-grow:1;">
                         <span id="userName" style="font-size: 0.9rem; font-weight: bold; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Usuário</span>
-                        <div id="btnLogout" style="color: #ff5555; cursor: pointer; font-size: 0.75rem; margin-top: 2px;">Disconnect (Sair)</div>
+                        <div id="userEmail" style="font-size: 0.7rem; color: #888; margin-bottom:4px;">email@exemplo.com</div>
+                        <button id="btnLogout" style="background:#ff4d4d; border:none; color:white; border-radius:3px; cursor:pointer; font-size:0.75rem; padding:2px 0;">Sair</button>
                     </div>
                 </div>
             </div>
@@ -847,71 +867,123 @@
         saveCurrentTeamToStorage();
     }
   </script>
-  <script type="module">
+<script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { 
+    getAuth, 
+    signInWithPopup, 
+    GoogleAuthProvider, 
+    signOut, 
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-  // --- CONFIGURAÇÃO (COLE AS CHAVES DO SEU PROJETO SIMPLETEANS AQUI) ---
-const firebaseConfig = {
-  apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
-  authDomain: "sampleteans.firebaseapp.com",
-  databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
-  projectId: "sampleteans",
-  storageBucket: "sampleteans.firebasestorage.app",
-  messagingSenderId: "1069510029261",
-  appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
-};
+  // --- SUAS CHAVES DO SIMPLETEANS ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
+    authDomain: "sampleteans.firebaseapp.com",
+    databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
+    projectId: "sampleteans",
+    storageBucket: "sampleteans.firebasestorage.app",
+    messagingSenderId: "1069510029261",
+    appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
+  };
 
-  // Inicializa o Firebase
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
 
-  // Elementos da tela (Já criados na sua Sidebar)
-  const btnLogin = document.getElementById('btnLogin');
-  const btnLogout = document.getElementById('btnLogout');
+  // Elementos HTML
+  const loginForm = document.getElementById('loginForm');
   const userProfile = document.getElementById('userProfile');
+  
+  const emailInput = document.getElementById('emailInput');
+  const passInput = document.getElementById('passInput');
+  
+  const btnGoogleLogin = document.getElementById('btnGoogleLogin');
+  const btnEmailLogin = document.getElementById('btnEmailLogin');
+  const btnEmailRegister = document.getElementById('btnEmailRegister');
+  const btnLogout = document.getElementById('btnLogout');
+
   const userPhoto = document.getElementById('userPhoto');
   const userName = document.getElementById('userName');
+  const userEmail = document.getElementById('userEmail');
 
-  // Função de Login
-  if(btnLogin) {
-      btnLogin.addEventListener('click', () => {
+  // --- 1. LOGIN COM GOOGLE ---
+  if(btnGoogleLogin) {
+      btnGoogleLogin.addEventListener('click', () => {
         signInWithPopup(auth, provider)
-          .then((result) => {
-            console.log("Logado:", result.user.email);
-          })
-          .catch((error) => {
-            console.error(error);
-            alert("Erro no Login: " + error.message);
-          });
+          .catch((error) => alert("Erro Google: " + error.message));
       });
   }
 
-  // Função de Logout
+  // --- 2. LOGIN COM EMAIL/SENHA ---
+  if(btnEmailLogin) {
+      btnEmailLogin.addEventListener('click', () => {
+        const email = emailInput.value;
+        const pass = passInput.value;
+        if(!email || !pass) { alert("Preencha email e senha!"); return; }
+
+        signInWithEmailAndPassword(auth, email, pass)
+            .then((userCredential) => {
+                console.log("Logado com email:", userCredential.user.email);
+            })
+            .catch((error) => {
+                let msg = error.message;
+                if(error.code === 'auth/invalid-credential') msg = "Email ou senha incorretos.";
+                alert("Erro no Login: " + msg);
+            });
+      });
+  }
+
+  // --- 3. CADASTRO COM EMAIL/SENHA ---
+  if(btnEmailRegister) {
+      btnEmailRegister.addEventListener('click', () => {
+        const email = emailInput.value;
+        const pass = passInput.value;
+        if(!email || !pass) { alert("Preencha email e senha!"); return; }
+        if(pass.length < 6) { alert("A senha precisa ter pelo menos 6 caracteres."); return; }
+
+        createUserWithEmailAndPassword(auth, email, pass)
+            .then((userCredential) => {
+                alert("Conta criada com sucesso! Bem-vindo.");
+            })
+            .catch((error) => {
+                let msg = error.message;
+                if(error.code === 'auth/email-already-in-use') msg = "Este email já está cadastrado.";
+                alert("Erro ao criar conta: " + msg);
+            });
+      });
+  }
+
+  // --- 4. LOGOUT ---
   if(btnLogout) {
       btnLogout.addEventListener('click', () => {
-        if(confirm("Deseja sair da conta?")) {
-            signOut(auth).then(() => {
-                location.reload(); // Recarrega para limpar visual
-            });
+        if(confirm("Sair da conta?")) {
+            signOut(auth).then(() => location.reload());
         }
       });
   }
 
-  // Monitora se o usuário está logado ou não
+  // --- 5. MONITOR DE ESTADO ---
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      // LOGADO: Esconde botão de login, mostra perfil
-      if(btnLogin) btnLogin.style.display = 'none';
+      // LOGADO
+      if(loginForm) loginForm.style.display = 'none';
       if(userProfile) {
           userProfile.style.display = 'flex';
-          if(userPhoto) userPhoto.src = user.photoURL;
-          if(userName) userName.innerText = user.displayName;
+          
+          // Se for login por email, não tem foto, então usamos uma genérica ou a do Google
+          userPhoto.src = user.photoURL ? user.photoURL : "https://i.imgur.com/XOEcuO8.png"; 
+          
+          // Se não tiver displayName (comum em login por email), usa o começo do email
+          userName.innerText = user.displayName ? user.displayName : user.email.split('@')[0];
+          userEmail.innerText = user.email;
       }
     } else {
-      // DESLOGADO: Mostra botão de login, esconde perfil
-      if(btnLogin) btnLogin.style.display = 'flex'; 
+      // DESLOGADO
+      if(loginForm) loginForm.style.display = 'flex';
       if(userProfile) userProfile.style.display = 'none';
     }
   });
