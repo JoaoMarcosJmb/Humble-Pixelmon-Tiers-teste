@@ -207,135 +207,119 @@
     nav.active { display: flex; }
     nav a { color: var(--cor-dourado); text-decoration:none; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:5px; }
 
-    /* --- ESTILO DO LOGIN (NOVO) --- */
-    .auth-box {
-        background: rgba(0, 0, 0, 0.3);
-        border: 1px solid #333;
-        border-radius: 8px;
-        padding: 15px;
-        margin-bottom: 20px;
+/* --- LOGIN INTEGRADO (Humble Style) --- */
+    .auth-container {
+        background: var(--cor-input); /* Mesma cor dos seus inputs */
+        border: 1px solid var(--cor-borda);
+        border-radius: 6px;
+        padding: 12px;
+        margin-bottom: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
     }
-    
-    .auth-title {
-        color: var(--cor-dourado);
+
+    .auth-header {
         font-size: 0.8rem;
+        color: #888;
         text-transform: uppercase;
         letter-spacing: 1px;
-        font-weight: bold;
-        margin-bottom: 12px;
-        text-align: center;
+        margin-bottom: 5px;
         border-bottom: 1px solid #333;
-        padding-bottom: 8px;
+        padding-bottom: 5px;
+        text-align: center;
     }
 
-    .auth-input {
-        background: #151515;
-        border: 1px solid #333;
-        color: #ddd;
-        padding: 10px;
-        border-radius: 4px;
-        width: 100%;
-        margin-bottom: 10px;
-        font-size: 0.9rem;
-        transition: 0.3s;
+    /* Inputs idênticos aos do resto do site */
+    .login-input {
+        background: #151515; 
+        border: 1px solid #333; 
+        color: #ddd; 
+        padding: 8px 10px; 
+        border-radius: 4px; 
+        width: 100%; 
+        font-size: 0.85rem;
+        transition: border-color 0.2s;
     }
-    .auth-input:focus {
-        border-color: var(--cor-dourado);
-        background: #000;
-        outline: none;
-        box-shadow: 0 0 5px rgba(209, 167, 32, 0.3);
-    }
+    .login-input:focus { border-color: var(--cor-dourado); outline: none; }
 
-    .auth-buttons-row {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 15px;
-    }
+    /* Botões alinhados */
+    .auth-btn-row { display: flex; gap: 5px; }
 
-    .btn-login-gold {
+    .btn-login {
         flex: 1;
         background: var(--cor-dourado);
-        color: #111;
+        color: #000;
         font-weight: bold;
         border: none;
-        padding: 8px;
+        padding: 6px;
         border-radius: 4px;
         cursor: pointer;
-        transition: 0.2s;
+        font-size: 0.8rem;
     }
-    .btn-login-gold:hover { filter: brightness(1.1); transform: translateY(-1px); }
+    .btn-login:hover { filter: brightness(1.1); }
 
-    .btn-register-dark {
+    .btn-register {
         flex: 1;
-        background: transparent;
-        color: #aaa;
-        border: 1px solid #444;
-        padding: 8px;
-        border-radius: 4px;
-        cursor: pointer;
-        transition: 0.2s;
-    }
-    .btn-register-dark:hover { border-color: #888; color: #fff; background: #222; }
-
-    .auth-divider {
-        display: flex;
-        align-items: center;
-        color: #555;
-        font-size: 0.75rem;
-        margin: 10px 0;
-    }
-    .auth-divider::before, .auth-divider::after {
-        content: "";
-        flex: 1;
-        height: 1px;
         background: #333;
-    }
-    .auth-divider span { padding: 0 10px; }
-
-    .btn-google-pro {
-        width: 100%;
-        background: #252525;
-        color: #fff;
+        color: #ccc;
         border: 1px solid #444;
-        padding: 10px;
+        padding: 6px;
         border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+    .btn-register:hover { background: #444; color: #fff; }
+
+    .google-btn {
+        width: 100%;
+        background: #222;
+        border: 1px solid #444;
+        color: #eee;
+        padding: 8px;
+        border-radius: 4px;
+        cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 10px;
-        cursor: pointer;
-        font-size: 0.9rem;
+        gap: 8px;
+        font-size: 0.85rem;
         transition: 0.2s;
+        margin-top: 5px;
     }
-    .btn-google-pro:hover { background: #333; border-color: #666; }
-    .btn-google-pro span { color: #4285F4; font-weight: bold; font-size: 1.1rem; }
+    .google-btn:hover { background: #333; border-color: #666; }
+    .google-icon { font-weight: bold; color: #4285F4; font-size: 1.1em; }
 
-    /* Perfil Estilizado */
-    .profile-card {
+    /* --- PERFIL LOGADO (Estilo Card) --- */
+    .user-card {
+        background: linear-gradient(135deg, #222, #1a1a1a);
+        border: 1px solid var(--cor-dourado);
+        border-radius: 6px;
+        padding: 10px;
         display: flex;
         align-items: center;
-        gap: 12px;
-        background: linear-gradient(to right, #222, #1a1a1a);
-        padding: 12px;
-        border-radius: 8px;
-        border: 1px solid #444;
-        border-left: 3px solid var(--cor-dourado);
+        gap: 10px;
+        margin-bottom: 15px;
     }
-    .profile-img {
-        width: 45px; height: 45px;
+    .user-avatar {
+        width: 40px; height: 40px;
         border-radius: 50%;
         border: 2px solid #333;
         object-fit: cover;
     }
-    .profile-info { flex-grow: 1; overflow: hidden; }
-    .profile-name { color: var(--cor-dourado); font-weight: bold; font-size: 0.95rem; }
-    .profile-email { color: #777; font-size: 0.75rem; overflow: hidden; text-overflow: ellipsis; }
-    .btn-logout-mini {
-        background: transparent; border: 1px solid #555; color: #888;
-        font-size: 0.7rem; padding: 2px 8px; border-radius: 3px;
-        cursor: pointer; margin-top: 4px; transition: 0.2s;
+    .user-info { flex-grow: 1; overflow: hidden; }
+    .user-name { color: var(--cor-dourado); font-weight: bold; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .user-email { color: #666; font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    
+    .btn-logout {
+        background: transparent;
+        border: none;
+        color: #ff5555;
+        font-size: 1.2rem;
+        cursor: pointer;
+        padding: 0 5px;
     }
-    .btn-logout-mini:hover { border-color: #ff4d4d; color: #ff4d4d; }
+    .btn-logout:hover { color: #ff0000; transform: scale(1.1); }
   </style>
 </head>
 <body>
@@ -374,37 +358,35 @@
             
             <div id="auth-section">
                 
-                <div id="loginForm" class="auth-box">
-                    <div class="auth-title">Acesso Humble</div>
+                <div id="loginForm" class="auth-container">
+                    <div class="auth-header">Acesso Humble</div>
                     
-                    <input type="email" id="emailInput" class="auth-input" placeholder="E-mail">
-                    <input type="password" id="passInput" class="auth-input" placeholder="Senha">
+                    <input type="email" id="emailInput" class="login-input" placeholder="E-mail">
+                    <input type="password" id="passInput" class="login-input" placeholder="Senha">
                     
-                    <div class="auth-buttons-row">
-                        <button id="btnEmailLogin" class="btn-login-gold">ENTRAR</button>
-                        <button id="btnEmailRegister" class="btn-register-dark">Criar Conta</button>
+                    <div class="auth-btn-row">
+                        <button id="btnEmailLogin" class="btn-login">Entrar</button>
+                        <button id="btnEmailRegister" class="btn-register">Criar</button>
                     </div>
 
-                    <div class="auth-divider"><span>OU</span></div>
-
-                    <button id="btnGoogleLogin" class="btn-google-pro">
-                       <span>G</span> Entrar com Google
+                    <button id="btnGoogleLogin" class="google-btn">
+                       <span class="google-icon">G</span> Entrar com Google
                     </button>
                 </div>
 
-                <div id="userProfile" class="profile-card" style="display:none;">
-                    <img id="userPhoto" src="" class="profile-img">
-                    <div class="profile-info">
-                        <div id="userName" class="profile-name">Treinador</div>
-                        <div id="userEmail" class="profile-email">email@exemplo.com</div>
-                        <button id="btnLogout" class="btn-logout-mini">Sair / Logout</button>
+                <div id="userProfile" class="user-card" style="display:none;">
+                    <img id="userPhoto" src="" class="user-avatar">
+                    <div class="user-info">
+                        <div id="userName" class="user-name">Treinador</div>
+                        <div id="userEmail" class="user-email">email@exemplo.com</div>
                     </div>
+                    <button id="btnLogout" class="btn-logout" title="Sair">×</button>
                 </div>
 
             </div>
 
             <button class="btn-new-team" onclick="createNewTeam()">
-                <span style="font-size:1.2rem; vertical-align:middle;">+</span> Novo Time
+                <span style="font-size:1.1rem; vertical-align:middle; margin-right:5px;">+</span> Novo Time
             </button>
         </div>
         
