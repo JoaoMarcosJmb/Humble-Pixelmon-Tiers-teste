@@ -59,7 +59,6 @@
     }
     .btn-outline:hover { border-color: var(--cor-dourado); color: var(--cor-dourado); background: rgba(209, 167, 32, 0.1); }
 
-    /* CONTAINER E GRID */
     .container {
         max-width: 1200px; margin: 30px auto; width: 100%;
         display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
@@ -73,7 +72,7 @@
         border-top: 3px solid var(--cor-dourado);
         border-radius: 8px;
         width: 350px;
-        height: 400px; /* Altura fixa para padronizar */
+        height: 420px; /* Altura fixa para todos ficarem iguais */
         padding: 15px;
         box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         display: flex; flex-direction: column;
@@ -84,16 +83,16 @@
 
     .card-header { 
         display: flex; justify-content: space-between; align-items: flex-start; 
-        margin-bottom: 12px; border-bottom: 1px solid #333; padding-bottom: 8px;
-        height: 40px; /* Altura fixa para o título não quebrar o layout */
+        margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 8px;
+        height: 45px;
     }
-    .poke-name { font-size: 1.2rem; font-weight: bold; color: #fff; margin: 0; text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .poke-item-icon { width: 30px; height: 30px; object-fit: contain; }
+    .poke-name { font-size: 1.3rem; font-weight: bold; color: #fff; margin: 0; text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .poke-item-icon { width: 32px; height: 32px; object-fit: contain; }
 
     .visual-area {
         display: flex; align-items: center; gap: 15px; margin-bottom: 15px;
         background: rgba(0,0,0,0.3); border-radius: 6px; padding: 10px; border: 1px solid #333;
-        flex-grow: 1; /* Ocupa o espaço disponível verticalmente */
+        flex-grow: 1;
     }
     .main-sprite { 
         width: 90px; height: 90px; object-fit: contain; 
@@ -101,17 +100,17 @@
         flex-shrink: 0;
     }
     
-    .info-list { font-size: 0.85rem; color: #ccc; line-height: 1.6; width: 100%; }
-    .info-list div { margin-bottom: 2px; border-bottom: 1px solid #2a2a2a; padding-bottom: 2px; }
+    .info-list { font-size: 0.85rem; color: #ccc; line-height: 1.5; width: 100%; }
+    .info-list div { margin-bottom: 3px; border-bottom: 1px solid #252525; padding-bottom: 2px; }
     .info-list div:last-child { border-bottom: none; }
-    .info-list strong { color: var(--cor-dourado); font-weight: normal; margin-right: 5px; }
+    .info-list strong { color: var(--cor-dourado); font-weight: normal; margin-right: 4px; }
 
     .moves-grid {
         display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: auto;
-        height: 80px; /* Altura fixa para os golpes */
+        height: 90px; align-content: start;
     }
     .move-tag {
-        background: #252525; padding: 0 5px; text-align: center; border-radius: 4px;
+        background: #252525; padding: 4px; text-align: center; border-radius: 4px;
         font-size: 0.8rem; color: #ddd; border: 1px solid #444;
         display: flex; align-items: center; justify-content: center;
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -139,20 +138,21 @@
 <div id="rawText" class="raw-text-area"></div>
 
 <script>
-    // --- URLs BASE ---
-    const POKEAPI_IMG = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
+    // URL Base para Imagens (ID será adicionado dinamicamente)
+    const POKEAPI_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
     const ITEM_ICON = "https://play.pokemonshowdown.com/sprites/itemicons/";
+    const IMG_FALLBACK = "https://img.pokemondb.net/sprites/items/poke-ball.png";
 
-    // --- FORMATAÇÃO CORRIGIDA PARA POKEAPI ---
     const toApiName = (n) => {
         if(!n) return "unknown";
+        // Formata para o padrão da API (ex: "Iron Valiant" -> "iron-valiant")
         return n.trim().toLowerCase()
-            .replace(/ /g,'-')       // Espaços viram hífens
-            .replace(/[.'":]/g,'')   // Remove pontos, aspas, dois pontos (Mr. Mime -> mr-mime)
-            .replace(/♀/g,'-f')      // Símbolos de gênero
+            .replace(/ /g,'-')
+            .replace(/[.'":]/g,'')
+            .replace(/♀/g,'-f')
             .replace(/♂/g,'-m')
-            .replace(/é/g,'e')       // Remove acentos (Flabébé)
-            .replace(/[^a-z0-9-]/g, ''); // Remove qualquer outro caractere estranho
+            .replace(/é/g,'e')
+            .replace(/[^a-z0-9-]/g, '');
     };
     
     const toItemName = (n) => n ? n.toLowerCase().replace(/[^a-z0-9]/g, '') : '';
@@ -175,9 +175,9 @@
             fullText = "Erro ao ler código.";
         }
 
-        // Configura o botão de voltar
-        // IMPORTANTE: Mude 'builder (14).html' para o nome exato do seu arquivo builder
+        // ATUALIZE AQUI O NOME DO SEU BUILDER
         const builderFile = "builder (14).html"; 
+        
         document.getElementById('editBtn').href = `${builderFile}?import=${code}`;
         document.getElementById('rawText').innerText = fullText;
 
@@ -199,29 +199,27 @@
             const firstLine = lines[0].split('@');
             let namePart = firstLine[0].trim();
             
-            // Remove apelido para pegar a imagem certa
+            // Remove apelido para a API
             if(namePart.includes('(') && namePart.includes(')')) {
                 const match = namePart.match(/\(([^)]+)\)/);
-                if(match) pokemon.name = match[1]; 
+                if(match) pokemon.name = match[1];
                 else pokemon.name = namePart;
             } else {
                 pokemon.name = namePart; 
             }
             
-            // Limpeza final de gênero para API
+            // Limpeza de Gênero
             pokemon.name = pokemon.name.replace('(M)','').replace('(F)','').trim();
-            // Nome visual (mantém apelido se tiver)
             pokemon.display = namePart.replace('(M)','').replace('(F)','').trim();
 
             if(firstLine[1]) pokemon.item = firstLine[1].trim();
 
             for(let i=1; i<lines.length; i++) {
                 const l = lines[i].trim();
-                
                 if(l.startsWith('Ability:')) pokemon.ability = l.split(':')[1].trim();
                 else if(l.startsWith('EVs:')) pokemon.evs = l.split(':')[1].trim();
                 else if(l.startsWith('IVs:')) pokemon.ivs = l.split(':')[1].trim();
-                else if(l.includes('Nature')) pokemon.nature = l.split(' ')[0]; // Pega a primeira palavra da linha Nature
+                else if(l.includes('Nature')) pokemon.nature = l.split(' ')[0]; // Pega "Adamant" de "Adamant Nature"
                 else if(l.startsWith('-')) pokemon.moves.push(l.substring(1).trim());
             }
             team.push(pokemon);
@@ -229,7 +227,8 @@
         return team;
     }
 
-    function renderCards(team) {
+    // Renderiza e Busca a Imagem Correta
+    async function renderCards(team) {
         const container = document.getElementById('cardsContainer');
         container.innerHTML = "";
 
@@ -238,13 +237,10 @@
              return;
         }
 
-        team.forEach(pk => {
+        for (const [index, pk] of team.entries()) {
             const apiName = toApiName(pk.name);
             const itemSrc = pk.item ? `${ITEM_ICON}${toItemName(pk.item)}.png` : '';
-            
-            // Fallback: Se der erro na imagem, mostra uma pokebola simples
-            const imgSrc = `${POKEAPI_IMG}${apiName}.png`;
-            const fallbackSrc = "https://img.pokemondb.net/sprites/items/poke-ball.png";
+            const imgId = `poke-img-${index}`;
 
             const card = document.createElement('div');
             card.className = 'poke-card';
@@ -255,7 +251,7 @@
                 </div>
                 
                 <div class="visual-area">
-                    <img src="${imgSrc}" class="main-sprite" onerror="this.src='${fallbackSrc}'">
+                    <img id="${imgId}" src="${IMG_FALLBACK}" class="main-sprite">
                     <div class="info-list">
                         ${pk.ability ? `<div><strong>Ability:</strong> ${pk.ability}</div>` : ''}
                         ${pk.nature ? `<div><strong>Nature:</strong> ${pk.nature}</div>` : ''}
@@ -266,11 +262,30 @@
 
                 <div class="moves-grid">
                     ${pk.moves.map(m => `<div class="move-tag">${m}</div>`).join('')}
-                    ${pk.moves.length === 0 ? '<div style="grid-column:span 2; color:#555; text-align:center; font-size:0.8rem;">Sem golpes</div>' : ''}
+                    ${pk.moves.length === 0 ? '<div style="grid-column:span 2; color:#555; text-align:center; font-size:0.8rem;">-</div>' : ''}
                 </div>
             `;
             container.appendChild(card);
-        });
+
+            // Chama a API para pegar o ID correto e atualizar a imagem
+            fetchPokemonImage(apiName, imgId);
+        }
+    }
+
+    // Busca o ID na API para usar a arte oficial
+    async function fetchPokemonImage(name, imgId) {
+        try {
+            const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+            if(r.ok) {
+                const d = await r.json();
+                // A arte oficial precisa do ID (d.id)
+                const src = `${POKEAPI_BASE}${d.id}.png`;
+                const img = document.getElementById(imgId);
+                if(img) img.src = src;
+            }
+        } catch(e) {
+            console.warn("Imagem não encontrada para:", name);
+        }
     }
 
     function toggleRaw() {
