@@ -957,7 +957,7 @@
         document.getElementById('ioModal').style.display='flex';
     }
 
-    // --- LINK CURTO (Tenta TinyURL) ---
+// --- LINK CURTO (Versão Blindada com Proxy) ---
     async function shareTeamLink() {
         const teamText = getTeamAsText();
         if(!teamText.trim() || teamText.length < 20) {
@@ -965,27 +965,38 @@
             return;
         }
 
+        // 1. Gera o link longo base
         const encoded = btoa(unescape(encodeURIComponent(teamText)));
         const longLink = `${window.location.origin}${window.location.pathname}?import=${encoded}`;
 
         const btn = document.querySelector('.btn-share');
         const oldText = btn.innerText;
-        btn.innerText = "⏳...";
+        btn.innerText = "⏳ Encurtando...";
 
         try {
-            // Usa proxy CORS ou tenta direto se a API permitir (TinyURL costuma ser flexível)
-            const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longLink)}`);
+            // 2. Tenta encurtar usando um Proxy para evitar bloqueio do navegador
+            // Usamos 'api.allorigins.win' para intermediar a conversa com o TinyURL
+            const tinyUrlApi = `https://tinyurl.com/api-create.php?url=${encodeURIComponent(longLink)}`;
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(tinyUrlApi)}`;
+            
+            const response = await fetch(proxyUrl);
+            
             if (response.ok) {
                 const shortLink = await response.text();
-                await navigator.clipboard.writeText(shortLink);
-                alert("Link Curto copiado!\n" + shortLink);
+                if (shortLink.startsWith('http')) {
+                    await navigator.clipboard.writeText(shortLink.trim());
+                    alert("Link Curto copiado!\n\n" + shortLink.trim());
+                } else {
+                    throw new Error("Resposta inválida do encurtador");
+                }
             } else {
-                throw new Error("Falha ao encurtar");
+                throw new Error("Falha na conexão");
             }
         } catch (e) {
-            // Se falhar o encurtador, copia o link longo
+            console.warn("Encurtador falhou:", e);
+            // 3. Se tudo falhar, copia o link longo como garantia
             await navigator.clipboard.writeText(longLink);
-            alert("Link copiado! (Versão completa)");
+            alert("O encurtador falhou, mas copiamos o link completo para você!");
         } finally {
             btn.innerText = oldText;
         }
