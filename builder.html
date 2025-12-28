@@ -320,6 +320,17 @@
         padding: 0 5px;
     }
     .btn-logout:hover { color: #ff0000; transform: scale(1.1); }
+/* Botão Compartilhar (Link) - Cinza Azulado */
+    .btn-share { 
+        background: #4a5568; color: #fff; border: 1px solid #718096; 
+    }
+    .btn-share:hover { background: #2d3748; }
+
+    /* Botão Publicar - Roxo (Destaque) */
+    .btn-publish { 
+        background: #805ad5; color: #fff; border: 1px solid #9f7aea; 
+    }
+    .btn-publish:hover { background: #6b46c1; box-shadow: 0 0 10px rgba(128, 90, 213, 0.4); }
   </style>
 </head>
 <body>
@@ -399,20 +410,31 @@
                 <div class="toolbar-left">
                     <input type="text" id="teamNameInput" placeholder="Nome do Time" onchange="saveCurrentTeamToStorage()">
                 </div>
-                <div class="toolbar-controls">
-                    <select id="teamTier" class="tier-select" onchange="carregarDados(this.value)">
-                        <option value="" disabled selected>Selecionar Tier</option>
-                        <option value="AG">AG</option><option value="LC">LC</option><option value="Monotype">Monotype</option>
-                        <option value="NU">NU</option><option value="National_Dex">National Dex</option>
-                        <option value="National_Dex_Monotype">NatDex Monotype</option><option value="National_Dex_RU">NatDex RU</option>
-                        <option value="National_Dex_UU">NatDex UU</option><option value="National_Dex_Ubers">NatDex Ubers</option>
-                        <option value="OU">OU</option><option value="PU">PU</option><option value="RU">RU</option>
-                        <option value="UU">UU</option><option value="Uber">Uber</option><option value="Ubers_UU">Ubers UU</option><option value="ZU">ZU</option>
-                    </select>
-                    <button class="btn-action btn-validate" onclick="validateTeam()">✓ Validar</button>
-                    <button class="btn-action btn-import" onclick="openIOModal()">📥 Texto</button>
-                    <button class="btn-action btn-save" onclick="saveCurrentTeamToStorage()">💾 Salvar</button>
-                </div>
+<div class="toolbar-controls">
+    <select id="teamTier" class="tier-select" onchange="carregarDados(this.value)">
+        <option value="" disabled selected>Selecionar Tier</option>
+        <option value="AG">AG</option>
+        <option value="LC">LC</option>
+        <option value="Monotype">Monotype</option>
+        <option value="NU">NU</option>
+        <option value="National_Dex">National Dex</option>
+        <option value="National_Dex_Monotype">NatDex Monotype</option>
+        <option value="National_Dex_RU">NatDex RU</option>
+        <option value="National_Dex_UU">NatDex UU</option>
+        <option value="National_Dex_Ubers">NatDex Ubers</option>
+        <option value="OU">OU</option>
+        <option value="PU">PU</option>
+        <option value="RU">RU</option>
+        <option value="UU">UU</option>
+        <option value="Uber">Uber</option>
+        <option value="Ubers_UU">Ubers UU</option>
+        <option value="ZU">ZU</option>
+    </select> <button class="btn-action btn-share" onclick="shareTeamLink()" title="Gerar Link">🔗 Link</button>
+    <button class="btn-action btn-publish" onclick="publishTeam()" title="Publicar no Site">📢 Publicar</button>
+    <button class="btn-action btn-validate" onclick="validateTeam()">✓ Validar</button>
+    <button class="btn-action btn-import" onclick="openIOModal()">📥 Texto</button>
+    <button class="btn-action btn-save" onclick="saveCurrentTeamToStorage()">💾 Salvar</button>
+</div>
             </div>
 
             <div class="tabs-wrapper">
@@ -486,11 +508,40 @@
     function formatText(str) { if (!str) return ''; return str.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '); }
 
     // --- INICIALIZAÇÃO ---
-    window.onload = async function() { 
+window.onload = async function() { 
         await initItens(); 
-        loadAllTeams();
-        if(allTeams.length > 0) editTeam(0); 
-        else createNewTeam();
+        
+        // --- NOVO: Lógica para ler o Link Mágico ---
+        const params = new URLSearchParams(window.location.search);
+        const importData = params.get('import');
+
+        if(importData) {
+            try {
+                // 1. Decodifica o código do link de volta para texto
+                const decodedText = decodeURIComponent(escape(atob(importData)));
+                
+                // 2. Coloca o texto no importador e processa
+                document.getElementById('ioText').value = decodedText;
+                
+                // Pequeno atraso para garantir que tudo carregou
+                setTimeout(() => {
+                    processImport(); 
+                    // 3. Limpa a URL para ficar bonita (remove o código gigante)
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    alert("Time carregado via Link Compartilhado!");
+                }, 500);
+            } catch(e) {
+                console.error(e);
+                alert("O link está quebrado ou inválido.");
+                // Se falhar, carrega o normal
+                loadAllTeams();
+            }
+        } else {
+            // --- COMPORTAMENTO PADRÃO (Se não tiver link) ---
+            loadAllTeams();
+            if(allTeams.length > 0) editTeam(0); 
+            else createNewTeam();
+        }
     };
 
     async function initItens() {
@@ -903,11 +954,12 @@
         });
         document.getElementById(`bst-${id}`).innerText = total;
     }
-
-    function openIOModal() {
+// Gera o texto do time (usado para Texto, Link e Publicar)
+    function getTeamAsText() {
         let txt = ""; 
         const tier = document.getElementById('teamTier').value;
         if(tier) txt += `=== [Gen 9] ${tier} ===\n\n`;
+        
         document.querySelectorAll('.poke-editor').forEach(ed=>{
             const name = ed.querySelector('.p-name').value;
             if(name) {
@@ -920,14 +972,66 @@
                 const ability = ed.querySelector('.p-ability').value; if(ability) txt += `Ability: ${ability}\n`;
                 const shiny = ed.querySelector('.p-shiny').value; if(shiny === 'Yes') txt += `Shiny: Yes\n`;
                 const level = ed.querySelector('.p-level').value; if(level && level!=100) txt += `Level: ${level}\n`;
-                let evs = []; STATS.forEach(s => { const v = document.getElementById(`num-${ed.id.split('-')[1]}-${s}`).value; if(v>0) evs.push(`${v} ${s}`); });
+                
+                let evs = []; 
+                STATS.forEach(s => { 
+                    const id = ed.id.split('-')[1];
+                    const v = document.getElementById(`num-${id}-${s}`).value; 
+                    if(v > 0) evs.push(`${v} ${s}`); 
+                });
                 if(evs.length) txt += `EVs: ${evs.join(' / ')}\n`;
+                
                 const nature = ed.querySelector('.p-nature').value; if(nature) txt += `${nature} Nature\n`;
-                let ivs = []; STATS.forEach(s => { const v = ed.querySelector(`.p-iv-${s.toLowerCase()}`).value; if(v!=31) ivs.push(`${v} ${s}`); });
+                
+                let ivs = []; 
+                STATS.forEach(s => { 
+                    const v = ed.querySelector(`.p-iv-${s.toLowerCase()}`).value; 
+                    if(v != 31) ivs.push(`${v} ${s}`); 
+                });
                 if(ivs.length) txt += `IVs: ${ivs.join(' / ')}\n`;
+                
                 ed.querySelectorAll('.p-move').forEach(m => { if(m.value) txt += `- ${m.value}\n`; });
                 txt += "\n";
             }
+        });
+        return txt;
+    }
+function openIOModal() {
+        const txt = getTeamAsText(); // Usa a nova função
+        document.getElementById('ioText').value = txt;
+        document.getElementById('ioModal').style.display='flex';
+    }
+  function shareTeamLink() {
+        const teamText = getTeamAsText();
+        if(!teamText.trim() || teamText.length < 20) {
+            alert("Monte um time antes de gerar o link!"); 
+            return;
+        }
+
+        // Cria o código mágico (Base64)
+        const encoded = btoa(unescape(encodeURIComponent(teamText)));
+        const link = `${window.location.origin}${window.location.pathname}?import=${encoded}`;
+        
+        navigator.clipboard.writeText(link).then(() => {
+            alert("Link copiado para a área de transferência!");
+        });
+    }
+
+    function publishTeam() {
+        // Verifica se o perfil está visível (significa que está logado)
+        const isLogged = document.getElementById('userProfile').style.display !== 'none';
+        
+        if(!isLogged) {
+            alert("Você precisa estar logado para publicar um time!");
+            return;
+        }
+        
+        const nomeTime = document.getElementById('teamNameInput').value;
+        if(!nomeTime) { alert("Dê um nome ao seu time antes de publicar."); return; }
+
+        // AQUI ENTRARÁ O BANCO DE DADOS DEPOIS
+        alert(`O time "${nomeTime}" está pronto para ser enviado! \n(Integração com BD em breve)`);
+    }
         });
         document.getElementById('ioText').value = txt;
         document.getElementById('ioModal').style.display='flex';
