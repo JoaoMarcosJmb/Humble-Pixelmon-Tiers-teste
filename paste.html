@@ -65,7 +65,6 @@
         padding: 20px; flex-grow: 1; align-items: flex-start;
     }
 
-    /* CARD DESIGN */
     .poke-card {
         background: var(--cor-painel);
         border: 1px solid var(--cor-borda);
@@ -144,18 +143,14 @@
 
     // --- CORREÇÕES DE NOMES (Showdown -> PokéAPI) ---
     const NAME_FIXES = {
-        // Genies e Formas
-        "landorus": "landorus-incarnate",
-        "landorus-t": "landorus-therian",
-        "thundurus": "thundurus-incarnate",
-        "thundurus-t": "thundurus-therian",
-        "tornadus": "tornadus-incarnate",
-        "tornadus-t": "tornadus-therian",
-        "enamorus": "enamorus-incarnate",
-        "enamorus-t": "enamorus-therian",
+        // Genies
+        "landorus": "landorus-incarnate", "landorus-t": "landorus-therian",
+        "thundurus": "thundurus-incarnate", "thundurus-t": "thundurus-therian",
+        "tornadus": "tornadus-incarnate", "tornadus-t": "tornadus-therian",
+        "enamorus": "enamorus-incarnate", "enamorus-t": "enamorus-therian",
         
         // Outros
-        "urshifu": "urshifu-single-strike",
+        "urshifu": "urshifu-single-strike", "urshifu-rapid-strike": "urshifu-rapid-strike",
         "toxtricity": "toxtricity-amped",
         "basculin": "basculin-red-striped",
         "wormadam": "wormadam-plant",
@@ -195,7 +190,11 @@
         return clean;
     };
     
-    const toItemName = (n) => n ? n.toLowerCase().replace(/[^a-z0-9]/g, '') : '';
+    // CORREÇÃO DO ITEM: Remove tudo que não for letra/número (Choice Scarf -> choicescarf)
+    const toItemName = (n) => {
+        if(!n) return '';
+        return n.toLowerCase().replace(/[\W_]+/g, ""); // Remove espaços e símbolos agressivamente
+    };
 
     window.onload = function() {
         const params = new URLSearchParams(window.location.search);
@@ -215,7 +214,9 @@
             fullText = "Erro ao ler código.";
         }
 
+        // CONFIRME SE O NOME DO SEU BUILDER ESTÁ CERTO AQUI:
         const builderFile = "builder (14).html"; 
+        
         document.getElementById('editBtn').href = `${builderFile}?import=${code}`;
         document.getElementById('rawText').innerText = fullText;
 
@@ -234,23 +235,31 @@
             const lines = block.split('\n');
             const pokemon = { moves: [] };
             
-            const firstLine = lines[0].split('@');
-            let namePart = firstLine[0].trim();
-
-            // --- CORREÇÃO DO BUG "Landorus (M)" ---
-            // Remove o gênero (M/F) do final da string ANTES de analisar o nome
-            // Regex: espaço opcional + (M ou F) ou [M ou F] + fim da linha
+            const firstLine = lines[0];
+            
+            // Separa Nome e Item pelo último '@' encontrado
+            let namePart, itemPart;
+            if(firstLine.includes('@')) {
+                const atIndex = firstLine.lastIndexOf('@');
+                namePart = firstLine.substring(0, atIndex).trim();
+                itemPart = firstLine.substring(atIndex + 1).trim();
+            } else {
+                namePart = firstLine.trim();
+                itemPart = "";
+            }
+            
+            // Remove (M)/(F) do final
             namePart = namePart.replace(/\s?[\(\[][MF][\)\]]$/i, '').trim();
             
-            // Lógica de Apelido: "Vampiro (Gliscor)"
+            // Apelidos
             if(namePart.includes('(') && namePart.includes(')')) {
                 const start = namePart.lastIndexOf('(');
                 const end = namePart.lastIndexOf(')');
                 if(start !== -1 && end !== -1) {
-                    pokemon.name = namePart.substring(start + 1, end); // Pega Gliscor
-                    pokemon.display = namePart; // Mantém "Vampiro (Gliscor)" visualmente
+                    pokemon.name = namePart.substring(start + 1, end); 
+                    pokemon.display = namePart; 
                 } else {
-                    pokemon.name = namePart;
+                    pokemon.name = namePart; 
                     pokemon.display = namePart;
                 }
             } else {
@@ -258,7 +267,7 @@
                 pokemon.display = namePart;
             }
 
-            if(firstLine[1]) pokemon.item = firstLine[1].trim();
+            if(itemPart) pokemon.item = itemPart;
 
             for(let i=1; i<lines.length; i++) {
                 const l = lines[i].trim();
@@ -319,14 +328,10 @@
 
     async function fetchPokemonImage(name, imgId) {
         try {
-            // Tenta buscar o Pokémon exato
             let r = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
             
-            // Se falhar e tiver traço (ex: landorus-therian com erro ou variante)
             if(!r.ok && name.includes('-')) {
-                // Tenta remover o sufixo para achar a base
                 const baseName = name.substring(0, name.lastIndexOf('-'));
-                // Só tenta base se não for uma correção manual nossa (ex: landorus-therian já é o certo)
                 if(!NAME_FIXES[baseName]) {
                     let r2 = await fetch(`https://pokeapi.co/api/v2/pokemon/${baseName}`);
                     if(r2.ok) r = r2;
