@@ -65,7 +65,6 @@
         padding: 20px; flex-grow: 1; align-items: flex-start;
     }
 
-    /* CARD DESIGN */
     .poke-card {
         background: var(--cor-painel);
         border: 1px solid var(--cor-borda);
@@ -138,10 +137,12 @@
 <div id="rawText" class="raw-text-area"></div>
 
 <script>
+    // --- FONTE DAS IMAGENS (USANDO POKEAPI PARA TUDO AGORA) ---
     const POKEAPI_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
-    const ITEM_ICON = "https://play.pokemonshowdown.com/sprites/itemicons/";
+    const POKEAPI_ITEMS = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/";
+    const SHOWDOWN_SPRITES = "https://play.pokemonshowdown.com/sprites/gen5/";
     const IMG_FALLBACK = "https://img.pokemondb.net/sprites/items/poke-ball.png";
-    const ITEM_FALLBACK = "https://img.pokemondb.net/sprites/items/berry.png"; // Ícone se item falhar
+    const ITEM_FALLBACK = "https://img.pokemondb.net/sprites/items/berry.png";
 
     // --- CORREÇÕES DE NOMES (Showdown -> PokéAPI) ---
     const NAME_FIXES = {
@@ -166,19 +167,24 @@
     const toApiName = (n) => {
         if(!n) return "unknown";
         let clean = n.trim().toLowerCase()
-            .replace(/ /g,'-').replace(/[.'":]/g,'').replace(/♀/g,'-f').replace(/♂/g,'-m')
-            .replace(/é/g,'e').replace(/[^a-z0-9-]/g, '');
+            .replace(/ /g,'-')
+            .replace(/[.'":]/g,'')
+            .replace(/♀/g,'-f')
+            .replace(/♂/g,'-m')
+            .replace(/é/g,'e')
+            .replace(/[^a-z0-9-]/g, '');
+
         if(NAME_FIXES[clean]) return NAME_FIXES[clean];
         return clean;
     };
     
-    // --- CORREÇÃO AGRESSIVA PARA ITENS ---
-    // Remove tudo que não for letra ou número.
-    // Ex: "Choice Scarf" -> "choicescarf"
-    // Ex: "Heavy-Duty Boots" -> "heavydutyboots"
+    // CORREÇÃO DOS ITENS (AGORA USANDO PADRÃO POKEAPI: TRAÇOS EM VEZ DE JUNTAR)
+    // Ex: "Choice Scarf" -> "choice-scarf" (funciona na PokéAPI)
     const toItemName = (n) => {
         if(!n) return '';
-        return n.toLowerCase().replace(/[^a-z0-9]/g, '');
+        return n.trim().toLowerCase()
+                .replace(/ /g, '-')
+                .replace(/[^a-z0-9-]/g, '');
     };
 
     window.onload = function() {
@@ -199,7 +205,6 @@
             fullText = "Erro ao ler código.";
         }
 
-        // SEU ARQUIVO DE EDIÇÃO
         const builderFile = "builder (14).html"; 
         
         document.getElementById('editBtn').href = `${builderFile}?import=${code}`;
@@ -216,19 +221,20 @@
 
         blocks.forEach(block => {
             if(!block.trim() || block.startsWith("===")) return;
-            
             const lines = block.split('\n');
             const pokemon = { moves: [] };
             
-            // PARSER DE NOME E ITEM
             const firstLine = lines[0];
             let namePart, itemPart;
 
-            // Se tem @, o item é tudo que vem depois do último @
+            // Parser mais robusto para separar Nome e Item
             if(firstLine.includes('@')) {
-                const atIndex = firstLine.lastIndexOf('@');
-                namePart = firstLine.substring(0, atIndex).trim();
-                itemPart = firstLine.substring(atIndex + 1).trim();
+                const parts = firstLine.split('@');
+                // O nome é a primeira parte, o item é a última (caso haja @ no nome, o que é raro)
+                // Mas seguro é split pelo ultimo @
+                const lastAt = firstLine.lastIndexOf('@');
+                namePart = firstLine.substring(0, lastAt).trim();
+                itemPart = firstLine.substring(lastAt + 1).trim();
             } else {
                 namePart = firstLine.trim();
                 itemPart = "";
@@ -237,7 +243,7 @@
             // Remove Gênero (M)/(F)
             namePart = namePart.replace(/\s?[\(\[][MF][\)\]]$/i, '').trim();
             
-            // Lógica de Apelido
+            // Apelidos
             if(namePart.includes('(') && namePart.includes(')')) {
                 const match = namePart.match(/\(([^)]+)\)/);
                 if(match) pokemon.name = match[1];
@@ -273,8 +279,11 @@
 
         for (const [index, pk] of team.entries()) {
             const apiName = toApiName(pk.name);
+            
+            // Tenta imagem da PokéAPI para o item
             const itemNameClean = toItemName(pk.item);
-            const itemSrc = pk.item ? `${ITEM_ICON}${itemNameClean}.png` : '';
+            const itemSrc = pk.item ? `${POKEAPI_ITEMS}${itemNameClean}.png` : '';
+            
             const imgId = `poke-img-${index}`;
 
             const card = document.createElement('div');
@@ -308,6 +317,7 @@
     }
 
     async function fetchPokemonImage(name, imgId) {
+        const imgEl = document.getElementById(imgId);
         try {
             let r = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
             
@@ -321,9 +331,11 @@
 
             if(r.ok) {
                 const d = await r.json();
-                const src = `${POKEAPI_BASE}${d.id}.png`;
-                const img = document.getElementById(imgId);
-                if(img) img.src = src;
+                imgEl.src = `${POKEAPI_BASE}${d.id}.png`;
+            } else {
+                // Fallback para Showdown Sprite se a PokéAPI falhar
+                let showdownName = name.replace('-incarnate', ''); // Showdown usa 'landorus' para incarnate
+                imgEl.src = `${SHOWDOWN_SPRITES}${showdownName}.png`;
             }
         } catch(e) {
             console.warn("Imagem não encontrada:", name);
