@@ -1056,8 +1056,8 @@ window.onload = async function() {
     }
 
     // 4. Função do Botão PUBLICAR
-    function publishTeam() {
-        // Verifica login olhando se o perfil está visível
+function publishTeam() {
+        // Verifica se o perfil está visível (significa que está logado)
         const isLogged = document.getElementById('userProfile').style.display !== 'none';
         
         if(!isLogged) {
@@ -1068,8 +1068,11 @@ window.onload = async function() {
         const nomeTime = document.getElementById('teamNameInput').value;
         if(!nomeTime) { alert("Dê um nome ao seu time antes de publicar."); return; }
 
+        // AQUI ENTRARÁ O BANCO DE DADOS DEPOIS
         alert(`O time "${nomeTime}" está pronto para ser enviado! \n(Integração com BD em breve)`);
     }
+
+    function copyToClipboard() { navigator.clipboard.writeText(document.getElementById('ioText').value); alert("Copiado!"); }
   function shareTeamLink() {
         const teamText = getTeamAsText();
         if(!teamText.trim() || teamText.length < 20) {
