@@ -1029,15 +1029,7 @@ function openIOModal() {
         const nomeTime = document.getElementById('teamNameInput').value;
         if(!nomeTime) { alert("Dê um nome ao seu time antes de publicar."); return; }
 
-        // AQUI ENTRARÁ O BANCO DE DADOS DEPOIS
-        alert(`O time "${nomeTime}" está pronto para ser enviado! \n(Integração com BD em breve)`);
-    }
-        });
-        document.getElementById('ioText').value = txt;
-        document.getElementById('ioModal').style.display='flex';
-    }
-    function copyToClipboard() { navigator.clipboard.writeText(document.getElementById('ioText').value); alert("Copiado!"); }
-    
+
     function processImport() {
         const text = document.getElementById('ioText').value; if (!text.trim()) { alert("Cole um time."); return; }
         document.getElementById('tabsContainer').innerHTML = ""; document.getElementById('editorsContainer').innerHTML = "";
