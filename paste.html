@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Humble Paste - Visualizador</title>
+  <link rel="icon" type="image/png" href="img/mike_anotando2.png">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+
+  <style>
+    :root { --cor-dourado: #d1a720; --bg-body: #111; }
+    
+    body {
+        font-family: "Segoe UI", sans-serif;
+        background: var(--bg-body);
+        color: #eee;
+        margin: 0; padding: 0;
+        min-height: 100vh;
+        display: flex; flex-direction: column;
+        background-image: url("https://i.imgur.com/vATNRmF.png");
+        background-size: cover;
+        background-attachment: fixed;
+    }
+
+    header {
+        background: rgba(0,0,0,0.9);
+        border-bottom: 2px solid var(--cor-dourado);
+        padding: 15px 20px;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    h1 { margin: 0; color: var(--cor-dourado); font-size: 1.5rem; display: flex; align-items: center; gap: 10px; }
+    h1 img { height: 40px; }
+
+    .action-btn {
+        background: var(--cor-dourado); color: #000; border: none;
+        padding: 10px 20px; font-weight: bold; border-radius: 4px; cursor: pointer;
+        text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .action-btn:hover { filter: brightness(1.1); }
+
+    .container {
+        max-width: 1200px; margin: 20px auto; width: 100%;
+        display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
+        padding: 20px;
+    }
+
+    /* CARD DO POKEMON */
+    .poke-card {
+        background: rgba(30, 30, 30, 0.95);
+        border: 1px solid #444;
+        border-radius: 10px;
+        width: 350px;
+        padding: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        display: flex; flex-direction: column;
+        position: relative;
+        overflow: hidden;
+    }
+    .poke-card::before {
+        content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+        background: var(--cor-dourado);
+    }
+
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .poke-name { font-size: 1.4rem; font-weight: bold; color: #fff; margin: 0; }
+    .poke-item-icon { width: 30px; height: 30px; object-fit: contain; }
+
+    .visual-area {
+        display: flex; align-items: center; gap: 15px; margin-bottom: 15px;
+        background: rgba(0,0,0,0.3); border-radius: 8px; padding: 10px;
+    }
+    .main-sprite { width: 90px; height: 90px; object-fit: contain; }
+    
+    .info-list { font-size: 0.9rem; color: #ccc; line-height: 1.6; }
+    .info-list strong { color: var(--cor-dourado); }
+
+    .moves-grid {
+        display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto;
+        padding-top: 10px; border-top: 1px solid #444;
+    }
+    .move-tag {
+        background: #333; padding: 6px; text-align: center; border-radius: 4px;
+        font-size: 0.85rem; color: #fff; border: 1px solid #555;
+    }
+
+    .raw-text-area {
+        width: 100%; max-width: 800px; margin: 30px auto; background: #111; 
+        padding: 20px; border: 1px solid #444; color: #aaa; font-family: monospace; 
+        white-space: pre-wrap; display: none;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+    <h1><img src="https://i.imgur.com/XOEcuO8.png"> Humble Paste</h1>
+    <a href="#" id="editBtn" class="action-btn">✎ Importar / Editar</a>
+</header>
+
+<div class="container" id="cardsContainer">
+    <h2 style="color:#666">Lendo dados do time...</h2>
+</div>
+
+<button onclick="toggleRaw()" style="display:block; background:none; border:none; color:#555; margin: 0 auto 20px; cursor:pointer;">(Ver Texto Original)</button>
+<div id="rawText" class="raw-text-area"></div>
+
+<script>
+    const POKEAPI_IMG = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
+    const ITEM_ICON = "https://play.pokemonshowdown.com/sprites/itemicons/";
+
+    const toApiName = (n) => n.toLowerCase().replace(/ /g,'-').replace(/[.'":]/g,'').replace(/♀/g,'-f').replace(/♂/g,'-m');
+    const toItemName = (n) => n.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+    window.onload = function() {
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('import');
+
+        if(!code) {
+            document.getElementById('cardsContainer').innerHTML = "<h2 style='color:#ff5555'>Erro: Nenhum código de time encontrado no link.</h2>";
+            return;
+        }
+
+        let fullText = "";
+        try {
+            fullText = LZString.decompressFromEncodedURIComponent(code);
+            if(!fullText) fullText = decodeURIComponent(escape(atob(code))); // Tenta modo antigo se falhar
+        } catch(e) {
+            fullText = "Erro ao ler código.";
+        }
+
+        // --- CONFIGURAÇÃO DO BOTÃO VOLTAR ---
+        // Se o nome do seu arquivo principal mudar, mude aqui:
+        document.getElementById('editBtn').href = `builder.html?import=${code}`;
+        
+        document.getElementById('rawText').innerText = fullText;
+
+        const pokemons = parseShowdown(fullText);
+        renderCards(pokemons);
+    };
+
+    function parseShowdown(text) {
+        const blocks = text.split(/\r?\n\r?\n/);
+        const team = [];
+
+        blocks.forEach(block => {
+            if(!block.trim() || block.startsWith("===")) return;
+            
+            const lines = block.split('\n');
+            const pokemon = { moves: [] };
+            
+            const firstLine = lines[0].split('@');
+            let namePart = firstLine[0].trim();
+            if(namePart.includes('(') && namePart.includes(')')) {
+                const match = namePart.match(/\(([^)]+)\)/);
+                if(match) pokemon.name = match[1];
+                else pokemon.name = namePart;
+            } else {
+                pokemon.name = namePart; 
+            }
+            pokemon.display = namePart.replace('(M)','').replace('(F)','').trim();
+
+            if(firstLine[1]) pokemon.item = firstLine[1].trim();
+
+            for(let i=1; i<lines.length; i++) {
+                const l = lines[i].trim();
+                if(l.startsWith('Ability:')) pokemon.ability = l.split(':')[1].trim();
+                else if(l.startsWith('EVs:')) pokemon.evs = l.split(':')[1].trim();
+                else if(l.startsWith('Nature')) pokemon.nature = l.split(' ')[0];
+                else if(l.startsWith('-')) pokemon.moves.push(l.substring(1).trim());
+            }
+            team.push(pokemon);
+        });
+        return team;
+    }
+
+    function renderCards(team) {
+        const container = document.getElementById('cardsContainer');
+        container.innerHTML = "";
+
+        team.forEach(pk => {
+            const apiName = toApiName(pk.name);
+            const itemSrc = pk.item ? `${ITEM_ICON}${toItemName(pk.item)}.png` : '';
+            
+            const card = document.createElement('div');
+            card.className = 'poke-card';
+            card.innerHTML = `
+                <div class="card-header">
+                    <span class="poke-name">${pk.display}</span>
+                    ${pk.item ? `<img src="${itemSrc}" class="poke-item-icon" title="${pk.item}">` : ''}
+                </div>
+                
+                <div class="visual-area">
+                    <img src="${POKEAPI_IMG}${apiName}.png" class="main-sprite" onerror="this.src='https://img.pokemondb.net/sprites/items/poke-ball.png'">
+                    <div class="info-list">
+                        ${pk.ability ? `<div><strong>Ability:</strong> ${pk.ability}</div>` : ''}
+                        ${pk.evs ? `<div><strong>EVs:</strong> ${pk.evs}</div>` : ''}
+                        ${pk.nature ? `<div><strong>Nature:</strong> ${pk.nature}</div>` : ''}
+                        ${pk.item ? `<div><strong>Item:</strong> ${pk.item}</div>` : ''}
+                    </div>
+                </div>
+
+                <div class="moves-grid">
+                    ${pk.moves.map(m => `<div class="move-tag">${m}</div>`).join('')}
+                </div>
+            `;
+            container.appendChild(card);
+        });
+    }
+
+    function toggleRaw() {
+        const el = document.getElementById('rawText');
+        el.style.display = el.style.display === 'block' ? 'none' : 'block';
+    }
+</script>
+
+</body>
+</html>
