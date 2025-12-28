@@ -847,5 +847,73 @@
         saveCurrentTeamToStorage();
     }
   </script>
+  <script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+  // --- CONFIGURAÇÃO (COLE AS CHAVES DO SEU PROJETO SIMPLETEANS AQUI) ---
+  const firebaseConfig = {
+    apiKey: "SUA_API_KEY",
+    authDomain: "simpleteans-XXXX.firebaseapp.com",
+    projectId: "simpleteans-XXXX",
+    storageBucket: "simpleteans-XXXX.appspot.com",
+    messagingSenderId: "NUMEROS...",
+    appId: "1:NUMEROS:web:..."
+  };
+
+  // Inicializa o Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+
+  // Elementos da tela (Já criados na sua Sidebar)
+  const btnLogin = document.getElementById('btnLogin');
+  const btnLogout = document.getElementById('btnLogout');
+  const userProfile = document.getElementById('userProfile');
+  const userPhoto = document.getElementById('userPhoto');
+  const userName = document.getElementById('userName');
+
+  // Função de Login
+  if(btnLogin) {
+      btnLogin.addEventListener('click', () => {
+        signInWithPopup(auth, provider)
+          .then((result) => {
+            console.log("Logado:", result.user.email);
+          })
+          .catch((error) => {
+            console.error(error);
+            alert("Erro no Login: " + error.message);
+          });
+      });
+  }
+
+  // Função de Logout
+  if(btnLogout) {
+      btnLogout.addEventListener('click', () => {
+        if(confirm("Deseja sair da conta?")) {
+            signOut(auth).then(() => {
+                location.reload(); // Recarrega para limpar visual
+            });
+        }
+      });
+  }
+
+  // Monitora se o usuário está logado ou não
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // LOGADO: Esconde botão de login, mostra perfil
+      if(btnLogin) btnLogin.style.display = 'none';
+      if(userProfile) {
+          userProfile.style.display = 'flex';
+          if(userPhoto) userPhoto.src = user.photoURL;
+          if(userName) userName.innerText = user.displayName;
+      }
+    } else {
+      // DESLOGADO: Mostra botão de login, esconde perfil
+      if(btnLogin) btnLogin.style.display = 'flex'; 
+      if(userProfile) userProfile.style.display = 'none';
+    }
+  });
+</script>
 </body>
 </html>
