@@ -8,7 +8,6 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 
   <style>
-    /* --- MESMA IDENTIDADE VISUAL DO BUILDER --- */
     :root { 
       --cor-dourado: #d1a720; 
       --cor-fundo: #111; 
@@ -22,7 +21,6 @@
     body {
         font-family: "Segoe UI", Arial, sans-serif;
         background-color: var(--cor-fundo);
-        /* Mesmo background do Builder */
         background-image: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,30,20,0.95)), 
                           url("https://i.imgur.com/vATNRmF.png");
         background-size: cover;
@@ -33,7 +31,6 @@
         display: flex; flex-direction: column;
     }
 
-    /* HEADER IDÊNTICO AO BUILDER */
     header {
         height: 60px; padding: 0 20px; flex-shrink: 0;
         display: flex; justify-content: space-between; align-items: center;
@@ -47,7 +44,6 @@
     }
     h1 img { height: 35px; }
 
-    /* BOTÕES PADRÃO */
     .btn-action {
         background: var(--cor-dourado); color: #111; border: none;
         padding: 8px 20px; font-weight: bold; border-radius: 4px; cursor: pointer;
@@ -63,24 +59,23 @@
     }
     .btn-outline:hover { border-color: var(--cor-dourado); color: var(--cor-dourado); background: rgba(209, 167, 32, 0.1); }
 
-    /* CONTAINER DOS CARDS */
     .container {
         max-width: 1200px; margin: 30px auto; width: 100%;
         display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
         padding: 20px; flex-grow: 1; align-items: flex-start;
     }
 
-    /* CARD DO POKEMON (Estilo Painel) */
     .poke-card {
         background: var(--cor-painel);
         border: 1px solid var(--cor-borda);
-        border-top: 3px solid var(--cor-dourado); /* Detalhe Dourado no Topo */
+        border-top: 3px solid var(--cor-dourado);
         border-radius: 8px;
         width: 340px;
         padding: 15px;
         box-shadow: 0 10px 25px rgba(0,0,0,0.5);
         display: flex; flex-direction: column;
         transition: transform 0.2s;
+        position: relative;
     }
     .poke-card:hover { transform: translateY(-3px); border-color: #666; }
 
@@ -131,19 +126,29 @@
 <div id="rawText" class="raw-text-area"></div>
 
 <script>
-    // --- LÓGICA DO VISUALIZADOR ---
     const POKEAPI_IMG = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
     const ITEM_ICON = "https://play.pokemonshowdown.com/sprites/itemicons/";
 
-    const toApiName = (n) => n.toLowerCase().replace(/ /g,'-').replace(/[.'":]/g,'').replace(/♀/g,'-f').replace(/♂/g,'-m');
-    const toItemName = (n) => n.toLowerCase().replace(/[^a-z0-9]/g, '');
+    // Funções de formatação melhoradas
+    const toApiName = (n) => {
+        if(!n) return "unknown";
+        return n.trim().toLowerCase()
+            .replace(/ /g,'-')
+            .replace(/\./g,'')
+            .replace(/'/g,'')
+            .replace(/:/g,'')
+            .replace(/♀/g,'-f')
+            .replace(/♂/g,'-m');
+    };
+    
+    const toItemName = (n) => n ? n.toLowerCase().replace(/[^a-z0-9]/g, '') : '';
 
     window.onload = function() {
         const params = new URLSearchParams(window.location.search);
         const code = params.get('import');
 
         if(!code) {
-            document.getElementById('cardsContainer').innerHTML = "<h3 style='color:#ff5555'>Erro: Nenhum código de time encontrado no link.</h3>";
+            document.getElementById('cardsContainer').innerHTML = "<h3 style='color:#ff5555'>Erro: Link incompleto.</h3>";
             document.getElementById('editBtn').style.display = 'none';
             return;
         }
@@ -156,11 +161,12 @@
             fullText = "Erro ao ler código.";
         }
 
-        // --- CONFIGURA O BOTÃO DE VOLTAR ---
-        // IMPORTANTE: Se o nome do seu arquivo principal não for 'builder.html', altere aqui:
-        const builderFile = "builder (14).html"; // <--- NOME DO SEU BUILDER AQUI
-        document.getElementById('editBtn').href = `${builderFile}?import=${code}`;
+        // ATUALIZE AQUI SE O NOME DO ARQUIVO DO BUILDER FOR DIFERENTE
+        // Como você enviou 'builder (14).html', vou deixar 'builder.html' como padrão seguro
+        // Mude para "builder (14).html" se quiser testar localmente com esse nome exato
+        const builderFilename = "builder.html"; 
         
+        document.getElementById('editBtn').href = `${builderFilename}?import=${code}`;
         document.getElementById('rawText').innerText = fullText;
 
         const pokemons = parseShowdown(fullText);
@@ -168,6 +174,7 @@
     };
 
     function parseShowdown(text) {
+        if(!text) return [];
         const blocks = text.split(/\r?\n\r?\n/);
         const team = [];
 
@@ -177,30 +184,35 @@
             const lines = block.split('\n');
             const pokemon = { moves: [] };
             
-            const firstLine = lines[0].split('@');
-            let namePart = firstLine[0].trim();
+            // Linha 1: Nome (Apelido) @ Item
+            const firstLineParts = lines[0].split('@');
+            let namePart = firstLineParts[0].trim();
             
-            // Lógica para pegar nome correto (ignorando apelidos e genero)
+            // Lógica para separar Apelido de Nome Real
+            // Ex: "Vampiro (Gliscor-M)" -> nome real é Gliscor-M
             if(namePart.includes('(') && namePart.includes(')')) {
                 const match = namePart.match(/\(([^)]+)\)/);
-                if(match) pokemon.name = match[1]; // Nome real (dentro dos parenteses)
+                if(match) pokemon.name = match[1]; // Pega o que tá no parênteses
                 else pokemon.name = namePart;
             } else {
                 pokemon.name = namePart; 
             }
-            // Limpa genero do nome que vai para a API
-            pokemon.name = pokemon.name.replace('(M)','').replace('(F)','').trim();
             
-            // Nome visual (pode ter apelido)
+            // Limpa Genero do nome da API
+            pokemon.name = pokemon.name.replace('(M)','').replace('(F)','').trim();
+            // Nome visual
             pokemon.display = namePart.replace('(M)','').replace('(F)','').trim();
 
-            if(firstLine[1]) pokemon.item = firstLine[1].trim();
+            if(firstLineParts[1]) pokemon.item = firstLineParts[1].trim();
 
+            // Processa resto das linhas
             for(let i=1; i<lines.length; i++) {
                 const l = lines[i].trim();
+                
                 if(l.startsWith('Ability:')) pokemon.ability = l.split(':')[1].trim();
                 else if(l.startsWith('EVs:')) pokemon.evs = l.split(':')[1].trim();
-                else if(l.startsWith('Nature')) pokemon.nature = l.split(' ')[0];
+                else if(l.startsWith('IVs:')) pokemon.ivs = l.split(':')[1].trim(); // <-- ADICIONADO IVs
+                else if(l.includes('Nature')) pokemon.nature = l.split(' ')[0]; // <-- CORRIGIDO NATURE
                 else if(l.startsWith('-')) pokemon.moves.push(l.substring(1).trim());
             }
             team.push(pokemon);
@@ -213,7 +225,7 @@
         container.innerHTML = "";
 
         if(team.length === 0) {
-             container.innerHTML = "<h3 style='color:#888'>Nenhum Pokémon encontrado no código.</h3>";
+             container.innerHTML = "<h3 style='color:#888'>Nenhum Pokémon encontrado.</h3>";
              return;
         }
 
@@ -233,8 +245,9 @@
                     <img src="${POKEAPI_IMG}${apiName}.png" class="main-sprite" onerror="this.src='https://img.pokemondb.net/sprites/items/poke-ball.png'">
                     <div class="info-list">
                         ${pk.ability ? `<div><strong>Ability:</strong> ${pk.ability}</div>` : ''}
-                        ${pk.evs ? `<div><strong>EVs:</strong> ${pk.evs}</div>` : ''}
                         ${pk.nature ? `<div><strong>Nature:</strong> ${pk.nature}</div>` : ''}
+                        ${pk.evs ? `<div><strong>EVs:</strong> ${pk.evs}</div>` : ''}
+                        ${pk.ivs ? `<div><strong>IVs:</strong> ${pk.ivs}</div>` : ''} 
                         ${pk.item ? `<div><strong>Item:</strong> ${pk.item}</div>` : ''}
                     </div>
                 </div>
