@@ -150,7 +150,11 @@
     .card-header-right { display: flex; align-items: center; gap: 8px; }
     .card-tier { background: #252525; color: var(--cor-dourado); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: 1px solid #444; font-weight: bold; }
 
-    .btn-delete-team { background: transparent; border: none; color: #666; font-size: 1.1rem; cursor: pointer; transition: 0.2s; padding: 0 5px; }
+    /* BOTÃO DE APAGAR */
+    .btn-delete-team {
+        background: transparent; border: none; color: #666; font-size: 1.1rem; 
+        cursor: pointer; transition: 0.2s; padding: 0 5px;
+    }
     .btn-delete-team:hover { color: #ff4d4d; transform: scale(1.1); }
 
     .card-icons { 
@@ -171,14 +175,18 @@
     .btn-view:hover { background: var(--cor-dourado); color: #000; }
     
     /* LIKE */
-    .btn-like { background: rgba(255,255,255,0.05); border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #888; font-size: 0.9rem; transition: 0.2s; padding: 6px 12px; border-radius: 20px; }
+    .btn-like {
+        background: rgba(255,255,255,0.05); border: none; cursor: pointer;
+        display: flex; align-items: center; gap: 6px;
+        color: #888; font-size: 0.9rem; transition: 0.2s; padding: 6px 12px; border-radius: 20px;
+    }
     .btn-like:hover { background: rgba(255,255,255,0.1); color: #fff; }
     .btn-like.liked { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
     .heart-icon { font-size: 1.1rem; }
 
     .loading-msg { grid-column: 1/-1; text-align: center; color: #888; padding: 40px; }
 
-    /* --- PAGINAÇÃO (NOVO) --- */
+    /* --- CONTROLES DE PAGINAÇÃO (NOVO) --- */
     .pagination-controls {
         display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 50px;
     }
