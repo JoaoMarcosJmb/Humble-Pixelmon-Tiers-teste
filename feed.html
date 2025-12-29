@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <title>Humble Feed - Times da Comunidade</title>
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 
   <style>
-    /* MESMO CSS ANTERIOR */
     :root { 
       --cor-dourado: #d1a720; 
       --cor-fundo: #111; 
@@ -23,11 +23,12 @@
       color: var(--cor-texto); margin: 0; padding: 0; 
     }
 
+    /* HEADER */
     header { 
       padding: 15px 20px; background: rgba(20,20,20,0.95); 
       border-bottom: 2px solid var(--cor-dourado); display: flex; 
       justify-content: space-between; align-items: center; 
-      position: sticky; top: 0; z-index: 100;
+      position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
     }
     header h1 { margin: 0; font-size: 1.5rem; color: var(--cor-dourado); display: flex; align-items: center; gap: 10px; }
     header h1 img { height: 35px; }
@@ -39,11 +40,13 @@
     }
     .btn-back:hover { background: var(--cor-dourado); color: #000; }
 
+    /* FEED GRID */
     .feed-container {
         max-width: 1000px; margin: 30px auto; padding: 0 15px;
         display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;
     }
 
+    /* CARD DESIGN */
     .feed-card {
         background: var(--cor-card); border: 1px solid #333; border-top: 3px solid var(--cor-dourado);
         border-radius: 8px; padding: 15px; display: flex; flex-direction: column;
@@ -63,7 +66,7 @@
 
     .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; border-top: 1px solid #333; }
     .author-info { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #aaa; }
-    .author-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #444; }
+    .author-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #444; object-fit: cover; }
     
     .btn-view { 
         background: var(--cor-dourado); color: #000; border: none; 
@@ -73,13 +76,26 @@
     .btn-view:hover { filter: brightness(1.1); }
     
     .loading-msg { text-align: center; color: #888; grid-column: 1/-1; margin-top: 50px; }
+
+    /* ESTILO DO LIKE (CORAÇÃO) */
+    .btn-like {
+        background: transparent; border: none; cursor: pointer;
+        display: flex; align-items: center; gap: 5px;
+        color: #888; font-size: 0.9rem; transition: 0.2s; padding: 5px;
+    }
+    .btn-like:hover { transform: scale(1.1); color: #bbb; }
+    .btn-like.liked { color: #ff4d4d; } /* Vermelho se curtiu */
+    .btn-like.liked:hover { color: #ff2222; }
+    
+    .heart-icon { font-size: 1.2rem; line-height: 1; }
+    .like-count { font-size: 0.85rem; font-weight: bold; }
   </style>
 </head>
 <body>
 
 <header>
     <h1><img src="https://i.imgur.com/XOEcuO8.png"> Humble Feed</h1>
-    <a href="builder (15).html" class="btn-back">← Voltar ao Builder</a>
+    <a href="builder.html" class="btn-back">← Voltar ao Builder</a>
 </header>
 
 <div class="feed-container" id="feedContainer">
@@ -88,14 +104,18 @@
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
   import { 
     getDatabase, 
     ref, 
     query, 
     limitToLast,
-    get
+    get,
+    set,
+    remove
   } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+  // Suas credenciais
   const firebaseConfig = {
     apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
     authDomain: "sampleteans.firebaseapp.com",
@@ -108,14 +128,16 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
+  const auth = getAuth(app); // Necessário para saber quem está curtindo
 
   const container = document.getElementById('feedContainer');
 
+  // --- 1. CARREGAR O FEED ---
   async function loadFeed() {
       try {
-          // Busca os últimos 20 times (limitToLast pega os mais recentes porque as chaves são cronológicas)
+          // Pega os últimos 30 times
           const teamsRef = ref(db, 'teams');
-          const recentTeamsQuery = query(teamsRef, limitToLast(20));
+          const recentTeamsQuery = query(teamsRef, limitToLast(30));
           
           const snapshot = await get(recentTeamsQuery);
 
@@ -124,46 +146,61 @@
               return;
           }
 
-          container.innerHTML = ""; // Limpa msg de carregando
+          container.innerHTML = ""; // Limpa mensagem de carregando
           
           const teamsData = [];
+          
+          // O Snapshot retorna um objeto. Vamos transformar em array e guardar o ID (key)
           snapshot.forEach((childSnapshot) => {
-              teamsData.push(childSnapshot.val());
+              const item = childSnapshot.val();
+              item.id = childSnapshot.key; // Guarda o ID único do Firebase
+              teamsData.push(item);
           });
 
-          // O Realtime Database retorna em ordem ascendente (mais velho primeiro)
-          // Precisamos inverter para mostrar o mais novo no topo
+          // Inverte o array para o time mais novo aparecer primeiro
           teamsData.reverse().forEach(data => {
               createCard(data);
           });
 
       } catch (error) {
-          console.error("Erro ao carregar feed:", error);
+          console.error("Erro feed:", error);
           container.innerHTML = `<h3 class='loading-msg' style='color:#ff5555'>Erro ao carregar: ${error.message}</h3>`;
       }
   }
 
+  // --- 2. CRIAR O CARD VISUAL ---
   function createCard(data) {
-      // Gera link para o Paste
+      // Gera link para o visualizador (Paste)
       const encoded = LZString.compressToEncodedURIComponent(data.teamData);
       const pasteLink = `paste.html?import=${encoded}`;
 
-      // Gera HTML dos ícones
+      // Gera os ícones dos Pokémons
       let iconsHtml = '';
       if(data.pokemon && Array.isArray(data.pokemon)) {
           data.pokemon.slice(0, 6).forEach(pokeName => {
+              // Limpeza simples do nome
               let cleanName = pokeName.trim().replace(/ /g, '-').replace(/\./g, '');
-              // Usa pokemondb para ícones confiáveis pelo nome
               const src = `https://img.pokemondb.net/sprites/scarlet-violet/icon/${cleanName}.png`;
               iconsHtml += `<img src="${src}" onerror="this.src='https://img.pokemondb.net/sprites/items/poke-ball.png'" title="${pokeName}">`;
           });
       }
 
+      // Foto do autor ou padrão
+      const authorImg = data.userPhoto || "https://i.imgur.com/XOEcuO8.png";
+
+      // --- LÓGICA DO LIKE VISUAL ---
+      const user = auth.currentUser;
+      const likesObj = data.likes || {}; 
+      const likesCount = Object.keys(likesObj).length; // Conta quantos IDs existem
+      
+      // Verifica se o usuário atual já curtiu
+      const isLiked = user && likesObj[user.uid]; 
+      const likeClass = isLiked ? 'liked' : '';
+      const heartIcon = isLiked ? '❤️' : '🤍'; 
+
       const card = document.createElement('div');
       card.className = 'feed-card';
       
-      const authorImg = data.userPhoto || "https://i.imgur.com/XOEcuO8.png";
-
       card.innerHTML = `
           <div class="card-header">
               <h3 class="card-title">${data.title}</h3>
@@ -177,14 +214,69 @@
                   <img src="${authorImg}" class="author-avatar">
                   <span>${data.author}</span>
               </div>
+              
+              <button class="btn-like ${likeClass}" id="btn-like-${data.id}" onclick="window.handleLike('${data.id}')">
+                <span class="heart-icon">${heartIcon}</span> 
+                <span class="like-count" id="count-${data.id}">${likesCount}</span>
+              </button>
+
               <a href="${pasteLink}" class="btn-view" target="_blank">Ver Time ➔</a>
           </div>
       `;
       container.appendChild(card);
   }
 
-  // Inicia
-  loadFeed();
+  // --- 3. FUNÇÃO DE CLICK NO LIKE ---
+  // Attachamos ao window para poder ser chamada pelo onclick do HTML
+  window.handleLike = async function(teamId) {
+      const user = auth.currentUser;
+      
+      // Se não estiver logado, avisa
+      if(!user) {
+          alert("Você precisa estar logado para curtir!");
+          return;
+      }
+
+      const btn = document.getElementById(`btn-like-${teamId}`);
+      const countSpan = document.getElementById(`count-${teamId}`);
+      const heartSpan = btn.querySelector('.heart-icon');
+      
+      // Caminho no banco: teams -> ID_DO_TIME -> likes -> ID_DO_USUARIO
+      const likeRef = ref(db, `teams/${teamId}/likes/${user.uid}`);
+
+      const isLikedNow = btn.classList.contains('liked');
+      let currentCount = parseInt(countSpan.innerText);
+
+      try {
+          if(isLikedNow) {
+              // REMOVER LIKE (Descurtir)
+              // Apagamos a entrada do banco
+              await remove(likeRef);
+              
+              // Atualiza visual
+              btn.classList.remove('liked');
+              heartSpan.innerText = '🤍';
+              countSpan.innerText = Math.max(0, currentCount - 1);
+          } else {
+              // ADICIONAR LIKE (Curtir)
+              // Gravamos "true" no ID do usuário
+              await set(likeRef, true);
+              
+              // Atualiza visual
+              btn.classList.add('liked');
+              heartSpan.innerText = '❤️';
+              countSpan.innerText = currentCount + 1;
+          }
+      } catch(e) {
+          console.error("Erro ao curtir:", e);
+          alert("Erro ao salvar like. Tente novamente.");
+      }
+  }
+
+  // Inicia o carregamento assim que abrir a página
+  // Aguarda um pequeno delay para garantir que o Auth carregue (opcional, mas bom pra UX do like)
+  setTimeout(loadFeed, 500);
+
 </script>
 
 </body>
