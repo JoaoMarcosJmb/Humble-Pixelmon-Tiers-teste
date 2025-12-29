@@ -439,12 +439,19 @@
 
   // --- CORREÇÃO DE NOMES PARA SPRITES (Showdown Style) ---
 function toShowdownName(rawName) {
+    if (!rawName || typeof rawName !== "string") {
+        console.warn("Nome inválido:", rawName);
+        return "pokeball";
+    }
+
     let name = rawName.toLowerCase().trim();
 
-    // Remove acentos
-    name = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    try {
+        name = name.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    } catch (e) {
+        console.warn("Normalize falhou:", rawName);
+    }
 
-    // Correções manuais importantes
     const manualFix = {
         "mega charizard x": "charizard-megax",
         "mega charizard y": "charizard-megay",
@@ -456,37 +463,17 @@ function toShowdownName(rawName) {
 
     if (manualFix[name]) return manualFix[name];
 
-    // Mega padrão (Mega Blaziken, Mega Kangaskhan etc)
     if (name.startsWith("mega ")) {
-        return name
-            .replace("mega ", "")
-            .replace(/[^a-z0-9]/g, "") + "-mega";
+        return name.replace("mega ", "").replace(/[^a-z0-9]/g, "") + "-mega";
     }
 
-    // Primal padrão
     if (name.startsWith("primal ")) {
-        return name
-            .replace("primal ", "")
-            .replace(/[^a-z0-9]/g, "") + "-primal";
+        return name.replace("primal ", "").replace(/[^a-z0-9]/g, "") + "-primal";
     }
 
-    // Casos que DEVEM manter hífen
-    const keepHyphen = [
-        "ogerpon-", "calyrex-", "urshifu-", "tauros-", "-black"
-        "zygarde-", "basculegion-", "enamorus-",
-        "-hisui", "-galar", "-alola", "-paldea",
-        "-ice", "-shadow", "-rapidstrike", "-single", "-White"
-    ];
-
-    if (keepHyphen.some(k => name.includes(k))) {
-        return name
-            .replace(/ /g, "")
-            .replace(/[.'"]/g, "");
-    }
-
-    // Padrão geral Showdown
     return name.replace(/[^a-z0-9]/g, "");
 }
+
 
   function createCard(data) {
       const encoded = LZString.compressToEncodedURIComponent(data.teamData);
