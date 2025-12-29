@@ -9,7 +9,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 
   <style>
-    /* --- ESTILO VISUAL PADRÃO (Igual ao Builder) --- */
+    /* --- ESTILO VISUAL PADRÃO --- */
     :root { 
       --cor-dourado: #d1a720; 
       --cor-fundo: #111; 
@@ -145,8 +145,17 @@
     .feed-card:hover { transform: translateY(-5px); border-color: #555; }
 
     .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-    .card-title { font-size: 1.2rem; font-weight: bold; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
+    .card-title { font-size: 1.2rem; font-weight: bold; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 65%; }
+    
+    .card-header-right { display: flex; align-items: center; gap: 8px; }
     .card-tier { background: #252525; color: var(--cor-dourado); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: 1px solid #444; font-weight: bold; }
+
+    /* BOTÃO DE APAGAR */
+    .btn-delete-team {
+        background: transparent; border: none; color: #666; font-size: 1.1rem; 
+        cursor: pointer; transition: 0.2s; padding: 0 5px;
+    }
+    .btn-delete-team:hover { color: #ff4d4d; transform: scale(1.1); }
 
     .card-icons { 
         display: flex; gap: 5px; margin-bottom: 20px; background: rgba(0,0,0,0.4); 
@@ -177,7 +186,7 @@
 
     .loading-msg { grid-column: 1/-1; text-align: center; color: #888; padding: 40px; }
 
-    /* MODAL LOGIN (Igual ao Builder) */
+    /* MODAL LOGIN */
     .modal-overlay { 
         position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
         background: rgba(0,0,0,0.85); z-index: 2000; display: none; 
@@ -367,7 +376,6 @@
   async function loadFeed() {
       const container = document.getElementById('feedContainer');
       try {
-          // Busca os últimos 50 times
           const snapshot = await get(query(ref(db, 'teams'), limitToLast(50)));
           if (!snapshot.exists()) { container.innerHTML = "<h3 class='loading-msg'>Nenhum time publicado ainda.</h3>"; return; }
 
@@ -375,7 +383,7 @@
           snapshot.forEach((child) => {
               const item = child.val(); item.id = child.key; allTeamsData.push(item);
           });
-          allTeamsData.reverse(); // Mais novos primeiro
+          allTeamsData.reverse(); 
           window.applyFilters();
       } catch (error) { container.innerHTML = `<h3 class='loading-msg' style='color:#ff5555'>Erro: ${error.message}</h3>`; }
   }
@@ -390,11 +398,31 @@
       const heartIcon = isLiked ? '❤️' : '🤍';
       const authorImg = data.userPhoto || "https://i.imgur.com/XOEcuO8.png";
 
+      // Verifica se é dono para botão de apagar
+      const isOwner = user && data.userId === user.uid;
+      let deleteBtn = '';
+      if(isOwner) {
+          deleteBtn = `<button class="btn-delete-team" onclick="window.deleteTeam('${data.id}')" title="Apagar Time">🗑️</button>`;
+      }
+
       let iconsHtml = '';
       if(data.pokemon) {
           data.pokemon.slice(0,6).forEach(p => {
-              let clean = p.trim().replace(/ /g,'-').replace(/\./g,'');
-              iconsHtml += `<img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/${clean}.png" onerror="this.src='https://img.pokemondb.net/sprites/items/poke-ball.png'" title="${p}">`;
+              // Limpeza para nomes do Showdown (compatível com regionais)
+              let clean = p.trim().toLowerCase()
+                  .replace(/ /g,'-')
+                  .replace(/\./g,'') // mr. mime -> mr mime -> mr-mime
+                  .replace(/'/g,'')  // farfetch'd -> farfetchd
+                  .replace(/%20/g,'-');
+              
+              // Ajuste específico para Mr. Mime e similares se necessário
+              // Showdown Icons: mr-mime-galar.png existe na pasta menu?
+              // Geralmente 'mrmime-galar' ou 'mr-mime-galar'. Vamos manter padrão com traços.
+              
+              // Nova fonte: Showdown Menu Sprites (Melhor para regionais)
+              const src = `https://play.pokemonshowdown.com/sprites/menu/${clean}.png`;
+              
+              iconsHtml += `<img src="${src}" onerror="this.src='https://img.pokemondb.net/sprites/items/poke-ball.png'" title="${p}">`;
           });
       }
 
@@ -402,7 +430,10 @@
       card.innerHTML = `
           <div class="card-header">
               <h3 class="card-title">${data.title}</h3>
-              <span class="card-tier">${data.tier}</span>
+              <div class="card-header-right">
+                  <span class="card-tier">${data.tier}</span>
+                  ${deleteBtn}
+              </div>
           </div>
           <div class="card-icons">${iconsHtml}</div>
           <div class="card-footer">
@@ -422,6 +453,18 @@
       document.getElementById('feedContainer').appendChild(card);
   }
 
+  // --- LÓGICA DE APAGAR ---
+  window.deleteTeam = async function(teamId) {
+      if(!confirm("Tem certeza que deseja apagar este time?")) return;
+      try {
+          await remove(ref(db, `teams/${teamId}`));
+          alert("Time apagado com sucesso.");
+          loadFeed(); // Recarrega para sumir
+      } catch(e) {
+          alert("Erro ao apagar: " + e.message);
+      }
+  }
+
   window.handleLike = async function(teamId) {
       const user = auth.currentUser;
       if(!user) { openLoginModal(); return; }
@@ -437,7 +480,6 @@
           if(isLikedNow) {
               btn.classList.remove('liked'); heartSpan.innerText = '🤍'; countSpan.innerText = Math.max(0, currentCount - 1);
               await remove(likeRef);
-              // Atualiza localmente para filtros não quebrarem
               const t = allTeamsData.find(x => x.id === teamId);
               if(t && t.likes) delete t.likes[user.uid];
           } else {
