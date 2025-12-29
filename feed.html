@@ -9,7 +9,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 
   <style>
-    /* --- VARIÁVEIS & RESET --- */
+    /* --- ESTILO VISUAL PADRÃO --- */
     :root { 
       --cor-dourado: #d1a720; 
       --cor-fundo: #111; 
@@ -26,20 +26,16 @@
       background: var(--cor-fundo); 
       background-image: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,30,20,0.95)), 
                         url("https://i.imgur.com/vATNRmF.png");
-      background-size: cover; 
-      background-attachment: fixed;
-      color: var(--cor-texto); 
-      margin: 0; padding: 0; 
-      min-height: 100vh; 
-      display: flex; flex-direction: column;
+      background-size: cover; background-attachment: fixed;
+      color: var(--cor-texto); margin: 0; padding: 0; 
+      min-height: 100vh; display: flex; flex-direction: column;
     }
 
     /* --- HEADER --- */
     header { 
       height: 60px; padding: 0 20px; flex-shrink: 0;
       display: flex; justify-content: space-between; align-items: center; 
-      background: rgba(20, 20, 20, 0.98); 
-      border-bottom: 2px solid var(--cor-dourado); 
+      background: rgba(20, 20, 20, 0.98); border-bottom: 2px solid var(--cor-dourado); 
       z-index: 1000; position: sticky; top: 0;
       box-shadow: 0 4px 15px rgba(0,0,0,0.6);
     }
@@ -49,7 +45,7 @@
     
     .header-right { display: flex; align-items: center; gap: 15px; }
 
-    /* BOTÕES */
+    /* BOTOES HEADER */
     .btn-create { 
         background: var(--cor-verde); color: #fff; padding: 8px 20px; border-radius: 30px; 
         text-decoration: none; font-weight: bold; transition: 0.3s; 
@@ -63,7 +59,7 @@
     }
     .btn-login-header:hover { background: var(--cor-dourado); color: #000; }
 
-    /* INFO DO USUARIO */
+    /* INFO DO USUARIO NO HEADER */
     .user-header-info { display: none; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 4px 15px; border-radius: 30px; border: 1px solid #444; }
     .header-avatar { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--cor-dourado); object-fit: cover; }
     .header-name { font-size: 0.9rem; font-weight: bold; color: #eee; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -87,12 +83,14 @@
     @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     nav a { color: var(--cor-dourado); text-decoration:none; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:5px; font-weight: 500; }
 
-    /* --- PESQUISA --- */
+    /* --- ÁREA DE PESQUISA (CONTAINER) --- */
     .search-wrapper {
         max-width: 900px; margin: 30px auto 20px; padding: 0 20px;
         display: flex; flex-direction: column; gap: 15px; width: 100%;
     }
+
     .search-bar-row { display: flex; gap: 10px; flex-wrap: wrap; }
+
     .main-search-input {
         flex-grow: 1; background: #222; border: 1px solid #444; color: #fff;
         padding: 12px 20px; border-radius: 30px; font-size: 1rem;
@@ -115,13 +113,14 @@
     .btn-my-teams.active { background: var(--cor-dourado); color: #000; }
     .btn-my-teams:hover { filter: brightness(1.2); }
 
-    /* FILTROS */
+    /* PAINEL DE FILTROS (ESCONDIDO) */
     .filters-panel {
         display: none; background: rgba(30,30,30,0.95); border: 1px solid #444; 
         border-radius: 12px; padding: 20px; gap: 15px; flex-wrap: wrap;
         box-shadow: 0 5px 20px rgba(0,0,0,0.5);
     }
     .filters-panel.show { display: flex; }
+
     .filter-group { flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 5px; }
     .filter-label { font-size: 0.8rem; color: #aaa; margin-left: 5px; }
     .filter-input {
@@ -137,6 +136,7 @@
         justify-content: center;
     }
 
+    /* CARD DESIGN */
     .feed-card {
         background: var(--cor-card); border: 1px solid #333; border-top: 3px solid var(--cor-dourado);
         border-radius: 12px; padding: 20px; display: flex; flex-direction: column;
@@ -146,18 +146,22 @@
 
     .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
     .card-title { font-size: 1.2rem; font-weight: bold; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 65%; }
+    
     .card-header-right { display: flex; align-items: center; gap: 8px; }
     .card-tier { background: #252525; color: var(--cor-dourado); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: 1px solid #444; font-weight: bold; }
 
-    .btn-delete-team { background: transparent; border: none; color: #666; font-size: 1.1rem; cursor: pointer; transition: 0.2s; padding: 0 5px; }
+    /* BOTÃO DE APAGAR */
+    .btn-delete-team {
+        background: transparent; border: none; color: #666; font-size: 1.1rem; 
+        cursor: pointer; transition: 0.2s; padding: 0 5px;
+    }
     .btn-delete-team:hover { color: #ff4d4d; transform: scale(1.1); }
 
-    /* --- SPRITES CORRIGIDOS --- */
     .card-icons { 
-        display: flex; gap: 2px; margin-bottom: 20px; background: rgba(0,0,0,0.4); 
+        display: flex; gap: 5px; margin-bottom: 20px; background: rgba(0,0,0,0.4); 
         padding: 10px; border-radius: 8px; justify-content: center; min-height: 70px; align-items: flex-end;
     }
-    .card-icons img { width: auto; height: auto; max-height: 50px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); image-rendering: pixelated; transition: transform 0.2s; }
+    .card-icons img { width: auto; height: auto; max-height: 50px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); transition: transform 0.2s; }
     .card-icons img:hover { transform: scale(1.2); }
 
     .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid #333; }
@@ -171,14 +175,19 @@
     }
     .btn-view:hover { background: var(--cor-dourado); color: #000; }
     
-    .btn-like { background: rgba(255,255,255,0.05); border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #888; font-size: 0.9rem; transition: 0.2s; padding: 6px 12px; border-radius: 20px; }
+    /* LIKE */
+    .btn-like {
+        background: rgba(255,255,255,0.05); border: none; cursor: pointer;
+        display: flex; align-items: center; gap: 6px;
+        color: #888; font-size: 0.9rem; transition: 0.2s; padding: 6px 12px; border-radius: 20px;
+    }
     .btn-like:hover { background: rgba(255,255,255,0.1); color: #fff; }
     .btn-like.liked { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
     .heart-icon { font-size: 1.1rem; }
 
     .loading-msg { grid-column: 1/-1; text-align: center; color: #888; padding: 40px; }
 
-    /* --- PAGINAÇÃO --- */
+    /* --- CONTROLES DE PAGINAÇÃO --- */
     .pagination-controls {
         display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 50px;
     }
@@ -211,14 +220,18 @@
     <div class="header-left">
         <h1><img src="https://i.imgur.com/XOEcuO8.png"> Humble Feed</h1>
     </div>
+
     <div class="header-right">
         <div id="userHeaderInfo" class="user-header-info desktop-only">
              <img id="headerAvatar" class="header-avatar" src="">
              <span id="headerName" class="header-name">User</span>
              <button onclick="logout()" class="btn-logout-mini" title="Sair">×</button>
         </div>
+
         <button id="btnLoginHeader" class="btn-login-header desktop-only" onclick="openLoginModal()">Entrar</button>
+
         <a href="builder.html" class="btn-create desktop-only"><span>+</span> Publicar</a>
+
         <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
     </div>
 </header>
@@ -247,9 +260,11 @@
             <span class="filter-label">Tier</span>
             <select id="filterTier" class="filter-input" onchange="applyFilters()">
                 <option value="">Todas</option>
-                <option value="OU">OU</option><option value="UU">UU</option><option value="Uber">Uber</option>
-                <option value="National_Dex">National Dex</option><option value="Monotype">Monotype</option>
-                <option value="AG">AG</option>
+                <option value="AG">AG</option><option value="LC">LC</option><option value="Monotype">Monotype</option>
+                <option value="NU">NU</option><option value="National_Dex">National Dex</option>
+                <option value="National_Dex_Monotype">NatDex Monotype</option><option value="National_Dex_Ubers">NatDex Ubers</option>
+                <option value="OU">OU</option><option value="PU">PU</option><option value="RU">RU</option>
+                <option value="UU">UU</option><option value="Uber">Uber</option><option value="ZU">ZU</option>
             </select>
         </div>
         <div class="filter-group">
@@ -287,7 +302,7 @@
 </div>
 
 <script type="module">
- import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
   import { getDatabase, ref, query, limitToLast, get, set, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
@@ -307,157 +322,128 @@
   const provider = new GoogleAuthProvider();
 
   // VARIÁVEIS GLOBAIS
-  let allTeamsData = []; 
-  let filteredTeams = [];
+  let allTeamsData = []; // Armazena todos os times carregados (Cache local)
+  let filteredTeams = []; // Times filtrados para exibição
   let myTeamsMode = false;
-  const ITEMS_PER_PAGE = 12;
+  
+  // PAGINAÇÃO
+  const ITEMS_PER_PAGE = 12; // MÁXIMO DE CARDS POR PÁGINA
   let currentPage = 1;
 
-  // --- UI CONTROLS ---
-  document.getElementById('menuBtn').onclick = () => document.getElementById('menu').classList.toggle('active');
-  window.openModal = () => { document.getElementById('modal').style.display='flex'; document.getElementById('menu').classList.remove('active'); }
-  window.closeModal = () => document.getElementById('modal').style.display='none';
-  window.logout = () => { if(confirm("Deseja sair?")) signOut(auth).then(()=>location.reload()); };
+  // --- MENU & MODAL UI ---
+  const menuBtn = document.getElementById("menuBtn");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+  menuBtn.onclick = () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); };
 
-  window.toggleFilters = () => document.getElementById('filters').classList.toggle('show');
+  window.openLoginModal = () => { document.getElementById('loginModal').style.display = 'flex'; dropdownMenu.classList.remove('active'); menuBtn.classList.remove('active'); }
+  window.closeLoginModal = () => { document.getElementById('loginModal').style.display = 'none'; }
+  window.logout = () => { if(confirm("Deseja sair?")) signOut(auth).then(()=>location.reload()); }
 
-  window.toggleMine = () => {
-      if(!auth.currentUser) return openModal();
+  // --- FILTROS ---
+  window.toggleFilterPanel = () => {
+      document.getElementById('filtersPanel').classList.toggle('show');
+      document.querySelector('.btn-filter-toggle').classList.toggle('active');
+  }
+  window.toggleMyTeams = () => {
+      if(!auth.currentUser) { openLoginModal(); return; }
       myTeamsMode = !myTeamsMode;
-      const btn = document.getElementById('btnMine');
-      if(myTeamsMode) {
-          btn.style.background = 'var(--gold)';
-          btn.style.color = '#000';
-      } else {
-          btn.style.background = 'transparent';
-          btn.style.color = 'var(--gold)';
-      }
-      applyFilters();
-  };
-
+      const btn = document.getElementById('btnMyTeams');
+      myTeamsMode ? btn.classList.add('active') : btn.classList.remove('active');
+      window.applyFilters();
+  }
   window.clearFilters = () => {
-      document.getElementById('search').value=""; 
-      document.getElementById('fPoke').value="";
-      document.getElementById('fTier').value=""; 
-      document.getElementById('fAuth').value="";
-      
-      myTeamsMode = false; 
-      const btn = document.getElementById('btnMine');
-      btn.style.background='transparent'; 
-      btn.style.color='var(--gold)';
-      
-      applyFilters();
+      document.getElementById('searchInput').value = "";
+      document.getElementById('filterPokemon').value = "";
+      document.getElementById('filterTier').value = "";
+      document.getElementById('filterAuthor').value = "";
+      myTeamsMode = false; document.getElementById('btnMyTeams').classList.remove('active');
+      window.applyFilters();
   }
 
-  // --- LÓGICA DE FILTROS ---
+  // --- LÓGICA DE FILTRO E PAGINAÇÃO ---
   window.applyFilters = () => {
-      const s = document.getElementById('search').value.toLowerCase();
-      const p = document.getElementById('fPoke').value.toLowerCase();
-      const t = document.getElementById('fTier').value;
-      const a = document.getElementById('fAuth').value.toLowerCase();
-      const u = auth.currentUser;
+      const searchTxt = document.getElementById('searchInput').value.toLowerCase();
+      const pokeTxt = document.getElementById('filterPokemon').value.toLowerCase();
+      const tierVal = document.getElementById('filterTier').value;
+      const authorTxt = document.getElementById('filterAuthor').value.toLowerCase();
+      const currentUser = auth.currentUser;
 
-      filteredTeams = allTeamsData.filter(d => {
-          const okTitle = (d.title||"").toLowerCase().includes(s);
-          const okTier = !t || d.tier === t;
-          const okAuth = (d.author||"").toLowerCase().includes(a);
-          
-          let okPoke = true;
-          if(p) {
-              if(!d.pokemon) okPoke = false;
-              else okPoke = d.pokemon.some(x => x.toLowerCase().includes(p));
+      filteredTeams = allTeamsData.filter(data => {
+          const titleMatch = (data.title || "").toLowerCase().includes(searchTxt);
+          const tierMatch = !tierVal || (data.tier === tierVal);
+          const authorMatch = (data.author || "").toLowerCase().includes(authorTxt);
+          let pokeMatch = true;
+          if(pokeTxt) {
+              if(!data.pokemon) pokeMatch = false;
+              else pokeMatch = data.pokemon.some(p => p.toLowerCase().includes(pokeTxt));
           }
-
-          let okMine = true;
-          if(myTeamsMode && u) okMine = (d.userId === u.uid);
-
-          return okTitle && okTier && okAuth && okPoke && okMine;
+          let myTeamMatch = true;
+          if(myTeamsMode && currentUser) myTeamMatch = (data.userId === currentUser.uid);
+          return titleMatch && tierMatch && authorMatch && pokeMatch && myTeamMatch;
       });
 
-      currentPage = 1; 
+      // Reseta para a primeira página sempre que filtrar
+      currentPage = 1;
       renderCurrentPage();
-  };
+  }
 
-  // --- RENDERIZAÇÃO E PAGINAÇÃO ---
   function renderCurrentPage() {
-      const el = document.getElementById('feed'); 
-      el.innerHTML="";
+      const container = document.getElementById('feedContainer');
+      container.innerHTML = "";
 
-      if(!filteredTeams.length) { 
-          el.innerHTML="<h3 style='grid-column:1/-1; text-align:center; color:#888;'>Nada encontrado.</h3>"; 
-          updatePaginationControls(); 
-          return; 
+      if(filteredTeams.length === 0) {
+          container.innerHTML = "<h3 class='loading-msg'>Nenhum time encontrado.</h3>";
+          updatePaginationControls();
+          return;
       }
-      
-      const start = (currentPage - 1) * ITEMS_PER_PAGE;
-      const slice = filteredTeams.slice(start, start + ITEMS_PER_PAGE);
-      
-      slice.forEach(d => createCard(d));
+
+      // Lógica de "fatiar" o array para mostrar só 12
+      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+      const endIndex = startIndex + ITEMS_PER_PAGE;
+      const pageItems = filteredTeams.slice(startIndex, endIndex);
+
+      pageItems.forEach(data => createCard(data));
       updatePaginationControls();
   }
 
   function updatePaginationControls() {
-      const total = Math.ceil(filteredTeams.length / ITEMS_PER_PAGE) || 1;
-      document.getElementById('pInfo').innerText = `${currentPage} / ${total}`;
-      document.getElementById('prev').disabled = (currentPage === 1);
-      document.getElementById('next').disabled = (currentPage === total);
+      const totalPages = Math.ceil(filteredTeams.length / ITEMS_PER_PAGE) || 1;
+      document.getElementById('pageInfo').innerText = `Página ${currentPage} de ${totalPages}`;
+      
+      // Desabilita botões se estiver no começo ou fim
+      document.getElementById('btnPrev').disabled = (currentPage === 1);
+      document.getElementById('btnNext').disabled = (currentPage === totalPages);
   }
 
-  window.changePage = (dir) => { 
-      const total = Math.ceil(filteredTeams.length / ITEMS_PER_PAGE);
-      if((dir === -1 && currentPage > 1) || (dir === 1 && currentPage < total)) {
-          currentPage += dir;
-          renderCurrentPage();
-          window.scrollTo(0,0);
-      }
-  };
+  window.prevPage = () => { if(currentPage > 1) { currentPage--; renderCurrentPage(); window.scrollTo(0,0); } }
+  window.nextPage = () => { 
+      const totalPages = Math.ceil(filteredTeams.length / ITEMS_PER_PAGE);
+      if(currentPage < totalPages) { currentPage++; renderCurrentPage(); window.scrollTo(0,0); } 
+  }
 
-  // --- TRATAMENTO DE NOMES (CORREÇÃO DE SPRITES) ---
+  // --- CARREGAMENTO INICIAL ---
+  async function loadFeed() {
+      const container = document.getElementById('feedContainer');
+      try {
+          // Carrega os últimos 150 times (para ter uma base boa no cache)
+          const snapshot = await get(query(ref(db, 'teams'), limitToLast(150)));
+          if (!snapshot.exists()) { container.innerHTML = "<h3 class='loading-msg'>Nenhum time publicado ainda.</h3>"; return; }
+          container.innerHTML = ""; allTeamsData = [];
+          snapshot.forEach((child) => {
+              const item = child.val(); item.id = child.key; allTeamsData.push(item);
+          });
+          allTeamsData.reverse(); 
+          window.applyFilters();
+      } catch (error) { container.innerHTML = `<h3 class='loading-msg' style='color:#ff5555'>Erro: ${error.message}</h3>`; }
+  }
+
+  // --- CORREÇÃO DE NOMES PARA SPRITES (Showdown Style) ---
   function toShowdownName(rawName) {
       let name = rawName.trim().toLowerCase();
-      // Remove tudo que não for letra/número (Padrão gen5 showdown)
+      // Remove tudo que não for letra ou número (Padrão Showdown)
+      // Ex: "Ogerpon-Wellspring" -> "ogerponwellspring"
+      // Ex: "Tauros-Paldea-Blaze" -> "taurospaldeablaze"
       name = name.replace(/[^a-z0-9]/g, ''); 
-      
-      // Mapeamento MANUAL para corrigir nomes que o Showdown salva diferente
-      const manualFixes = {
-          "taurospaldea": "taurospaldeacombat",
-          "taurospaldeafire": "taurospaldeablaze",
-          "taurospaldeawater": "taurospaldeaaqua",
-          "urshifu": "urshifusinglestrike",
-          "urshifurapid": "urshifurapidstrike",
-          "lycanroc": "lycanrocmidday",
-          "basculin": "basculinredstriped",
-          "wormadam": "wormadamplant",
-          "shaymin": "shayminland",
-          "giratina": "giratinaaltered",
-          "tornadus": "tornadusincarnate",
-          "thundurus": "thundurusincarnate",
-          "landorus": "landorusincarnate",
-          "enamorus": "enamorusincarnate",
-          "meloetta": "meloettaaria",
-          "aegislash": "aegislashshield",
-          "pumpkaboo": "pumpkabooaverage",
-          "gourgeist": "gourgeistaverage",
-          "zygarde": "zygarde50",
-          "mimikyu": "mimikyudisguised",
-          "toxtricity": "toxtricityamped",
-          "eiscue": "eiscueice",
-          "indeedee": "indeedeemale",
-          "morpeko": "morpekofullbelly",
-          "zacian": "zacianhero",
-          "zamazenta": "zamazentahero",
-          "calyrexice": "calyrexicerider",
-          "calyrexshadow": "calyrexshadowrider",
-          "ogerpon": "ogerponteal",
-          "ogerpontealmask": "ogerponteal",
-          "tatsugiri": "tatsugiricurly",
-          "dudunsparce": "dudunsparcetwosegment",
-          "palafin": "palafinzero",
-          "maushold": "mausholdfamilyoffour",
-          "gimmighoul": "gimmighoulchest"
-      };
-
-      if(manualFixes[name]) return manualFixes[name];
       return name;
   }
 
@@ -472,116 +458,105 @@
       const authorImg = data.userPhoto || "https://i.imgur.com/XOEcuO8.png";
 
       const isOwner = user && data.userId === user.uid;
-      const deleteBtn = isOwner ? `<button class="btn-del" onclick="window.delT('${data.id}')" title="Apagar">🗑️</button>` : '';
+      const deleteBtn = isOwner ? `<button class="btn-delete-team" onclick="window.deleteTeam('${data.id}')" title="Apagar Time">🗑️</button>` : '';
 
       let iconsHtml = '';
       if(data.pokemon) {
           data.pokemon.slice(0,6).forEach(p => {
               const cleanName = toShowdownName(p);
+              // SPRITES ESTÁTICOS DO SHOWDOWN (GEN 5)
               const src = `https://play.pokemonshowdown.com/sprites/gen5/${cleanName}.png`;
               
               iconsHtml += `<img src="${src}" onerror="this.src='https://img.pokemondb.net/sprites/items/poke-ball.png'" title="${p}">`;
           });
       }
 
-      const card = document.createElement('div'); card.className = 'card';
+      const card = document.createElement('div'); card.className = 'feed-card';
       card.innerHTML = `
-          <div class="c-head">
-              <h3 class="c-title">${data.title}</h3>
-              <div style="display:flex; align-items:center; gap:5px;">
-                  <span class="c-tier">${data.tier}</span>${deleteBtn}
+          <div class="card-header">
+              <h3 class="card-title">${data.title}</h3>
+              <div class="card-header-right">
+                  <span class="card-tier">${data.tier}</span>
+                  ${deleteBtn}
               </div>
           </div>
-          <div class="c-sprites">${iconsHtml}</div>
-          <div class="c-foot">
-              <div class="c-auth">
-                  <img src="${authorImg}">
+          <div class="card-icons">${iconsHtml}</div>
+          <div class="card-footer">
+              <div class="author-info">
+                  <img src="${authorImg}" class="author-avatar">
                   <span>${data.author}</span>
               </div>
-              <div style="display:flex; gap:10px;">
-                  <button class="btn-like ${likeClass}" onclick="window.like('${data.id}')">
-                    ${heartIcon} ${likesCount}
+              <div style="display:flex; gap:10px; align-items:center;">
+                  <button class="btn-like ${likeClass}" id="btn-like-${data.id}" onclick="window.handleLike('${data.id}')">
+                    <span class="heart-icon">${heartIcon}</span> 
+                    <span class="like-count" id="count-${data.id}">${likesCount}</span>
                   </button>
-                  <a href="${pasteLink}" class="btn btn-outline" style="font-size:0.8rem; padding:4px 10px;">Ver</a>
+                  <a href="${pasteLink}" class="btn-view" target="_blank">Ver Time</a>
               </div>
           </div>
       `;
-      document.getElementById('feed').appendChild(card);
+      document.getElementById('feedContainer').appendChild(card);
   }
 
-  // --- AÇÕES DO USUÁRIO ---
-  window.delT = async (id) => {
-      if(confirm("Apagar este time?")) { 
-          try { await remove(ref(db, `teams/${id}`)); alert("Feito."); load(); } 
-          catch(e) { alert("Erro: "+e.message); } 
-      }
-  };
-
-  window.like = async (id) => {
-      const u = auth.currentUser; if(!u) return openModal();
-      const r = ref(db, `teams/${id}/likes/${u.uid}`);
-      const t = allTeamsData.find(x => x.id === id);
-      const isL = t.likes && t.likes[u.uid];
-      
+  // --- ACTIONS ---
+  window.deleteTeam = async function(teamId) {
+      if(!confirm("Apagar este time?")) return;
+      try { await remove(ref(db, `teams/${teamId}`)); alert("Time apagado."); loadFeed(); } catch(e) { alert("Erro: "+e.message); }
+  }
+  window.handleLike = async function(teamId) {
+      const user = auth.currentUser;
+      if(!user) { openLoginModal(); return; }
+      const btn = document.getElementById(`btn-like-${teamId}`);
+      const countSpan = document.getElementById(`count-${teamId}`);
+      const heartSpan = btn.querySelector('.heart-icon');
+      const likeRef = ref(db, `teams/${teamId}/likes/${user.uid}`);
+      const isLikedNow = btn.classList.contains('liked');
+      let currentCount = parseInt(countSpan.innerText);
       try {
-          // Atualização Otimista
-          if(isL) { await remove(r); if(t.likes) delete t.likes[u.uid]; }
-          else { await set(r, true); if(!t.likes) t.likes={}; t.likes[u.uid]=true; }
-          renderCurrentPage(); 
-      } catch(e){ console.error(e); }
-  };
-
-  // --- CARREGAMENTO INICIAL ---
-  async function load() {
-      try {
-          // Carrega os últimos 200 times
-          const snap = await get(query(ref(db,'teams'), limitToLast(200)));
-          if(!snap.exists()) { document.getElementById('feed').innerHTML="<h3 style='text-align:center; color:#888'>Vazio...</h3>"; return; }
-          allTeamsData = []; 
-          snap.forEach(c => { let v=c.val(); v.id=c.key; allTeamsData.push(v); });
-          allTeamsData.reverse(); 
-          applyFilters();
-      } catch(e) { console.error(e); }
+          if(isLikedNow) {
+              btn.classList.remove('liked'); heartSpan.innerText = '🤍'; countSpan.innerText = Math.max(0, currentCount - 1);
+              await remove(likeRef);
+              const t = allTeamsData.find(x => x.id === teamId); if(t && t.likes) delete t.likes[user.uid];
+          } else {
+              btn.classList.add('liked'); heartSpan.innerText = '❤️'; countSpan.innerText = currentCount + 1;
+              await set(likeRef, true);
+              const t = allTeamsData.find(x => x.id === teamId); if(t) { if(!t.likes) t.likes={}; t.likes[user.uid]=true; }
+          }
+      } catch(e) { console.error("Erro like", e); }
   }
 
-  // --- AUTHENTICATION ---
-  const p = new GoogleAuthProvider();
-  document.getElementById('doGoogle').onclick = () => signInWithPopup(auth, p).then(closeModal).catch(e=>alert(e.message));
-  document.getElementById('doLogin').onclick = () => {
-      const e = document.getElementById('mEmail').value; 
-      const ps = document.getElementById('mPass').value;
-      if(e && ps) signInWithEmailAndPassword(auth, e, ps).then(closeModal).catch(er=>alert(er.message));
+  // AUTH
+  document.getElementById('modalBtnGoogle').onclick = () => signInWithPopup(auth, provider).then(()=>closeLoginModal()).catch(e=>alert(e.message));
+  document.getElementById('modalBtnLogin').onclick = () => {
+      const e = document.getElementById('modalEmail').value; const p = document.getElementById('modalPass').value;
+      if(e && p) signInWithEmailAndPassword(auth, e, p).then(()=>closeLoginModal()).catch(er=>alert(er.message));
   };
-  document.getElementById('doReg').onclick = () => {
-      const e = document.getElementById('mEmail').value; 
-      const ps = document.getElementById('mPass').value;
-      if(ps.length < 6) return alert("Senha curta");
-      createUserWithEmailAndPassword(auth, e, ps).then(async c => {
-          const n = prompt("Seu Nick:"); 
-          if(n) await updateProfile(c.user, {displayName:n}); 
-          closeModal(); location.reload();
+  document.getElementById('modalBtnRegister').onclick = () => {
+      const e = document.getElementById('modalEmail').value; const p = document.getElementById('modalPass').value;
+      if(p.length<6) return alert("Senha curta");
+      createUserWithEmailAndPassword(auth, e, p).then(async (c)=>{
+          const nick=prompt("Nick:"); if(nick) await updateProfile(c.user,{displayName:nick}); closeLoginModal(); location.reload();
       }).catch(er=>alert(er.message));
   };
 
-  onAuthStateChanged(auth, u => {
-      const hL = document.getElementById('hLogin');
-      const uI = document.getElementById('uInfo');
-      const mL = document.getElementById('mobLogin');
-      const mO = document.getElementById('mobLogout');
-
-      if(u) {
-          hL.style.display = 'none'; uI.style.display = 'flex';
-          mL.style.display = 'none'; mO.style.display = 'block';
-          document.getElementById('uImg').src = u.photoURL || "https://i.imgur.com/XOEcuO8.png";
-          document.getElementById('uNick').innerText = u.displayName || "Treinador";
+  onAuthStateChanged(auth, (user) => {
+      const loginBtn = document.getElementById('btnLoginHeader');
+      const userInfo = document.getElementById('userHeaderInfo');
+      const mobileLogin = document.getElementById('mobileLoginLink');
+      const mobileLogout = document.getElementById('mobileLogoutLink');
+      if(user) {
+          loginBtn.style.display='none'; userInfo.style.display='flex';
+          document.getElementById('headerAvatar').src = user.photoURL || "https://i.imgur.com/XOEcuO8.png";
+          document.getElementById('headerName').innerText = user.displayName || "Treinador";
+          mobileLogin.style.display='none'; mobileLogout.style.display='block';
       } else {
-          hL.style.display = 'block'; uI.style.display = 'none';
-          mL.style.display = 'block'; mO.style.display = 'none';
+          loginBtn.style.display='block'; userInfo.style.display='none';
+          mobileLogin.style.display='block'; mobileLogout.style.display='none';
       }
-      if(allTeamsData.length > 0) renderCurrentPage();
+      if(allTeamsData.length > 0) window.applyFilters();
   });
 
-  setTimeout(load, 500);
+  setTimeout(loadFeed, 500);
 </script>
 
 </body>
