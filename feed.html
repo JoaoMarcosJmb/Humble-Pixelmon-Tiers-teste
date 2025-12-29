@@ -3,48 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Humble Feed - Times da Comunidade</title>
+  <title>Humble Builder - Criar Time</title>
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
-  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
-
   <style>
+    /* --- ESTILO VISUAL NOVO --- */
     :root { 
       --cor-dourado: #d1a720; 
       --cor-fundo: #111; 
-      --cor-card: #1e1e1e;
+      --cor-painel: #1a1a1a;
       --cor-texto: #f5f5f5; 
-      --cor-verde: #28a745;
-      --cor-input: #2a2a2a;
+      --cor-input: #252525; 
       --cor-borda: #444;
+      --cor-verde: #28a745;
     }
+    * { box-sizing: border-box; }
+    
     body { 
       font-family: "Segoe UI", Arial, sans-serif; 
       background: var(--cor-fundo); 
-      background-image: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,30,20,0.95)), 
-                        url("https://i.imgur.com/vATNRmF.png");
-      background-size: cover; background-attachment: fixed;
-      color: var(--cor-texto); margin: 0; padding: 0; 
-    }
-
-    /* --- HEADER --- */
-    header { 
-      height: 70px; padding: 0 20px; 
-      background: rgba(20,20,20,0.98); 
-      border-bottom: 2px solid var(--cor-dourado); 
-      display: flex; justify-content: space-between; align-items: center; 
-      position: sticky; top: 0; z-index: 100; 
-      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
-      backdrop-filter: blur(10px);
+      margin: 0; padding: 0; color: var(--cor-texto); 
+      height: 100vh; overflow: hidden; 
+      display: flex; flex-direction: column;
     }
     
-    .header-left { display: flex; align-items: center; gap: 15px; }
-    header h1 { margin: 0; font-size: 1.4rem; color: var(--cor-dourado); display: flex; align-items: center; gap: 10px; }
+    /* HEADER */
+    header { 
+      height: 60px; padding: 0 20px; flex-shrink: 0;
+      display: flex; justify-content: space-between; align-items: center; 
+      background: rgba(20, 20, 20, 0.98); border-bottom: 2px solid var(--cor-dourado); 
+      z-index: 1000;
+    }
+    header h1 { font-size: 1.4rem; color: var(--cor-dourado); display: flex; gap: 10px; margin: 0; align-items: center; }
     header h1 img { height: 35px; }
+    header a { text-decoration: none; color: inherit; display:flex; align-items:center; gap:10px; }
 
     .header-right { display: flex; align-items: center; gap: 15px; }
-
-    /* MENU HAMBURGUER */
     .menu-toggle { display: flex; flex-direction: column; width: 30px; gap: 6px; cursor: pointer; z-index: 1300; }
     .menu-toggle span { display: block; height: 3px; background: var(--cor-texto); border-radius: 4px; transition: 0.3s; }
     .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
@@ -52,269 +46,782 @@
     .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
 
     nav { 
-        position: absolute; top: 70px; right: 20px; 
+        position: absolute; top: 60px; right: 20px; 
         background: rgba(30, 25, 20, 0.98); border: 1px solid var(--cor-dourado); 
         border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.8); 
         display: none; flex-direction: column; padding: 15px; gap: 12px; 
         z-index: 1200; width: 220px; 
     }
-    nav.active { display: flex; animation: slideDown 0.3s ease; }
-    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-    nav a { color: var(--cor-dourado); text-decoration:none; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:5px; font-weight: 500; }
-    nav a:hover { color: #fff; border-bottom-color: var(--cor-dourado); }
+    nav.active { display: flex; }
+    nav a { color: var(--cor-dourado); text-decoration:none; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:5px; }
 
-    /* BOTÕES HEADER */
-    .btn-create { 
-        background: var(--cor-verde); color: #fff; padding: 8px 20px; border-radius: 30px; 
-        text-decoration: none; font-weight: bold; transition: 0.3s; 
-        display: flex; align-items: center; gap: 8px; font-size: 0.9rem;
-        box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3); border: 1px solid #218838;
+    /* LAYOUT */
+    .main-container { display: flex; flex-grow: 1; overflow: hidden; width: 100%; }
+
+    /* SIDEBAR */
+    .sidebar {
+        width: 320px; background: #181818; border-right: 1px solid #333;
+        display: flex; flex-direction: column; flex-shrink: 0; transition: transform 0.3s ease;
     }
-    .btn-create:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(40, 167, 69, 0.5); background: #34ce57; }
-
-    .btn-login-header {
-        background: transparent; border: 1px solid var(--cor-dourado); color: var(--cor-dourado);
-        padding: 8px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; transition: 0.3s;
-    }
-    .btn-login-header:hover { background: var(--cor-dourado); color: #000; }
-
-    .user-header-info { display: none; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 5px 15px; border-radius: 30px; border: 1px solid #444; }
-    .header-avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--cor-dourado); object-fit: cover; }
-    .header-name { font-size: 0.9rem; font-weight: bold; color: #eee; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .btn-logout-mini { background: none; border: none; color: #ff5555; cursor: pointer; font-size: 1.1rem; padding: 0; display: flex; align-items: center; }
-
-    /* HERO */
-    .hero-section {
-        text-align: center; padding: 40px 20px 20px;
-        background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
-    }
-    .hero-title { font-size: 2.2rem; color: #fff; margin: 0 0 10px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-    .hero-subtitle { color: #bbb; font-size: 1rem; max-width: 600px; margin: 0 auto; }
-
-    /* --- BARRA DE PESQUISA E FILTROS (NOVO) --- */
-    .search-wrapper {
-        max-width: 800px; margin: 20px auto 40px; padding: 0 20px;
-        display: flex; flex-direction: column; gap: 15px;
-    }
-
-    .search-bar-row {
-        display: flex; gap: 10px;
-    }
-
-    .main-search-input {
-        flex-grow: 1; background: #222; border: 1px solid #444; color: #fff;
-        padding: 12px 20px; border-radius: 30px; font-size: 1rem;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.3); outline: none; transition: 0.3s;
-    }
-    .main-search-input:focus { border-color: var(--cor-dourado); background: #2a2a2a; }
-
-    .btn-filter-toggle {
-        background: #333; color: #ddd; border: 1px solid #444;
-        padding: 0 20px; border-radius: 30px; cursor: pointer; font-weight: bold;
-        display: flex; align-items: center; gap: 8px; transition: 0.2s;
-    }
-    .btn-filter-toggle:hover, .btn-filter-toggle.active { background: #444; color: var(--cor-dourado); border-color: var(--cor-dourado); }
-
-    /* Painel de Filtros Avançados */
-    .filters-panel {
-        display: none; /* Oculto por padrão */
-        background: rgba(30,30,30,0.9); border: 1px solid #444; border-radius: 12px;
-        padding: 15px; gap: 10px; flex-wrap: wrap; justify-content: space-between;
-        animation: slideDownFade 0.3s ease;
-    }
-    @keyframes slideDownFade { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    .sidebar-header { padding: 15px; border-bottom: 1px solid #333; background: #202020; }
     
-    .filters-panel.show { display: flex; }
+    .auth-container { background: #252525; padding: 10px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #333; }
+    .auth-title { font-size: 0.8rem; color: #888; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; }
+    .login-input { width: 100%; background: #111; border: 1px solid #444; color: #fff; padding: 6px; margin-bottom: 5px; border-radius: 4px; }
+    .btn-auth { width: 100%; padding: 6px; cursor: pointer; border-radius: 4px; border: none; font-weight: bold; margin-top: 2px; }
+    .btn-login { background: var(--cor-dourado); color: #000; }
+    .btn-register { background: #444; color: #fff; margin-top: 5px; }
 
-    .filter-group { flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 5px; }
-    .filter-label { font-size: 0.8rem; color: #aaa; margin-left: 5px; }
+    .user-profile-mini { display: flex; align-items: center; gap: 10px; padding: 5px; background: #252525; border-radius: 6px; border: 1px solid var(--cor-dourado); }
+    .user-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: cover; border: 1px solid #555; }
+    .user-details { flex-grow: 1; overflow: hidden; }
+    .user-nick { color: var(--cor-dourado); font-weight: bold; font-size: 0.9rem; }
+    .btn-logout { background: none; border: none; color: #ff5555; cursor: pointer; font-size: 1.2rem; }
+
+    .btn-new-team { width: 100%; padding: 12px; background: var(--cor-verde); color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+    .btn-new-team:hover { filter: brightness(1.1); }
+
+    .team-list { flex-grow: 1; overflow-y: auto; padding: 10px; }
+    .sidebar-card { background: #2a2a2a; border: 1px solid #444; border-radius: 6px; padding: 10px; margin-bottom: 8px; cursor: pointer; position: relative; }
+    .sidebar-card:hover { border-color: #666; background: #333; }
+    .sidebar-card.active { border-color: var(--cor-dourado); background: #3a3320; }
+    .card-title { font-weight: bold; color: #fff; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 25px; }
+    .card-meta { font-size: 0.75rem; color: #888; margin-bottom: 5px; }
+    .card-icons { height: 25px; overflow: hidden; display: flex; gap: 2px; }
+    .card-icons img { width: 25px; height: 25px; object-fit: contain; }
+    .btn-del-card { position: absolute; top: 5px; right: 5px; background: none; border: none; color: #666; font-size: 1.2rem; cursor: pointer; }
+    .btn-del-card:hover { color: #ff5555; }
+
+    /* BUILDER AREA */
+    .builder-area {
+        flex-grow: 1;
+        background: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,30,20,0.95)), 
+                    url("https://i.imgur.com/vATNRmF.png");
+        background-size: cover; overflow-y: auto; padding: 20px; display: flex; flex-direction: column;
+    }
+    .builder-wrapper { width: 100%; max-width: 1200px; margin: 0 auto; }
+
+    .toolbar {
+      display: flex; flex-wrap: wrap; gap: 15px; justify-content: space-between; align-items: center; margin-bottom: 15px;
+      background: rgba(30,30,30,0.95); padding: 15px; border-radius: 8px; border: 1px solid var(--cor-borda);
+    }
+    .toolbar-inputs { flex-grow: 1; display: flex; flex-direction: column; gap: 8px; min-width: 250px; }
     
-    .filter-input {
-        background: #1a1a1a; border: 1px solid #555; color: #eee;
-        padding: 8px 12px; border-radius: 6px; width: 100%; font-size: 0.9rem;
+    .styled-input {
+        background: transparent; border: none; border-bottom: 2px solid #444;
+        color: #fff; padding: 5px; width: 100%; transition: 0.3s;
     }
-    .filter-input:focus { border-color: var(--cor-dourado); outline: none; }
-
-    /* Botão Meus Times */
-    .btn-my-teams {
-        background: transparent; border: 1px solid var(--cor-dourado); color: var(--cor-dourado);
-        padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: bold;
-        transition: 0.2s; white-space: nowrap;
-    }
-    .btn-my-teams.active { background: var(--cor-dourado); color: #000; }
-    .btn-my-teams:hover { filter: brightness(1.2); }
-
-    /* GRID */
-    .feed-container {
-        max-width: 1200px; margin: 0 auto 60px; padding: 0 20px;
-        display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;
-        justify-content: center;
-    }
-
-    /* CARD */
-    .feed-card {
-        background: var(--cor-card); border: 1px solid #333; border-top: 4px solid var(--cor-dourado);
-        border-radius: 12px; padding: 20px; display: flex; flex-direction: column;
-        transition: transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden;
-    }
-    .feed-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.5); border-color: #555; }
-
-    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-    .card-title { font-size: 1.2rem; font-weight: bold; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
-    .card-tier { background: #252525; color: var(--cor-dourado); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: 1px solid #444; font-weight: bold; letter-spacing: 0.5px; }
-
-    .card-icons { 
-        display: flex; gap: 5px; margin-bottom: 20px; background: rgba(0,0,0,0.4); 
-        padding: 10px; border-radius: 8px; justify-content: center; min-height: 60px; align-items: center;
-    }
-    .card-icons img { width: 40px; height: 40px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); transition: 0.2s; }
-    .card-icons img:hover { transform: scale(1.2); }
-
-    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid #333; }
-    .author-info { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #ccc; }
-    .author-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #333; object-fit: cover; }
+    .styled-input:focus { outline: none; border-bottom-color: var(--cor-dourado); }
+    .input-title { font-size: 1.4rem; font-weight: bold; }
+    .input-author { font-size: 0.9rem; color: #aaa; }
     
-    .btn-view { 
-        background: transparent; color: var(--cor-dourado); border: 1px solid var(--cor-dourado);
-        padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; 
-        text-decoration: none; font-size: 0.85rem; transition: 0.2s;
-    }
-    .btn-view:hover { background: var(--cor-dourado); color: #000; }
-    
-    .btn-like {
-        background: rgba(255,255,255,0.05); border: none; cursor: pointer;
-        display: flex; align-items: center; gap: 6px;
-        color: #888; font-size: 0.9rem; transition: 0.2s; padding: 6px 12px; border-radius: 20px;
-    }
-    .btn-like:hover { background: rgba(255,255,255,0.1); color: #fff; }
-    .btn-like.liked { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
-    .heart-icon { font-size: 1.1rem; }
+    .toolbar-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .tier-select { background: #111; color: var(--cor-dourado); border: 1px solid #555; padding: 8px; border-radius: 4px; font-weight: bold; height: 38px; cursor: pointer; }
 
-    .loading-container { grid-column: 1/-1; display: flex; justify-content: center; padding: 50px; flex-direction: column; align-items: center; gap: 15px; }
-    .spinner {
-        width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1);
-        border-top-color: var(--cor-dourado); border-radius: 50%;
-        animation: spin 1s linear infinite;
+    .btn-action { padding: 8px 16px; border-radius: 4px; border: none; cursor: pointer; font-weight: bold; display: flex; align-items: center; gap: 5px; height: 38px; font-size: 0.9rem; }
+    .btn-link { background: #4a5568; color: #fff; }
+    .btn-publish { background: #805ad5; color: #fff; }
+    .btn-save { background: var(--cor-verde); color: #fff; }
+    .btn-import { background: #444; color: #fff; border: 1px solid #666; }
+    .btn-validate { background: #17a2b8; color: #fff; }
+    .btn-action:hover { filter: brightness(1.1); transform: translateY(-1px); }
+
+    /* ABAS */
+    .tabs-wrapper { display: flex; gap: 5px; margin-bottom: -1px; z-index: 10; padding-left: 10px; flex-wrap: wrap; align-items: flex-end; }
+    .tab-slot {
+        width: 60px; height: 45px; background: #222; border: 1px solid #444; 
+        border-radius: 8px 8px 0 0; display: flex; justify-content: center; align-items: center;
+        cursor: pointer; opacity: 0.6; position: relative;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    .tab-slot.active { opacity: 1; background: rgba(30,30,30,0.95); border-bottom: 1px solid rgba(30,30,30,0.95); border-color: var(--cor-dourado); height: 50px; z-index: 20; }
+    .tab-slot img { width: 30px; height: 30px; pointer-events: none; }
+    .tab-close { position: absolute; top: 0; right: 2px; font-size: 14px; display: none; color: #ff5555; }
+    .tab-slot:hover .tab-close { display: block; }
+    .add-tab-btn { width: 40px; height: 40px; background: transparent; border: 1px dashed #666; color: #888; font-size: 1.5rem; cursor: pointer; }
+
+    .editor-container-wrapper {
+        background: rgba(30, 30, 30, 0.95); border: 1px solid var(--cor-dourado); border-radius: 8px; 
+        padding: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); min-height: 550px;
+    }
+
+    /* EDITOR INTERNO */
+    .poke-editor { display: none; }
+    .poke-editor.active { display: block; animation: fadeIn 0.3s; }
+    @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+
+    .editor-layout { display: flex; flex-wrap: wrap; gap: 20px; }
+    .left-panel { width: 200px; flex-shrink: 0; }
+    .visual-large-box { 
+        width: 100%; height: 160px; background: rgba(0,0,0,0.3); border: 1px solid #444; border-radius: 12px; 
+        display: flex; justify-content: center; align-items: center; margin-bottom: 10px;
+    }
+    .poke-sprite-large { width: 130px; height: 130px; object-fit: contain; filter: drop-shadow(0 5px 10px rgba(0,0,0,0.5)); }
+
+    /* STATS BARS */
+    .base-stats-panel { background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; border: 1px solid #444; font-size: 0.8rem; }
+    .stat-bar-row { display: flex; align-items: center; margin-bottom: 4px; gap: 5px; }
+    .stat-name { width: 25px; font-weight: bold; color: #888; }
+    .stat-val-base { width: 25px; text-align: center; color: #aaa; }
+    .bar-track { flex-grow: 1; background: #222; height: 6px; border-radius: 3px; overflow: hidden; }
+    .bar-fill { height: 100%; width: 0%; border-radius: 3px; transition: width 0.3s; }
+    .bar-hp { background: #FF5959; } .bar-atk { background: #F5AC78; } .bar-def { background: #FAE078; }
+    .bar-spa { background: #9DB7F5; } .bar-spd { background: #A7DB8D; } .bar-spe { background: #FA92B2; }
+    .stat-val-final { width: 30px; text-align: right; color: #fff; font-weight: bold; }
+
+    .inputs-area { flex: 1; display: flex; flex-direction: column; gap: 10px; min-width: 300px; }
+    .row { display: flex; gap: 10px; } .col { flex: 1; }
+    .col-small { width: 80px; flex: none; } .col-mini { width: 70px; flex: none; }
+
+    label { font-size: 0.75rem; color: #888; display: block; margin-bottom: 4px; }
+    .p-input { width: 100%; background: #222; border: 1px solid #444; color: #fff; padding: 8px; border-radius: 4px; font-size: 0.9rem; }
+    .p-input:focus { border-color: var(--cor-dourado); outline: none; background: #2a2a2a; }
+
+    .input-wrapper { position: relative; width: 100%; }
+    .clear-x { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: #666; cursor: pointer; display: none; }
+    .input-wrapper input:not(:placeholder-shown) + .clear-x { display: block; }
+    .item-icon-img { position:absolute; right:35px; top:30px; width:30px; height:30px; object-fit:contain; opacity:0; pointer-events:none; }
+    .item-icon-img.active { opacity:1; }
+
+    /* EVS / IVS / MOVES */
+    .iv-section { background: rgba(0,0,0,0.2); padding: 8px; border-radius: 6px; border: 1px solid #444; margin-top: 5px; }
+    .iv-grid { display: flex; gap: 5px; justify-content: space-between; }
+    .iv-box { text-align: center; width: 100%; }
+    .iv-box input { text-align: center; padding: 4px; font-size: 0.85rem; }
+
+    .stats-box { margin-top: 15px; background: rgba(0,0,0,0.1); padding: 10px; border-radius: 6px; }
+    .ev-header { display: flex; justify-content: space-between; font-size: 0.8rem; color: #aaa; margin-bottom: 5px; }
+    .stat-row-ev { display: flex; align-items: center; gap: 10px; margin-bottom: 5px; }
+    .stat-label-ev { width: 30px; font-weight: bold; color: #888; font-size: 0.8rem; }
+    input[type=range] { flex: 1; height: 6px; background: #333; border-radius: 3px; accent-color: var(--cor-dourado); cursor: pointer; }
+    .ev-num { width: 45px; text-align: center; padding: 2px; }
+
+    .moves-section { margin-top: 20px; }
+    .move-input { border-left: 4px solid #555 !important; margin-bottom: 8px; }
+    .move-input:focus { border-left-color: var(--cor-dourado) !important; }
 
     /* MODAL */
-    .modal-overlay { 
-        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-        background: rgba(0,0,0,0.85); z-index: 2000; display: none; 
-        justify-content: center; align-items: center; backdrop-filter: blur(5px);
-    }
-    .modal-content { 
-        background: #1a1a1a; border: 2px solid var(--cor-dourado); 
-        padding: 25px; border-radius: 10px; width: 90%; max-width: 400px; 
-        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
-    }
-    .auth-header { font-size: 1.1rem; color: var(--cor-dourado); text-align: center; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
-    .login-input { background: #151515; border: 1px solid #333; color: #ddd; padding: 10px; border-radius: 4px; width: 100%; margin-bottom: 10px; box-sizing: border-box; }
-    .login-input:focus { border-color: var(--cor-dourado); outline: none; }
-    .auth-btn-row { display: flex; gap: 10px; margin-bottom: 15px; }
-    .btn-auth-action { flex: 1; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; border: none; }
-    .btn-entrar { background: var(--cor-dourado); color: #000; }
-    .btn-criar { background: #333; color: #fff; border: 1px solid #444; }
-    .google-btn { width: 100%; background: #fff; color: #333; padding: 10px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: bold; border: none; }
-    .close-modal { float: right; cursor: pointer; color: #888; font-size: 1.2rem; }
-    .close-modal:hover { color: #fff; }
-
-    @media (max-width: 768px) { .desktop-only { display: none; } }
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 2000; display: none; justify-content: center; align-items: center; }
+    .modal-content { background: #222; border: 1px solid var(--cor-dourado); padding: 20px; width: 90%; max-width: 600px; border-radius: 8px; }
+    .modal-textarea { width: 100%; height: 300px; background: #111; color: #ccc; border: 1px solid #444; padding: 10px; font-family: monospace; }
+    .modal-btns { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
   </style>
 </head>
 <body>
 
 <header>
-    <div class="header-left">
-        <h1><img src="https://i.imgur.com/XOEcuO8.png"> Humble Feed</h1>
-    </div>
-
+    <h1><a href="feed.html"><img src="https://i.imgur.com/XOEcuO8.png"> Humble Builder</a></h1>
     <div class="header-right">
-        <div id="userHeaderInfo" class="user-header-info desktop-only">
-             <img id="headerAvatar" class="header-avatar" src="">
-             <span id="headerName" class="header-name">User</span>
-             <button onclick="logout()" class="btn-logout-mini" title="Sair">×</button>
-        </div>
-        <button id="btnLoginHeader" class="btn-login-header desktop-only" onclick="openLoginModal()">Entrar</button>
-        <a href="builder.html" class="btn-create desktop-only"><span>+</span> Publicar</a>
+        <a href="feed.html" style="font-weight:bold; color:#aaa; margin-right:10px;">Ir para o Feed</a>
         <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
     </div>
 </header>
 
 <nav id="dropdownMenu">
-    <a href="builder.html">🛠️ Builder (Criar)</a>
+    <a href="feed.html">📰 Feed de Times</a>
     <a href="index.html">🏠 Início</a>
     <a href="https://www.humblepixelmon.com.br">🌐 Site Oficial</a>
-    <a href="#" onclick="openLoginModal()" id="mobileLoginLink">👤 Entrar / Login</a>
-    <a href="#" onclick="logout()" id="mobileLogoutLink" style="display:none; color:#ff5555;">🚪 Sair</a>
+    <a href="#" onclick="alert('Use a barra lateral para logar!')">👤 Login (Na Sidebar)</a>
 </nav>
 
-<div class="hero-section">
-    <h2 class="hero-title">Explore Estratégias</h2>
-    <p class="hero-subtitle">Descubra os melhores times criados pela comunidade Humble Pixelmon.</p>
+<datalist id="list-pokemon"></datalist>
+<datalist id="list-items"></datalist>
+
+<div class="main-container">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div id="authSection">
+                <div id="loginForm" class="auth-container">
+                    <div class="auth-title">Login / Registro</div>
+                    <input type="email" id="emailInput" class="login-input" placeholder="E-mail">
+                    <input type="password" id="passInput" class="login-input" placeholder="Senha">
+                    <button id="btnEmailLogin" class="btn-auth btn-login">Entrar</button>
+                    <button id="btnEmailRegister" class="btn-auth btn-register">Criar Conta</button>
+                    <button id="btnGoogleLogin" class="btn-auth" style="background:#fff; color:#333; margin-top:5px;">G Google</button>
+                </div>
+                
+                <div id="userProfile" class="user-profile-mini" style="display:none;">
+                    <img id="userPhoto" src="" class="user-avatar">
+                    <div class="user-details">
+                        <div id="userName" class="user-nick">Treinador</div>
+                        <div id="userEmail" style="font-size:0.7rem; color:#888;">email@...</div>
+                    </div>
+                    <button id="btnLogout" class="btn-logout" title="Sair">×</button>
+                </div>
+            </div>
+
+            <button class="btn-new-team" onclick="createNewTeam()">+ Novo Time</button>
+        </div>
+        <div class="team-list" id="teamListContainer"></div>
+    </aside>
+
+    <main class="builder-area">
+        <div class="builder-wrapper">
+            
+            <div class="toolbar">
+                <div class="toolbar-inputs">
+                    <input type="text" id="teamNameInput" class="styled-input input-title" placeholder="Nome do Time" onchange="saveCurrentTeamToStorage()">
+                    <input type="text" id="teamAuthorInput" class="styled-input input-author" placeholder="Autor / Nick" onchange="saveCurrentTeamToStorage()">
+                </div>
+
+                <div class="toolbar-actions">
+                    <select id="teamTier" class="tier-select" onchange="carregarDados(this.value); saveCurrentTeamToStorage()">
+                        <option value="" disabled selected>Selecionar Tier</option>
+                        <option value="AG">AG</option><option value="LC">LC</option><option value="Monotype">Monotype</option>
+                        <option value="NU">NU</option><option value="National_Dex">National Dex</option>
+                        <option value="National_Dex_Monotype">NatDex Monotype</option><option value="National_Dex_RU">NatDex RU</option>
+                        <option value="National_Dex_UU">NatDex UU</option><option value="National_Dex_Ubers">NatDex Ubers</option>
+                        <option value="OU">OU</option><option value="PU">PU</option><option value="RU">RU</option>
+                        <option value="UU">UU</option><option value="Uber">Uber</option><option value="Ubers_UU">Ubers UU</option><option value="ZU">ZU</option>
+                    </select>
+                    
+                    <button class="btn-action btn-link" onclick="shareTeamLink()">🔗 Link</button>
+                    <button class="btn-action btn-publish" onclick="publishTeam()">📢 Publicar</button>
+                    <button class="btn-action btn-validate" onclick="validateTeam()">✓ Validar</button>
+                    <button class="btn-action btn-import" onclick="openIOModal()">📥 Texto</button>
+                    <button class="btn-action btn-save" onclick="saveCurrentTeamToStorage()">💾 Salvar</button>
+                </div>
+            </div>
+
+            <div class="tabs-wrapper">
+                <div id="tabsContainer" style="display:flex; gap:5px;"></div>
+                <button id="addSlotBtn" class="add-tab-btn" onclick="addNewSlot()">+</button>
+            </div>
+
+            <div class="editor-container-wrapper" id="editorsContainer"></div>
+        </div>
+    </main>
 </div>
 
-<div class="search-wrapper">
-    <div class="search-bar-row">
-        <input type="text" id="searchInput" class="main-search-input" placeholder="Buscar por nome do time..." oninput="applyFilters()">
-        <button class="btn-filter-toggle" onclick="toggleFilterPanel()">⚙️ Filtros</button>
-        <button id="btnMyTeams" class="btn-my-teams" onclick="toggleMyTeams()">Meus Times</button>
-    </div>
-
-    <div id="filtersPanel" class="filters-panel">
-        <div class="filter-group">
-            <span class="filter-label">Pokémon</span>
-            <input type="text" id="filterPokemon" class="filter-input" placeholder="Ex: Pikachu" oninput="applyFilters()">
-        </div>
-        <div class="filter-group">
-            <span class="filter-label">Tier</span>
-            <select id="filterTier" class="filter-input" onchange="applyFilters()">
-                <option value="">Todas</option>
-                <option value="AG">AG</option><option value="LC">LC</option><option value="Monotype">Monotype</option>
-                <option value="NU">NU</option><option value="National_Dex">National Dex</option>
-                <option value="National_Dex_Monotype">NatDex Monotype</option><option value="National_Dex_Ubers">NatDex Ubers</option>
-                <option value="OU">OU</option><option value="PU">PU</option><option value="RU">RU</option>
-                <option value="UU">UU</option><option value="Uber">Uber</option><option value="ZU">ZU</option>
-            </select>
-        </div>
-        <div class="filter-group">
-            <span class="filter-label">Jogador</span>
-            <input type="text" id="filterAuthor" class="filter-input" placeholder="Nick do criador" oninput="applyFilters()">
-        </div>
-        <div style="flex-basis: 100%; text-align: right;">
-            <button onclick="clearFilters()" style="background:transparent; border:none; color:#888; cursor:pointer; font-size:0.8rem; text-decoration:underline;">Limpar Filtros</button>
-        </div>
-    </div>
-</div>
-
-<div class="feed-container" id="feedContainer">
-    <div class="loading-container">
-        <div class="spinner"></div>
-        <div style="color:#888;">Carregando times...</div>
-    </div>
-</div>
-
-<div class="modal-overlay" id="loginModal">
+<div class="modal-overlay" id="ioModal">
     <div class="modal-content">
-        <span class="close-modal" onclick="closeLoginModal()">×</span>
-        <div class="auth-header">Acesso Humble</div>
-        <input type="email" id="modalEmail" class="login-input" placeholder="E-mail">
-        <input type="password" id="modalPass" class="login-input" placeholder="Senha">
-        <div class="auth-btn-row">
-            <button id="modalBtnLogin" class="btn-auth-action btn-entrar">Entrar</button>
-            <button id="modalBtnRegister" class="btn-auth-action btn-criar">Criar Conta</button>
+        <h3 style="color:var(--cor-dourado); margin-top:0;">Importar / Exportar</h3>
+        <textarea id="ioText" class="modal-textarea"></textarea>
+        <div class="modal-btns">
+            <button class="btn-action btn-import" onclick="document.getElementById('ioModal').style.display='none'">Fechar</button>
+            <button class="btn-action btn-import" onclick="copyToClipboard()">Copiar</button>
+            <button class="btn-action btn-save" onclick="processImport()">Carregar</button>
         </div>
-        <button id="modalBtnGoogle" class="google-btn">
-           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Entrar com Google
-        </button>
     </div>
 </div>
+
+<script>
+    // --- LÓGICA DO BUILDER (COMPLETA) ---
+    const menuBtn = document.getElementById("menuBtn");
+    const dropdownMenu = document.getElementById("dropdownMenu");
+    menuBtn.onclick = () => { dropdownMenu.classList.toggle("active"); menuBtn.classList.toggle("active"); };
+
+    const MAX_EVS = 508; 
+    const MAX_SLOTS = 6;
+    const STATS = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
+    
+    const NATURES_INFO = { 
+        "Adamant": "+Atk, -SpA", "Bashful": "Neutral", "Bold": "+Def, -Atk", 
+        "Brave": "+Atk, -Spe", "Calm": "+SpD, -Atk", "Careful": "+SpD, -SpA", 
+        "Docile": "Neutral", "Gentle": "+SpD, -Def", "Hardy": "Neutral", 
+        "Hasty": "+Spe, -Def", "Impish": "+Def, -SpA", "Jolly": "+Spe, -SpA", 
+        "Lax": "+Def, -SpD", "Lonely": "+Atk, -Def", "Mild": "+SpA, -Def", 
+        "Modest": "+SpA, -Atk", "Naive": "+Spe, -SpD", "Naughty": "+Atk, -SpD", 
+        "Quiet": "+SpA, -Spe", "Quirky": "Neutral", "Rash": "+SpA, -SpD", 
+        "Relaxed": "+Def, -Spe", "Sassy": "+SpD, -Spe", "Serious": "Neutral", 
+        "Timid": "+Spe, -Atk" 
+    };
+
+    const POKEAPI_IMG = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
+    const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
+    const ITEM_ICON_BASE = "https://play.pokemonshowdown.com/sprites/itemicons/";
+
+    let pokemonIdMap = {}; 
+    let validAbilitiesMap = {}; 
+    let todosItens = [];
+    let slotCounter = 0; 
+    let slotBaseStats = {}; 
+    let allTeams = []; 
+    let currentTeamIndex = null;
+
+    function formatToApiName(name) { 
+        if(!name) return "";
+        return name.trim().toLowerCase().replace(/ /g, '-').replace(/\./g, '').replace(/'/g, '').replace(/:/g, '').replace(/♀/g, '-f').replace(/♂/g, '-m'); 
+    }
+    function formatItemToShowdown(name) { return name.toLowerCase().replace(/[^a-z0-9]/g, ''); }
+    function formatText(str) { if (!str) return ''; return str.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '); }
+
+    window.onload = async function() { 
+        await initItens(); 
+        const params = new URLSearchParams(window.location.search);
+        const importData = params.get('import');
+        if(importData) {
+            try {
+                const decodedText = decodeURIComponent(escape(atob(importData)));
+                document.getElementById('ioText').value = decodedText;
+                setTimeout(() => { processImport(); window.history.replaceState({}, document.title, window.location.pathname); alert("Time carregado via Link!"); }, 500);
+            } catch(e) { console.error(e); loadAllTeams(); }
+        } else {
+            loadAllTeams();
+            if(allTeams.length > 0) editTeam(0); 
+            else createNewTeam();
+        }
+    };
+
+    async function initItens() {
+        try { 
+            const r = await fetch('builder/itens.json'); 
+            if (r.ok) { todosItens = await r.json(); atualizarListaItens(null); } 
+        } catch (e) { console.warn("Erro itens (pode estar offline)", e); }
+    }
+
+    function loadAllTeams() {
+        const data = localStorage.getItem('humbleTeamsList');
+        if (data) allTeams = JSON.parse(data); else allTeams = [];
+        renderSidebar();
+    }
+
+    function renderSidebar() {
+        const container = document.getElementById('teamListContainer');
+        container.innerHTML = "";
+        allTeams.forEach((team, index) => {
+            const div = document.createElement('div');
+            div.className = `sidebar-card ${currentTeamIndex === index ? 'active' : ''}`;
+            div.onclick = (e) => { if(!e.target.closest('.btn-del-card')) editTeam(index); };
+            let iconsHtml = '';
+            if(team.slots) {
+                team.slots.slice(0,6).forEach(s => {
+                    if(s.name) {
+                        const apiName = formatToApiName(s.name);
+                        let src = `${POKEAPI_IMG}${apiName}.png`;
+                        if(pokemonIdMap[apiName] && typeof pokemonIdMap[apiName] !== 'boolean') src = `${POKEAPI_IMG}${pokemonIdMap[apiName]}.png`;
+                        iconsHtml += `<img src="${src}" onerror="this.src='${IMG_ERROR}'">`;
+                    }
+                });
+            }
+            div.innerHTML = `<div class="card-title">${team.title || 'Novo Time'}</div><div class="card-meta">[${team.tier || 'Format'}]</div><div class="card-icons">${iconsHtml}</div><button class="btn-del-card" onclick="deleteTeam(${index}, event)">×</button>`;
+            container.appendChild(div);
+        });
+    }
+
+    function createNewTeam() {
+        currentTeamIndex = null;
+        document.getElementById('teamNameInput').value = "";
+        document.getElementById('teamAuthorInput').value = "";
+        document.getElementById('teamTier').value = "";
+        resetBuilderUI();
+        addNewSlot(); 
+        renderSidebar();
+    }
+
+    function resetBuilderUI() {
+        document.getElementById('tabsContainer').innerHTML = "";
+        document.getElementById('editorsContainer').innerHTML = "";
+        slotCounter = 0; slotBaseStats = {};
+        validAbilitiesMap = {};
+    }
+
+    async function editTeam(index) {
+        currentTeamIndex = index;
+        const team = allTeams[index];
+        document.getElementById('teamNameInput').value = team.title || "";
+        document.getElementById('teamAuthorInput').value = team.author || "";
+        document.getElementById('teamTier').value = team.tier || "";
+        await carregarDados(team.tier); 
+        resetBuilderUI();
+        if (team.slots && team.slots.length > 0) {
+            for (const s of team.slots) {
+                const id = addNewSlot();
+                const ed = document.getElementById(`editor-${id}`);
+                ed.querySelector('.p-name').value = s.name;
+                await updatePokemon(id, ed.querySelector('.p-name'), true); 
+                ed.querySelector('.p-item').value = s.item;
+                updateItemIcon(id, ed.querySelector('.p-item'));
+                if(s.ability) ed.querySelector('.p-ability').value = s.ability;
+                ed.querySelector('.p-nature').value = s.nature;
+                ed.querySelector('.p-level').value = s.level;
+                ed.querySelector('.p-gender').value = s.gender || '-';
+                ed.querySelector('.p-shiny').value = s.shiny || 'No';
+                STATS.forEach(stat => {
+                    updateEV(id, stat, s.evs[stat] || 0);
+                    ed.querySelector(`.p-iv-${stat.toLowerCase()}`).value = s.ivs[stat] || 31;
+                });
+                const movesInp = ed.querySelectorAll('.p-move');
+                s.moves.forEach((m, i) => { if(movesInp[i]) movesInp[i].value = m; });
+                recalcStats(id);
+            }
+            switchTab(1);
+        } else { addNewSlot(); }
+        renderSidebar();
+    }
+
+    function saveCurrentTeamToStorage() {
+        const authorInput = document.getElementById('teamAuthorInput');
+        const authorName = authorInput ? authorInput.value : "";
+        const teamData = {
+            title: document.getElementById('teamNameInput').value || "Novo Time",
+            author: authorName, 
+            tier: document.getElementById('teamTier').value,
+            slots: []
+        };
+        document.querySelectorAll('.poke-editor').forEach(ed => {
+            const id = ed.id.split('-')[1];
+            const name = ed.querySelector('.p-name').value;
+            const slot = {
+                name: name,
+                item: ed.querySelector('.p-item').value,
+                ability: ed.querySelector('.p-ability').value,
+                nature: ed.querySelector('.p-nature').value,
+                level: ed.querySelector('.p-level').value,
+                gender: ed.querySelector('.p-gender').value,
+                shiny: ed.querySelector('.p-shiny').value,
+                evs: {}, ivs: {}, moves: []
+            };
+            STATS.forEach(s => {
+                slot.evs[s] = document.getElementById(`num-${id}-${s}`).value;
+                slot.ivs[s] = ed.querySelector(`.p-iv-${s.toLowerCase()}`).value;
+            });
+            ed.querySelectorAll('.p-move').forEach(m => slot.moves.push(m.value));
+            teamData.slots.push(slot);
+        });
+        if (currentTeamIndex === null) { allTeams.push(teamData); currentTeamIndex = allTeams.length - 1; } 
+        else { allTeams[currentTeamIndex] = teamData; }
+        localStorage.setItem('humbleTeamsList', JSON.stringify(allTeams));
+        renderSidebar();
+    }
+
+    function deleteTeam(index, event) {
+        if(event) event.stopPropagation();
+        if(confirm("Deletar time?")) {
+            allTeams.splice(index, 1);
+            localStorage.setItem('humbleTeamsList', JSON.stringify(allTeams));
+            if (currentTeamIndex === index) createNewTeam();
+            else if (currentTeamIndex > index) currentTeamIndex--;
+            loadAllTeams();
+        }
+    }
+
+    async function carregarDados(tier) { 
+        if(!tier) return;
+        const isLC = (tier === 'LC');
+        document.querySelectorAll('.p-level').forEach(input => {
+            if(isLC) { input.max = 5; if(input.value > 5 || input.value == 100) input.value = 5; } 
+            else { input.max = 100; if(input.value == 5) input.value = 100; }
+            const id = input.closest('.poke-editor').id.split('-')[1];
+            recalcStats(id);
+        });
+        const dl = document.getElementById('list-pokemon'); dl.innerHTML = "";
+        pokemonIdMap = {}; 
+        try {
+            const r = await fetch(`tiers_1.16/${tier}.json`);
+            if (r.ok) {
+                const d = await r.json();
+                Object.keys(d).forEach(chaveJson => {
+                    const nomeExibicao = formatText(chaveJson);
+                    const o = document.createElement('option'); o.value = nomeExibicao; dl.appendChild(o);
+                    const chaveNormalizada = formatToApiName(chaveJson);
+                    pokemonIdMap[chaveNormalizada] = d[chaveJson].id || true; 
+                });
+            }
+        } catch(e){ console.error("Erro Tier Local", e); }
+        atualizarListaItens(tier);
+    }
+    
+    function atualizarListaItens(tier) {
+        const dl = document.getElementById('list-items'); dl.innerHTML = "";
+        todosItens.forEach(i => {
+            if(tier && i.ban && i.ban.includes(tier)) return;
+            const o = document.createElement('option'); o.value = i.name; dl.appendChild(o);
+        });
+    }
+
+    function validateTeam() {
+        const tier = document.getElementById('teamTier').value;
+        if(!tier) { alert("Selecione uma Tier."); return; }
+        let errors = [];
+        document.querySelectorAll('.poke-editor').forEach((ed, i) => {
+            const id = ed.id.split('-')[1];
+            const name = ed.querySelector('.p-name').value.trim();
+            if(name) {
+                const searchName = formatToApiName(name);
+                if(!pokemonIdMap[searchName]) errors.push(`Pokémon #${i+1} (${name}) não permitido em ${tier}.`);
+                const item = ed.querySelector('.p-item').value.trim();
+                const itemObj = todosItens.find(it => it.name === item);
+                if(itemObj && itemObj.ban && itemObj.ban.includes(tier)) errors.push(`Item do #${i+1} (${item}) banido em ${tier}.`);
+                const ability = ed.querySelector('.p-ability').value.trim();
+                if (validAbilitiesMap[id]) {
+                    if (!ability) errors.push(`Pokémon #${i+1} (${name}) precisa de uma habilidade.`);
+                    else if (!validAbilitiesMap[id].includes(ability)) errors.push(`Habilidade "${ability}" inválida para ${name}.`);
+                }
+            }
+        });
+        if(errors.length > 0) alert("Erros:\n\n" + errors.join("\n")); else alert("Time Válido!");
+    }
+
+    function addNewSlot() {
+        if (document.querySelectorAll('.tab-slot').length >= MAX_SLOTS) return;
+        slotCounter++; const id = slotCounter;
+        const tab = document.createElement('div'); tab.className='tab-slot'; tab.id=`tab-${id}`; tab.onclick=()=>switchTab(id);
+        tab.innerHTML = `<span class="tab-close" onclick="removeSlot(${id}, event)">×</span><img src="${IMG_ERROR}" id="tab-img-${id}">`;
+        document.getElementById('tabsContainer').appendChild(tab);
+        const ed = document.createElement('div'); ed.className='poke-editor'; ed.id=`editor-${id}`; ed.innerHTML=generateEditorHTML(id);
+        document.getElementById('editorsContainer').appendChild(ed);
+        const tier = document.getElementById('teamTier').value;
+        if(tier === 'LC') { ed.querySelector('.p-level').value = 5; ed.querySelector('.p-level').max = 5; }
+        slotBaseStats[id] = {hp:0,atk:0,def:0,spa:0,spd:0,spe:0};
+        switchTab(id);
+        updateAddBtnVisibility();
+        return id;
+    }
+    
+    function removeSlot(id,e){ 
+        if(e)e.stopPropagation(); 
+        const tab = document.getElementById(`tab-${id}`);
+        const wasActive = tab.classList.contains('active');
+        document.getElementById(`tab-${id}`).remove(); document.getElementById(`editor-${id}`).remove(); 
+        delete slotBaseStats[id]; delete validAbilitiesMap[id];
+        if (wasActive) {
+            const tabs = document.querySelectorAll('.tab-slot');
+            if(tabs.length > 0) switchTab(tabs[tabs.length-1].id.split('-')[1]);
+            else addNewSlot();
+        }
+        updateAddBtnVisibility(); saveCurrentTeamToStorage();
+    }
+    function switchTab(id){ document.querySelectorAll('.tab-slot').forEach(t=>t.classList.remove('active')); document.querySelectorAll('.poke-editor').forEach(e=>e.classList.remove('active')); document.getElementById(`tab-${id}`)?.classList.add('active'); document.getElementById(`editor-${id}`)?.classList.add('active'); }
+    function updateAddBtnVisibility(){ document.getElementById('addSlotBtn').style.display = (document.querySelectorAll('.tab-slot').length >= MAX_SLOTS) ? 'none' : 'flex'; }
+
+    function generateEditorHTML(id) {
+        const nOpts = Object.keys(NATURES_INFO).map(n=>`<option value="${n}">${n}</option>`).join('');
+        // HTML DO EDITOR COM CLASSES NOVAS (p-input, styled-input)
+        return `
+        <div class="editor-layout">
+            <div class="left-panel">
+                <div class="visual-large-box"><img src="${IMG_ERROR}" id="img-${id}" class="poke-sprite-large"></div>
+                <div class="base-stats-panel" id="stats-panel-${id}">${STATS.map(s=>`<div class="stat-bar-row"><span class="stat-name">${s}</span><span class="stat-val-base" id="base-${id}-${s.toLowerCase()}">0</span><div class="bar-track"><div class="bar-fill bar-${s.toLowerCase()}" id="bar-${id}-${s.toLowerCase()}"></div></div><span class="stat-val-final" id="val-${id}-${s.toLowerCase()}">0</span></div>`).join('')}</div>
+            </div>
+            <div class="inputs-area">
+                <div class="row">
+                    <div class="col"><label>Pokémon</label><input type="text" class="p-input p-name" list="list-pokemon" onchange="updatePokemon('${id}',this,true);saveCurrentTeamToStorage()"></div>
+                    <div class="col"><label>Item</label><div class="input-wrapper"><input type="text" class="p-input p-item" list="list-items" oninput="updateItemIcon('${id}',this);saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearItem('${id}')">×</span></div><img id="item-icon-${id}" class="item-icon-img" style="position:absolute; right:35px; top:32px;"></div>
+                </div>
+                <div class="row"><datalist id="abilities-${id}"></datalist>
+                    <div class="col"><label>Ability</label><input type="text" class="p-input p-ability" list="abilities-${id}" onchange="saveCurrentTeamToStorage()"></div>
+                    <div class="col"><label>Nature</label><select class="p-input p-nature" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"><option value="" disabled>Nature</option>${nOpts}</select></div>
+                    <div class="col-small"><label>Level</label><input type="number" class="p-input p-level" value="100" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"></div>
+                    <div class="col-mini"><label>Gender</label><select class="p-input p-gender" onchange="saveCurrentTeamToStorage()"><option value="-">-</option><option value="M">M</option><option value="F">F</option></select></div>
+                    <div class="col-mini"><label>Shiny</label><select class="p-input p-shiny" onchange="saveCurrentTeamToStorage()"><option value="No">No</option><option value="Yes">Yes</option></select></div>
+                </div>
+                <div class="iv-section">
+                    <div class="iv-grid">${STATS.map(s=>`<div class="iv-box"><label>${s}</label><input type="text" class="p-input p-iv-${s.toLowerCase()}" value="31" onchange="recalcStats('${id}');saveCurrentTeamToStorage()"></div>`).join('')}</div>
+                </div>
+                <div class="stats-box">
+                    <div class="ev-header"><span>EVs</span><span id="remain-${id}" class="ev-remaining">508</span></div>
+                    ${STATS.map(s=>`<div class="stat-row-ev"><span class="stat-label-ev">${s}</span><input type="range" min="0" max="252" oninput="updateEV('${id}','${s}',this.value)" id="range-${id}-${s}"><input type="number" class="p-input ev-num" min="0" max="252" onchange="updateEV('${id}','${s}',this.value)" id="num-${id}-${s}"></div>`).join('')}
+                </div>
+                <div class="moves-section"><datalist id="moves-${id}"></datalist>
+                    <div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="p-input move-input p-move" list="moves-${id}" placeholder="- Move 1" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div>
+                    <div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="p-input move-input p-move" list="moves-${id}" placeholder="- Move 2" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div>
+                    <div class="input-wrapper" style="margin-bottom:8px;"><input type="text" class="p-input move-input p-move" list="moves-${id}" placeholder="- Move 3" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div>
+                    <div class="input-wrapper"><input type="text" class="p-input move-input p-move" list="moves-${id}" placeholder="- Move 4" onchange="saveCurrentTeamToStorage()"><span class="clear-x" onclick="clearInput(this)">×</span></div>
+                </div>
+            </div>
+        </div>`;
+    }
+
+    function clearItem(id) { const i=document.getElementById(`editor-${id}`).querySelector('.p-item'); i.value=""; updateItemIcon(id,i); saveCurrentTeamToStorage(); }
+    function clearInput(btn) { btn.previousElementSibling.value=""; saveCurrentTeamToStorage(); }
+
+    async function updatePokemon(id, el, fetchData = true) {
+        if (el.value) el.value = el.value.toLowerCase().replace(/(?:^|\s|-)\S/g, function(a) { return a.toUpperCase(); });
+        const val = el.value; if(val.length < 2) return;
+        const apiName = formatToApiName(val);
+        const img = document.getElementById(`img-${id}`); const tabImg = document.getElementById(`tab-img-${id}`);
+        if(!fetchData) {
+            let src = `${POKEAPI_IMG}${apiName}.png`;
+            if(pokemonIdMap[apiName] && typeof pokemonIdMap[apiName] !== 'boolean') src = `${POKEAPI_IMG}${pokemonIdMap[apiName]}.png`;
+            img.src = src; tabImg.src = src; return;
+        }
+        try {
+            const r = await fetch(`https://pokeapi.co/api/v2/pokemon/${apiName}`);
+            if(r.ok) {
+                const d = await r.json();
+                const newSrc = `${POKEAPI_IMG}${d.id}.png`;
+                img.src = newSrc; tabImg.src = newSrc;
+                slotBaseStats[id] = { hp:d.stats[0].base_stat, atk:d.stats[1].base_stat, def:d.stats[2].base_stat, spa:d.stats[3].base_stat, spd:d.stats[4].base_stat, spe:d.stats[5].base_stat };
+                recalcStats(id);
+                const abilList = document.getElementById(`abilities-${id}`); abilList.innerHTML="";
+                const currentAbilityInput = document.getElementById(`editor-${id}`).querySelector('.p-ability');
+                let allowedAbilities = [];
+                d.abilities.forEach(a => { 
+                    const formattedAbi = formatText(a.ability.name); allowedAbilities.push(formattedAbi);
+                    const o = document.createElement('option'); o.value = formattedAbi; abilList.appendChild(o); 
+                });
+                validAbilitiesMap[id] = allowedAbilities; 
+                if (!allowedAbilities.includes(currentAbilityInput.value)) currentAbilityInput.value = allowedAbilities[0] || "";
+                const moveList = document.getElementById(`moves-${id}`); moveList.innerHTML="";
+                d.moves.forEach(m=>{ const o=document.createElement('option'); o.value=formatText(m.move.name); moveList.appendChild(o); });
+            }
+        } catch(e){ console.error("Erro API", e); }
+    }
+
+    function updateItemIcon(id, input) {
+        const val = input.value; const icon = document.getElementById(`item-icon-${id}`);
+        if (!val || val.length < 2) { icon.src=""; icon.classList.remove('active'); return; }
+        icon.src = `${ITEM_ICON_BASE}${formatItemToShowdown(val)}.png`;
+        icon.classList.add('active'); icon.onerror = function() { this.src=""; this.classList.remove('active'); }
+    }
+
+    function updateEV(id, stat, val) {
+        let v = parseInt(val) || 0; if (v < 0) v = 0; 
+        let usedByOthers = 0;
+        STATS.forEach(s => { if (s !== stat) usedByOthers += parseInt(document.getElementById(`num-${id}-${s}`).value) || 0; });
+        const remainingGlobal = 508 - usedByOthers;
+        const maxAllowed = Math.min(252, remainingGlobal);
+        if (v > maxAllowed) v = maxAllowed;
+        document.getElementById(`range-${id}-${stat}`).value = v;
+        document.getElementById(`num-${id}-${stat}`).value = v;
+        document.getElementById(`remain-${id}`).innerText = "Restam: " + (508 - (usedByOthers + v));
+        recalcStats(id); saveCurrentTeamToStorage();
+    }
+
+    function recalcStats(id) {
+        const base = slotBaseStats[id] || {hp:0,atk:0,def:0,spa:0,spd:0,spe:0};
+        const level = parseInt(document.getElementById(`editor-${id}`).querySelector('.p-level').value) || 100;
+        const nature = document.getElementById(`editor-${id}`).querySelector('.p-nature').value;
+        let mods = { atk:1, def:1, spa:1, spd:1, spe:1 };
+        if(NATURES_INFO[nature] && NATURES_INFO[nature]!=="Neutral") {
+            const parts = NATURES_INFO[nature].split(','); 
+            parts.forEach(p => { 
+                p = p.trim(); const type = p.substring(1).toLowerCase(); 
+                if(p.startsWith('+')) mods[type] = 1.1; if(p.startsWith('-')) mods[type] = 0.9; 
+            });
+        }
+        STATS.forEach(s => {
+            const k = s.toLowerCase(); const b = base[k];
+            document.getElementById(`base-${id}-${k}`).innerText = b;
+            const iv = parseInt(document.getElementById(`editor-${id}`).querySelector(`.p-iv-${k}`).value)||0;
+            const ev = parseInt(document.getElementById(`num-${id}-${s}`).value)||0; 
+            let final = 0;
+            if(b > 0) {
+                if(s === 'HP') final = b === 1 ? 1 : Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + level + 10;
+                else {
+                    const rawStat = Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + 5;
+                    final = Math.floor(rawStat * mods[k]);
+                }
+            }
+            document.getElementById(`val-${id}-${k}`).innerText = final;
+            document.getElementById(`bar-${id}-${k}`).style.width = Math.min((b/255)*100, 100)+"%";
+        });
+    }
+
+    function getTeamAsText() {
+        let txt = ""; 
+        const tier = document.getElementById('teamTier').value;
+        const authorInput = document.getElementById('teamAuthorInput');
+        const author = authorInput ? authorInput.value : "";
+        if(tier) txt += `=== [Gen 9] ${tier} ===\n`;
+        if(author) txt += `// Author: ${author}\n\n`; else txt += `\n`;
+        
+        document.querySelectorAll('.poke-editor').forEach(ed=>{
+            const name = ed.querySelector('.p-name').value;
+            if(name) {
+                let line1 = name;
+                const gender = ed.querySelector('.p-gender').value;
+                const item = ed.querySelector('.p-item').value;
+                if(gender !== '-') line1 += ` (${gender})`;
+                if(item) line1 += ` @ ${item}`;
+                txt += `${line1}\n`;
+                const ability = ed.querySelector('.p-ability').value; if(ability) txt += `Ability: ${ability}\n`;
+                const shiny = ed.querySelector('.p-shiny').value; if(shiny === 'Yes') txt += `Shiny: Yes\n`;
+                const level = ed.querySelector('.p-level').value; if(level && level!=100) txt += `Level: ${level}\n`;
+                let evs = []; 
+                STATS.forEach(s => { 
+                    const id = ed.id.split('-')[1];
+                    const v = document.getElementById(`num-${id}-${s}`).value; 
+                    if(v > 0) evs.push(`${v} ${s}`); 
+                });
+                if(evs.length) txt += `EVs: ${evs.join(' / ')}\n`;
+                const nature = ed.querySelector('.p-nature').value; if(nature) txt += `${nature} Nature\n`;
+                let ivs = []; 
+                STATS.forEach(s => { 
+                    const v = ed.querySelector(`.p-iv-${s.toLowerCase()}`).value; 
+                    if(v != 31) ivs.push(`${v} ${s}`); 
+                });
+                if(ivs.length) txt += `IVs: ${ivs.join(' / ')}\n`;
+                ed.querySelectorAll('.p-move').forEach(m => { if(m.value) txt += `- ${m.value}\n`; });
+                txt += "\n";
+            }
+        });
+        return txt;
+    }
+
+    function openIOModal() {
+        const txt = getTeamAsText();
+        document.getElementById('ioText').value = txt;
+        document.getElementById('ioModal').style.display='flex';
+    }
+    function copyToClipboard() { navigator.clipboard.writeText(document.getElementById('ioText').value); alert("Copiado!"); }
+    
+    function processImport() {
+        const text = document.getElementById('ioText').value; if (!text.trim()) { alert("Cole um time."); return; }
+        document.getElementById('tabsContainer').innerHTML = ""; document.getElementById('editorsContainer').innerHTML = "";
+        slotCounter = 0; const blocks = text.split(/\r?\n\r?\n/);
+        blocks.forEach(block => {
+            if (!block.trim() || block.startsWith("===") || block.startsWith("//")) return;
+            const id = addNewSlot();
+            const lines = block.split('\n'); const firstLine = lines[0].trim();
+            let name = firstLine, item = "";
+            if (firstLine.includes('@')) { const p = firstLine.split('@'); name = p[0].trim(); item = p[1].trim(); }
+            const ed = document.getElementById(`editor-${id}`);
+            if (name.includes('(M)')) { ed.querySelector('.p-gender').value = 'M'; name = name.replace('(M)', ''); }
+            else if (name.includes('(F)')) { ed.querySelector('.p-gender').value = 'F'; name = name.replace('(F)', ''); }
+            name = name.trim();
+            if (name.includes('(') && name.includes(')')) { const m = name.match(/\(([^)]+)\)/); if (m) name = m[1]; }
+            const nInp = ed.querySelector('.p-name'); nInp.value = name; updatePokemon(id, nInp, true); 
+            const iInp = ed.querySelector('.p-item'); iInp.value = item; updateItemIcon(id, iInp);
+            let mIdx = 0; const mInps = ed.querySelectorAll('.p-move');
+            for(let i=1; i<lines.length; i++) {
+                const l = lines[i].trim();
+                if (l.startsWith('Ability:')) ed.querySelector('.p-ability').value = l.replace('Ability:', '').trim();
+                else if (l.includes('Nature')) ed.querySelector('.p-nature').value = l.split(' ')[0];
+                else if (l.startsWith('Level:')) ed.querySelector('.p-level').value = l.replace('Level:', '').trim();
+                else if (l.startsWith('Shiny:')) ed.querySelector('.p-shiny').value = l.includes('Yes') ? 'Yes' : 'No';
+                else if (l.startsWith('EVs:')) {
+                    const p = l.replace('EVs:', '').split('/');
+                    p.forEach(x => { x=x.trim(); const v=parseInt(x); STATS.forEach(s=>{ if(x.includes(s)) updateEV(id,s,v); }); });
+                }
+                else if (l.startsWith('IVs:')) {
+                    const p = l.replace('IVs:', '').split('/');
+                    p.forEach(x => { x=x.trim(); const v=parseInt(x); STATS.forEach(s=>{ if(x.includes(s)) ed.querySelector(`.p-iv-${s.toLowerCase()}`).value = v; }); });
+                }
+                else if (l.startsWith('-')) { if(mIdx<4) { mInps[mIdx].value = l.replace('-','').trim(); mIdx++; } }
+            }
+            setTimeout(() => recalcStats(id), 500);
+        });
+        document.getElementById('ioModal').style.display='none';
+        saveCurrentTeamToStorage();
+    }
+
+    async function shareTeamLink() {
+        let author = document.getElementById('teamAuthorInput').value;
+        if(!author.trim()) {
+            author = prompt("Digite o Nick do Autor:");
+            if(author) { document.getElementById('teamAuthorInput').value = author; saveCurrentTeamToStorage(); } 
+            else { alert("É necessário um Nick."); return; }
+        }
+        const teamText = getTeamAsText();
+        if(!teamText.trim() || teamText.length < 20) { alert("Time vazio!"); return; }
+        const encoded = LZString.compressToEncodedURIComponent(teamText);
+        const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/')) + "/paste.html";
+        const longLink = `${baseUrl}?import=${encoded}`;
+        const btn = document.querySelector('.btn-link'); const oldText = btn.innerText; btn.innerText = "⏳...";
+        try {
+            const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longLink)}`);
+            if (response.ok) { const shortLink = await response.text(); await navigator.clipboard.writeText(shortLink); alert("Link Curto Copiado!\n" + shortLink); } 
+            else throw new Error("Falha");
+        } catch (e) { await navigator.clipboard.writeText(longLink); alert("Link Longo Copiado!"); } 
+        finally { btn.innerText = oldText; }
+    }
+  </script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getDatabase, ref, query, limitToLast, get, set, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  import { getDatabase, ref, push, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
@@ -327,272 +834,75 @@
   };
 
   const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
   const db = getDatabase(app);
-  const auth = getAuth(app); 
   const provider = new GoogleAuthProvider();
 
-  // Variáveis Globais para Filtros
-  let allTeamsData = []; // Armazena todos os times carregados
-  let myTeamsMode = false; // Estado do botão "Meus Times"
+  // AUTH UI
+  const loginForm = document.getElementById('loginForm');
+  const userProfile = document.getElementById('userProfile');
+  const emailInput = document.getElementById('emailInput');
+  const passInput = document.getElementById('passInput');
 
-  // --- UI MENU & MODAL ---
-  const menuBtn = document.getElementById("menuBtn");
-  const dropdownMenu = document.getElementById("dropdownMenu");
-
-  menuBtn.addEventListener("click", () => {
-      menuBtn.classList.toggle("active");
-      dropdownMenu.classList.toggle("active");
-  });
-
-  window.openLoginModal = function() {
-      document.getElementById('loginModal').style.display = 'flex';
-      dropdownMenu.classList.remove('active');
-      menuBtn.classList.remove('active');
-  }
-  window.closeLoginModal = function() { document.getElementById('loginModal').style.display = 'none'; }
-  window.logout = function() { if(confirm("Deseja sair?")) signOut(auth).then(() => location.reload()); }
-
-  // --- FILTROS UI ---
-  window.toggleFilterPanel = function() {
-      const p = document.getElementById('filtersPanel');
-      const b = document.querySelector('.btn-filter-toggle');
-      p.classList.toggle('show');
-      b.classList.toggle('active');
-  }
-
-  window.toggleMyTeams = function() {
-      if(!auth.currentUser) { openLoginModal(); return; }
-      
-      myTeamsMode = !myTeamsMode;
-      const btn = document.getElementById('btnMyTeams');
-      if(myTeamsMode) btn.classList.add('active');
-      else btn.classList.remove('active');
-      
-      window.applyFilters();
-  }
-
-  window.clearFilters = function() {
-      document.getElementById('searchInput').value = "";
-      document.getElementById('filterPokemon').value = "";
-      document.getElementById('filterTier').value = "";
-      document.getElementById('filterAuthor').value = "";
-      myTeamsMode = false;
-      document.getElementById('btnMyTeams').classList.remove('active');
-      window.applyFilters();
-  }
-
-  // --- LÓGICA DE FILTRAGEM ---
-  window.applyFilters = function() {
-      const container = document.getElementById('feedContainer');
-      const searchTxt = document.getElementById('searchInput').value.toLowerCase();
-      const pokeTxt = document.getElementById('filterPokemon').value.toLowerCase();
-      const tierVal = document.getElementById('filterTier').value;
-      const authorTxt = document.getElementById('filterAuthor').value.toLowerCase();
-      const currentUser = auth.currentUser;
-
-      // Filtra o array local (allTeamsData)
-      const filtered = allTeamsData.filter(data => {
-          // 1. Pesquisa por Título
-          const titleMatch = (data.title || "").toLowerCase().includes(searchTxt);
-          
-          // 2. Filtro de Tier
-          const tierMatch = !tierVal || (data.tier === tierVal);
-          
-          // 3. Filtro de Autor
-          const authorMatch = (data.author || "").toLowerCase().includes(authorTxt);
-          
-          // 4. Filtro de Pokémon (procura no array de pokemons)
-          let pokeMatch = true;
-          if(pokeTxt) {
-              if(!data.pokemon) pokeMatch = false;
-              else {
-                  // Vê se ALGUM pokemon do time inclui o texto digitado
-                  pokeMatch = data.pokemon.some(p => p.toLowerCase().includes(pokeTxt));
-              }
-          }
-
-          // 5. Filtro "Meus Times"
-          let myTeamMatch = true;
-          if(myTeamsMode && currentUser) {
-              myTeamMatch = (data.userId === currentUser.uid);
-          }
-
-          return titleMatch && tierMatch && authorMatch && pokeMatch && myTeamMatch;
-      });
-
-      // Renderiza
-      container.innerHTML = "";
-      if(filtered.length === 0) {
-          container.innerHTML = "<h3 class='loading-msg'>Nenhum time encontrado com esses filtros.</h3>";
-          return;
-      }
-
-      filtered.forEach(data => createCard(data));
-  }
-
-
-  // --- CARREGAMENTO DE DADOS ---
-  const container = document.getElementById('feedContainer');
-
-  async function loadFeed() {
-      try {
-          const teamsRef = ref(db, 'teams');
-          // Carrega os últimos 50 times para ter uma base boa de pesquisa
-          const recentTeamsQuery = query(teamsRef, limitToLast(50));
-          const snapshot = await get(recentTeamsQuery);
-
-          if (!snapshot.exists()) {
-              container.innerHTML = "<h3 class='loading-msg'>Nenhum time publicado ainda. Seja o primeiro!</h3>";
-              return;
-          }
-
-          container.innerHTML = ""; 
-          allTeamsData = []; // Limpa array global
-          
-          snapshot.forEach((childSnapshot) => {
-              const item = childSnapshot.val();
-              item.id = childSnapshot.key;
-              allTeamsData.push(item);
-          });
-
-          // Inverte para o mais novo primeiro
-          allTeamsData.reverse();
-
-          // Aplica filtros iniciais (ou mostra tudo)
-          window.applyFilters();
-
-      } catch (error) {
-          console.error("Erro feed:", error);
-          container.innerHTML = `<h3 class='loading-msg' style='color:#ff5555'>Erro ao carregar: ${error.message}</h3>`;
-      }
-  }
-
-  function createCard(data) {
-      const encoded = LZString.compressToEncodedURIComponent(data.teamData);
-      const pasteLink = `paste.html?import=${encoded}`;
-
-      let iconsHtml = '';
-      if(data.pokemon && Array.isArray(data.pokemon)) {
-          data.pokemon.slice(0, 6).forEach(pokeName => {
-              let cleanName = pokeName.trim().replace(/ /g, '-').replace(/\./g, '');
-              const src = `https://img.pokemondb.net/sprites/scarlet-violet/icon/${cleanName}.png`;
-              iconsHtml += `<img src="${src}" onerror="this.src='https://img.pokemondb.net/sprites/items/poke-ball.png'" title="${pokeName}">`;
-          });
-      }
-
-      const authorImg = data.userPhoto || "https://i.imgur.com/XOEcuO8.png";
-      const user = auth.currentUser;
-      const likesObj = data.likes || {}; 
-      const likesCount = Object.keys(likesObj).length;
-      const isLiked = user && likesObj[user.uid]; 
-      const likeClass = isLiked ? 'liked' : '';
-      const heartIcon = isLiked ? '❤️' : '🤍'; 
-
-      const card = document.createElement('div');
-      card.className = 'feed-card';
-      
-      card.innerHTML = `
-          <div class="card-header">
-              <h3 class="card-title">${data.title}</h3>
-              <span class="card-tier">${data.tier}</span>
-          </div>
-          <div class="card-icons">${iconsHtml}</div>
-          <div class="card-footer">
-              <div class="author-info">
-                  <img src="${authorImg}" class="author-avatar">
-                  <span>${data.author}</span>
-              </div>
-              <div style="display:flex; gap:10px; align-items:center;">
-                  <button class="btn-like ${likeClass}" id="btn-like-${data.id}" onclick="window.handleLike('${data.id}')">
-                    <span class="heart-icon">${heartIcon}</span> 
-                    <span class="like-count" id="count-${data.id}">${likesCount}</span>
-                  </button>
-                  <a href="${pasteLink}" class="btn-view" target="_blank">Ver Time</a>
-              </div>
-          </div>
-      `;
-      container.appendChild(card);
-  }
-
-  window.handleLike = async function(teamId) {
-      const user = auth.currentUser;
-      if(!user) { openLoginModal(); return; }
-
-      const btn = document.getElementById(`btn-like-${teamId}`);
-      const countSpan = document.getElementById(`count-${teamId}`);
-      const heartSpan = btn.querySelector('.heart-icon');
-      const likeRef = ref(db, `teams/${teamId}/likes/${user.uid}`);
-      const isLikedNow = btn.classList.contains('liked');
-      let currentCount = parseInt(countSpan.innerText);
-
-      try {
-          // Atualização Otimista
-          if(isLikedNow) {
-              btn.classList.remove('liked');
-              heartSpan.innerText = '🤍';
-              countSpan.innerText = Math.max(0, currentCount - 1);
-              await remove(likeRef);
-              // Atualiza dado local para filtros não quebrarem status
-              const t = allTeamsData.find(t=>t.id===teamId);
-              if(t && t.likes) delete t.likes[user.uid];
-          } else {
-              btn.classList.add('liked');
-              heartSpan.innerText = '❤️';
-              countSpan.innerText = currentCount + 1;
-              await set(likeRef, true);
-              // Atualiza dado local
-              const t = allTeamsData.find(t=>t.id===teamId);
-              if(t) { if(!t.likes) t.likes={}; t.likes[user.uid]=true; }
-          }
-      } catch(e) { console.error("Erro like:", e); }
-  }
-
-  // --- FIREBASE AUTH ---
-  document.getElementById('modalBtnGoogle').addEventListener('click', () => {
-      signInWithPopup(auth, provider).then(() => closeLoginModal()).catch(e => alert(e.message));
-  });
-  document.getElementById('modalBtnLogin').addEventListener('click', () => {
-      const email = document.getElementById('modalEmail').value;
-      const pass = document.getElementById('modalPass').value;
-      if(!email || !pass) return;
-      signInWithEmailAndPassword(auth, email, pass).then(() => closeLoginModal()).catch(e => alert(e.message));
-  });
-  document.getElementById('modalBtnRegister').addEventListener('click', () => {
-      const email = document.getElementById('modalEmail').value;
-      const pass = document.getElementById('modalPass').value;
-      if(pass.length < 6) { alert("Min 6 caracteres"); return; }
-      createUserWithEmailAndPassword(auth, email, pass).then(async (cred) => {
-          const nick = prompt("Seu Nick:");
-          if(nick) await updateProfile(cred.user, { displayName: nick });
-          closeLoginModal(); location.reload();
-      }).catch(e => alert(e.message));
-  });
+  document.getElementById('btnGoogleLogin').onclick = () => signInWithPopup(auth, provider).catch(e => alert(e.message));
+  document.getElementById('btnLogout').onclick = () => { if(confirm("Sair?")) signOut(auth); };
+  document.getElementById('btnEmailLogin').onclick = () => {
+     if(!emailInput.value || !passInput.value) return;
+     signInWithEmailAndPassword(auth, emailInput.value, passInput.value).catch(e => alert(e.message));
+  };
+  document.getElementById('btnEmailRegister').onclick = () => {
+     if(passInput.value.length < 6) return alert("Min 6 chars");
+     createUserWithEmailAndPassword(auth, emailInput.value, passInput.value)
+       .then(async (cred) => {
+           const nick = prompt("Seu Nick:");
+           if(nick) await updateProfile(cred.user, { displayName: nick });
+           location.reload();
+       }).catch(e => alert(e.message));
+  };
 
   onAuthStateChanged(auth, (user) => {
-      const loginBtn = document.getElementById('btnLoginHeader');
-      const userInfo = document.getElementById('userHeaderInfo');
-      const mobileLogin = document.getElementById('mobileLoginLink');
-      const mobileLogout = document.getElementById('mobileLogoutLink');
-
-      if (user) {
-          loginBtn.style.display = 'none';
-          userInfo.style.display = 'flex';
-          document.getElementById('headerAvatar').src = user.photoURL || "https://i.imgur.com/XOEcuO8.png";
-          document.getElementById('headerName').innerText = user.displayName || "Treinador";
-          mobileLogin.style.display = 'none';
-          mobileLogout.style.display = 'block';
-      } else {
-          loginBtn.style.display = 'block';
-          userInfo.style.display = 'none';
-          mobileLogin.style.display = 'block';
-          mobileLogout.style.display = 'none';
-      }
-      // Reaplica filtros (para atualizar estado do botão 'meus times' e likes)
-      if(allTeamsData.length > 0) window.applyFilters();
+    if (user) {
+      loginForm.style.display = 'none'; userProfile.style.display = 'flex';
+      document.getElementById('userPhoto').src = user.photoURL || "https://i.imgur.com/XOEcuO8.png";
+      document.getElementById('userName').innerText = user.displayName || user.email.split('@')[0];
+      document.getElementById('userEmail').innerText = user.email;
+      const authorInput = document.getElementById('teamAuthorInput');
+      if(authorInput && !authorInput.value && user.displayName) authorInput.value = user.displayName;
+    } else {
+      loginForm.style.display = 'block'; userProfile.style.display = 'none';
+    }
   });
 
-  setTimeout(loadFeed, 500);
-</script>
+  window.publishTeam = async function() {
+      const user = auth.currentUser;
+      if(!user) { alert("Faça login na barra lateral para publicar!"); return; }
+      const title = document.getElementById('teamNameInput').value;
+      const author = document.getElementById('teamAuthorInput').value;
+      const tier = document.getElementById('teamTier').value;
+      const teamText = getTeamAsText();
+      if(!title || title==="Novo Time") { alert("Nome do time inválido."); return; }
+      if(!tier) { alert("Selecione Tier."); return; }
+      if(teamText.length < 50) { alert("Time vazio."); return; }
 
+      let sprites = [];
+      document.querySelectorAll('.poke-editor').forEach(ed => {
+          const name = ed.querySelector('.p-name').value;
+          if(name) sprites.push(name.toLowerCase());
+      });
+
+      const btn = document.querySelector('.btn-publish');
+      btn.innerText = "Enviando..."; btn.disabled = true;
+      try {
+          const newTeamRef = push(ref(db, 'teams'));
+          await set(newTeamRef, {
+              title: title, author: author || user.displayName, tier: tier,
+              teamData: teamText, pokemon: sprites, userId: user.uid,
+              userPhoto: user.photoURL || null, createdAt: serverTimestamp()
+          });
+          alert("Sucesso!");
+      } catch (error) { alert("Erro: " + error.message); } 
+      finally { btn.innerText = "📢 Publicar"; btn.disabled = false; }
+  }
+</script>
 </body>
 </html>
