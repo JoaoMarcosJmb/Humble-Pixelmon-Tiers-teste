@@ -150,12 +150,15 @@
     .card-header-right { display: flex; align-items: center; gap: 8px; }
     .card-tier { background: #252525; color: var(--cor-dourado); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: 1px solid #444; font-weight: bold; }
 
-    .btn-delete-team { background: transparent; border: none; color: #666; font-size: 1.1rem; cursor: pointer; transition: 0.2s; padding: 0 5px; }
+    /* BOTÃO DE APAGAR */
+    .btn-delete-team {
+        background: transparent; border: none; color: #666; font-size: 1.1rem; 
+        cursor: pointer; transition: 0.2s; padding: 0 5px;
+    }
     .btn-delete-team:hover { color: #ff4d4d; transform: scale(1.1); }
 
-    /* SPRITES */
     .card-icons { 
-        display: flex; gap: 2px; margin-bottom: 20px; background: rgba(0,0,0,0.4); 
+        display: flex; gap: 5px; margin-bottom: 20px; background: rgba(0,0,0,0.4); 
         padding: 10px; border-radius: 8px; justify-content: center; min-height: 70px; align-items: flex-end;
     }
     .card-icons img { width: auto; height: auto; max-height: 50px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); transition: transform 0.2s; }
@@ -172,14 +175,19 @@
     }
     .btn-view:hover { background: var(--cor-dourado); color: #000; }
     
-    .btn-like { background: rgba(255,255,255,0.05); border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #888; font-size: 0.9rem; transition: 0.2s; padding: 6px 12px; border-radius: 20px; }
+    /* LIKE */
+    .btn-like {
+        background: rgba(255,255,255,0.05); border: none; cursor: pointer;
+        display: flex; align-items: center; gap: 6px;
+        color: #888; font-size: 0.9rem; transition: 0.2s; padding: 6px 12px; border-radius: 20px;
+    }
     .btn-like:hover { background: rgba(255,255,255,0.1); color: #fff; }
     .btn-like.liked { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
     .heart-icon { font-size: 1.1rem; }
 
     .loading-msg { grid-column: 1/-1; text-align: center; color: #888; padding: 40px; }
 
-    /* --- PAGINAÇÃO (NOVO) --- */
+    /* --- CONTROLES DE PAGINAÇÃO --- */
     .pagination-controls {
         display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 50px;
     }
@@ -219,8 +227,11 @@
              <span id="headerName" class="header-name">User</span>
              <button onclick="logout()" class="btn-logout-mini" title="Sair">×</button>
         </div>
+
         <button id="btnLoginHeader" class="btn-login-header desktop-only" onclick="openLoginModal()">Entrar</button>
+
         <a href="builder.html" class="btn-create desktop-only"><span>+</span> Publicar</a>
+
         <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
     </div>
 </header>
@@ -310,13 +321,16 @@
   const auth = getAuth(app); 
   const provider = new GoogleAuthProvider();
 
-  let allTeamsData = []; 
-  let filteredTeams = [];
+  // VARIÁVEIS GLOBAIS
+  let allTeamsData = []; // Armazena todos os times carregados (Cache local)
+  let filteredTeams = []; // Times filtrados para exibição
   let myTeamsMode = false;
-  const ITEMS_PER_PAGE = 12;
+  
+  // PAGINAÇÃO
+  const ITEMS_PER_PAGE = 12; // MÁXIMO DE CARDS POR PÁGINA
   let currentPage = 1;
 
-  // --- MENU & MODAL ---
+  // --- MENU & MODAL UI ---
   const menuBtn = document.getElementById("menuBtn");
   const dropdownMenu = document.getElementById("dropdownMenu");
   menuBtn.onclick = () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); };
@@ -346,7 +360,7 @@
       window.applyFilters();
   }
 
-  // --- LÓGICA DE FILTRO ---
+  // --- LÓGICA DE FILTRO E PAGINAÇÃO ---
   window.applyFilters = () => {
       const searchTxt = document.getElementById('searchInput').value.toLowerCase();
       const pokeTxt = document.getElementById('filterPokemon').value.toLowerCase();
@@ -368,11 +382,11 @@
           return titleMatch && tierMatch && authorMatch && pokeMatch && myTeamMatch;
       });
 
+      // Reseta para a primeira página sempre que filtrar
       currentPage = 1;
       renderCurrentPage();
   }
 
-  // --- PAGINAÇÃO ---
   function renderCurrentPage() {
       const container = document.getElementById('feedContainer');
       container.innerHTML = "";
@@ -383,6 +397,7 @@
           return;
       }
 
+      // Lógica de "fatiar" o array para mostrar só 12
       const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
       const endIndex = startIndex + ITEMS_PER_PAGE;
       const pageItems = filteredTeams.slice(startIndex, endIndex);
@@ -394,6 +409,8 @@
   function updatePaginationControls() {
       const totalPages = Math.ceil(filteredTeams.length / ITEMS_PER_PAGE) || 1;
       document.getElementById('pageInfo').innerText = `Página ${currentPage} de ${totalPages}`;
+      
+      // Desabilita botões se estiver no começo ou fim
       document.getElementById('btnPrev').disabled = (currentPage === 1);
       document.getElementById('btnNext').disabled = (currentPage === totalPages);
   }
@@ -404,11 +421,12 @@
       if(currentPage < totalPages) { currentPage++; renderCurrentPage(); window.scrollTo(0,0); } 
   }
 
-  // --- CARREGAMENTO ---
+  // --- CARREGAMENTO INICIAL ---
   async function loadFeed() {
       const container = document.getElementById('feedContainer');
       try {
-          const snapshot = await get(query(ref(db, 'teams'), limitToLast(100)));
+          // Carrega os últimos 150 times (para ter uma base boa no cache)
+          const snapshot = await get(query(ref(db, 'teams'), limitToLast(150)));
           if (!snapshot.exists()) { container.innerHTML = "<h3 class='loading-msg'>Nenhum time publicado ainda.</h3>"; return; }
           container.innerHTML = ""; allTeamsData = [];
           snapshot.forEach((child) => {
@@ -419,10 +437,12 @@
       } catch (error) { container.innerHTML = `<h3 class='loading-msg' style='color:#ff5555'>Erro: ${error.message}</h3>`; }
   }
 
-  // --- CORREÇÃO DE NOMES (Para Showdown Sprites) ---
+  // --- CORREÇÃO DE NOMES PARA SPRITES (Showdown Style) ---
   function toShowdownName(rawName) {
       let name = rawName.trim().toLowerCase();
       // Remove tudo que não for letra ou número (Padrão Showdown)
+      // Ex: "Ogerpon-Wellspring" -> "ogerponwellspring"
+      // Ex: "Tauros-Paldea-Blaze" -> "taurospaldeablaze"
       name = name.replace(/[^a-z0-9]/g, ''); 
       return name;
   }
@@ -438,15 +458,14 @@
       const authorImg = data.userPhoto || "https://i.imgur.com/XOEcuO8.png";
 
       const isOwner = user && data.userId === user.uid;
-      const deleteBtn = isOwner ? `<button class="btn-delete-team" onclick="window.deleteTeam('${data.id}')" title="Apagar">🗑️</button>` : '';
+      const deleteBtn = isOwner ? `<button class="btn-delete-team" onclick="window.deleteTeam('${data.id}')" title="Apagar Time">🗑️</button>` : '';
 
       let iconsHtml = '';
       if(data.pokemon) {
           data.pokemon.slice(0,6).forEach(p => {
               const cleanName = toShowdownName(p);
-              // SPRITES ANIMADOS DO SHOWDOWN
-              // Se quiser estáticos, mude "/ani/" para "/gen5/"
-              const src = `https://play.pokemonshowdown.com/sprites/gen5/${cleanName}.gif`;
+              // SPRITES ESTÁTICOS DO SHOWDOWN (GEN 5)
+              const src = `https://play.pokemonshowdown.com/sprites/gen5/${cleanName}.png`;
               
               iconsHtml += `<img src="${src}" onerror="this.src='https://img.pokemondb.net/sprites/items/poke-ball.png'" title="${p}">`;
           });
