@@ -287,7 +287,7 @@
 </div>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
   import { getDatabase, ref, query, limitToLast, get, set, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
@@ -313,130 +313,151 @@
   const ITEMS_PER_PAGE = 12;
   let currentPage = 1;
 
-  // --- MENU & MODAL ---
-  const menuBtn = document.getElementById("menuBtn");
-  const dropdownMenu = document.getElementById("dropdownMenu");
-  menuBtn.onclick = () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); };
+  // --- UI CONTROLS ---
+  document.getElementById('menuBtn').onclick = () => document.getElementById('menu').classList.toggle('active');
+  window.openModal = () => { document.getElementById('modal').style.display='flex'; document.getElementById('menu').classList.remove('active'); }
+  window.closeModal = () => document.getElementById('modal').style.display='none';
+  window.logout = () => { if(confirm("Deseja sair?")) signOut(auth).then(()=>location.reload()); };
 
-  window.openLoginModal = () => { document.getElementById('loginModal').style.display = 'flex'; dropdownMenu.classList.remove('active'); menuBtn.classList.remove('active'); }
-  window.closeLoginModal = () => { document.getElementById('loginModal').style.display = 'none'; }
-  window.logout = () => { if(confirm("Deseja sair?")) signOut(auth).then(()=>location.reload()); }
+  window.toggleFilters = () => document.getElementById('filters').classList.toggle('show');
 
-  // --- FILTROS ---
-  window.toggleFilterPanel = () => {
-      document.getElementById('filtersPanel').classList.toggle('show');
-      document.querySelector('.btn-filter-toggle').classList.toggle('active');
-  }
-  window.toggleMyTeams = () => {
-      if(!auth.currentUser) { openLoginModal(); return; }
+  window.toggleMine = () => {
+      if(!auth.currentUser) return openModal();
       myTeamsMode = !myTeamsMode;
-      const btn = document.getElementById('btnMyTeams');
-      myTeamsMode ? btn.classList.add('active') : btn.classList.remove('active');
-      window.applyFilters();
-  }
+      const btn = document.getElementById('btnMine');
+      if(myTeamsMode) {
+          btn.style.background = 'var(--gold)';
+          btn.style.color = '#000';
+      } else {
+          btn.style.background = 'transparent';
+          btn.style.color = 'var(--gold)';
+      }
+      applyFilters();
+  };
+
   window.clearFilters = () => {
-      document.getElementById('searchInput').value = "";
-      document.getElementById('filterPokemon').value = "";
-      document.getElementById('filterTier').value = "";
-      document.getElementById('filterAuthor').value = "";
-      myTeamsMode = false; document.getElementById('btnMyTeams').classList.remove('active');
-      window.applyFilters();
+      document.getElementById('search').value=""; 
+      document.getElementById('fPoke').value="";
+      document.getElementById('fTier').value=""; 
+      document.getElementById('fAuth').value="";
+      
+      myTeamsMode = false; 
+      const btn = document.getElementById('btnMine');
+      btn.style.background='transparent'; 
+      btn.style.color='var(--gold)';
+      
+      applyFilters();
   }
 
-  // --- LOGICA DE FILTROS ---
+  // --- LÓGICA DE FILTROS ---
   window.applyFilters = () => {
-      const searchTxt = document.getElementById('searchInput').value.toLowerCase();
-      const pokeTxt = document.getElementById('filterPokemon').value.toLowerCase();
-      const tierVal = document.getElementById('filterTier').value;
-      const authorTxt = document.getElementById('filterAuthor').value.toLowerCase();
-      const currentUser = auth.currentUser;
+      const s = document.getElementById('search').value.toLowerCase();
+      const p = document.getElementById('fPoke').value.toLowerCase();
+      const t = document.getElementById('fTier').value;
+      const a = document.getElementById('fAuth').value.toLowerCase();
+      const u = auth.currentUser;
 
-      filteredTeams = allTeamsData.filter(data => {
-          const titleMatch = (data.title || "").toLowerCase().includes(searchTxt);
-          const tierMatch = !tierVal || (data.tier === tierVal);
-          const authorMatch = (data.author || "").toLowerCase().includes(authorTxt);
-          let pokeMatch = true;
-          if(pokeTxt) {
-              if(!data.pokemon) pokeMatch = false;
-              else pokeMatch = data.pokemon.some(p => p.toLowerCase().includes(pokeTxt));
+      filteredTeams = allTeamsData.filter(d => {
+          const okTitle = (d.title||"").toLowerCase().includes(s);
+          const okTier = !t || d.tier === t;
+          const okAuth = (d.author||"").toLowerCase().includes(a);
+          
+          let okPoke = true;
+          if(p) {
+              if(!d.pokemon) okPoke = false;
+              else okPoke = d.pokemon.some(x => x.toLowerCase().includes(p));
           }
-          let myTeamMatch = true;
-          if(myTeamsMode && currentUser) myTeamMatch = (data.userId === currentUser.uid);
-          return titleMatch && tierMatch && authorMatch && pokeMatch && myTeamMatch;
+
+          let okMine = true;
+          if(myTeamsMode && u) okMine = (d.userId === u.uid);
+
+          return okTitle && okTier && okAuth && okPoke && okMine;
       });
 
-      currentPage = 1;
+      currentPage = 1; 
       renderCurrentPage();
-  }
+  };
 
-  // --- PAGINAÇÃO ---
+  // --- RENDERIZAÇÃO E PAGINAÇÃO ---
   function renderCurrentPage() {
-      const container = document.getElementById('feedContainer');
-      container.innerHTML = "";
+      const el = document.getElementById('feed'); 
+      el.innerHTML="";
 
-      if(filteredTeams.length === 0) {
-          container.innerHTML = "<h3 class='loading-msg'>Nenhum time encontrado.</h3>";
-          updatePaginationControls();
-          return;
+      if(!filteredTeams.length) { 
+          el.innerHTML="<h3 style='grid-column:1/-1; text-align:center; color:#888;'>Nada encontrado.</h3>"; 
+          updatePaginationControls(); 
+          return; 
       }
-
-      const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-      const endIndex = startIndex + ITEMS_PER_PAGE;
-      const pageItems = filteredTeams.slice(startIndex, endIndex);
-
-      pageItems.forEach(data => createCard(data));
+      
+      const start = (currentPage - 1) * ITEMS_PER_PAGE;
+      const slice = filteredTeams.slice(start, start + ITEMS_PER_PAGE);
+      
+      slice.forEach(d => createCard(d));
       updatePaginationControls();
   }
 
   function updatePaginationControls() {
-      const totalPages = Math.ceil(filteredTeams.length / ITEMS_PER_PAGE) || 1;
-      document.getElementById('pageInfo').innerText = `Página ${currentPage} de ${totalPages}`;
-      document.getElementById('btnPrev').disabled = (currentPage === 1);
-      document.getElementById('btnNext').disabled = (currentPage === totalPages);
+      const total = Math.ceil(filteredTeams.length / ITEMS_PER_PAGE) || 1;
+      document.getElementById('pInfo').innerText = `${currentPage} / ${total}`;
+      document.getElementById('prev').disabled = (currentPage === 1);
+      document.getElementById('next').disabled = (currentPage === total);
   }
 
-  window.prevPage = () => { if(currentPage > 1) { currentPage--; renderCurrentPage(); window.scrollTo(0,0); } }
-  window.nextPage = () => { 
-      const totalPages = Math.ceil(filteredTeams.length / ITEMS_PER_PAGE);
-      if(currentPage < totalPages) { currentPage++; renderCurrentPage(); window.scrollTo(0,0); } 
-  }
+  window.changePage = (dir) => { 
+      const total = Math.ceil(filteredTeams.length / ITEMS_PER_PAGE);
+      if((dir === -1 && currentPage > 1) || (dir === 1 && currentPage < total)) {
+          currentPage += dir;
+          renderCurrentPage();
+          window.scrollTo(0,0);
+      }
+  };
 
-  // --- CARREGAMENTO DO FEED ---
-  async function loadFeed() {
-      const container = document.getElementById('feedContainer');
-      try {
-          const snapshot = await get(query(ref(db, 'teams'), limitToLast(200)));
-          if (!snapshot.exists()) { container.innerHTML = "<h3 class='loading-msg'>Nenhum time publicado ainda.</h3>"; return; }
-          container.innerHTML = ""; allTeamsData = [];
-          snapshot.forEach((child) => {
-              const item = child.val(); item.id = child.key; allTeamsData.push(item);
-          });
-          allTeamsData.reverse(); 
-          window.applyFilters();
-      } catch (error) { container.innerHTML = `<h3 class='loading-msg' style='color:#ff5555'>Erro: ${error.message}</h3>`; }
-  }
-
-  // --- CORREÇÃO DE NOMES PARA SPRITES GEN 5 ---
+  // --- TRATAMENTO DE NOMES (CORREÇÃO DE SPRITES) ---
   function toShowdownName(rawName) {
       let name = rawName.trim().toLowerCase();
-      // Remove tudo que não for letra ou número (Padrão gen5 showdown)
+      // Remove tudo que não for letra/número (Padrão gen5 showdown)
       name = name.replace(/[^a-z0-9]/g, ''); 
       
-      // Fixes Específicos para Formas e Nomes que bugam
-      if(name.includes("taurospaldea")) return "taurospaldeacombat"; // Padrão
-      if(name.includes("taurospaldeafire")) return "taurospaldeablaze";
-      if(name.includes("taurospaldeawater")) return "taurospaldeaaqua";
-      
-      // Urshifu
-      if(name === "urshifu") return "urshifusinglestrike";
-      
-      // Lycanroc
-      if(name === "lycanroc") return "lycanrocmidday";
+      // Mapeamento MANUAL para corrigir nomes que o Showdown salva diferente
+      const manualFixes = {
+          "taurospaldea": "taurospaldeacombat",
+          "taurospaldeafire": "taurospaldeablaze",
+          "taurospaldeawater": "taurospaldeaaqua",
+          "urshifu": "urshifusinglestrike",
+          "urshifurapid": "urshifurapidstrike",
+          "lycanroc": "lycanrocmidday",
+          "basculin": "basculinredstriped",
+          "wormadam": "wormadamplant",
+          "shaymin": "shayminland",
+          "giratina": "giratinaaltered",
+          "tornadus": "tornadusincarnate",
+          "thundurus": "thundurusincarnate",
+          "landorus": "landorusincarnate",
+          "enamorus": "enamorusincarnate",
+          "meloetta": "meloettaaria",
+          "aegislash": "aegislashshield",
+          "pumpkaboo": "pumpkabooaverage",
+          "gourgeist": "gourgeistaverage",
+          "zygarde": "zygarde50",
+          "mimikyu": "mimikyudisguised",
+          "toxtricity": "toxtricityamped",
+          "eiscue": "eiscueice",
+          "indeedee": "indeedeemale",
+          "morpeko": "morpekofullbelly",
+          "zacian": "zacianhero",
+          "zamazenta": "zamazentahero",
+          "calyrexice": "calyrexicerider",
+          "calyrexshadow": "calyrexshadowrider",
+          "ogerpon": "ogerponteal",
+          "ogerpontealmask": "ogerponteal",
+          "tatsugiri": "tatsugiricurly",
+          "dudunsparce": "dudunsparcetwosegment",
+          "palafin": "palafinzero",
+          "maushold": "mausholdfamilyoffour",
+          "gimmighoul": "gimmighoulchest"
+      };
 
-      // Nidoran
-      if(name.includes("nidoranm") || name.includes("nidoranmale")) return "nidoranm";
-      if(name.includes("nidoranf") || name.includes("nidoranfemale")) return "nidoranf";
-
+      if(manualFixes[name]) return manualFixes[name];
       return name;
   }
 
@@ -451,105 +472,116 @@
       const authorImg = data.userPhoto || "https://i.imgur.com/XOEcuO8.png";
 
       const isOwner = user && data.userId === user.uid;
-      const deleteBtn = isOwner ? `<button class="btn-delete-team" onclick="window.deleteTeam('${data.id}')" title="Apagar">🗑️</button>` : '';
+      const deleteBtn = isOwner ? `<button class="btn-del" onclick="window.delT('${data.id}')" title="Apagar">🗑️</button>` : '';
 
       let iconsHtml = '';
       if(data.pokemon) {
           data.pokemon.slice(0,6).forEach(p => {
               const cleanName = toShowdownName(p);
-              // SPRITES ESTÁTICOS GEN 5 (PIXEL ART)
               const src = `https://play.pokemonshowdown.com/sprites/gen5/${cleanName}.png`;
               
               iconsHtml += `<img src="${src}" onerror="this.src='https://img.pokemondb.net/sprites/items/poke-ball.png'" title="${p}">`;
           });
       }
 
-      const card = document.createElement('div'); card.className = 'feed-card';
+      const card = document.createElement('div'); card.className = 'card';
       card.innerHTML = `
-          <div class="card-header">
-              <h3 class="card-title">${data.title}</h3>
-              <div class="card-header-right">
-                  <span class="card-tier">${data.tier}</span>
-                  ${deleteBtn}
+          <div class="c-head">
+              <h3 class="c-title">${data.title}</h3>
+              <div style="display:flex; align-items:center; gap:5px;">
+                  <span class="c-tier">${data.tier}</span>${deleteBtn}
               </div>
           </div>
-          <div class="card-icons">${iconsHtml}</div>
-          <div class="card-footer">
-              <div class="author-info">
-                  <img src="${authorImg}" class="author-avatar">
+          <div class="c-sprites">${iconsHtml}</div>
+          <div class="c-foot">
+              <div class="c-auth">
+                  <img src="${authorImg}">
                   <span>${data.author}</span>
               </div>
-              <div style="display:flex; gap:10px; align-items:center;">
-                  <button class="btn-like ${likeClass}" id="btn-like-${data.id}" onclick="window.handleLike('${data.id}')">
-                    <span class="heart-icon">${heartIcon}</span> 
-                    <span class="like-count" id="count-${data.id}">${likesCount}</span>
+              <div style="display:flex; gap:10px;">
+                  <button class="btn-like ${likeClass}" onclick="window.like('${data.id}')">
+                    ${heartIcon} ${likesCount}
                   </button>
-                  <a href="${pasteLink}" class="btn-view" target="_blank">Ver Time</a>
+                  <a href="${pasteLink}" class="btn btn-outline" style="font-size:0.8rem; padding:4px 10px;">Ver</a>
               </div>
           </div>
       `;
-      document.getElementById('feedContainer').appendChild(card);
+      document.getElementById('feed').appendChild(card);
   }
 
-  // --- ACTIONS ---
-  window.deleteTeam = async function(teamId) {
-      if(!confirm("Apagar este time?")) return;
-      try { await remove(ref(db, `teams/${teamId}`)); alert("Time apagado."); loadFeed(); } catch(e) { alert("Erro: "+e.message); }
-  }
-  window.handleLike = async function(teamId) {
-      const user = auth.currentUser;
-      if(!user) { openLoginModal(); return; }
-      const btn = document.getElementById(`btn-like-${teamId}`);
-      const countSpan = document.getElementById(`count-${teamId}`);
-      const heartSpan = btn.querySelector('.heart-icon');
-      const likeRef = ref(db, `teams/${teamId}/likes/${user.uid}`);
-      const isLikedNow = btn.classList.contains('liked');
-      let currentCount = parseInt(countSpan.innerText);
-      try {
-          if(isLikedNow) {
-              btn.classList.remove('liked'); heartSpan.innerText = '🤍'; countSpan.innerText = Math.max(0, currentCount - 1);
-              await remove(likeRef);
-              const t = allTeamsData.find(x => x.id === teamId); if(t && t.likes) delete t.likes[user.uid];
-          } else {
-              btn.classList.add('liked'); heartSpan.innerText = '❤️'; countSpan.innerText = currentCount + 1;
-              await set(likeRef, true);
-              const t = allTeamsData.find(x => x.id === teamId); if(t) { if(!t.likes) t.likes={}; t.likes[user.uid]=true; }
-          }
-      } catch(e) { console.error("Erro like", e); }
-  }
-
-  // --- AUTH ---
-  document.getElementById('modalBtnGoogle').onclick = () => signInWithPopup(auth, provider).then(()=>closeLoginModal()).catch(e=>alert(e.message));
-  document.getElementById('modalBtnLogin').onclick = () => {
-      const e = document.getElementById('modalEmail').value; const p = document.getElementById('modalPass').value;
-      if(e && p) signInWithEmailAndPassword(auth, e, p).then(()=>closeLoginModal()).catch(er=>alert(er.message));
+  // --- AÇÕES DO USUÁRIO ---
+  window.delT = async (id) => {
+      if(confirm("Apagar este time?")) { 
+          try { await remove(ref(db, `teams/${id}`)); alert("Feito."); load(); } 
+          catch(e) { alert("Erro: "+e.message); } 
+      }
   };
-  document.getElementById('modalBtnRegister').onclick = () => {
-      const e = document.getElementById('modalEmail').value; const p = document.getElementById('modalPass').value;
-      if(p.length<6) return alert("Senha curta");
-      createUserWithEmailAndPassword(auth, e, p).then(async (c)=>{
-          const nick=prompt("Nick:"); if(nick) await updateProfile(c.user,{displayName:nick}); closeLoginModal(); location.reload();
+
+  window.like = async (id) => {
+      const u = auth.currentUser; if(!u) return openModal();
+      const r = ref(db, `teams/${id}/likes/${u.uid}`);
+      const t = allTeamsData.find(x => x.id === id);
+      const isL = t.likes && t.likes[u.uid];
+      
+      try {
+          // Atualização Otimista
+          if(isL) { await remove(r); if(t.likes) delete t.likes[u.uid]; }
+          else { await set(r, true); if(!t.likes) t.likes={}; t.likes[u.uid]=true; }
+          renderCurrentPage(); 
+      } catch(e){ console.error(e); }
+  };
+
+  // --- CARREGAMENTO INICIAL ---
+  async function load() {
+      try {
+          // Carrega os últimos 200 times
+          const snap = await get(query(ref(db,'teams'), limitToLast(200)));
+          if(!snap.exists()) { document.getElementById('feed').innerHTML="<h3 style='text-align:center; color:#888'>Vazio...</h3>"; return; }
+          allTeamsData = []; 
+          snap.forEach(c => { let v=c.val(); v.id=c.key; allTeamsData.push(v); });
+          allTeamsData.reverse(); 
+          applyFilters();
+      } catch(e) { console.error(e); }
+  }
+
+  // --- AUTHENTICATION ---
+  const p = new GoogleAuthProvider();
+  document.getElementById('doGoogle').onclick = () => signInWithPopup(auth, p).then(closeModal).catch(e=>alert(e.message));
+  document.getElementById('doLogin').onclick = () => {
+      const e = document.getElementById('mEmail').value; 
+      const ps = document.getElementById('mPass').value;
+      if(e && ps) signInWithEmailAndPassword(auth, e, ps).then(closeModal).catch(er=>alert(er.message));
+  };
+  document.getElementById('doReg').onclick = () => {
+      const e = document.getElementById('mEmail').value; 
+      const ps = document.getElementById('mPass').value;
+      if(ps.length < 6) return alert("Senha curta");
+      createUserWithEmailAndPassword(auth, e, ps).then(async c => {
+          const n = prompt("Seu Nick:"); 
+          if(n) await updateProfile(c.user, {displayName:n}); 
+          closeModal(); location.reload();
       }).catch(er=>alert(er.message));
   };
 
-  onAuthStateChanged(auth, (user) => {
-      const loginBtn = document.getElementById('btnLoginHeader');
-      const userInfo = document.getElementById('userHeaderInfo');
-      const mobileLogin = document.getElementById('mobileLoginLink');
-      const mobileLogout = document.getElementById('mobileLogoutLink');
-      if(user) {
-          loginBtn.style.display='none'; userInfo.style.display='flex';
-          document.getElementById('headerAvatar').src = user.photoURL || "https://i.imgur.com/XOEcuO8.png";
-          document.getElementById('headerName').innerText = user.displayName || "Treinador";
-          mobileLogin.style.display='none'; mobileLogout.style.display='block';
+  onAuthStateChanged(auth, u => {
+      const hL = document.getElementById('hLogin');
+      const uI = document.getElementById('uInfo');
+      const mL = document.getElementById('mobLogin');
+      const mO = document.getElementById('mobLogout');
+
+      if(u) {
+          hL.style.display = 'none'; uI.style.display = 'flex';
+          mL.style.display = 'none'; mO.style.display = 'block';
+          document.getElementById('uImg').src = u.photoURL || "https://i.imgur.com/XOEcuO8.png";
+          document.getElementById('uNick').innerText = u.displayName || "Treinador";
       } else {
-          loginBtn.style.display='block'; userInfo.style.display='none';
-          mobileLogin.style.display='block'; mobileLogout.style.display='none';
+          hL.style.display = 'block'; uI.style.display = 'none';
+          mL.style.display = 'block'; mO.style.display = 'none';
       }
-      if(allTeamsData.length > 0) window.applyFilters();
+      if(allTeamsData.length > 0) renderCurrentPage();
   });
 
-  setTimeout(loadFeed, 500);
+  setTimeout(load, 500);
 </script>
 
 </body>
