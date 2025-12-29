@@ -81,13 +81,12 @@
     .poke-card:hover { transform: translateY(-3px); border-color: #666; }
 
     .card-header { 
-        display: flex; justify-content: space-between; align-items: center; /* Alinha texto no centro vertical */
+        display: flex; justify-content: space-between; align-items: center;
         margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 8px;
         height: 45px;
     }
     .poke-name { font-size: 1.3rem; font-weight: bold; color: #fff; margin: 0; text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* ESTILO NOVO DO ITEM (TEXTO) */
     .poke-item-text { 
         font-size: 0.9rem; color: #bbb; font-style: italic; 
         white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
@@ -267,63 +266,4 @@
             card.className = 'poke-card';
             card.innerHTML = `
                 <div class="card-header">
-                    <span class="poke-name">${pk.display}</span>
-                    ${pk.item ? `<span class="poke-item-text">@ ${pk.item}</span>` : ''}
-                </div>
-                
-                <div class="visual-area">
-                    <img id="${imgId}" src="${IMG_FALLBACK}" class="main-sprite">
-                    <div class="info-list">
-                        ${pk.ability ? `<div><strong>Ability:</strong> ${pk.ability}</div>` : ''}
-                        ${pk.nature ? `<div><strong>Nature:</strong> ${pk.nature}</div>` : ''}
-                        ${pk.evs ? `<div><strong>EVs:</strong> ${pk.evs}</div>` : ''}
-                        ${pk.ivs ? `<div><strong>IVs:</strong> ${pk.ivs}</div>` : ''}
-                    </div>
-                </div>
-
-                <div class="moves-grid">
-                    ${pk.moves.map(m => `<div class="move-tag">${m}</div>`).join('')}
-                    ${pk.moves.length === 0 ? '<div style="grid-column:span 2; color:#555; text-align:center; font-size:0.8rem;">-</div>' : ''}
-                </div>
-            `;
-            container.appendChild(card);
-
-            fetchPokemonImage(apiName, imgId);
-        }
-    }
-
-    async function fetchPokemonImage(name, imgId) {
-        const imgEl = document.getElementById(imgId);
-        try {
-            // 1. Tenta API Oficial
-            let r = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
-            
-            if(!r.ok && name.includes('-')) {
-                const baseName = name.substring(0, name.lastIndexOf('-'));
-                if(!NAME_FIXES[baseName]) {
-                    let r2 = await fetch(`https://pokeapi.co/api/v2/pokemon/${baseName}`);
-                    if(r2.ok) r = r2;
-                }
-            }
-
-            if(r.ok) {
-                const d = await r.json();
-                imgEl.src = `${POKEAPI_BASE}${d.id}.png`;
-            } else {
-                // 2. Fallback para Showdown Sprite
-                let showdownName = name.replace('-incarnate', ''); 
-                imgEl.src = `${SHOWDOWN_SPRITES}${showdownName}.png`;
-            }
-        } catch(e) {
-            console.warn("Imagem não encontrada:", name);
-        }
-    }
-
-    function toggleRaw() {
-        const el = document.getElementById('rawText');
-        el.style.display = el.style.display === 'block' ? 'none' : 'block';
-    }
-</script>
-
-</body>
-</html>
+                    <span class="poke-
