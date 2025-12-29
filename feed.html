@@ -9,7 +9,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 
   <style>
-    /* --- ESTILO VISUAL PADRÃO --- */
+    /* --- VARIÁVEIS & RESET --- */
     :root { 
       --cor-dourado: #d1a720; 
       --cor-fundo: #111; 
@@ -26,16 +26,20 @@
       background: var(--cor-fundo); 
       background-image: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,30,20,0.95)), 
                         url("https://i.imgur.com/vATNRmF.png");
-      background-size: cover; background-attachment: fixed;
-      color: var(--cor-texto); margin: 0; padding: 0; 
-      min-height: 100vh; display: flex; flex-direction: column;
+      background-size: cover; 
+      background-attachment: fixed;
+      color: var(--cor-texto); 
+      margin: 0; padding: 0; 
+      min-height: 100vh; 
+      display: flex; flex-direction: column;
     }
 
     /* --- HEADER --- */
     header { 
       height: 60px; padding: 0 20px; flex-shrink: 0;
       display: flex; justify-content: space-between; align-items: center; 
-      background: rgba(20, 20, 20, 0.98); border-bottom: 2px solid var(--cor-dourado); 
+      background: rgba(20, 20, 20, 0.98); 
+      border-bottom: 2px solid var(--cor-dourado); 
       z-index: 1000; position: sticky; top: 0;
       box-shadow: 0 4px 15px rgba(0,0,0,0.6);
     }
@@ -45,7 +49,7 @@
     
     .header-right { display: flex; align-items: center; gap: 15px; }
 
-    /* BOTOES HEADER */
+    /* BOTÕES */
     .btn-create { 
         background: var(--cor-verde); color: #fff; padding: 8px 20px; border-radius: 30px; 
         text-decoration: none; font-weight: bold; transition: 0.3s; 
@@ -59,7 +63,7 @@
     }
     .btn-login-header:hover { background: var(--cor-dourado); color: #000; }
 
-    /* INFO DO USUARIO NO HEADER */
+    /* INFO DO USUARIO */
     .user-header-info { display: none; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 4px 15px; border-radius: 30px; border: 1px solid #444; }
     .header-avatar { width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--cor-dourado); object-fit: cover; }
     .header-name { font-size: 0.9rem; font-weight: bold; color: #eee; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -83,14 +87,12 @@
     @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     nav a { color: var(--cor-dourado); text-decoration:none; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:5px; font-weight: 500; }
 
-    /* --- ÁREA DE PESQUISA (CONTAINER) --- */
+    /* --- PESQUISA --- */
     .search-wrapper {
         max-width: 900px; margin: 30px auto 20px; padding: 0 20px;
         display: flex; flex-direction: column; gap: 15px; width: 100%;
     }
-
     .search-bar-row { display: flex; gap: 10px; flex-wrap: wrap; }
-
     .main-search-input {
         flex-grow: 1; background: #222; border: 1px solid #444; color: #fff;
         padding: 12px 20px; border-radius: 30px; font-size: 1rem;
@@ -113,14 +115,13 @@
     .btn-my-teams.active { background: var(--cor-dourado); color: #000; }
     .btn-my-teams:hover { filter: brightness(1.2); }
 
-    /* PAINEL DE FILTROS (ESCONDIDO) */
+    /* FILTROS */
     .filters-panel {
         display: none; background: rgba(30,30,30,0.95); border: 1px solid #444; 
         border-radius: 12px; padding: 20px; gap: 15px; flex-wrap: wrap;
         box-shadow: 0 5px 20px rgba(0,0,0,0.5);
     }
     .filters-panel.show { display: flex; }
-
     .filter-group { flex: 1; min-width: 150px; display: flex; flex-direction: column; gap: 5px; }
     .filter-label { font-size: 0.8rem; color: #aaa; margin-left: 5px; }
     .filter-input {
@@ -136,7 +137,6 @@
         justify-content: center;
     }
 
-    /* CARD DESIGN */
     .feed-card {
         background: var(--cor-card); border: 1px solid #333; border-top: 3px solid var(--cor-dourado);
         border-radius: 12px; padding: 20px; display: flex; flex-direction: column;
@@ -146,22 +146,18 @@
 
     .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
     .card-title { font-size: 1.2rem; font-weight: bold; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 65%; }
-    
     .card-header-right { display: flex; align-items: center; gap: 8px; }
     .card-tier { background: #252525; color: var(--cor-dourado); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: 1px solid #444; font-weight: bold; }
 
-    /* BOTÃO DE APAGAR */
-    .btn-delete-team {
-        background: transparent; border: none; color: #666; font-size: 1.1rem; 
-        cursor: pointer; transition: 0.2s; padding: 0 5px;
-    }
+    .btn-delete-team { background: transparent; border: none; color: #666; font-size: 1.1rem; cursor: pointer; transition: 0.2s; padding: 0 5px; }
     .btn-delete-team:hover { color: #ff4d4d; transform: scale(1.1); }
 
+    /* --- SPRITES CORRIGIDOS --- */
     .card-icons { 
-        display: flex; gap: 5px; margin-bottom: 20px; background: rgba(0,0,0,0.4); 
+        display: flex; gap: 2px; margin-bottom: 20px; background: rgba(0,0,0,0.4); 
         padding: 10px; border-radius: 8px; justify-content: center; min-height: 70px; align-items: flex-end;
     }
-    .card-icons img { width: auto; height: auto; max-height: 50px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); transition: transform 0.2s; }
+    .card-icons img { width: auto; height: auto; max-height: 50px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); image-rendering: pixelated; transition: transform 0.2s; }
     .card-icons img:hover { transform: scale(1.2); }
 
     .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid #333; }
@@ -175,19 +171,14 @@
     }
     .btn-view:hover { background: var(--cor-dourado); color: #000; }
     
-    /* LIKE */
-    .btn-like {
-        background: rgba(255,255,255,0.05); border: none; cursor: pointer;
-        display: flex; align-items: center; gap: 6px;
-        color: #888; font-size: 0.9rem; transition: 0.2s; padding: 6px 12px; border-radius: 20px;
-    }
+    .btn-like { background: rgba(255,255,255,0.05); border: none; cursor: pointer; display: flex; align-items: center; gap: 6px; color: #888; font-size: 0.9rem; transition: 0.2s; padding: 6px 12px; border-radius: 20px; }
     .btn-like:hover { background: rgba(255,255,255,0.1); color: #fff; }
     .btn-like.liked { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
     .heart-icon { font-size: 1.1rem; }
 
     .loading-msg { grid-column: 1/-1; text-align: center; color: #888; padding: 40px; }
 
-    /* --- CONTROLES DE PAGINAÇÃO --- */
+    /* --- PAGINAÇÃO --- */
     .pagination-controls {
         display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 50px;
     }
@@ -220,18 +211,14 @@
     <div class="header-left">
         <h1><img src="https://i.imgur.com/XOEcuO8.png"> Humble Feed</h1>
     </div>
-
     <div class="header-right">
         <div id="userHeaderInfo" class="user-header-info desktop-only">
              <img id="headerAvatar" class="header-avatar" src="">
              <span id="headerName" class="header-name">User</span>
              <button onclick="logout()" class="btn-logout-mini" title="Sair">×</button>
         </div>
-
         <button id="btnLoginHeader" class="btn-login-header desktop-only" onclick="openLoginModal()">Entrar</button>
-
         <a href="builder.html" class="btn-create desktop-only"><span>+</span> Publicar</a>
-
         <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
     </div>
 </header>
@@ -260,11 +247,9 @@
             <span class="filter-label">Tier</span>
             <select id="filterTier" class="filter-input" onchange="applyFilters()">
                 <option value="">Todas</option>
-                <option value="AG">AG</option><option value="LC">LC</option><option value="Monotype">Monotype</option>
-                <option value="NU">NU</option><option value="National_Dex">National Dex</option>
-                <option value="National_Dex_Monotype">NatDex Monotype</option><option value="National_Dex_Ubers">NatDex Ubers</option>
-                <option value="OU">OU</option><option value="PU">PU</option><option value="RU">RU</option>
-                <option value="UU">UU</option><option value="Uber">Uber</option><option value="ZU">ZU</option>
+                <option value="OU">OU</option><option value="UU">UU</option><option value="Uber">Uber</option>
+                <option value="National_Dex">National Dex</option><option value="Monotype">Monotype</option>
+                <option value="AG">AG</option>
             </select>
         </div>
         <div class="filter-group">
@@ -322,15 +307,13 @@
   const provider = new GoogleAuthProvider();
 
   // VARIÁVEIS GLOBAIS
-  let allTeamsData = []; // Armazena todos os times carregados (Cache local)
-  let filteredTeams = []; // Times filtrados para exibição
+  let allTeamsData = []; 
+  let filteredTeams = [];
   let myTeamsMode = false;
-  
-  // PAGINAÇÃO
-  const ITEMS_PER_PAGE = 12; // MÁXIMO DE CARDS POR PÁGINA
+  const ITEMS_PER_PAGE = 12;
   let currentPage = 1;
 
-  // --- MENU & MODAL UI ---
+  // --- MENU & MODAL ---
   const menuBtn = document.getElementById("menuBtn");
   const dropdownMenu = document.getElementById("dropdownMenu");
   menuBtn.onclick = () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); };
@@ -360,7 +343,7 @@
       window.applyFilters();
   }
 
-  // --- LÓGICA DE FILTRO E PAGINAÇÃO ---
+  // --- LOGICA DE FILTROS ---
   window.applyFilters = () => {
       const searchTxt = document.getElementById('searchInput').value.toLowerCase();
       const pokeTxt = document.getElementById('filterPokemon').value.toLowerCase();
@@ -382,11 +365,11 @@
           return titleMatch && tierMatch && authorMatch && pokeMatch && myTeamMatch;
       });
 
-      // Reseta para a primeira página sempre que filtrar
       currentPage = 1;
       renderCurrentPage();
   }
 
+  // --- PAGINAÇÃO ---
   function renderCurrentPage() {
       const container = document.getElementById('feedContainer');
       container.innerHTML = "";
@@ -397,7 +380,6 @@
           return;
       }
 
-      // Lógica de "fatiar" o array para mostrar só 12
       const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
       const endIndex = startIndex + ITEMS_PER_PAGE;
       const pageItems = filteredTeams.slice(startIndex, endIndex);
@@ -409,8 +391,6 @@
   function updatePaginationControls() {
       const totalPages = Math.ceil(filteredTeams.length / ITEMS_PER_PAGE) || 1;
       document.getElementById('pageInfo').innerText = `Página ${currentPage} de ${totalPages}`;
-      
-      // Desabilita botões se estiver no começo ou fim
       document.getElementById('btnPrev').disabled = (currentPage === 1);
       document.getElementById('btnNext').disabled = (currentPage === totalPages);
   }
@@ -421,12 +401,11 @@
       if(currentPage < totalPages) { currentPage++; renderCurrentPage(); window.scrollTo(0,0); } 
   }
 
-  // --- CARREGAMENTO INICIAL ---
+  // --- CARREGAMENTO DO FEED ---
   async function loadFeed() {
       const container = document.getElementById('feedContainer');
       try {
-          // Carrega os últimos 150 times (para ter uma base boa no cache)
-          const snapshot = await get(query(ref(db, 'teams'), limitToLast(150)));
+          const snapshot = await get(query(ref(db, 'teams'), limitToLast(200)));
           if (!snapshot.exists()) { container.innerHTML = "<h3 class='loading-msg'>Nenhum time publicado ainda.</h3>"; return; }
           container.innerHTML = ""; allTeamsData = [];
           snapshot.forEach((child) => {
@@ -437,13 +416,27 @@
       } catch (error) { container.innerHTML = `<h3 class='loading-msg' style='color:#ff5555'>Erro: ${error.message}</h3>`; }
   }
 
-  // --- CORREÇÃO DE NOMES PARA SPRITES (Showdown Style) ---
+  // --- CORREÇÃO DE NOMES PARA SPRITES GEN 5 ---
   function toShowdownName(rawName) {
       let name = rawName.trim().toLowerCase();
-      // Remove tudo que não for letra ou número (Padrão Showdown)
-      // Ex: "Ogerpon-Wellspring" -> "ogerponwellspring"
-      // Ex: "Tauros-Paldea-Blaze" -> "taurospaldeablaze"
+      // Remove tudo que não for letra ou número (Padrão gen5 showdown)
       name = name.replace(/[^a-z0-9]/g, ''); 
+      
+      // Fixes Específicos para Formas e Nomes que bugam
+      if(name.includes("taurospaldea")) return "taurospaldeacombat"; // Padrão
+      if(name.includes("taurospaldeafire")) return "taurospaldeablaze";
+      if(name.includes("taurospaldeawater")) return "taurospaldeaaqua";
+      
+      // Urshifu
+      if(name === "urshifu") return "urshifusinglestrike";
+      
+      // Lycanroc
+      if(name === "lycanroc") return "lycanrocmidday";
+
+      // Nidoran
+      if(name.includes("nidoranm") || name.includes("nidoranmale")) return "nidoranm";
+      if(name.includes("nidoranf") || name.includes("nidoranfemale")) return "nidoranf";
+
       return name;
   }
 
@@ -458,13 +451,13 @@
       const authorImg = data.userPhoto || "https://i.imgur.com/XOEcuO8.png";
 
       const isOwner = user && data.userId === user.uid;
-      const deleteBtn = isOwner ? `<button class="btn-delete-team" onclick="window.deleteTeam('${data.id}')" title="Apagar Time">🗑️</button>` : '';
+      const deleteBtn = isOwner ? `<button class="btn-delete-team" onclick="window.deleteTeam('${data.id}')" title="Apagar">🗑️</button>` : '';
 
       let iconsHtml = '';
       if(data.pokemon) {
           data.pokemon.slice(0,6).forEach(p => {
               const cleanName = toShowdownName(p);
-              // SPRITES ESTÁTICOS DO SHOWDOWN (GEN 5)
+              // SPRITES ESTÁTICOS GEN 5 (PIXEL ART)
               const src = `https://play.pokemonshowdown.com/sprites/gen5/${cleanName}.png`;
               
               iconsHtml += `<img src="${src}" onerror="this.src='https://img.pokemondb.net/sprites/items/poke-ball.png'" title="${p}">`;
@@ -525,7 +518,7 @@
       } catch(e) { console.error("Erro like", e); }
   }
 
-  // AUTH
+  // --- AUTH ---
   document.getElementById('modalBtnGoogle').onclick = () => signInWithPopup(auth, provider).then(()=>closeLoginModal()).catch(e=>alert(e.message));
   document.getElementById('modalBtnLogin').onclick = () => {
       const e = document.getElementById('modalEmail').value; const p = document.getElementById('modalPass').value;
