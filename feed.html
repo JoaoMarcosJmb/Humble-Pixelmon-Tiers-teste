@@ -472,10 +472,10 @@ function toShowdownName(rawName) {
 
     // Casos que DEVEM manter hífen
     const keepHyphen = [
-        "ogerpon-", "calyrex-", "urshifu-", "tauros-",
+        "ogerpon-", "calyrex-", "urshifu-", "tauros-", "-black"
         "zygarde-", "basculegion-", "enamorus-",
         "-hisui", "-galar", "-alola", "-paldea",
-        "-ice", "-shadow", "-rapidstrike", "-single"
+        "-ice", "-shadow", "-rapidstrike", "-single", "-White"
     ];
 
     if (keepHyphen.some(k => name.includes(k))) {
@@ -506,7 +506,7 @@ function toShowdownName(rawName) {
           data.pokemon.slice(0,6).forEach(p => {
               const cleanName = toShowdownName(p);
               // SPRITES ESTÁTICOS DO SHOWDOWN (GEN 5)
-              const src = `https://play.pokemonshowdown.com/sprites/gen5/${cleanName}.png`;
+              const src = `https://play.pokemonshowdown.com/sprites/xy/${cleanName}.png`;
               
               iconsHtml += `<img src="${src}" onerror="this.src='https://img.pokemondb.net/sprites/items/poke-ball.png'" title="${p}">`;
           });
