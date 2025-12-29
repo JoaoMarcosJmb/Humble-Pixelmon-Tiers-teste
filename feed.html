@@ -4,10 +4,10 @@
   <meta charset="UTF-8">
   <title>Humble Feed - Times da Comunidade</title>
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
-  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
 
   <style>
+    /* MESMO CSS ANTERIOR */
     :root { 
       --cor-dourado: #d1a720; 
       --cor-fundo: #111; 
@@ -44,7 +44,6 @@
         display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;
     }
 
-    /* CARD ESTILO HUMBLE */
     .feed-card {
         background: var(--cor-card); border: 1px solid #333; border-top: 3px solid var(--cor-dourado);
         border-radius: 8px; padding: 15px; display: flex; flex-direction: column;
@@ -90,13 +89,12 @@
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { 
-    getFirestore, 
-    collection, 
-    getDocs, 
+    getDatabase, 
+    ref, 
     query, 
-    orderBy, 
-    limit 
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    limitToLast,
+    get
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
@@ -109,41 +107,44 @@
   };
 
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const db = getDatabase(app);
 
   const container = document.getElementById('feedContainer');
 
-  // URL para imagem dos Pokémons
-  const POKE_IMG_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
-  const POKE_ICON_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/";
-
   async function loadFeed() {
       try {
-          // Busca os últimos 20 times ordenados por data
-          const q = query(collection(db, "teams"), orderBy("createdAt", "desc"), limit(20));
-          const querySnapshot = await getDocs(q);
+          // Busca os últimos 20 times (limitToLast pega os mais recentes porque as chaves são cronológicas)
+          const teamsRef = ref(db, 'teams');
+          const recentTeamsQuery = query(teamsRef, limitToLast(20));
+          
+          const snapshot = await get(recentTeamsQuery);
 
-          if(querySnapshot.empty) {
+          if (!snapshot.exists()) {
               container.innerHTML = "<h3 class='loading-msg'>Nenhum time publicado ainda. Seja o primeiro!</h3>";
               return;
           }
 
           container.innerHTML = ""; // Limpa msg de carregando
+          
+          const teamsData = [];
+          snapshot.forEach((childSnapshot) => {
+              teamsData.push(childSnapshot.val());
+          });
 
-          querySnapshot.forEach((doc) => {
-              const data = doc.data();
+          // O Realtime Database retorna em ordem ascendente (mais velho primeiro)
+          // Precisamos inverter para mostrar o mais novo no topo
+          teamsData.reverse().forEach(data => {
               createCard(data);
           });
 
       } catch (error) {
           console.error("Erro ao carregar feed:", error);
-          container.innerHTML = `<h3 class='loading-msg' style='color:#ff5555'>Erro ao carregar: ${error.message}<br>Verifique se ativou o Firestore no console.</h3>`;
+          container.innerHTML = `<h3 class='loading-msg' style='color:#ff5555'>Erro ao carregar: ${error.message}</h3>`;
       }
   }
 
   function createCard(data) {
       // Gera link para o Paste
-      // Comprimimos o texto igual ao builder faz para o link ficar curto
       const encoded = LZString.compressToEncodedURIComponent(data.teamData);
       const pasteLink = `paste.html?import=${encoded}`;
 
@@ -151,14 +152,9 @@
       let iconsHtml = '';
       if(data.pokemon && Array.isArray(data.pokemon)) {
           data.pokemon.slice(0, 6).forEach(pokeName => {
-              // Tenta limpar o nome para URL da API (simples)
               let cleanName = pokeName.trim().replace(/ /g, '-').replace(/\./g, '');
-              // Usa sprite pequeno (ícone) para o feed não ficar pesado
-              // Mas aqui usaremos a arte oficial pra ficar bonito se preferir, ou ícone
-              // Vamos tentar achar o ID ou usar nome direto se a API aceitar, mas a URL direta pede ID normalmente.
-              // Truque: Usar o pokemondb para icones pelo nome é mais garantido se não tivermos o ID
+              // Usa pokemondb para ícones confiáveis pelo nome
               const src = `https://img.pokemondb.net/sprites/scarlet-violet/icon/${cleanName}.png`;
-              
               iconsHtml += `<img src="${src}" onerror="this.src='https://img.pokemondb.net/sprites/items/poke-ball.png'" title="${pokeName}">`;
           });
       }
@@ -166,7 +162,6 @@
       const card = document.createElement('div');
       card.className = 'feed-card';
       
-      // Foto do autor ou genérica
       const authorImg = data.userPhoto || "https://i.imgur.com/XOEcuO8.png";
 
       card.innerHTML = `
