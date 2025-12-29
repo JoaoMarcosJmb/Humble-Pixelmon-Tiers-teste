@@ -1000,11 +1000,20 @@
     createUserWithEmailAndPassword,
     updateProfile
   } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  
+  // --- MUDANÇA: IMPORTANDO REALTIME DATABASE ---
+  import { 
+    getDatabase, 
+    ref, 
+    push, 
+    set,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  // --- SUAS CHAVES DO SIMPLETEANS ---
   const firebaseConfig = {
     apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
     authDomain: "sampleteans.firebaseapp.com",
+    // SUA URL DO REALTIME DATABASE
     databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
     projectId: "sampleteans",
     storageBucket: "sampleteans.firebasestorage.app",
@@ -1014,118 +1023,138 @@
 
   const app = initializeApp(firebaseConfig);
   const auth = getAuth(app);
+  const db = getDatabase(app); // Inicializa Realtime Database
   const provider = new GoogleAuthProvider();
 
-  // Elementos HTML
+  // --- Elementos de Auth (Mantidos) ---
   const loginForm = document.getElementById('loginForm');
   const userProfile = document.getElementById('userProfile');
-  
   const emailInput = document.getElementById('emailInput');
   const passInput = document.getElementById('passInput');
-  
   const btnGoogleLogin = document.getElementById('btnGoogleLogin');
   const btnEmailLogin = document.getElementById('btnEmailLogin');
   const btnEmailRegister = document.getElementById('btnEmailRegister');
   const btnLogout = document.getElementById('btnLogout');
-
   const userPhoto = document.getElementById('userPhoto');
   const userName = document.getElementById('userName');
   const userEmail = document.getElementById('userEmail');
 
-  // --- 1. LOGIN COM GOOGLE ---
+  // --- LÓGICA DE PUBLICAR (REALTIME DATABASE) ---
+  window.publishTeam = async function() {
+      const user = auth.currentUser;
+      
+      if(!user) {
+          alert("Você precisa estar logado para publicar!");
+          document.getElementById("menuBtn").classList.add("active"); 
+          document.querySelector(".sidebar").style.display = "flex";
+          return;
+      }
+
+      const title = document.getElementById('teamNameInput').value;
+      const author = document.getElementById('teamAuthorInput').value;
+      const tier = document.getElementById('teamTier').value;
+      const teamText = getTeamAsText(); 
+
+      if(!title || title === "Novo Time") { alert("Dê um nome ao time."); return; }
+      if(!tier) { alert("Selecione uma Tier."); return; }
+      if(teamText.length < 50) { alert("O time parece estar vazio."); return; }
+
+      let sprites = [];
+      document.querySelectorAll('.poke-editor').forEach(ed => {
+          const name = ed.querySelector('.p-name').value;
+          if(name) sprites.push(name.toLowerCase());
+      });
+
+      const btn = document.querySelector('.btn-publish');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = "Enviando...";
+      btn.disabled = true;
+
+      try {
+          // --- MUDANÇA AQUI: REALTIME DATABASE ---
+          // Cria uma referência para a lista de times
+          const teamsListRef = ref(db, 'teams');
+          // Gera uma nova chave única (push)
+          const newTeamRef = push(teamsListRef);
+          
+          // Salva os dados nessa nova chave
+          await set(newTeamRef, {
+              title: title,
+              author: author || user.displayName || "Treinador",
+              tier: tier,
+              teamData: teamText,
+              pokemon: sprites,
+              userId: user.uid,
+              userPhoto: user.photoURL || null,
+              createdAt: serverTimestamp()
+          });
+
+          alert("Time publicado com sucesso no Feed!");
+      } catch (error) {
+          console.error("Erro ao publicar: ", error);
+          alert("Erro ao publicar: " + error.message);
+      } finally {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+      }
+  }
+
+  // --- MÉTODOS DE AUTH (Mantidos) ---
   if(btnGoogleLogin) {
       btnGoogleLogin.addEventListener('click', () => {
-        signInWithPopup(auth, provider)
-          .then(async (result) => {
-            // Pergunta o nick se o usuário quiser alterar ou for novo
-             if(confirm(`Logado como ${result.user.displayName}. Deseja alterar seu Nick de Treinador?`)) {
-                 const newNick = prompt("Digite seu novo Nick:");
+        signInWithPopup(auth, provider).then(async (result) => {
+             if(confirm(`Logado como ${result.user.displayName}. Alterar Nick?`)) {
+                 const newNick = prompt("Novo Nick:");
                  if(newNick) {
                      await updateProfile(result.user, { displayName: newNick });
                      location.reload();
                  }
             }
-          })
-          .catch((error) => alert("Erro Google: " + error.message));
+        }).catch((e) => alert("Erro: " + e.message));
       });
   }
 
-  // --- 2. LOGIN COM EMAIL/SENHA ---
   if(btnEmailLogin) {
       btnEmailLogin.addEventListener('click', () => {
-        const email = emailInput.value;
-        const pass = passInput.value;
-        if(!email || !pass) { alert("Preencha email e senha!"); return; }
-
-        signInWithEmailAndPassword(auth, email, pass)
-            .then((userCredential) => {
-                console.log("Logado com email:", userCredential.user.email);
-            })
-            .catch((error) => {
-                let msg = error.message;
-                if(error.code === 'auth/invalid-credential') msg = "Email ou senha incorretos.";
-                alert("Erro no Login: " + msg);
-            });
+        signInWithEmailAndPassword(auth, emailInput.value, passInput.value)
+            .catch((e) => alert("Erro Login: " + e.message));
       });
   }
 
-  // --- 3. CADASTRO COM EMAIL/SENHA ---
   if(btnEmailRegister) {
       btnEmailRegister.addEventListener('click', () => {
-        const email = emailInput.value;
-        const pass = passInput.value;
-        if(!email || !pass) { alert("Preencha email e senha!"); return; }
-        if(pass.length < 6) { alert("A senha precisa ter pelo menos 6 caracteres."); return; }
-
-        createUserWithEmailAndPassword(auth, email, pass)
-            .then(async (userCredential) => {
-                const nick = prompt("Conta criada! Qual será seu Nick de Treinador?");
-                if(nick) {
-                    await updateProfile(userCredential.user, { displayName: nick });
-                    // Auto preenche o input se estiver vazio
-                    const authorInput = document.getElementById('teamAuthorInput');
-                    if(authorInput && !authorInput.value) authorInput.value = nick;
-                }
-                alert("Bem-vindo, " + (nick || "Treinador") + "!");
+        if(passInput.value.length < 6) { alert("Senha curta."); return; }
+        createUserWithEmailAndPassword(auth, emailInput.value, passInput.value)
+            .then(async (cred) => {
+                const nick = prompt("Qual seu Nick de Treinador?");
+                if(nick) await updateProfile(cred.user, { displayName: nick });
                 location.reload();
             })
-            .catch((error) => {
-                let msg = error.message;
-                if(error.code === 'auth/email-already-in-use') msg = "Este email já está cadastrado.";
-                alert("Erro ao criar conta: " + msg);
-            });
+            .catch((e) => alert("Erro Cadastro: " + e.message));
       });
   }
 
-  // --- 4. LOGOUT ---
   if(btnLogout) {
       btnLogout.addEventListener('click', () => {
-        if(confirm("Sair da conta?")) {
-            signOut(auth).then(() => location.reload());
-        }
+        if(confirm("Sair?")) signOut(auth).then(() => location.reload());
       });
   }
 
-  // --- 5. MONITOR DE ESTADO ---
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      // LOGADO
       if(loginForm) loginForm.style.display = 'none';
       if(userProfile) {
           userProfile.style.display = 'flex';
-          
           userPhoto.src = user.photoURL ? user.photoURL : "https://i.imgur.com/XOEcuO8.png"; 
-          userName.innerText = user.displayName ? user.displayName : user.email.split('@')[0];
+          userName.innerText = user.displayName ? user.displayName : "Treinador";
           userEmail.innerText = user.email;
 
-          // Auto-preenche o autor no time se estiver vazio
           const authorInput = document.getElementById('teamAuthorInput');
           if(authorInput && !authorInput.value && user.displayName) {
               authorInput.value = user.displayName;
           }
       }
     } else {
-      // DESLOGADO
       if(loginForm) loginForm.style.display = 'flex';
       if(userProfile) userProfile.style.display = 'none';
     }
