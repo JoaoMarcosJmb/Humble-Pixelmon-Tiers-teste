@@ -11,8 +11,9 @@
     :root { 
       --cor-dourado: #d1a720; 
       --cor-fundo: #111; 
-      --cor-card: #1a1a1a;
+      --cor-card: #1e1e1e;
       --cor-texto: #f5f5f5; 
+      --cor-verde: #28a745;
     }
     body { 
       font-family: "Segoe UI", Arial, sans-serif; 
@@ -23,84 +24,152 @@
       color: var(--cor-texto); margin: 0; padding: 0; 
     }
 
-    /* HEADER */
+    /* --- HEADER NOVO --- */
     header { 
-      padding: 15px 20px; background: rgba(20,20,20,0.95); 
-      border-bottom: 2px solid var(--cor-dourado); display: flex; 
-      justify-content: space-between; align-items: center; 
-      position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+      padding: 15px 30px; 
+      background: rgba(20,20,20,0.98); 
+      border-bottom: 2px solid var(--cor-dourado); 
+      display: flex; 
+      justify-content: space-between; 
+      align-items: center; 
+      position: sticky; top: 0; z-index: 100; 
+      box-shadow: 0 4px 15px rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
     }
-    header h1 { margin: 0; font-size: 1.5rem; color: var(--cor-dourado); display: flex; align-items: center; gap: 10px; }
-    header h1 img { height: 35px; }
+    header h1 { margin: 0; font-size: 1.6rem; color: var(--cor-dourado); display: flex; align-items: center; gap: 10px; }
+    header h1 img { height: 40px; }
     
-    .btn-back { 
-        background: transparent; border: 1px solid var(--cor-dourado); 
-        color: var(--cor-dourado); padding: 8px 15px; border-radius: 4px; 
-        text-decoration: none; font-weight: bold; transition: 0.3s;
-    }
-    .btn-back:hover { background: var(--cor-dourado); color: #000; }
+    .header-actions { display: flex; gap: 15px; }
 
-    /* GRID DO FEED */
+    /* Botão Publicar (Header) */
+    .btn-create { 
+        background: var(--cor-verde); 
+        color: #fff; 
+        padding: 10px 20px; 
+        border-radius: 30px; 
+        text-decoration: none; 
+        font-weight: bold; 
+        transition: 0.3s;
+        display: flex; align-items: center; gap: 8px;
+        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
+        border: 1px solid #218838;
+    }
+    .btn-create:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6); background: #34ce57; }
+
+    /* Botão Voltar (Estilo Outline) */
+    .btn-outline {
+        border: 1px solid #666; color: #aaa; padding: 10px 20px; border-radius: 30px;
+        text-decoration: none; font-size: 0.9rem; transition: 0.3s;
+    }
+    .btn-outline:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.05); }
+
+    /* --- HERO SECTION (BANNER) --- */
+    .hero-section {
+        text-align: center;
+        padding: 60px 20px 40px;
+        background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
+    }
+    .hero-title { font-size: 2.5rem; color: #fff; margin: 0 0 10px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+    .hero-subtitle { color: #bbb; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+    /* --- GRID --- */
     .feed-container {
-        max-width: 1000px; margin: 30px auto; padding: 0 15px;
-        display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;
+        max-width: 1100px; margin: 0 auto 60px; padding: 0 20px;
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;
     }
 
-    /* ESTILO DO CARD */
+    /* --- CARD DESIGN --- */
     .feed-card {
-        background: var(--cor-card); border: 1px solid #333; border-top: 3px solid var(--cor-dourado);
-        border-radius: 8px; padding: 15px; display: flex; flex-direction: column;
-        transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden;
+        background: var(--cor-card); 
+        border: 1px solid #333; 
+        border-top: 4px solid var(--cor-dourado);
+        border-radius: 12px; 
+        padding: 20px; 
+        display: flex; flex-direction: column;
+        transition: transform 0.3s, box-shadow 0.3s; 
+        position: relative; overflow: hidden;
     }
-    .feed-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); border-color: #555; }
+    .feed-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.5); border-color: #555; }
 
-    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
-    .card-title { font-size: 1.1rem; font-weight: bold; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
-    .card-tier { background: #333; color: var(--cor-dourado); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; border: 1px solid #444; }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+    .card-title { font-size: 1.2rem; font-weight: bold; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
+    .card-tier { background: #252525; color: var(--cor-dourado); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: 1px solid #444; font-weight: bold; letter-spacing: 0.5px; }
 
     .card-icons { 
-        display: flex; gap: 5px; margin-bottom: 15px; background: rgba(0,0,0,0.3); 
-        padding: 8px; border-radius: 6px; justify-content: center; min-height: 50px;
+        display: flex; gap: 5px; margin-bottom: 20px; background: rgba(0,0,0,0.4); 
+        padding: 10px; border-radius: 8px; justify-content: center; min-height: 60px; align-items: center;
     }
-    .card-icons img { width: 35px; height: 35px; object-fit: contain; }
+    .card-icons img { width: 40px; height: 40px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); transition: 0.2s; }
+    .card-icons img:hover { transform: scale(1.2); }
 
-    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; border-top: 1px solid #333; }
-    .author-info { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #aaa; }
-    .author-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #444; object-fit: cover; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid #333; }
+    
+    .author-info { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #ccc; }
+    .author-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #333; object-fit: cover; }
     
     .btn-view { 
-        background: var(--cor-dourado); color: #000; border: none; 
-        padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; 
-        text-decoration: none; font-size: 0.85rem; 
+        background: transparent; color: var(--cor-dourado); border: 1px solid var(--cor-dourado);
+        padding: 8px 16px; border-radius: 6px; font-weight: bold; cursor: pointer; 
+        text-decoration: none; font-size: 0.85rem; transition: 0.2s;
     }
-    .btn-view:hover { filter: brightness(1.1); }
+    .btn-view:hover { background: var(--cor-dourado); color: #000; }
     
-    .loading-msg { text-align: center; color: #888; grid-column: 1/-1; margin-top: 50px; }
-
-    /* BOTÃO DE LIKE (CORAÇÃO) */
+    /* LIKE BUTTON */
     .btn-like {
-        background: transparent; border: none; cursor: pointer;
-        display: flex; align-items: center; gap: 5px;
-        color: #888; font-size: 0.9rem; transition: 0.2s; padding: 5px;
+        background: rgba(255,255,255,0.05); border: none; cursor: pointer;
+        display: flex; align-items: center; gap: 6px;
+        color: #888; font-size: 0.9rem; transition: 0.2s; padding: 6px 12px; border-radius: 20px;
     }
-    .btn-like:hover { transform: scale(1.1); color: #bbb; }
-    .btn-like.liked { color: #ff4d4d; } /* Fica vermelho se curtiu */
-    .btn-like.liked:hover { color: #ff2222; }
+    .btn-like:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .btn-like.liked { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
+    .heart-icon { font-size: 1.1rem; }
     
-    .heart-icon { font-size: 1.2rem; line-height: 1; }
-    .like-count { font-size: 0.85rem; font-weight: bold; }
+    /* SPINNER DE LOADING */
+    .loading-container { grid-column: 1/-1; display: flex; justify-content: center; padding: 50px; flex-direction: column; align-items: center; gap: 15px; }
+    .spinner {
+        width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1);
+        border-top-color: var(--cor-dourado); border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* BOTÃO FLUTUANTE (MOBILE) */
+    .fab-create {
+        position: fixed; bottom: 30px; right: 30px;
+        width: 60px; height: 60px; background: var(--cor-verde);
+        border-radius: 50%; display: flex; justify-content: center; align-items: center;
+        color: white; font-size: 2rem; text-decoration: none;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 200;
+        transition: 0.3s;
+    }
+    .fab-create:hover { transform: scale(1.1) rotate(90deg); background: #34ce57; }
   </style>
 </head>
 <body>
 
 <header>
     <h1><img src="https://i.imgur.com/XOEcuO8.png"> Humble Feed</h1>
-    <a href="builder.html" class="btn-back">← Voltar ao Builder</a>
+    <div class="header-actions">
+        <a href="builder.html" class="btn-create">
+            <span style="font-size:1.2rem;">+</span> Publicar Time
+        </a>
+        <a href="builder.html" class="btn-outline">Voltar</a>
+    </div>
 </header>
 
-<div class="feed-container" id="feedContainer">
-    <h3 class="loading-msg">Carregando últimos times...</h3>
+<div class="hero-section">
+    <h2 class="hero-title">Explore Estratégias</h2>
+    <p class="hero-subtitle">Descubra os melhores times criados pela comunidade Humble Pixelmon.</p>
 </div>
+
+<div class="feed-container" id="feedContainer">
+    <div class="loading-container">
+        <div class="spinner"></div>
+        <div style="color:#888;">Carregando times...</div>
+    </div>
+</div>
+
+<a href="builder.html" class="fab-create" title="Criar Novo Time">+</a>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -115,7 +184,6 @@
     remove
   } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  // SUAS CREDENCIAIS
   const firebaseConfig = {
     apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
     authDomain: "sampleteans.firebaseapp.com",
@@ -128,14 +196,12 @@
 
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
-  const auth = getAuth(app); // Auth necessário para os likes
+  const auth = getAuth(app); 
 
   const container = document.getElementById('feedContainer');
 
-  // --- 1. CARREGAR O FEED ---
   async function loadFeed() {
       try {
-          // Pega os últimos 30 times
           const teamsRef = ref(db, 'teams');
           const recentTeamsQuery = query(teamsRef, limitToLast(30));
           
@@ -146,18 +212,16 @@
               return;
           }
 
-          container.innerHTML = ""; // Limpa o loading
+          container.innerHTML = ""; 
           
           const teamsData = [];
           
-          // Transforma o objeto do Firebase em Array e guarda o ID
           snapshot.forEach((childSnapshot) => {
               const item = childSnapshot.val();
-              item.id = childSnapshot.key; // Salva ID (para o like funcionar)
+              item.id = childSnapshot.key;
               teamsData.push(item);
           });
 
-          // Inverte array (Mais novo no topo)
           teamsData.reverse().forEach(data => {
               createCard(data);
           });
@@ -168,13 +232,10 @@
       }
   }
 
-  // --- 2. CRIAR O CARD VISUAL ---
   function createCard(data) {
-      // Cria link para o paste.html
       const encoded = LZString.compressToEncodedURIComponent(data.teamData);
       const pasteLink = `paste.html?import=${encoded}`;
 
-      // Ícones dos Pokémons
       let iconsHtml = '';
       if(data.pokemon && Array.isArray(data.pokemon)) {
           data.pokemon.slice(0, 6).forEach(pokeName => {
@@ -184,15 +245,12 @@
           });
       }
 
-      // Foto do autor
       const authorImg = data.userPhoto || "https://i.imgur.com/XOEcuO8.png";
 
-      // --- CHECAGEM DO LIKE ---
       const user = auth.currentUser;
       const likesObj = data.likes || {}; 
-      const likesCount = Object.keys(likesObj).length; // Conta quantos
+      const likesCount = Object.keys(likesObj).length;
       
-      // Vê se EU curti
       const isLiked = user && likesObj[user.uid]; 
       const likeClass = isLiked ? 'liked' : '';
       const heartIcon = isLiked ? '❤️' : '🤍'; 
@@ -214,22 +272,22 @@
                   <span>${data.author}</span>
               </div>
               
-              <button class="btn-like ${likeClass}" id="btn-like-${data.id}" onclick="window.handleLike('${data.id}')">
-                <span class="heart-icon">${heartIcon}</span> 
-                <span class="like-count" id="count-${data.id}">${likesCount}</span>
-              </button>
+              <div style="display:flex; gap:10px; align-items:center;">
+                  <button class="btn-like ${likeClass}" id="btn-like-${data.id}" onclick="window.handleLike('${data.id}')">
+                    <span class="heart-icon">${heartIcon}</span> 
+                    <span class="like-count" id="count-${data.id}">${likesCount}</span>
+                  </button>
 
-              <a href="${pasteLink}" class="btn-view" target="_blank">Ver Time ➔</a>
+                  <a href="${pasteLink}" class="btn-view" target="_blank">Ver Time</a>
+              </div>
           </div>
       `;
       container.appendChild(card);
   }
 
-  // --- 3. LÓGICA DO CLIQUE NO LIKE ---
   window.handleLike = async function(teamId) {
       const user = auth.currentUser;
       
-      // SE NÃO ESTIVER LOGADO: Redireciona para o Builder (Login)
       if(!user) {
           if(confirm("Você precisa estar logado para curtir. Ir para a tela de Login?")) {
               window.location.href = "builder.html"; 
@@ -241,21 +299,17 @@
       const countSpan = document.getElementById(`count-${teamId}`);
       const heartSpan = btn.querySelector('.heart-icon');
       
-      // Caminho: teams -> ID -> likes -> MEU_ID
       const likeRef = ref(db, `teams/${teamId}/likes/${user.uid}`);
-
       const isLikedNow = btn.classList.contains('liked');
       let currentCount = parseInt(countSpan.innerText);
 
       try {
           if(isLikedNow) {
-              // REMOVER LIKE
               await remove(likeRef);
               btn.classList.remove('liked');
               heartSpan.innerText = '🤍';
               countSpan.innerText = Math.max(0, currentCount - 1);
           } else {
-              // ADICIONAR LIKE
               await set(likeRef, true);
               btn.classList.add('liked');
               heartSpan.innerText = '❤️';
@@ -263,11 +317,9 @@
           }
       } catch(e) {
           console.error("Erro like:", e);
-          alert("Erro ao curtir.");
       }
   }
 
-  // Delay para carregar Auth antes do feed (para pintar os likes corretamente)
   setTimeout(loadFeed, 800);
 
 </script>
