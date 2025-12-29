@@ -92,7 +92,7 @@
       background: rgba(30,30,30,0.95); padding: 12px 20px; border-radius: 8px; border: 1px solid var(--cor-borda);
       flex-wrap: wrap; gap: 15px; width: 100%;
     }
-    .toolbar-left { flex-grow: 1; }
+    .toolbar-left { flex-grow: 1; display:flex; flex-direction:column; gap:5px; } /* Ajustado para caber o Autor */
     .toolbar-controls { display: flex; gap: 10px; align-items: center; }
 
     #teamNameInput { 
@@ -100,6 +100,13 @@
         color: #fff; font-size: 1.3rem; padding: 2px; width: 100%; 
     }
     #teamNameInput:focus { border-color: var(--cor-dourado); outline: none; }
+    
+    /* Estilo do Input de Autor */
+    #teamAuthorInput {
+        background: transparent; border: none; border-bottom: 1px solid #444;
+        color: #aaa; font-size: 0.9rem; padding: 2px; width: 100%;
+    }
+    #teamAuthorInput:focus { border-color: var(--cor-dourado); outline: none; color: #fff; }
 
     .tier-select { background: #111; color: var(--cor-dourado); border: 1px solid #555; padding: 8px; border-radius: 4px; font-weight: bold; cursor: pointer; min-width: 150px; }
     
@@ -107,7 +114,6 @@
     
     .btn-save { background: #28a745; color: #fff; } .btn-save:hover { background: #34ce57; }
     .btn-import { background: #444; color: #fff; border:1px solid #666; } .btn-import:hover { background: #555; }
-    /* BOTÃO VALIDAR (NOVO) */
     .btn-validate { background: #17a2b8; color: #fff; } .btn-validate:hover { background: #1ebcd3; }
 
     /* TABS */
@@ -207,124 +213,35 @@
     nav.active { display: flex; }
     nav a { color: var(--cor-dourado); text-decoration:none; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:5px; }
 
-/* --- LOGIN INTEGRADO (Humble Style) --- */
+/* --- LOGIN INTEGRADO --- */
     .auth-container {
-        background: var(--cor-input); /* Mesma cor dos seus inputs */
+        background: var(--cor-input);
         border: 1px solid var(--cor-borda);
-        border-radius: 6px;
-        padding: 12px;
-        margin-bottom: 15px;
-        display: flex;
-        flex-direction: column;
-        gap: 8px;
+        border-radius: 6px; padding: 12px; margin-bottom: 15px;
+        display: flex; flex-direction: column; gap: 8px;
     }
-
-    .auth-header {
-        font-size: 0.8rem;
-        color: #888;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        margin-bottom: 5px;
-        border-bottom: 1px solid #333;
-        padding-bottom: 5px;
-        text-align: center;
-    }
-
-    /* Inputs idênticos aos do resto do site */
-    .login-input {
-        background: #151515; 
-        border: 1px solid #333; 
-        color: #ddd; 
-        padding: 8px 10px; 
-        border-radius: 4px; 
-        width: 100%; 
-        font-size: 0.85rem;
-        transition: border-color 0.2s;
-    }
+    .auth-header { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; border-bottom: 1px solid #333; padding-bottom: 5px; text-align: center; }
+    .login-input { background: #151515; border: 1px solid #333; color: #ddd; padding: 8px 10px; border-radius: 4px; width: 100%; font-size: 0.85rem; transition: border-color 0.2s; }
     .login-input:focus { border-color: var(--cor-dourado); outline: none; }
-
-    /* Botões alinhados */
     .auth-btn-row { display: flex; gap: 5px; }
-
-    .btn-login {
-        flex: 1;
-        background: var(--cor-dourado);
-        color: #000;
-        font-weight: bold;
-        border: none;
-        padding: 6px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.8rem;
-    }
+    .btn-login { flex: 1; background: var(--cor-dourado); color: #000; font-weight: bold; border: none; padding: 6px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
     .btn-login:hover { filter: brightness(1.1); }
-
-    .btn-register {
-        flex: 1;
-        background: #333;
-        color: #ccc;
-        border: 1px solid #444;
-        padding: 6px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.8rem;
-    }
+    .btn-register { flex: 1; background: #333; color: #ccc; border: 1px solid #444; padding: 6px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; }
     .btn-register:hover { background: #444; color: #fff; }
-
-    .google-btn {
-        width: 100%;
-        background: #222;
-        border: 1px solid #444;
-        color: #eee;
-        padding: 8px;
-        border-radius: 4px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 8px;
-        font-size: 0.85rem;
-        transition: 0.2s;
-        margin-top: 5px;
-    }
+    .google-btn { width: 100%; background: #222; border: 1px solid #444; color: #eee; padding: 8px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.85rem; transition: 0.2s; margin-top: 5px; }
     .google-btn:hover { background: #333; border-color: #666; }
     .google-icon { font-weight: bold; color: #4285F4; font-size: 1.1em; }
 
-    /* --- PERFIL LOGADO (Estilo Card) --- */
-    .user-card {
-        background: linear-gradient(135deg, #222, #1a1a1a);
-        border: 1px solid var(--cor-dourado);
-        border-radius: 6px;
-        padding: 10px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        margin-bottom: 15px;
-    }
-    .user-avatar {
-        width: 40px; height: 40px;
-        border-radius: 50%;
-        border: 2px solid #333;
-        object-fit: cover;
-    }
+    /* --- PERFIL LOGADO --- */
+    .user-card { background: linear-gradient(135deg, #222, #1a1a1a); border: 1px solid var(--cor-dourado); border-radius: 6px; padding: 10px; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+    .user-avatar { width: 40px; height: 40px; border-radius: 50%; border: 2px solid #333; object-fit: cover; }
     .user-info { flex-grow: 1; overflow: hidden; }
     .user-name { color: var(--cor-dourado); font-weight: bold; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .user-email { color: #666; font-size: 0.7rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    
-    .btn-logout {
-        background: transparent;
-        border: none;
-        color: #ff5555;
-        font-size: 1.2rem;
-        cursor: pointer;
-        padding: 0 5px;
-    }
+    .btn-logout { background: transparent; border: none; color: #ff5555; font-size: 1.2rem; cursor: pointer; padding: 0 5px; }
     .btn-logout:hover { color: #ff0000; transform: scale(1.1); }
-    /* Botão Link (Cinza Azulado) */
     .btn-share { background: #4a5568; color: #fff; border: 1px solid #718096; }
     .btn-share:hover { background: #2d3748; }
-
-    /* Botão Publicar (Roxo) */
     .btn-publish { background: #805ad5; color: #fff; border: 1px solid #9f7aea; }
     .btn-publish:hover { background: #6b46c1; box-shadow: 0 0 10px rgba(128, 90, 213, 0.4); }
   </style>
@@ -403,10 +320,10 @@
     <main class="builder-area">
         <div class="builder-wrapper">
             <div class="toolbar">
-                <div class="toolbar-left" style="display:flex; flex-direction:column; gap:5px;">
-    <input type="text" id="teamNameInput" placeholder="Nome do Time" onchange="saveCurrentTeamToStorage()">
-    <input type="text" id="teamAuthorInput" placeholder="Autor / Nick" style="font-size:0.9rem; color:#aaa; border-bottom:1px solid #444;" onchange="saveCurrentTeamToStorage()">
-</div>
+                <div class="toolbar-left">
+                    <input type="text" id="teamNameInput" placeholder="Nome do Time" onchange="saveCurrentTeamToStorage()">
+                    <input type="text" id="teamAuthorInput" placeholder="Autor / Nick" onchange="saveCurrentTeamToStorage()">
+                </div>
 <div class="toolbar-controls">
     <select id="teamTier" class="tier-select" onchange="carregarDados(this.value)">
         <option value="" disabled selected>Selecionar Tier</option>
@@ -565,6 +482,7 @@
     function createNewTeam() {
         currentTeamIndex = null;
         document.getElementById('teamNameInput').value = "";
+        document.getElementById('teamAuthorInput').value = ""; // Limpa Autor
         document.getElementById('teamTier').value = "";
         resetBuilderUI();
         addNewSlot(); 
@@ -583,6 +501,7 @@
         const team = allTeams[index];
         renderSidebar(); 
         document.getElementById('teamNameInput').value = team.title || "";
+        document.getElementById('teamAuthorInput').value = team.author || ""; // Carrega Autor
         document.getElementById('teamTier').value = team.tier || "";
         
         await carregarDados(team.tier); 
@@ -618,60 +537,42 @@
         } else { addNewSlot(); }
     }
 
-   function saveCurrentTeamToStorage() {
-    // Tenta pegar o elemento do autor. Se ele não existir (erro no HTML), define como string vazia.
-    const authorInput = document.getElementById('teamAuthorInput');
-    const authorName = authorInput ? authorInput.value : "";
+    function saveCurrentTeamToStorage() {
+        const authorInput = document.getElementById('teamAuthorInput');
+        const authorName = authorInput ? authorInput.value : "";
 
-    const teamData = {
-        title: document.getElementById('teamNameInput').value || "Novo Time",
-        author: authorName, // <--- Salva o Nick/Autor aqui
-        tier: document.getElementById('teamTier').value,
-        slots: []
-    };
-
-    // Percorre todos os editores de Pokémon abertos para salvar os dados de cada um
-    document.querySelectorAll('.poke-editor').forEach(ed => {
-        const id = ed.id.split('-')[1];
-        const name = ed.querySelector('.p-name').value;
-        
-        const slot = {
-            name: name,
-            item: ed.querySelector('.p-item').value,
-            ability: ed.querySelector('.p-ability').value,
-            nature: ed.querySelector('.p-nature').value,
-            level: ed.querySelector('.p-level').value,
-            gender: ed.querySelector('.p-gender').value,
-            shiny: ed.querySelector('.p-shiny').value,
-            evs: {}, 
-            ivs: {}, 
-            moves: []
+        const teamData = {
+            title: document.getElementById('teamNameInput').value || "Novo Time",
+            author: authorName, 
+            tier: document.getElementById('teamTier').value,
+            slots: []
         };
-
-        // Salva EVs e IVs
-        STATS.forEach(s => {
-            slot.evs[s] = document.getElementById(`num-${id}-${s}`).value;
-            slot.ivs[s] = ed.querySelector(`.p-iv-${s.toLowerCase()}`).value;
+        document.querySelectorAll('.poke-editor').forEach(ed => {
+            const id = ed.id.split('-')[1];
+            const name = ed.querySelector('.p-name').value;
+            const slot = {
+                name: name,
+                item: ed.querySelector('.p-item').value,
+                ability: ed.querySelector('.p-ability').value,
+                nature: ed.querySelector('.p-nature').value,
+                level: ed.querySelector('.p-level').value,
+                gender: ed.querySelector('.p-gender').value,
+                shiny: ed.querySelector('.p-shiny').value,
+                evs: {}, ivs: {}, moves: []
+            };
+            STATS.forEach(s => {
+                slot.evs[s] = document.getElementById(`num-${id}-${s}`).value;
+                slot.ivs[s] = ed.querySelector(`.p-iv-${s.toLowerCase()}`).value;
+            });
+            ed.querySelectorAll('.p-move').forEach(m => slot.moves.push(m.value));
+            teamData.slots.push(slot);
         });
 
-        // Salva os Movimentos
-        ed.querySelectorAll('.p-move').forEach(m => slot.moves.push(m.value));
-        
-        teamData.slots.push(slot);
-    });
-
-    // Lógica para Adicionar Novo ou Atualizar Existente
-    if (currentTeamIndex === null) { 
-        allTeams.push(teamData); 
-        currentTeamIndex = allTeams.length - 1; 
-    } else { 
-        allTeams[currentTeamIndex] = teamData; 
+        if (currentTeamIndex === null) { allTeams.push(teamData); currentTeamIndex = allTeams.length - 1; } 
+        else { allTeams[currentTeamIndex] = teamData; }
+        localStorage.setItem('humbleTeamsList', JSON.stringify(allTeams));
+        renderSidebar();
     }
-
-    // Persiste no LocalStorage e atualiza a barra lateral
-    localStorage.setItem('humbleTeamsList', JSON.stringify(allTeams));
-    renderSidebar();
-}
 
     function deleteTeam(index, event) {
         if(event) event.stopPropagation();
@@ -931,11 +832,17 @@
         });
     }
 
-    // --- FUNÇÕES DE TEXTO / LINK / PUBLICAR ---
+    // --- FUNÇÃO CORRIGIDA PARA INCLUIR AUTOR NO LINK ---
     function getTeamAsText() {
         let txt = ""; 
         const tier = document.getElementById('teamTier').value;
-        if(tier) txt += `=== [Gen 9] ${tier} ===\n\n`;
+        const authorInput = document.getElementById('teamAuthorInput');
+        const author = authorInput ? authorInput.value : "";
+
+        if(tier) txt += `=== [Gen 9] ${tier} ===\n`;
+        // Adiciona a linha de Autor para o Paste ler
+        if(author) txt += `// Author: ${author}\n\n`;
+        else txt += `\n`;
         
         document.querySelectorAll('.poke-editor').forEach(ed=>{
             const name = ed.querySelector('.p-name').value;
@@ -980,19 +887,27 @@
         document.getElementById('ioModal').style.display='flex';
     }
 
-// --- GERA O LINK PARA O ARQUIVO 'paste.html' ---
     async function shareTeamLink() {
+        // VERIFICA SE TEM NICK, SE NÃO, PEDE
+        let author = document.getElementById('teamAuthorInput').value;
+        if(!author.trim()) {
+            author = prompt("Por favor, digite o Nick do Autor do time para gerar o link:");
+            if(author) {
+                document.getElementById('teamAuthorInput').value = author;
+                saveCurrentTeamToStorage();
+            } else {
+                alert("É necessário um Nick para compartilhar.");
+                return;
+            }
+        }
+
         const teamText = getTeamAsText();
         if(!teamText.trim() || teamText.length < 20) {
             alert("Monte um time antes de gerar o link!"); 
             return;
         }
 
-        // 1. Comprime o texto do time
         const encoded = LZString.compressToEncodedURIComponent(teamText);
-        
-        // 2. Cria o endereço apontando para 'paste.html' na mesma pasta
-        // Pega o endereço atual, remove o nome do arquivo e adiciona 'paste.html'
         const baseUrl = window.location.href.substring(0, window.location.href.lastIndexOf('/')) + "/paste.html";
         const longLink = `${baseUrl}?import=${encoded}`;
 
@@ -1001,7 +916,6 @@
         btn.innerText = "⏳...";
 
         try {
-            // 3. Tenta encurtar com TinyURL
             const response = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longLink)}`);
             if (response.ok) {
                 const shortLink = await response.text();
@@ -1011,7 +925,6 @@
                 throw new Error("Falha ao encurtar");
             }
         } catch (e) {
-            // Se falhar, usa o link longo do paste.html
             await navigator.clipboard.writeText(longLink);
             alert("Link copiado! (Versão completa)");
         } finally {
@@ -1037,7 +950,7 @@
         document.getElementById('tabsContainer').innerHTML = ""; document.getElementById('editorsContainer').innerHTML = "";
         slotCounter = 0; const blocks = text.split(/\r?\n\r?\n/);
         blocks.forEach(block => {
-            if (!block.trim() || block.startsWith("===")) return;
+            if (!block.trim() || block.startsWith("===") || block.startsWith("//")) return;
             const id = addNewSlot();
             const lines = block.split('\n'); const firstLine = lines[0].trim();
             let name = firstLine, item = "";
@@ -1084,7 +997,8 @@
     signOut, 
     onAuthStateChanged,
     signInWithEmailAndPassword,
-    createUserWithEmailAndPassword
+    createUserWithEmailAndPassword,
+    updateProfile
   } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
   // --- SUAS CHAVES DO SIMPLETEANS ---
@@ -1119,13 +1033,12 @@
   const userEmail = document.getElementById('userEmail');
 
   // --- 1. LOGIN COM GOOGLE ---
-if(btnGoogleLogin) {
+  if(btnGoogleLogin) {
       btnGoogleLogin.addEventListener('click', () => {
         signInWithPopup(auth, provider)
           .then(async (result) => {
-            // Verifica se o usuário já tem um nome de exibição que goste
-            // Se quiser forçar a criação de um nick caso venha o nome completo:
-            if(confirm(`Logado como ${result.user.displayName}. Deseja alterar seu Nick de Treinador?`)) {
+            // Pergunta o nick se o usuário quiser alterar ou for novo
+             if(confirm(`Logado como ${result.user.displayName}. Deseja alterar seu Nick de Treinador?`)) {
                  const newNick = prompt("Digite seu novo Nick:");
                  if(newNick) {
                      await updateProfile(result.user, { displayName: newNick });
@@ -1136,6 +1049,7 @@ if(btnGoogleLogin) {
           .catch((error) => alert("Erro Google: " + error.message));
       });
   }
+
   // --- 2. LOGIN COM EMAIL/SENHA ---
   if(btnEmailLogin) {
       btnEmailLogin.addEventListener('click', () => {
@@ -1156,7 +1070,7 @@ if(btnGoogleLogin) {
   }
 
   // --- 3. CADASTRO COM EMAIL/SENHA ---
-if(btnEmailRegister) {
+  if(btnEmailRegister) {
       btnEmailRegister.addEventListener('click', () => {
         const email = emailInput.value;
         const pass = passInput.value;
@@ -1165,16 +1079,15 @@ if(btnEmailRegister) {
 
         createUserWithEmailAndPassword(auth, email, pass)
             .then(async (userCredential) => {
-                // SUCESSO NO REGISTRO - PERGUNTA O NICK
                 const nick = prompt("Conta criada! Qual será seu Nick de Treinador?");
                 if(nick) {
                     await updateProfile(userCredential.user, { displayName: nick });
-                    // Tenta preencher automaticamente no builder se estiver vazio
+                    // Auto preenche o input se estiver vazio
                     const authorInput = document.getElementById('teamAuthorInput');
                     if(authorInput && !authorInput.value) authorInput.value = nick;
                 }
                 alert("Bem-vindo, " + (nick || "Treinador") + "!");
-                location.reload(); // Recarrega para atualizar a UI
+                location.reload();
             })
             .catch((error) => {
                 let msg = error.message;
@@ -1194,27 +1107,25 @@ if(btnEmailRegister) {
   }
 
   // --- 5. MONITOR DE ESTADO ---
-onAuthStateChanged(auth, (user) => {
+  onAuthStateChanged(auth, (user) => {
     if (user) {
       // LOGADO
       if(loginForm) loginForm.style.display = 'none';
       if(userProfile) {
           userProfile.style.display = 'flex';
+          
           userPhoto.src = user.photoURL ? user.photoURL : "https://i.imgur.com/XOEcuO8.png"; 
           userName.innerText = user.displayName ? user.displayName : user.email.split('@')[0];
           userEmail.innerText = user.email;
 
-          // --- AUTO-PREENCHER AUTOR NO BUILDER ---
+          // Auto-preenche o autor no time se estiver vazio
           const authorInput = document.getElementById('teamAuthorInput');
-          // Só preenche se o campo estiver vazio e o usuário tiver um nome
           if(authorInput && !authorInput.value && user.displayName) {
               authorInput.value = user.displayName;
-              // Opcional: Salvar isso no estado atual se já houver um time aberto
-              // saveCurrentTeamToStorage(); 
           }
       }
     } else {
-// DESLOGADO
+      // DESLOGADO
       if(loginForm) loginForm.style.display = 'flex';
       if(userProfile) userProfile.style.display = 'none';
     }
