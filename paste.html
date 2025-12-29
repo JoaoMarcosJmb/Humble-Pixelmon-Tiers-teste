@@ -59,8 +59,26 @@
     }
     .btn-outline:hover { border-color: var(--cor-dourado); color: var(--cor-dourado); background: rgba(209, 167, 32, 0.1); }
 
+    /* --- INFO DO TIME (AUTOR / TIER) --- */
+    .team-header-info {
+        width: 100%; max-width: 1200px; margin: 20px auto 0;
+        text-align: center; background: rgba(0,0,0,0.4);
+        border: 1px solid #333; border-radius: 8px; padding: 15px;
+        backdrop-filter: blur(5px); display: none; /* Inicia oculto */
+    }
+    .team-tier-badge {
+        display: inline-block; background: #333; color: var(--cor-dourado);
+        padding: 5px 12px; border-radius: 20px; font-size: 0.85rem;
+        border: 1px solid #555; text-transform: uppercase; letter-spacing: 1px;
+        margin-bottom: 8px;
+    }
+    .team-author {
+        font-size: 1.2rem; color: #fff; margin: 0;
+    }
+    .team-author span { color: var(--cor-dourado); font-weight: bold; }
+
     .container {
-        max-width: 1200px; margin: 30px auto; width: 100%;
+        max-width: 1200px; margin: 20px auto; width: 100%;
         display: flex; flex-wrap: wrap; gap: 20px; justify-content: center;
         padding: 20px; flex-grow: 1; align-items: flex-start;
     }
@@ -134,6 +152,11 @@
     <a href="#" id="editBtn" class="btn-action">✎ Importar / Editar</a>
 </header>
 
+<div id="teamInfoArea" class="team-header-info">
+    <div id="displayTier" class="team-tier-badge">FORMATO</div>
+    <h2 class="team-author">Treinador: <span id="displayAuthor">???</span></h2>
+</div>
+
 <div class="container" id="cardsContainer">
     <h2 style="color:#888; font-weight:normal;">Lendo dados do time...</h2>
 </div>
@@ -144,7 +167,6 @@
 <script>
     // --- URLs e Imagens ---
     const POKEAPI_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
-    const SHOWDOWN_SPRITES = "https://play.pokemonshowdown.com/sprites/gen5/";
     const IMG_FALLBACK = "https://img.pokemondb.net/sprites/items/poke-ball.png";
 
     // --- CORREÇÕES DE NOMES (Showdown -> PokéAPI) ---
@@ -188,19 +210,26 @@
         if(!code) {
             document.getElementById('cardsContainer').innerHTML = "<h3 style='color:#ff5555'>Erro: Link incompleto.</h3>";
             document.getElementById('editBtn').style.display = 'none';
+            document.getElementById('teamInfoArea').style.display = 'none';
             return;
         }
 
         let fullText = "";
         try {
+            // 1. Tenta descomprimir
             fullText = LZString.decompressFromEncodedURIComponent(code);
+            // 2. Se falhar, tenta o base64 antigo (retrocompatibilidade)
             if(!fullText) fullText = decodeURIComponent(escape(atob(code))); 
         } catch(e) {
             fullText = "Erro ao ler código.";
         }
 
-        // AJUSTE SEU NOME DE ARQUIVO AQUI
-        const builderFile = "builder (14).html"; 
+        // --- ATUALIZAÇÃO: Extrair Metadados ---
+        extractMetadata(fullText);
+
+        // AJUSTE O NOME DO SEU ARQUIVO BUILDER AQUI SE FOR DIFERENTE
+        const builderFile = "builder (15).html"; 
+        
         document.getElementById('editBtn').href = `${builderFile}?import=${code}`;
         document.getElementById('rawText').innerText = fullText;
 
@@ -208,26 +237,59 @@
         renderCards(pokemons);
     };
 
+    // --- LÓGICA PARA EXIBIR AUTOR E TIER ---
+    function extractMetadata(text) {
+        // Regex para pegar: === [Gen 9] OU ===
+        const tierMatch = text.match(/^===\s+(.*?)\s+===/m);
+        // Regex para pegar: // Author: Nick
+        const authorMatch = text.match(/^\/\/\s+Author:\s+(.*)$/m);
+
+        const infoArea = document.getElementById('teamInfoArea');
+        const displayTier = document.getElementById('displayTier');
+        const displayAuthor = document.getElementById('displayAuthor');
+
+        let hasInfo = false;
+
+        if (tierMatch) {
+            displayTier.innerText = tierMatch[1].trim();
+            hasInfo = true;
+        } else {
+            displayTier.style.display = 'none';
+        }
+
+        if (authorMatch) {
+            displayAuthor.innerText = authorMatch[1].trim();
+            hasInfo = true;
+        } else {
+            displayAuthor.innerText = "Desconhecido";
+        }
+
+        // Só mostra a barra se tiver alguma info ou se houver Pokémon
+        if(text.trim().length > 10) infoArea.style.display = 'block';
+    }
+
     function parseShowdown(text) {
         if(!text) return [];
         const blocks = text.split(/\r?\n\r?\n/);
         const team = [];
 
         blocks.forEach(block => {
-            if(!block.trim() || block.startsWith("===")) return;
+            // Ignora blocos vazios, linhas de Tier (===) ou comentários (//)
+            if(!block.trim() || block.trim().startsWith("===") || block.trim().startsWith("//")) return;
+            
             const lines = block.split('\n');
             const pokemon = { moves: [] };
             
             const firstLine = lines[0].split('@');
             let namePart = firstLine[0].trim();
             
-            // Remove Gênero (M)/(F)
+            // Remove indicadores de gênero do nome
             namePart = namePart.replace(/\s?[\(\[][MF][\)\]]$/i, '').trim();
             
-            // Apelidos
+            // Lógica de Apelido vs Espécie
             if(namePart.includes('(') && namePart.includes(')')) {
                 const match = namePart.match(/\(([^)]+)\)/);
-                if(match) pokemon.name = match[1];
+                if(match) pokemon.name = match[1]; // Espécie real
                 else pokemon.name = namePart;
             } else {
                 pokemon.name = namePart; 
@@ -238,6 +300,9 @@
 
             for(let i=1; i<lines.length; i++) {
                 const l = lines[i].trim();
+                // Pula linhas de comentário dentro do bloco do Pokémon
+                if (l.startsWith('//')) continue;
+
                 if(l.startsWith('Ability:')) pokemon.ability = l.split(':')[1].trim();
                 else if(l.startsWith('EVs:')) pokemon.evs = l.split(':')[1].trim();
                 else if(l.startsWith('IVs:')) pokemon.ivs = l.split(':')[1].trim();
@@ -266,4 +331,51 @@
             card.className = 'poke-card';
             card.innerHTML = `
                 <div class="card-header">
-                    <span class="poke-
+                    <span class="poke-name">${pk.display}</span>
+                    <span class="poke-item-text">${pk.item || ''}</span>
+                </div>
+                <div class="visual-area">
+                    <img src="${IMG_FALLBACK}" id="${imgId}" class="main-sprite">
+                    <div class="info-list">
+                        <div><strong>Ability:</strong> ${pk.ability || '-'}</div>
+                        <div><strong>Nature:</strong> ${pk.nature || '-'}</div>
+                        <div><strong>EVs:</strong> ${pk.evs || '-'}</div>
+                        <div><strong>IVs:</strong> ${pk.ivs || '-'}</div>
+                    </div>
+                </div>
+                <div class="moves-grid">
+                    ${pk.moves.map(m => `<div class="move-tag">${m}</div>`).join('')}
+                </div>
+            `;
+            container.appendChild(card);
+
+            // Carrega imagem da PokéAPI
+            fetch(`https://pokeapi.co/api/v2/pokemon/${apiName}`)
+                .then(r => {
+                    if(!r.ok) throw new Error("404");
+                    return r.json();
+                })
+                .then(d => {
+                    document.getElementById(imgId).src = `${POKEAPI_BASE}${d.id}.png`;
+                })
+                .catch(() => {
+                    // Tenta nome limpo se falhar
+                    const clean = apiName.split('-')[0];
+                    if(clean !== apiName) {
+                        fetch(`https://pokeapi.co/api/v2/pokemon/${clean}`)
+                        .then(r=>r.json())
+                        .then(d=>{ document.getElementById(imgId).src = `${POKEAPI_BASE}${d.id}.png`; })
+                        .catch(e=>console.log(e));
+                    }
+                });
+        }
+    }
+
+    function toggleRaw() {
+        const div = document.getElementById('rawText');
+        div.style.display = (div.style.display === 'block') ? 'none' : 'block';
+    }
+</script>
+
+</body>
+</html>
