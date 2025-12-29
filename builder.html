@@ -403,9 +403,10 @@
     <main class="builder-area">
         <div class="builder-wrapper">
             <div class="toolbar">
-                <div class="toolbar-left">
-                    <input type="text" id="teamNameInput" placeholder="Nome do Time" onchange="saveCurrentTeamToStorage()">
-                </div>
+                <div class="toolbar-left" style="display:flex; flex-direction:column; gap:5px;">
+    <input type="text" id="teamNameInput" placeholder="Nome do Time" onchange="saveCurrentTeamToStorage()">
+    <input type="text" id="teamAuthorInput" placeholder="Autor / Nick" style="font-size:0.9rem; color:#aaa; border-bottom:1px solid #444;" onchange="saveCurrentTeamToStorage()">
+</div>
 <div class="toolbar-controls">
     <select id="teamTier" class="tier-select" onchange="carregarDados(this.value)">
         <option value="" disabled selected>Selecionar Tier</option>
@@ -617,38 +618,60 @@
         } else { addNewSlot(); }
     }
 
-    function saveCurrentTeamToStorage() {
-        const teamData = {
-            title: document.getElementById('teamNameInput').value || "Novo Time",
-            tier: document.getElementById('teamTier').value,
-            slots: []
+   function saveCurrentTeamToStorage() {
+    // Tenta pegar o elemento do autor. Se ele não existir (erro no HTML), define como string vazia.
+    const authorInput = document.getElementById('teamAuthorInput');
+    const authorName = authorInput ? authorInput.value : "";
+
+    const teamData = {
+        title: document.getElementById('teamNameInput').value || "Novo Time",
+        author: authorName, // <--- Salva o Nick/Autor aqui
+        tier: document.getElementById('teamTier').value,
+        slots: []
+    };
+
+    // Percorre todos os editores de Pokémon abertos para salvar os dados de cada um
+    document.querySelectorAll('.poke-editor').forEach(ed => {
+        const id = ed.id.split('-')[1];
+        const name = ed.querySelector('.p-name').value;
+        
+        const slot = {
+            name: name,
+            item: ed.querySelector('.p-item').value,
+            ability: ed.querySelector('.p-ability').value,
+            nature: ed.querySelector('.p-nature').value,
+            level: ed.querySelector('.p-level').value,
+            gender: ed.querySelector('.p-gender').value,
+            shiny: ed.querySelector('.p-shiny').value,
+            evs: {}, 
+            ivs: {}, 
+            moves: []
         };
-        document.querySelectorAll('.poke-editor').forEach(ed => {
-            const id = ed.id.split('-')[1];
-            const name = ed.querySelector('.p-name').value;
-            const slot = {
-                name: name,
-                item: ed.querySelector('.p-item').value,
-                ability: ed.querySelector('.p-ability').value,
-                nature: ed.querySelector('.p-nature').value,
-                level: ed.querySelector('.p-level').value,
-                gender: ed.querySelector('.p-gender').value,
-                shiny: ed.querySelector('.p-shiny').value,
-                evs: {}, ivs: {}, moves: []
-            };
-            STATS.forEach(s => {
-                slot.evs[s] = document.getElementById(`num-${id}-${s}`).value;
-                slot.ivs[s] = ed.querySelector(`.p-iv-${s.toLowerCase()}`).value;
-            });
-            ed.querySelectorAll('.p-move').forEach(m => slot.moves.push(m.value));
-            teamData.slots.push(slot);
+
+        // Salva EVs e IVs
+        STATS.forEach(s => {
+            slot.evs[s] = document.getElementById(`num-${id}-${s}`).value;
+            slot.ivs[s] = ed.querySelector(`.p-iv-${s.toLowerCase()}`).value;
         });
 
-        if (currentTeamIndex === null) { allTeams.push(teamData); currentTeamIndex = allTeams.length - 1; } 
-        else { allTeams[currentTeamIndex] = teamData; }
-        localStorage.setItem('humbleTeamsList', JSON.stringify(allTeams));
-        renderSidebar();
+        // Salva os Movimentos
+        ed.querySelectorAll('.p-move').forEach(m => slot.moves.push(m.value));
+        
+        teamData.slots.push(slot);
+    });
+
+    // Lógica para Adicionar Novo ou Atualizar Existente
+    if (currentTeamIndex === null) { 
+        allTeams.push(teamData); 
+        currentTeamIndex = allTeams.length - 1; 
+    } else { 
+        allTeams[currentTeamIndex] = teamData; 
     }
+
+    // Persiste no LocalStorage e atualiza a barra lateral
+    localStorage.setItem('humbleTeamsList', JSON.stringify(allTeams));
+    renderSidebar();
+}
 
     function deleteTeam(index, event) {
         if(event) event.stopPropagation();
@@ -1096,13 +1119,23 @@
   const userEmail = document.getElementById('userEmail');
 
   // --- 1. LOGIN COM GOOGLE ---
-  if(btnGoogleLogin) {
+if(btnGoogleLogin) {
       btnGoogleLogin.addEventListener('click', () => {
         signInWithPopup(auth, provider)
+          .then(async (result) => {
+            // Verifica se o usuário já tem um nome de exibição que goste
+            // Se quiser forçar a criação de um nick caso venha o nome completo:
+            if(confirm(`Logado como ${result.user.displayName}. Deseja alterar seu Nick de Treinador?`)) {
+                 const newNick = prompt("Digite seu novo Nick:");
+                 if(newNick) {
+                     await updateProfile(result.user, { displayName: newNick });
+                     location.reload();
+                 }
+            }
+          })
           .catch((error) => alert("Erro Google: " + error.message));
       });
   }
-
   // --- 2. LOGIN COM EMAIL/SENHA ---
   if(btnEmailLogin) {
       btnEmailLogin.addEventListener('click', () => {
@@ -1123,7 +1156,7 @@
   }
 
   // --- 3. CADASTRO COM EMAIL/SENHA ---
-  if(btnEmailRegister) {
+if(btnEmailRegister) {
       btnEmailRegister.addEventListener('click', () => {
         const email = emailInput.value;
         const pass = passInput.value;
@@ -1131,8 +1164,17 @@
         if(pass.length < 6) { alert("A senha precisa ter pelo menos 6 caracteres."); return; }
 
         createUserWithEmailAndPassword(auth, email, pass)
-            .then((userCredential) => {
-                alert("Conta criada com sucesso! Bem-vindo.");
+            .then(async (userCredential) => {
+                // SUCESSO NO REGISTRO - PERGUNTA O NICK
+                const nick = prompt("Conta criada! Qual será seu Nick de Treinador?");
+                if(nick) {
+                    await updateProfile(userCredential.user, { displayName: nick });
+                    // Tenta preencher automaticamente no builder se estiver vazio
+                    const authorInput = document.getElementById('teamAuthorInput');
+                    if(authorInput && !authorInput.value) authorInput.value = nick;
+                }
+                alert("Bem-vindo, " + (nick || "Treinador") + "!");
+                location.reload(); // Recarrega para atualizar a UI
             })
             .catch((error) => {
                 let msg = error.message;
@@ -1152,22 +1194,27 @@
   }
 
   // --- 5. MONITOR DE ESTADO ---
-  onAuthStateChanged(auth, (user) => {
+onAuthStateChanged(auth, (user) => {
     if (user) {
       // LOGADO
       if(loginForm) loginForm.style.display = 'none';
       if(userProfile) {
           userProfile.style.display = 'flex';
-          
-          // Se for login por email, não tem foto, então usamos uma genérica ou a do Google
           userPhoto.src = user.photoURL ? user.photoURL : "https://i.imgur.com/XOEcuO8.png"; 
-          
-          // Se não tiver displayName (comum em login por email), usa o começo do email
           userName.innerText = user.displayName ? user.displayName : user.email.split('@')[0];
           userEmail.innerText = user.email;
+
+          // --- AUTO-PREENCHER AUTOR NO BUILDER ---
+          const authorInput = document.getElementById('teamAuthorInput');
+          // Só preenche se o campo estiver vazio e o usuário tiver um nome
+          if(authorInput && !authorInput.value && user.displayName) {
+              authorInput.value = user.displayName;
+              // Opcional: Salvar isso no estado atual se já houver um time aberto
+              // saveCurrentTeamToStorage(); 
+          }
       }
     } else {
-      // DESLOGADO
+// DESLOGADO
       if(loginForm) loginForm.style.display = 'flex';
       if(userProfile) userProfile.style.display = 'none';
     }
