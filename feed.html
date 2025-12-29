@@ -2,6 +2,7 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Humble Feed - Times da Comunidade</title>
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
@@ -14,6 +15,8 @@
       --cor-card: #1e1e1e;
       --cor-texto: #f5f5f5; 
       --cor-verde: #28a745;
+      --cor-input: #2a2a2a;
+      --cor-borda: #444;
     }
     body { 
       font-family: "Segoe UI", Arial, sans-serif; 
@@ -24,70 +27,85 @@
       color: var(--cor-texto); margin: 0; padding: 0; 
     }
 
-    /* --- HEADER NOVO --- */
+    /* --- HEADER --- */
     header { 
-      padding: 15px 30px; 
+      height: 70px; padding: 0 20px; 
       background: rgba(20,20,20,0.98); 
       border-bottom: 2px solid var(--cor-dourado); 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: center; 
+      display: flex; justify-content: space-between; align-items: center; 
       position: sticky; top: 0; z-index: 100; 
       box-shadow: 0 4px 15px rgba(0,0,0,0.6);
       backdrop-filter: blur(10px);
     }
-    header h1 { margin: 0; font-size: 1.6rem; color: var(--cor-dourado); display: flex; align-items: center; gap: 10px; }
-    header h1 img { height: 40px; }
     
-    .header-actions { display: flex; gap: 15px; }
+    .header-left { display: flex; align-items: center; gap: 15px; }
+    header h1 { margin: 0; font-size: 1.4rem; color: var(--cor-dourado); display: flex; align-items: center; gap: 10px; }
+    header h1 img { height: 35px; }
 
-    /* Botão Publicar (Header) */
+    /* Área da Direita (Botoes + Menu) */
+    .header-right { display: flex; align-items: center; gap: 15px; }
+
+    /* Menu Hamburguer */
+    .menu-toggle { display: flex; flex-direction: column; width: 30px; gap: 6px; cursor: pointer; z-index: 1300; }
+    .menu-toggle span { display: block; height: 3px; background: var(--cor-texto); border-radius: 4px; transition: 0.3s; }
+    .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 6px); }
+    .menu-toggle.active span:nth-child(2) { opacity: 0; }
+    .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -6px); }
+
+    /* Dropdown Nav */
+    nav { 
+        position: absolute; top: 70px; right: 20px; 
+        background: rgba(30, 25, 20, 0.98); border: 1px solid var(--cor-dourado); 
+        border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.8); 
+        display: none; flex-direction: column; padding: 15px; gap: 12px; 
+        z-index: 1200; width: 220px; 
+    }
+    nav.active { display: flex; animation: slideDown 0.3s ease; }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+    nav a { color: var(--cor-dourado); text-decoration:none; border-bottom:1px solid rgba(255,255,255,0.05); padding-bottom:5px; font-weight: 500; }
+    nav a:hover { color: #fff; border-bottom-color: var(--cor-dourado); }
+
+    /* Botões do Header */
     .btn-create { 
-        background: var(--cor-verde); 
-        color: #fff; 
-        padding: 10px 20px; 
-        border-radius: 30px; 
-        text-decoration: none; 
-        font-weight: bold; 
-        transition: 0.3s;
-        display: flex; align-items: center; gap: 8px;
-        box-shadow: 0 4px 15px rgba(40, 167, 69, 0.4);
-        border: 1px solid #218838;
+        background: var(--cor-verde); color: #fff; padding: 8px 20px; border-radius: 30px; 
+        text-decoration: none; font-weight: bold; transition: 0.3s; 
+        display: flex; align-items: center; gap: 8px; font-size: 0.9rem;
+        box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3); border: 1px solid #218838;
     }
-    .btn-create:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(40, 167, 69, 0.6); background: #34ce57; }
+    .btn-create:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(40, 167, 69, 0.5); background: #34ce57; }
 
-    /* Botão Voltar (Estilo Outline) */
-    .btn-outline {
-        border: 1px solid #666; color: #aaa; padding: 10px 20px; border-radius: 30px;
-        text-decoration: none; font-size: 0.9rem; transition: 0.3s;
+    .btn-login-header {
+        background: transparent; border: 1px solid var(--cor-dourado); color: var(--cor-dourado);
+        padding: 8px 20px; border-radius: 30px; cursor: pointer; font-weight: bold; transition: 0.3s;
     }
-    .btn-outline:hover { border-color: #fff; color: #fff; background: rgba(255,255,255,0.05); }
+    .btn-login-header:hover { background: var(--cor-dourado); color: #000; }
 
-    /* --- HERO SECTION (BANNER) --- */
+    /* Perfil no Header */
+    .user-header-info { display: none; align-items: center; gap: 10px; background: rgba(255,255,255,0.05); padding: 5px 15px; border-radius: 30px; border: 1px solid #444; }
+    .header-avatar { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--cor-dourado); object-fit: cover; }
+    .header-name { font-size: 0.9rem; font-weight: bold; color: #eee; max-width: 100px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .btn-logout-mini { background: none; border: none; color: #ff5555; cursor: pointer; font-size: 1.1rem; padding: 0; display: flex; align-items: center; }
+
+    /* --- HERO SECTION --- */
     .hero-section {
-        text-align: center;
-        padding: 60px 20px 40px;
+        text-align: center; padding: 50px 20px 30px;
         background: linear-gradient(to bottom, rgba(0,0,0,0.6), transparent);
     }
-    .hero-title { font-size: 2.5rem; color: #fff; margin: 0 0 10px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
-    .hero-subtitle { color: #bbb; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+    .hero-title { font-size: 2.2rem; color: #fff; margin: 0 0 10px 0; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+    .hero-subtitle { color: #bbb; font-size: 1rem; max-width: 600px; margin: 0 auto; }
 
-    /* --- GRID --- */
+    /* --- GRID FEED --- */
     .feed-container {
-        max-width: 1100px; margin: 0 auto 60px; padding: 0 20px;
+        max-width: 1200px; margin: 0 auto 60px; padding: 0 20px;
         display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;
+        justify-content: center; /* Centraliza se tiver poucos cards */
     }
 
-    /* --- CARD DESIGN --- */
+    /* --- CARD --- */
     .feed-card {
-        background: var(--cor-card); 
-        border: 1px solid #333; 
-        border-top: 4px solid var(--cor-dourado);
-        border-radius: 12px; 
-        padding: 20px; 
-        display: flex; flex-direction: column;
-        transition: transform 0.3s, box-shadow 0.3s; 
-        position: relative; overflow: hidden;
+        background: var(--cor-card); border: 1px solid #333; border-top: 4px solid var(--cor-dourado);
+        border-radius: 12px; padding: 20px; display: flex; flex-direction: column;
+        transition: transform 0.3s, box-shadow 0.3s; position: relative; overflow: hidden;
     }
     .feed-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.5); border-color: #555; }
 
@@ -103,7 +121,6 @@
     .card-icons img:hover { transform: scale(1.2); }
 
     .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid #333; }
-    
     .author-info { display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: #ccc; }
     .author-avatar { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #333; object-fit: cover; }
     
@@ -114,7 +131,7 @@
     }
     .btn-view:hover { background: var(--cor-dourado); color: #000; }
     
-    /* LIKE BUTTON */
+    /* LIKE */
     .btn-like {
         background: rgba(255,255,255,0.05); border: none; cursor: pointer;
         display: flex; align-items: center; gap: 6px;
@@ -123,8 +140,8 @@
     .btn-like:hover { background: rgba(255,255,255,0.1); color: #fff; }
     .btn-like.liked { color: #ff4d4d; background: rgba(255, 77, 77, 0.1); }
     .heart-icon { font-size: 1.1rem; }
-    
-    /* SPINNER DE LOADING */
+
+    /* LOADING */
     .loading-container { grid-column: 1/-1; display: flex; justify-content: center; padding: 50px; flex-direction: column; align-items: center; gap: 15px; }
     .spinner {
         width: 40px; height: 40px; border: 4px solid rgba(255,255,255,0.1);
@@ -133,29 +150,65 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* BOTÃO FLUTUANTE (MOBILE) */
-    .fab-create {
-        position: fixed; bottom: 30px; right: 30px;
-        width: 60px; height: 60px; background: var(--cor-verde);
-        border-radius: 50%; display: flex; justify-content: center; align-items: center;
-        color: white; font-size: 2rem; text-decoration: none;
-        box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 200;
-        transition: 0.3s;
+    /* MODAL DE LOGIN (ESTILO DO BUILDER) */
+    .modal-overlay { 
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+        background: rgba(0,0,0,0.85); z-index: 2000; display: none; 
+        justify-content: center; align-items: center; backdrop-filter: blur(5px);
     }
-    .fab-create:hover { transform: scale(1.1) rotate(90deg); background: #34ce57; }
+    .modal-content { 
+        background: #1a1a1a; border: 2px solid var(--cor-dourado); 
+        padding: 25px; border-radius: 10px; width: 90%; max-width: 400px; 
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+    .auth-header { font-size: 1.1rem; color: var(--cor-dourado); text-align: center; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold; }
+    .login-input { background: #151515; border: 1px solid #333; color: #ddd; padding: 10px; border-radius: 4px; width: 100%; margin-bottom: 10px; box-sizing: border-box; }
+    .login-input:focus { border-color: var(--cor-dourado); outline: none; }
+    .auth-btn-row { display: flex; gap: 10px; margin-bottom: 15px; }
+    .btn-auth-action { flex: 1; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; border: none; }
+    .btn-entrar { background: var(--cor-dourado); color: #000; }
+    .btn-criar { background: #333; color: #fff; border: 1px solid #444; }
+    .google-btn { width: 100%; background: #fff; color: #333; padding: 10px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: bold; border: none; }
+    .close-modal { float: right; cursor: pointer; color: #888; font-size: 1.2rem; }
+    .close-modal:hover { color: #fff; }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 768px) {
+        .desktop-only { display: none; }
+    }
   </style>
 </head>
 <body>
 
 <header>
-    <h1><img src="https://i.imgur.com/XOEcuO8.png"> Humble Feed</h1>
-    <div class="header-actions">
-        <a href="builder.html" class="btn-create">
-            <span style="font-size:1.2rem;">+</span> Publicar Time
+    <div class="header-left">
+        <h1><img src="https://i.imgur.com/XOEcuO8.png"> Humble Feed</h1>
+    </div>
+
+    <div class="header-right">
+        <div id="userHeaderInfo" class="user-header-info desktop-only">
+             <img id="headerAvatar" class="header-avatar" src="">
+             <span id="headerName" class="header-name">User</span>
+             <button onclick="logout()" class="btn-logout-mini" title="Sair">×</button>
+        </div>
+
+        <button id="btnLoginHeader" class="btn-login-header desktop-only" onclick="openLoginModal()">Entrar</button>
+
+        <a href="builder.html" class="btn-create desktop-only">
+            <span>+</span> Publicar
         </a>
-        <a href="builder.html" class="btn-outline">Voltar</a>
+
+        <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
     </div>
 </header>
+
+<nav id="dropdownMenu">
+    <a href="builder.html">🛠️ Builder (Criar)</a>
+    <a href="index.html">🏠 Início</a>
+    <a href="https://www.humblepixelmon.com.br">🌐 Site Oficial</a>
+    <a href="#" onclick="openLoginModal()" id="mobileLoginLink">👤 Entrar / Login</a>
+    <a href="#" onclick="logout()" id="mobileLogoutLink" style="display:none; color:#ff5555;">🚪 Sair</a>
+</nav>
 
 <div class="hero-section">
     <h2 class="hero-title">Explore Estratégias</h2>
@@ -169,11 +222,37 @@
     </div>
 </div>
 
-<a href="builder.html" class="fab-create" title="Criar Novo Time">+</a>
+<div class="modal-overlay" id="loginModal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeLoginModal()">×</span>
+        <div class="auth-header">Acesso Humble</div>
+        
+        <input type="email" id="modalEmail" class="login-input" placeholder="E-mail">
+        <input type="password" id="modalPass" class="login-input" placeholder="Senha">
+        
+        <div class="auth-btn-row">
+            <button id="modalBtnLogin" class="btn-auth-action btn-entrar">Entrar</button>
+            <button id="modalBtnRegister" class="btn-auth-action btn-criar">Criar Conta</button>
+        </div>
+
+        <button id="modalBtnGoogle" class="google-btn">
+           <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="18"> Entrar com Google
+        </button>
+    </div>
+</div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  import { 
+    getAuth, 
+    signInWithPopup, 
+    GoogleAuthProvider, 
+    signOut, 
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    updateProfile
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
   import { 
     getDatabase, 
     ref, 
@@ -197,14 +276,92 @@
   const app = initializeApp(firebaseConfig);
   const db = getDatabase(app);
   const auth = getAuth(app); 
+  const provider = new GoogleAuthProvider();
 
+  // --- LÓGICA DO MENU ---
+  const menuBtn = document.getElementById("menuBtn");
+  const dropdownMenu = document.getElementById("dropdownMenu");
+
+  menuBtn.addEventListener("click", () => {
+      menuBtn.classList.toggle("active");
+      dropdownMenu.classList.toggle("active");
+  });
+
+  // --- LÓGICA DO MODAL DE LOGIN ---
+  window.openLoginModal = function() {
+      document.getElementById('loginModal').style.display = 'flex';
+      dropdownMenu.classList.remove('active'); // Fecha menu se estiver aberto
+      menuBtn.classList.remove('active');
+  }
+  window.closeLoginModal = function() {
+      document.getElementById('loginModal').style.display = 'none';
+  }
+  window.logout = function() {
+      if(confirm("Deseja sair da conta?")) {
+          signOut(auth).then(() => location.reload());
+      }
+  }
+
+  // --- FIREBASE AUTH ACTIONS (DENTRO DO MODAL) ---
+  document.getElementById('modalBtnGoogle').addEventListener('click', () => {
+      signInWithPopup(auth, provider).then(() => closeLoginModal()).catch(e => alert(e.message));
+  });
+
+  document.getElementById('modalBtnLogin').addEventListener('click', () => {
+      const email = document.getElementById('modalEmail').value;
+      const pass = document.getElementById('modalPass').value;
+      if(!email || !pass) { alert("Preencha email e senha"); return; }
+      signInWithEmailAndPassword(auth, email, pass).then(() => closeLoginModal()).catch(e => alert("Erro: " + e.message));
+  });
+
+  document.getElementById('modalBtnRegister').addEventListener('click', () => {
+      const email = document.getElementById('modalEmail').value;
+      const pass = document.getElementById('modalPass').value;
+      if(pass.length < 6) { alert("Senha curta (min 6)"); return; }
+      createUserWithEmailAndPassword(auth, email, pass).then(async (cred) => {
+          const nick = prompt("Conta criada! Seu Nick:");
+          if(nick) await updateProfile(cred.user, { displayName: nick });
+          closeLoginModal();
+          location.reload();
+      }).catch(e => alert("Erro: " + e.message));
+  });
+
+  // --- MONITOR DE ESTADO (ATUALIZA O HEADER) ---
+  onAuthStateChanged(auth, (user) => {
+      const loginBtn = document.getElementById('btnLoginHeader');
+      const userInfo = document.getElementById('userHeaderInfo');
+      const mobileLogin = document.getElementById('mobileLoginLink');
+      const mobileLogout = document.getElementById('mobileLogoutLink');
+
+      if (user) {
+          // LOGADO
+          loginBtn.style.display = 'none';
+          userInfo.style.display = 'flex'; // Mostra avatar e nome
+          
+          document.getElementById('headerAvatar').src = user.photoURL || "https://i.imgur.com/XOEcuO8.png";
+          document.getElementById('headerName').innerText = user.displayName || "Treinador";
+
+          // Ajustes Mobile
+          mobileLogin.style.display = 'none';
+          mobileLogout.style.display = 'block';
+      } else {
+          // DESLOGADO
+          loginBtn.style.display = 'block';
+          userInfo.style.display = 'none';
+
+          // Ajustes Mobile
+          mobileLogin.style.display = 'block';
+          mobileLogout.style.display = 'none';
+      }
+  });
+
+  // --- FEED LÓGICA (CARREGAMENTO E CARDS) ---
   const container = document.getElementById('feedContainer');
 
   async function loadFeed() {
       try {
           const teamsRef = ref(db, 'teams');
           const recentTeamsQuery = query(teamsRef, limitToLast(30));
-          
           const snapshot = await get(recentTeamsQuery);
 
           if (!snapshot.exists()) {
@@ -213,7 +370,6 @@
           }
 
           container.innerHTML = ""; 
-          
           const teamsData = [];
           
           snapshot.forEach((childSnapshot) => {
@@ -246,11 +402,9 @@
       }
 
       const authorImg = data.userPhoto || "https://i.imgur.com/XOEcuO8.png";
-
       const user = auth.currentUser;
       const likesObj = data.likes || {}; 
       const likesCount = Object.keys(likesObj).length;
-      
       const isLiked = user && likesObj[user.uid]; 
       const likeClass = isLiked ? 'liked' : '';
       const heartIcon = isLiked ? '❤️' : '🤍'; 
@@ -263,21 +417,17 @@
               <h3 class="card-title">${data.title}</h3>
               <span class="card-tier">${data.tier}</span>
           </div>
-          <div class="card-icons">
-              ${iconsHtml}
-          </div>
+          <div class="card-icons">${iconsHtml}</div>
           <div class="card-footer">
               <div class="author-info">
                   <img src="${authorImg}" class="author-avatar">
                   <span>${data.author}</span>
               </div>
-              
               <div style="display:flex; gap:10px; align-items:center;">
                   <button class="btn-like ${likeClass}" id="btn-like-${data.id}" onclick="window.handleLike('${data.id}')">
                     <span class="heart-icon">${heartIcon}</span> 
                     <span class="like-count" id="count-${data.id}">${likesCount}</span>
                   </button>
-
                   <a href="${pasteLink}" class="btn-view" target="_blank">Ver Time</a>
               </div>
           </div>
@@ -287,18 +437,14 @@
 
   window.handleLike = async function(teamId) {
       const user = auth.currentUser;
-      
       if(!user) {
-          if(confirm("Você precisa estar logado para curtir. Ir para a tela de Login?")) {
-              window.location.href = "builder.html"; 
-          }
+          openLoginModal(); // Abre o modal em vez de alert
           return;
       }
 
       const btn = document.getElementById(`btn-like-${teamId}`);
       const countSpan = document.getElementById(`count-${teamId}`);
       const heartSpan = btn.querySelector('.heart-icon');
-      
       const likeRef = ref(db, `teams/${teamId}/likes/${user.uid}`);
       const isLikedNow = btn.classList.contains('liked');
       let currentCount = parseInt(countSpan.innerText);
@@ -315,13 +461,11 @@
               heartSpan.innerText = '❤️';
               countSpan.innerText = currentCount + 1;
           }
-      } catch(e) {
-          console.error("Erro like:", e);
-      }
+      } catch(e) { console.error("Erro like:", e); }
   }
 
-  setTimeout(loadFeed, 800);
-
+  // Inicia
+  setTimeout(loadFeed, 500);
 </script>
 
 </body>
