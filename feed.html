@@ -438,11 +438,27 @@
   }
 
   // --- CORREÇÃO DE NOMES PARA SPRITES (Showdown Style) ---
+// --- CORREÇÃO DE NOMES PARA SPRITES (Showdown Style) ---
   function toShowdownName(rawName) {
       let name = rawName.trim().toLowerCase();
-      // Remove tudo que não for letra ou número (Padrão Showdown)
-      // Ex: "Ogerpon-Wellspring" -> "ogerponwellspring"
-      // Ex: "Tauros-Paldea-Blaze" -> "taurospaldeablaze"
+      
+      // Lista de termos que indicam que DEVEMOS manter o hífen
+      // Geralmente formas regionais, lendários com fusão, etc.
+      const formsWithHyphen = [
+        "tauros-", "calyrex-", "ogerpon-", "urshifu-", 
+        "basculegion-", "enamorus-", "zygarde-", 
+        "-hisui", "-galar", "-alola", "-paldea", "-mega"
+      ];
+
+      // Verifica se é um desses casos especiais
+      if (formsWithHyphen.some(term => name.includes(term))) {
+         // Mantém o hífen, remove apenas espaços, pontos e apóstrofos
+         return name.replace(/ /g, "").replace(/[.:']/g, "");
+      }
+
+      // --- TRATAMENTO PADRÃO ---
+      // Remove tudo que não é letra ou número (Padrão para a maioria)
+      // Resolve: "Iron Valiant" -> "ironvaliant", "Ho-Oh" -> "hooh", "Wo-Chien" -> "wochien"
       name = name.replace(/[^a-z0-9]/g, ''); 
       return name;
   }
