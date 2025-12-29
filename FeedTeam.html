@@ -2,211 +2,195 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>Feed de Times - Humble</title>
+  <title>Humble Feed - Times da Comunidade</title>
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+
   <style>
-    /* --- SEU CSS PADRÃO (Mantido) --- */
-    :root { --cor-dourado: #d1a720; --cor-fundo: #1a1a1a; --cor-texto: #f5f5f5; --cor-card: rgba(30, 30, 30, 0.95); }
-    body { font-family: "Segoe UI", Arial, sans-serif; background: linear-gradient(135deg, rgba(20,20,20,0.85), rgba(40,30,20,0.85)), url("https://i.imgur.com/vATNRmF.png") no-repeat center center fixed; background-size: cover; margin: 0; padding: 0; min-height: 100vh; color: var(--cor-texto); padding-top: 80px; /* Espaço para o header fixo */ }
+    :root { 
+      --cor-dourado: #d1a720; 
+      --cor-fundo: #111; 
+      --cor-card: #1a1a1a;
+      --cor-texto: #f5f5f5; 
+    }
+    body { 
+      font-family: "Segoe UI", Arial, sans-serif; 
+      background: var(--cor-fundo); 
+      background-image: linear-gradient(135deg, rgba(20,20,20,0.95), rgba(40,30,20,0.95)), 
+                        url("https://i.imgur.com/vATNRmF.png");
+      background-size: cover; background-attachment: fixed;
+      color: var(--cor-texto); margin: 0; padding: 0; 
+    }
+
+    header { 
+      padding: 15px 20px; background: rgba(20,20,20,0.95); 
+      border-bottom: 2px solid var(--cor-dourado); display: flex; 
+      justify-content: space-between; align-items: center; 
+      position: sticky; top: 0; z-index: 100;
+    }
+    header h1 { margin: 0; font-size: 1.5rem; color: var(--cor-dourado); display: flex; align-items: center; gap: 10px; }
+    header h1 img { height: 35px; }
     
-    /* Header e Menu (Exatamente iguais ao seu) */
-    header { position: fixed; top: 0; left: 0; right: 0; width: 100%; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(20, 20, 20, 0.9); border-bottom: 2px solid var(--cor-dourado); box-shadow: 0 2px 8px rgba(0,0,0,0.6); z-index: 1000; box-sizing: border-box; }
-    header h1 { font-size: 1.6rem; margin: 0; display: flex; align-items: center; gap: 12px; color: var(--cor-dourado); }
-    header h1 img { height: 40px; cursor: pointer; }
-    header a { text-decoration: none; color: inherit; }
-    .menu-toggle { position: relative; display: flex; flex-direction: column; justify-content: space-between; width: 30px; height: 22px; cursor: pointer; z-index: 1100; }
-    .menu-toggle span { display: block; height: 4px; background: var(--cor-texto); border-radius: 4px; transition: 0.3s; }
-    .menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-    .menu-toggle.active span:nth-child(2) { opacity: 0; }
-    .menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
-    nav { position: absolute; top: 65px; right: 10px; background: rgba(30, 25, 20, 0.95); border: 1px solid var(--cor-dourado); border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.6); display: none; flex-direction: column; padding: 15px; gap: 12px; z-index: 1200; width: 200px; }
-    nav.active { display: flex; }
-    nav a { color: var(--cor-dourado); text-decoration: none; font-size: 1rem; transition: color 0.2s; }
-    nav a:hover { color: var(--cor-texto); }
+    .btn-back { 
+        background: transparent; border: 1px solid var(--cor-dourado); 
+        color: var(--cor-dourado); padding: 8px 15px; border-radius: 4px; 
+        text-decoration: none; font-weight: bold; transition: 0.3s;
+    }
+    .btn-back:hover { background: var(--cor-dourado); color: #000; }
 
-    /* --- CSS NOVO: ESTILO DO FEED --- */
-    .container {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 20px;
+    .feed-container {
+        max-width: 1000px; margin: 30px auto; padding: 0 15px;
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;
     }
 
-    .feed-header {
-      text-align: center;
-      margin-bottom: 30px;
+    /* CARD ESTILO HUMBLE */
+    .feed-card {
+        background: var(--cor-card); border: 1px solid #333; border-top: 3px solid var(--cor-dourado);
+        border-radius: 8px; padding: 15px; display: flex; flex-direction: column;
+        transition: transform 0.2s, box-shadow 0.2s; position: relative; overflow: hidden;
     }
+    .feed-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.5); border-color: #555; }
+
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+    .card-title { font-size: 1.1rem; font-weight: bold; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 70%; }
+    .card-tier { background: #333; color: var(--cor-dourado); padding: 2px 8px; border-radius: 4px; font-size: 0.75rem; border: 1px solid #444; }
+
+    .card-icons { 
+        display: flex; gap: 5px; margin-bottom: 15px; background: rgba(0,0,0,0.3); 
+        padding: 8px; border-radius: 6px; justify-content: center; min-height: 50px;
+    }
+    .card-icons img { width: 35px; height: 35px; object-fit: contain; }
+
+    .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 10px; border-top: 1px solid #333; }
+    .author-info { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #aaa; }
+    .author-avatar { width: 24px; height: 24px; border-radius: 50%; border: 1px solid #444; }
     
-    .btn-criar {
-      background-color: var(--cor-dourado);
-      color: #000;
-      padding: 10px 20px;
-      text-decoration: none;
-      font-weight: bold;
-      border-radius: 5px;
-      border: 1px solid #ffd700;
-      transition: 0.3s;
+    .btn-view { 
+        background: var(--cor-dourado); color: #000; border: none; 
+        padding: 6px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; 
+        text-decoration: none; font-size: 0.85rem; 
     }
-    .btn-criar:hover { background-color: #fff; box-shadow: 0 0 10px var(--cor-dourado); }
-
-    .team-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 20px;
-    }
-
-    .team-card {
-      background: var(--cor-card);
-      border: 1px solid #444;
-      border-radius: 10px;
-      padding: 15px;
-      transition: transform 0.2s, border-color 0.2s;
-      position: relative;
-    }
-
-    .team-card:hover {
-      transform: translateY(-5px);
-      border-color: var(--cor-dourado);
-    }
-
-    .card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #444;
-      padding-bottom: 5px;
-    }
-
-    .team-title { font-size: 1.2rem; font-weight: bold; color: var(--cor-dourado); }
-    .team-author { font-size: 0.9rem; color: #aaa; }
-
-    /* Exibição dos 6 Pokemon */
-    .poke-icons {
-      display: flex;
-      justify-content: space-between;
-      margin: 15px 0;
-    }
-    .poke-icons img {
-      width: 40px; 
-      height: 30px; 
-      object-fit: contain; /* Ajusta sprite */
-    }
-
-    .card-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
-    }
-
-    .btn-ver {
-      background: transparent;
-      border: 1px solid var(--cor-dourado);
-      color: var(--cor-texto);
-      padding: 5px 15px;
-      border-radius: 4px;
-      cursor: pointer;
-      text-decoration: none;
-      font-size: 0.9rem;
-    }
-    .btn-ver:hover { background: var(--cor-dourado); color: #000; }
-
-    .like-area { display: flex; align-items: center; gap: 5px; cursor: pointer; }
-    .like-icon { font-size: 1.2rem; color: #888; transition: 0.2s; }
-    .like-area:hover .like-icon { color: #ff4d4d; }
-    .like-area.liked .like-icon { color: #ff4d4d; }
-
+    .btn-view:hover { filter: brightness(1.1); }
+    
+    .loading-msg { text-align: center; color: #888; grid-column: 1/-1; margin-top: 50px; }
   </style>
 </head>
 <body>
 
-  <header>
-    <h1><a href="index.html"><img src="https://i.imgur.com/XOEcuO8.png" alt="Mascote"></a> Humble Teams</h1>
-    <div class="menu-toggle" id="menuBtn"><span></span><span></span><span></span></div>
-  </header>
+<header>
+    <h1><img src="https://i.imgur.com/XOEcuO8.png"> Humble Feed</h1>
+    <a href="builder (15).html" class="btn-back">← Voltar ao Builder</a>
+</header>
 
-  <nav id="dropdownMenu">
-    <a href="index.html">🏠 Início</a>
-    <a href="builder.html">🔨 Criar Novo Time</a>
-    <a href="#">🏆 Top Rankings</a>
-  </nav>
+<div class="feed-container" id="feedContainer">
+    <h3 class="loading-msg">Carregando últimos times...</h3>
+</div>
 
-  <div class="container">
-    <div class="feed-header">
-      <h2>Times da Comunidade</h2>
-      <a href="builder.html" class="btn-criar">+ Publicar Time</a>
-    </div>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { 
+    getFirestore, 
+    collection, 
+    getDocs, 
+    query, 
+    orderBy, 
+    limit 
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-    <div class="team-grid">
-      <div class="team-card">
-        <div class="card-header">
-          <div>
-            <div class="team-title">Chuva Ofensiva</div>
-            <div class="team-author">por Joaomarcosjmb</div>
-          </div>
-          <span style="font-size: 0.8rem; background: #333; padding: 2px 6px; border-radius: 4px;">Gen 9 OU</span>
-        </div>
-        <div class="poke-icons">
-          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/pelipper.png">
-          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/barraskewda.png">
-          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/zapdos.png">
-          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/ferrothorn.png">
-          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/seismitoad.png">
-          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/scizor.png">
-        </div>
-        <div class="card-footer">
-          <a href="builder.html" class="btn-ver">Ver Detalhes</a>
-          <div class="like-area" onclick="toggleLike(this)">
-            <span class="like-icon">❤</span> <span class="like-count">12</span>
-          </div>
-        </div>
-      </div>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
+    authDomain: "sampleteans.firebaseapp.com",
+    databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
+    projectId: "sampleteans",
+    storageBucket: "sampleteans.firebasestorage.app",
+    messagingSenderId: "1069510029261",
+    appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
+  };
 
-      <div class="team-card">
-        <div class="card-header">
-          <div>
-            <div class="team-title">Hyper Offense</div>
-            <div class="team-author">por AshKetchum</div>
-          </div>
-          <span style="font-size: 0.8rem; background: #333; padding: 2px 6px; border-radius: 4px;">NatDex</span>
-        </div>
-        <div class="poke-icons">
-          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/dragapult.png">
-          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/garchomp.png">
-          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/lucario.png">
-          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/dragonite.png">
-          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/gengar.png">
-          <img src="https://img.pokemondb.net/sprites/scarlet-violet/icon/rotom-wash.png">
-        </div>
-        <div class="card-footer">
-          <a href="#" class="btn-ver">Ver Detalhes</a>
-          <div class="like-area" onclick="toggleLike(this)">
-            <span class="like-icon">❤</span> <span class="like-count">5</span>
-          </div>
-        </div>
-      </div>
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-    </div>
-  </div>
+  const container = document.getElementById('feedContainer');
 
-  <script>
-    // Menu Script
-    const menuBtn = document.getElementById("menuBtn");
-    const dropdownMenu = document.getElementById("dropdownMenu");
-    menuBtn.addEventListener("click", () => { menuBtn.classList.toggle("active"); dropdownMenu.classList.toggle("active"); });
-    
-    // Like Script (Visual Apenas)
-    function toggleLike(element) {
-      element.classList.toggle('liked');
-      let countSpan = element.querySelector('.like-count');
-      let count = parseInt(countSpan.innerText);
-      if(element.classList.contains('liked')) {
-        countSpan.innerText = count + 1;
-      } else {
-        countSpan.innerText = count - 1;
+  // URL para imagem dos Pokémons
+  const POKE_IMG_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
+  const POKE_ICON_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/";
+
+  async function loadFeed() {
+      try {
+          // Busca os últimos 20 times ordenados por data
+          const q = query(collection(db, "teams"), orderBy("createdAt", "desc"), limit(20));
+          const querySnapshot = await getDocs(q);
+
+          if(querySnapshot.empty) {
+              container.innerHTML = "<h3 class='loading-msg'>Nenhum time publicado ainda. Seja o primeiro!</h3>";
+              return;
+          }
+
+          container.innerHTML = ""; // Limpa msg de carregando
+
+          querySnapshot.forEach((doc) => {
+              const data = doc.data();
+              createCard(data);
+          });
+
+      } catch (error) {
+          console.error("Erro ao carregar feed:", error);
+          container.innerHTML = `<h3 class='loading-msg' style='color:#ff5555'>Erro ao carregar: ${error.message}<br>Verifique se ativou o Firestore no console.</h3>`;
       }
-    }
-  </script>
+  }
+
+  function createCard(data) {
+      // Gera link para o Paste
+      // Comprimimos o texto igual ao builder faz para o link ficar curto
+      const encoded = LZString.compressToEncodedURIComponent(data.teamData);
+      const pasteLink = `paste.html?import=${encoded}`;
+
+      // Gera HTML dos ícones
+      let iconsHtml = '';
+      if(data.pokemon && Array.isArray(data.pokemon)) {
+          data.pokemon.slice(0, 6).forEach(pokeName => {
+              // Tenta limpar o nome para URL da API (simples)
+              let cleanName = pokeName.trim().replace(/ /g, '-').replace(/\./g, '');
+              // Usa sprite pequeno (ícone) para o feed não ficar pesado
+              // Mas aqui usaremos a arte oficial pra ficar bonito se preferir, ou ícone
+              // Vamos tentar achar o ID ou usar nome direto se a API aceitar, mas a URL direta pede ID normalmente.
+              // Truque: Usar o pokemondb para icones pelo nome é mais garantido se não tivermos o ID
+              const src = `https://img.pokemondb.net/sprites/scarlet-violet/icon/${cleanName}.png`;
+              
+              iconsHtml += `<img src="${src}" onerror="this.src='https://img.pokemondb.net/sprites/items/poke-ball.png'" title="${pokeName}">`;
+          });
+      }
+
+      const card = document.createElement('div');
+      card.className = 'feed-card';
+      
+      // Foto do autor ou genérica
+      const authorImg = data.userPhoto || "https://i.imgur.com/XOEcuO8.png";
+
+      card.innerHTML = `
+          <div class="card-header">
+              <h3 class="card-title">${data.title}</h3>
+              <span class="card-tier">${data.tier}</span>
+          </div>
+          <div class="card-icons">
+              ${iconsHtml}
+          </div>
+          <div class="card-footer">
+              <div class="author-info">
+                  <img src="${authorImg}" class="author-avatar">
+                  <span>${data.author}</span>
+              </div>
+              <a href="${pasteLink}" class="btn-view" target="_blank">Ver Time ➔</a>
+          </div>
+      `;
+      container.appendChild(card);
+  }
+
+  // Inicia
+  loadFeed();
+</script>
+
 </body>
 </html>
