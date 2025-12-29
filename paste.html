@@ -81,12 +81,18 @@
     .poke-card:hover { transform: translateY(-3px); border-color: #666; }
 
     .card-header { 
-        display: flex; justify-content: space-between; align-items: flex-start; 
+        display: flex; justify-content: space-between; align-items: center; /* Alinha texto no centro vertical */
         margin-bottom: 10px; border-bottom: 1px solid #333; padding-bottom: 8px;
         height: 45px;
     }
     .poke-name { font-size: 1.3rem; font-weight: bold; color: #fff; margin: 0; text-transform: capitalize; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .poke-item-icon { width: 32px; height: 32px; object-fit: contain; }
+    
+    /* ESTILO NOVO DO ITEM (TEXTO) */
+    .poke-item-text { 
+        font-size: 0.9rem; color: #bbb; font-style: italic; 
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; 
+        max-width: 140px; text-align: right;
+    }
 
     .visual-area {
         display: flex; align-items: center; gap: 15px; margin-bottom: 15px;
@@ -137,12 +143,10 @@
 <div id="rawText" class="raw-text-area"></div>
 
 <script>
-    // --- FONTE DAS IMAGENS (USANDO POKEAPI PARA TUDO AGORA) ---
+    // --- URLs e Imagens ---
     const POKEAPI_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
-    const POKEAPI_ITEMS = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/";
     const SHOWDOWN_SPRITES = "https://play.pokemonshowdown.com/sprites/gen5/";
     const IMG_FALLBACK = "https://img.pokemondb.net/sprites/items/poke-ball.png";
-    const ITEM_FALLBACK = "https://img.pokemondb.net/sprites/items/berry.png";
 
     // --- CORREÇÕES DE NOMES (Showdown -> PokéAPI) ---
     const NAME_FIXES = {
@@ -177,15 +181,6 @@
         if(NAME_FIXES[clean]) return NAME_FIXES[clean];
         return clean;
     };
-    
-    // CORREÇÃO DOS ITENS (AGORA USANDO PADRÃO POKEAPI: TRAÇOS EM VEZ DE JUNTAR)
-    // Ex: "Choice Scarf" -> "choice-scarf" (funciona na PokéAPI)
-    const toItemName = (n) => {
-        if(!n) return '';
-        return n.trim().toLowerCase()
-                .replace(/ /g, '-')
-                .replace(/[^a-z0-9-]/g, '');
-    };
 
     window.onload = function() {
         const params = new URLSearchParams(window.location.search);
@@ -205,8 +200,8 @@
             fullText = "Erro ao ler código.";
         }
 
+        // AJUSTE SEU NOME DE ARQUIVO AQUI
         const builderFile = "builder (14).html"; 
-        
         document.getElementById('editBtn').href = `${builderFile}?import=${code}`;
         document.getElementById('rawText').innerText = fullText;
 
@@ -224,21 +219,8 @@
             const lines = block.split('\n');
             const pokemon = { moves: [] };
             
-            const firstLine = lines[0];
-            let namePart, itemPart;
-
-            // Parser mais robusto para separar Nome e Item
-            if(firstLine.includes('@')) {
-                const parts = firstLine.split('@');
-                // O nome é a primeira parte, o item é a última (caso haja @ no nome, o que é raro)
-                // Mas seguro é split pelo ultimo @
-                const lastAt = firstLine.lastIndexOf('@');
-                namePart = firstLine.substring(0, lastAt).trim();
-                itemPart = firstLine.substring(lastAt + 1).trim();
-            } else {
-                namePart = firstLine.trim();
-                itemPart = "";
-            }
+            const firstLine = lines[0].split('@');
+            let namePart = firstLine[0].trim();
             
             // Remove Gênero (M)/(F)
             namePart = namePart.replace(/\s?[\(\[][MF][\)\]]$/i, '').trim();
@@ -253,7 +235,7 @@
             }
             pokemon.display = namePart;
 
-            if(itemPart) pokemon.item = itemPart;
+            if(firstLine[1]) pokemon.item = firstLine[1].trim();
 
             for(let i=1; i<lines.length; i++) {
                 const l = lines[i].trim();
@@ -279,11 +261,6 @@
 
         for (const [index, pk] of team.entries()) {
             const apiName = toApiName(pk.name);
-            
-            // Tenta imagem da PokéAPI para o item
-            const itemNameClean = toItemName(pk.item);
-            const itemSrc = pk.item ? `${POKEAPI_ITEMS}${itemNameClean}.png` : '';
-            
             const imgId = `poke-img-${index}`;
 
             const card = document.createElement('div');
@@ -291,7 +268,7 @@
             card.innerHTML = `
                 <div class="card-header">
                     <span class="poke-name">${pk.display}</span>
-                    ${pk.item ? `<img src="${itemSrc}" class="poke-item-icon" title="${pk.item}" onerror="this.src='${ITEM_FALLBACK}'">` : ''}
+                    ${pk.item ? `<span class="poke-item-text">@ ${pk.item}</span>` : ''}
                 </div>
                 
                 <div class="visual-area">
@@ -301,7 +278,6 @@
                         ${pk.nature ? `<div><strong>Nature:</strong> ${pk.nature}</div>` : ''}
                         ${pk.evs ? `<div><strong>EVs:</strong> ${pk.evs}</div>` : ''}
                         ${pk.ivs ? `<div><strong>IVs:</strong> ${pk.ivs}</div>` : ''}
-                        ${pk.item ? `<div><strong>Item:</strong> ${pk.item}</div>` : ''}
                     </div>
                 </div>
 
@@ -319,6 +295,7 @@
     async function fetchPokemonImage(name, imgId) {
         const imgEl = document.getElementById(imgId);
         try {
+            // 1. Tenta API Oficial
             let r = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
             
             if(!r.ok && name.includes('-')) {
@@ -333,8 +310,8 @@
                 const d = await r.json();
                 imgEl.src = `${POKEAPI_BASE}${d.id}.png`;
             } else {
-                // Fallback para Showdown Sprite se a PokéAPI falhar
-                let showdownName = name.replace('-incarnate', ''); // Showdown usa 'landorus' para incarnate
+                // 2. Fallback para Showdown Sprite
+                let showdownName = name.replace('-incarnate', ''); 
                 imgEl.src = `${SHOWDOWN_SPRITES}${showdownName}.png`;
             }
         } catch(e) {
