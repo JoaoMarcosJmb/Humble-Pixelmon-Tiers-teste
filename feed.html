@@ -437,30 +437,39 @@
       } catch (error) { container.innerHTML = `<h3 class='loading-msg' style='color:#ff5555'>Erro: ${error.message}</h3>`; }
   }
 
-  // --- CORREÇÃO DE NOMES PARA SPRITES (Showdown Style) ---
-// --- CORREÇÃO DE NOMES PARA SPRITES (Showdown Style) ---
+
   function toShowdownName(rawName) {
       let name = rawName.trim().toLowerCase();
-      
-      // Lista de termos que indicam que DEVEMOS manter o hífen
-      // Geralmente formas regionais, lendários com fusão, etc.
-      const formsWithHyphen = [
-        "tauros-", "calyrex-", "ogerpon-", "urshifu-", 
-        "basculegion-", "enamorus-", "zygarde-", 
-        "-hisui", "-galar", "-alola", "-paldea", "-mega"
-      ];
 
-      // Verifica se é um desses casos especiais
-      if (formsWithHyphen.some(term => name.includes(term))) {
-         // Mantém o hífen, remove apenas espaços, pontos e apóstrofos
-         return name.replace(/ /g, "").replace(/[.:']/g, "");
-      }
+      // 1. MAPA DE CORREÇÃO MANUAL (Adicione aqui os que derem erro)
+      // O Showdown é inconsistente, então forçamos o nome do arquivo correto aqui.
+      const fixes = {
+          // Calyrex PRECISA do hífen no arquivo
+          "calyrex-shadow": "calyrex-shadow",
+          "calyrex-ice": "calyrex-ice",
+          "calyrex-shadow-rider": "calyrex-shadow", // Caso venha com nome longo
+          "calyrex-ice-rider": "calyrex-ice",
+          
+          // Tauros de Paldea geralmente NÃO tem hífen no arquivo Gen 5
+          "tauros-paldea-blaze": "taurospaldeablaze",
+          "tauros-paldea-aqua": "taurospaldeaaqua",
+          "tauros-paldea-combat": "taurospaldeacombat",
+          
+          // Outros chatos
+          "wo-chien": "wochien",
+          "ting-lu": "tinglu",
+          "chi-yu": "chiyu",
+          "chien-pao": "chienpao",
+          "iron-valiant": "ironvaliant"
+      };
 
-      // --- TRATAMENTO PADRÃO ---
-      // Remove tudo que não é letra ou número (Padrão para a maioria)
-      // Resolve: "Iron Valiant" -> "ironvaliant", "Ho-Oh" -> "hooh", "Wo-Chien" -> "wochien"
-      name = name.replace(/[^a-z0-9]/g, ''); 
-      return name;
+      // Se estiver na lista acima, usa o nome corrigido
+      if (fixes[name]) return fixes[name];
+
+      // 2. TENTATIVA INTELIGENTE DE HÍFEN
+      // Se for Totem, Mega, Alola, Hisui ou Galar, geralmente mantém o hífen ou remove?
+      // Na dúvida, o padrãozão (remove tudo) funciona para 95%
+      return name.replace(/[^a-z0-9]/g, ''); 
   }
 
   function createCard(data) {
@@ -477,13 +486,27 @@
       const deleteBtn = isOwner ? `<button class="btn-delete-team" onclick="window.deleteTeam('${data.id}')" title="Apagar Time">🗑️</button>` : '';
 
       let iconsHtml = '';
-      if(data.pokemon) {
+     if(data.pokemon) {
           data.pokemon.slice(0,6).forEach(p => {
               const cleanName = toShowdownName(p);
-              // SPRITES ESTÁTICOS DO SHOWDOWN (GEN 5)
-              const src = `https://play.pokemonshowdown.com/sprites/gen5/${cleanName}.png`;
               
-              iconsHtml += `<img src="${src}" onerror="this.src='https://img.pokemondb.net/sprites/items/poke-ball.png'" title="${p}">`;
+              // Tenta primeiro o sprite GEN 5 (Estilo pixel art antigo)
+              const srcGen5 = `https://play.pokemonshowdown.com/sprites/gen5/${cleanName}.png`;
+              
+              // Se falhar, tenta o sprite ANIMADO moderno (Geralmente tem todos)
+              const srcAni = `https://play.pokemonshowdown.com/sprites/ani/${cleanName}.gif`;
+              
+              // Se falhar, tenta o ícone de inventário (Último recurso)
+              const srcIcon = `https://img.pokemondb.net/sprites/scarlet-violet/icon/${cleanName}.png`;
+
+              // Monta a tag IMG com "baterias de reserva" (onerrror)
+              iconsHtml += `
+                <img src="${srcGen5}" 
+                     class="poke-sprite"
+                     alt="${p}"
+                     title="${p}"
+                     onerror="this.onerror=null; this.src='${srcAni}'; this.onerror=function(){this.src='${srcIcon}'};">
+              `;
           });
       }
 
