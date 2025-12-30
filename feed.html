@@ -443,8 +443,6 @@
       } catch (error) { container.innerHTML = `<h3 class='loading-msg' style='color:#ff5555'>Erro: ${error.message}</h3>`; }
   }
 
-  // --- CORREÇÃO DE NOMES PARA SPRITES (Showdown Style) ---
-// --- CORREÇÃO DE NOMES PARA SPRITES (Showdown Style) ---
 function toShowdownName(rawName) {
     if (!rawName) return "pokeball";
     
@@ -457,7 +455,7 @@ function toShowdownName(rawName) {
 
     // --- REGRAS ESPECÍFICAS ---
 
-    // 1. MEGA EVOLUÇÕES (X e Y)
+    // 1. MEGA EVOLUÇÕES
     if (name.includes("mega") && !name.includes("yanmega") && !name.includes("meganium")) {
         if (name.includes(" x") || name.includes("-x")) {
             let base = name.replace("mega", "").replace(" x", "").replace("-x", "").replace(/[^a-z0-9]/g, "");
@@ -471,25 +469,32 @@ function toShowdownName(rawName) {
         return base + "-mega";
     }
 
-    // 2. ZACIAN E ZAMAZENTA (NOVA REGRA: Crowned vs Hero)
+    // 2. FORMAS ORIGIN (NOVA REGRA: Dialga, Palkia, Giratina)
+    if (name.includes("origin")) {
+        // Remove "origin", "forme" e limpa a string para pegar o nome do pokémon
+        let base = name.replace("origin", "").replace("forme", "").replace(/[^a-z0-9]/g, "");
+        return base + "-origin";
+    }
+
+    // 3. ZACIAN E ZAMAZENTA (Crowned)
     if (name.includes("zacian")) {
         if (name.includes("crowned")) return "zacian-crowned";
-        return "zacian"; // Hero of Many Battles (base)
+        return "zacian";
     }
     if (name.includes("zamazenta")) {
         if (name.includes("crowned")) return "zamazenta-crowned";
-        return "zamazenta"; // Hero of Many Battles (base)
+        return "zamazenta";
     }
 
-    // 3. DEOXYS (NOVA REGRA: Formas)
+    // 4. DEOXYS (Attack, Defense, Speed)
     if (name.includes("deoxys")) {
         if (name.includes("attack")) return "deoxys-attack";
         if (name.includes("defense")) return "deoxys-defense";
         if (name.includes("speed")) return "deoxys-speed";
-        return "deoxys"; // Normal
+        return "deoxys";
     }
 
-    // 4. TAUROS (Paldea)
+    // 5. TAUROS (Paldea)
     if (name.includes("tauros")) {
         if (name.includes("aqua")) return "tauros-paldeaaqua";
         if (name.includes("blaze")) return "tauros-paldeablaze";
@@ -497,14 +502,14 @@ function toShowdownName(rawName) {
         return "tauros";
     }
 
-    // 5. KYUREM
+    // 6. KYUREM
     if (name.includes("kyurem")) {
         if (name.includes("black")) return "kyurem-black";
         if (name.includes("white")) return "kyurem-white";
         return "kyurem";
     }
 
-    // 6. OGERPON
+    // 7. OGERPON
     if (name.includes("ogerpon")) {
         if (name.includes("cornerstone")) return "ogerpon-cornerstone";
         if (name.includes("hearthflame")) return "ogerpon-hearthflame";
@@ -512,14 +517,14 @@ function toShowdownName(rawName) {
         return "ogerpon";
     }
 
-    // 7. LYCANROC
+    // 8. LYCANROC
     if (name.includes("lycanroc")) {
         if (name.includes("midnight")) return "lycanroc-midnight";
         if (name.includes("dusk")) return "lycanroc-dusk";
         return "lycanroc";
     }
 
-    // 8. NECROZMA
+    // 9. NECROZMA
     if (name.includes("necrozma")) {
         if (name.includes("dawn")) return "necrozma-dawnwings";
         if (name.includes("dusk") || name.includes("mane")) return "necrozma-duskmane";
@@ -527,13 +532,13 @@ function toShowdownName(rawName) {
         return "necrozma";
     }
 
-    // 9. PALAFIN
+    // 10. PALAFIN
     if (name.includes("palafin")) {
         if (name.includes("hero")) return "palafin-hero";
         return "palafin";
     }
 
-    // 10. PRIMAL / INDEEDEE / GENERO
+    // 11. PRIMAL / INDEEDEE
     if (name.includes("primal")) {
         let base = name.replace("primal", "").replace(/[^a-z0-9]/g, "");
         return base + "-primal";
@@ -543,7 +548,7 @@ function toShowdownName(rawName) {
         return "indeedee";
     }
 
-    // 11. FORMAS REGIONAIS (Galar, Alola, Hisui)
+    // 12. FORMAS REGIONAIS (Galar, Alola, Hisui)
     if (name.includes("galar")) {
         let base = name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "");
         return base + "-galar";
