@@ -449,13 +449,20 @@ function toShowdownName(rawName) {
     // Normaliza para minúsculo
     let name = rawName.toLowerCase();
 
-    // Limpeza inicial (remove itens e gênero)
+    // Limpeza inicial (remove itens, gênero e parenteses)
     if (name.includes("@")) name = name.split("@")[0];
     name = name.replace(/\(.*\)/g, "").trim();
 
     // --- REGRAS ESPECÍFICAS ---
 
-    // 1. MEGA EVOLUÇÕES
+    // 1. BASCULEGION (Correção solicitada)
+    // Intercepta logo para evitar que caia na regra de Hisui ou gere nomes estranhos
+    if (name.includes("basculegion")) {
+        if (name.includes("female") || name.includes("-f")) return "basculegion-f";
+        return "basculegion"; // Retorna o nome base para o link funcionar
+    }
+
+    // 2. MEGA EVOLUÇÕES
     if (name.includes("mega") && !name.includes("yanmega") && !name.includes("meganium")) {
         if (name.includes(" x") || name.includes("-x")) {
             let base = name.replace("mega", "").replace(" x", "").replace("-x", "").replace(/[^a-z0-9]/g, "");
@@ -469,26 +476,31 @@ function toShowdownName(rawName) {
         return base + "-mega";
     }
 
-    // 2. FORMAS ORIGIN
+    // 3. FORMAS ORIGIN
     if (name.includes("origin")) {
         let base = name.replace("origin", "").replace("forme", "").replace(/[^a-z0-9]/g, "");
         return base + "-origin";
     }
 
-    // 3. FORMAS INCARNATE (NOVO: Landorus, Thundurus, etc)
-    // Se for Incarnate, removemos o sufixo pois o sprite base é apenas o nome (ex: landorus.png)
+    // 4. FORMAS THERIAN
+    if (name.includes("therian")) {
+        let base = name.replace("therian", "").replace("forme", "").replace(/[^a-z0-9]/g, "");
+        return base + "-therian";
+    }
+
+    // 5. FORMAS INCARNATE
     if (name.includes("incarnate")) {
         let base = name.replace("incarnate", "").replace("forme", "").replace(/[^a-z0-9]/g, "");
         return base;
     }
 
-    // 4. URSALUNA (NOVO: Bloodmoon)
+    // 6. URSALUNA
     if (name.includes("ursaluna")) {
         if (name.includes("bloodmoon") || name.includes("blood")) return "ursaluna-bloodmoon";
         return "ursaluna";
     }
 
-    // 5. ROTOM (NOVO: Todas as formas)
+    // 7. ROTOM
     if (name.includes("rotom")) {
         if (name.includes("wash")) return "rotom-wash";
         if (name.includes("heat")) return "rotom-heat";
@@ -498,17 +510,15 @@ function toShowdownName(rawName) {
         return "rotom";
     }
 
-    // 6. ZACIAN E ZAMAZENTA (Crowned)
+    // 8. ZACIAN E ZAMAZENTA (Crowned)
     if (name.includes("zacian")) {
-        if (name.includes("crowned")) return "zacian-crowned";
-        return "zacian";
+        return name.includes("crowned") ? "zacian-crowned" : "zacian";
     }
     if (name.includes("zamazenta")) {
-        if (name.includes("crowned")) return "zamazenta-crowned";
-        return "zamazenta";
+        return name.includes("crowned") ? "zamazenta-crowned" : "zamazenta";
     }
 
-    // 7. DEOXYS
+    // 9. DEOXYS
     if (name.includes("deoxys")) {
         if (name.includes("attack")) return "deoxys-attack";
         if (name.includes("defense")) return "deoxys-defense";
@@ -516,7 +526,7 @@ function toShowdownName(rawName) {
         return "deoxys";
     }
 
-    // 8. TAUROS (Paldea)
+    // 10. TAUROS (Paldea)
     if (name.includes("tauros")) {
         if (name.includes("aqua")) return "tauros-paldeaaqua";
         if (name.includes("blaze")) return "tauros-paldeablaze";
@@ -524,30 +534,23 @@ function toShowdownName(rawName) {
         return "tauros";
     }
 
-    // 9. KYUREM
+    // 11. KYUREM / OGERPON / LYCANROC / NECROZMA
     if (name.includes("kyurem")) {
         if (name.includes("black")) return "kyurem-black";
         if (name.includes("white")) return "kyurem-white";
         return "kyurem";
     }
-
-    // 10. OGERPON
     if (name.includes("ogerpon")) {
         if (name.includes("cornerstone")) return "ogerpon-cornerstone";
         if (name.includes("hearthflame")) return "ogerpon-hearthflame";
         if (name.includes("wellspring")) return "ogerpon-wellspring";
-        if (name.includes("teal")) return "ogerpon"; // Base
         return "ogerpon";
     }
-
-    // 11. LYCANROC
     if (name.includes("lycanroc")) {
         if (name.includes("midnight")) return "lycanroc-midnight";
         if (name.includes("dusk")) return "lycanroc-dusk";
         return "lycanroc";
     }
-
-    // 12. NECROZMA
     if (name.includes("necrozma")) {
         if (name.includes("dawn")) return "necrozma-dawnwings";
         if (name.includes("dusk") || name.includes("mane")) return "necrozma-duskmane";
@@ -555,63 +558,35 @@ function toShowdownName(rawName) {
         return "necrozma";
     }
 
-    // 13. PALAFIN / PRIMAL / INDEEDEE
-    if (name.includes("palafin")) {
-        if (name.includes("hero")) return "palafin-hero";
-        return "palafin";
-    }
-    if (name.includes("primal")) {
-        let base = name.replace("primal", "").replace(/[^a-z0-9]/g, "");
-        return base + "-primal";
-    }
-    if (name.includes("indeedee")) {
-        if (name.includes("-f") || name.includes("female")) return "indeedee-f";
-        return "indeedee";
-    }
+    // 12. PALAFIN / PRIMAL / INDEEDEE
+    if (name.includes("palafin")) return name.includes("hero") ? "palafin-hero" : "palafin";
+    if (name.includes("primal")) return name.replace("primal", "").replace(/[^a-z0-9]/g, "") + "-primal";
+    if (name.includes("indeedee") && (name.includes("-f") || name.includes("female"))) return "indeedee-f";
 
-    // 14. FORMAS REGIONAIS (Galar, Alola, Hisui)
-    if (name.includes("galar")) {
-        let base = name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "");
-        return base + "-galar";
-    }
-    if (name.includes("alola")) {
-        let base = name.replace("alolan", "").replace("alola", "").replace(/[^a-z0-9]/g, "");
-        return base + "-alola";
-    }
+    // 13. FORMAS REGIONAIS (Galar, Alola, Hisui, Paldea)
+    if (name.includes("galar")) return name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "") + "-galar";
+    if (name.includes("alola")) return name.replace("alolan", "").replace("alola", "").replace(/[^a-z0-9]/g, "") + "-alola";
+    if (name.includes("paldea")) return name.replace("paldeaian", "").replace("paldea", "").replace(/[^a-z0-9]/g, "") + "-paldea";
+    
     if (name.includes("hisui")) {
-        // Correção para não quebrar Ursaluna caso passe por aqui
-        if (name.includes("ursaluna")) return "ursaluna";
+        // Exceções de Hisui que não usam sufixo -hisui no Showdown
+        if (name.includes("sneasler")) return "sneasler";
+        if (name.includes("overqwil")) return "overqwil";
+        if (name.includes("wyrdeer")) return "wyrdeer";
+        if (name.includes("kleavor")) return "kleavor";
+        if (name.includes("enamorus")) return name.includes("therian") ? "enamorus-therian" : "enamorus"; 
+        
         let base = name.replace("hisuian", "").replace("hisui", "").replace(/[^a-z0-9]/g, "");
         return base + "-hisui";
-    }
-    if (name.includes("paldea")) {
-        let base = name.replace("paldeaian", "").replace("paldea", "").replace(/[^a-z0-9]/g, "");
-        return base + "-paldea";
     }
 
     // --- EXCEÇÕES GERAIS ---
     const exceptions = {
-        "ho-oh": "ho-oh",
-        "porygon-z": "porygon-z",
-        "wo-chien": "wo-chien",
-        "chien-pao": "chien-pao",
-        "ting-lu": "ting-lu",
-        "chi-yu": "chi-yu",
-        "type: null": "typenull",
-        "jangmo-o": "jangmo-o",
-        "hakamo-o": "hakamo-o",
-        "kommo-o": "kommo-o",
-        "urshifu-rapid-strike": "urshifu-rapid-strike",
-        "urshifu-single-strike": "urshifu",
-        "calyrex-shadow": "calyrex-shadow",
-        "calyrex-ice": "calyrex-ice",
-        "meowstic-f": "meowstic-f", 
-        "meowstic": "meowstic",
-        "basculegion-f": "basculegion-f",
-        "basculegion": "basculegion",
-        "oinkologne-f": "oinkologne-f",
-        "oinkologne": "oinkologne",
-        // Paradoxos
+        "ho-oh": "ho-oh", "porygon-z": "porygon-z", "wo-chien": "wo-chien", "chien-pao": "chien-pao",
+        "ting-lu": "ting-lu", "chi-yu": "chi-yu", "type: null": "typenull", "jangmo-o": "jangmo-o",
+        "hakamo-o": "hakamo-o", "kommo-o": "kommo-o", "urshifu-rapid-strike": "urshifu-rapid-strike",
+        "urshifu-single-strike": "urshifu", "calyrex-shadow": "calyrex-shadow", "calyrex-ice": "calyrex-ice",
+        "meowstic-f": "meowstic-f", "meowstic": "meowstic", "basculegion-f": "basculegion-f", "basculegion": "basculegion",
         "great-tusk": "great-tusk", "scream-tail": "scream-tail", "brute-bonnet": "brute-bonnet",
         "flutter-mane": "flutter-mane", "slither-wing": "slither-wing", "sandy-shocks": "sandy-shocks",
         "iron-treads": "iron-treads", "iron-bundle": "iron-bundle", "iron-hands": "iron-hands",
@@ -624,7 +599,6 @@ function toShowdownName(rawName) {
     const checkName = name.replace(/ /g, "-").replace(/[^a-z0-9-]/g, "");
     if (exceptions[checkName]) return exceptions[checkName];
 
-    // Limpeza Padrão
     return name.replace(/[^a-z0-9]/g, "");
 }
   function createCard(data) {
