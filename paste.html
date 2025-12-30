@@ -165,7 +165,7 @@
 <div id="rawText" class="raw-text-area"></div>
 
 <script>
-    // --- LÓGICA DE NOMES DO SHOWDOWN ---
+    // --- LÓGICA DE NOMES DO SHOWDOWN (Versão Gen 5 Ani Master) ---
     function toShowdownName(rawName) {
         if (!rawName) return "pokeball";
         let name = rawName.toLowerCase();
@@ -174,23 +174,62 @@
         if (name.includes("@")) name = name.split("@")[0];
         name = name.replace(/\(.*\)/g, "").trim();
 
-        // --- REGRAS ESPECÍFICAS ---
+        // --- REGRAS GERAIS DE HÍFEN ---
+        // Para a pasta 'gen5ani' e 'gen5', a regra de ouro para Pokémon novos 
+        // (Paradoxos, Treasures, etc) é REMOVER os hífens e espaços.
+        // Ex: "Wo-Chien" -> "wochien", "Iron Bundle" -> "ironbundle"
 
-        // 1. MEGAS
+        // Lista de prefixos/nomes que devem ter o hífen removido completamente
+        const stripHyphenGroups = [
+            // Treasures of Ruin
+            "wo-chien", "chien-pao", "ting-lu", "chi-yu",
+            // Paradoxos (Past/Future)
+            "iron bundle", "great tusk", "scream tail", "flutter mane", "slither wing", 
+            "sandy shocks", "iron treads", "iron hands", "iron jugulis", "iron moth", 
+            "iron thorns", "iron valiant", "roaring moon", "walking wake", "iron leaves",
+            "gouging fire", "raging bolt", "iron boulder", "iron crown", "brute bonnet",
+            // Tapus
+            "tapu koko", "tapu lele", "tapu bulu", "tapu fini",
+            // Kommo-o line
+            "kommo-o", "jangmo-o", "hakamo-o"
+        ];
+
+        // Se encontrar algum desses, limpa tudo para alphanumeric (wochien, ironbundle)
+        for (let p of stripHyphenGroups) {
+            // Verifica se o nome contém o termo (com ou sem traço/espaço)
+            const cleanP = p.replace(/[- ]/g, ""); 
+            const checkName = name.replace(/[- ]/g, "");
+            
+            if (checkName.includes(cleanP)) {
+                // Retorna o nome limpo (sem traços)
+                return checkName; 
+            }
+        }
+
+        // --- REGRAS ESPECÍFICAS (Exceções que mantêm estrutura diferente) ---
+
+        // 1. URSHIFU (Exceção da Exceção)
+        // Rapid Strike na Gen5 costuma ser "urshifu-rapidstrike" (um traço só)
+        if (name.includes("urshifu")) {
+            if (name.includes("rapid")) return "urshifu-rapidstrike";
+            return "urshifu";
+        }
+
+        // 2. MEGAS
         if (name.includes("mega") && !name.includes("yanmega") && !name.includes("meganium")) {
             if (name.includes(" x") || name.includes("-x")) return name.replace("mega", "").replace(" x", "").replace("-x", "").replace(/[^a-z0-9]/g, "") + "-megax";
             if (name.includes(" y") || name.includes("-y")) return name.replace("mega", "").replace(" y", "").replace("-y", "").replace(/[^a-z0-9]/g, "") + "-megay";
             return name.replace("mega", "").replace(/[^a-z0-9]/g, "") + "-mega";
         }
 
-        // 2. FORMAS ORIGIN
+        // 3. FORMAS ORIGIN
         if (name.includes("origin")) return name.replace("origin", "").replace("forme", "").replace(/[^a-z0-9]/g, "") + "-origin";
 
-        // 3. ZACIAN / ZAMAZENTA
+        // 4. ZACIAN / ZAMAZENTA
         if (name.includes("zacian")) return name.includes("crowned") ? "zacian-crowned" : "zacian";
         if (name.includes("zamazenta")) return name.includes("crowned") ? "zamazenta-crowned" : "zamazenta";
 
-        // 4. DEOXYS
+        // 5. DEOXYS
         if (name.includes("deoxys")) {
             if (name.includes("attack")) return "deoxys-attack";
             if (name.includes("defense")) return "deoxys-defense";
@@ -198,22 +237,22 @@
             return "deoxys";
         }
 
-        // 5. TAUROS (Paldea)
+        // 6. TAUROS (Paldea) -> taurospaldea (tudo junto para Gen5)
         if (name.includes("tauros")) {
-            if (name.includes("aqua")) return "tauros-paldeaaqua";
+            if (name.includes("aqua")) return "tauros-paldeaaqua"; // As vezes usam taurospaldeaaqua
             if (name.includes("blaze")) return "tauros-paldeablaze";
             if (name.includes("combat") || name.includes("paldea")) return "tauros-paldeacombat";
             return "tauros";
         }
 
-        // 6. KYUREM
+        // 7. KYUREM
         if (name.includes("kyurem")) {
             if (name.includes("black")) return "kyurem-black";
             if (name.includes("white")) return "kyurem-white";
             return "kyurem";
         }
 
-        // 7. OGERPON
+        // 8. OGERPON -> ogerpon (Gen5 style costuma unificar ou ter nomes simples)
         if (name.includes("ogerpon")) {
             if (name.includes("cornerstone")) return "ogerpon-cornerstone";
             if (name.includes("hearthflame")) return "ogerpon-hearthflame";
@@ -221,19 +260,19 @@
             return "ogerpon";
         }
 
-        // 8. BASCULEGION
+        // 9. BASCULEGION
         if (name.includes("basculegion")) {
             if (name.includes("female") || name.includes("-f")) return "basculegion-f";
             return "basculegion";
         }
 
-        // 9. URSALUNA
+        // 10. URSALUNA
         if (name.includes("ursaluna")) {
             if (name.includes("bloodmoon") || name.includes("blood")) return "ursaluna-bloodmoon";
             return "ursaluna";
         }
 
-        // 10. ROTOM
+        // 11. ROTOM
         if (name.includes("rotom")) {
             if (name.includes("wash")) return "rotom-wash";
             if (name.includes("heat")) return "rotom-heat";
@@ -243,36 +282,14 @@
             return "rotom";
         }
 
-        // 11. GENIES (Incanade vs Therian)
+        // 12. GENIES
         if (name.includes("landorus") || name.includes("thundurus") || name.includes("tornadus") || name.includes("enamorus")) {
-            let baseName = "";
-            if (name.includes("landorus")) baseName = "landorus";
-            else if (name.includes("thundurus")) baseName = "thundurus";
-            else if (name.includes("tornadus")) baseName = "tornadus";
-            else if (name.includes("enamorus")) baseName = "enamorus";
-
-            if (name.includes("therian") || name.includes("-t ")) return baseName + "-therian";
+            let baseName = name.split("-")[0].split(" ")[0]; // Pega o primeiro nome
+            if (name.includes("therian") || name.includes("-t")) {
+                // Enamorus Therian as vezes quebra com hífen no Gen5, vamos testar com hífen padrão
+                return baseName + "-therian"; 
+            }
             return baseName;
-        }
-
-        // 12. URSHIFU (Rapid vs Single)
-        if (name.includes("urshifu")) {
-            if (name.includes("rapid")) return "urshifu-rapid-strike";
-            return "urshifu"; // Single Strike
-        }
-
-        // --- LISTAS DE POKÉMON COM HÍFEN (Para pasta ANI) ---
-        const hyphenMons = [
-            "wo-chien", "chien-pao", "ting-lu", "chi-yu",
-            "tapu koko", "tapu lele", "tapu bulu", "tapu fini",
-            "iron bundle", "great tusk", "scream tail", "flutter mane", "slither wing", 
-            "sandy shocks", "iron treads", "iron hands", "iron jugulis", "iron moth", 
-            "iron thorns", "iron valiant", "roaring moon", "walking wake", "iron leaves",
-            "gouging fire", "raging bolt", "iron boulder", "iron crown", "brute bonnet"
-        ];
-
-        for (let p of hyphenMons) {
-            if (name.includes(p)) return p.replace(" ", "-");
         }
 
         // REGIONAIS
@@ -281,33 +298,33 @@
         if (name.includes("hisui")) return name.replace("hisuian", "").replace("hisui", "").replace(/[^a-z0-9]/g, "") + "-hisui";
         if (name.includes("paldea")) return name.replace("paldean", "").replace("paldea", "").replace(/[^a-z0-9]/g, "") + "-paldea";
 
-        // EXCEÇÕES ABSOLUTAS (Hífen em TUDO)
+        // EXCEÇÕES ABSOLUTAS (Hífen Obrigatório)
         const absoluteExceptions = {
             "ho-oh": "ho-oh", "porygon-z": "porygon-z", 
             "type: null": "typenull", 
-            // Estes aqui precisam do hífen no toShowdownName para o GIF funcionar.
-            // A gente tira o hífen no renderCards para o Gen 5 funcionar.
-            "jangmo-o": "jangmo-o", "hakamo-o": "hakamo-o", "kommo-o": "kommo-o", 
             "calyrex-shadow": "calyrex-shadow", "calyrex-ice": "calyrex-ice", 
             "meowstic-f": "meowstic-f", "meowstic": "meowstic", 
-            "basculegion-f": "basculegion-f", "basculegion": "basculegion", 
-            "oinkologne-f": "oinkologne-f", "oinkologne": "oinkologne",
-            "archaludon": "archaludon", "hydrapple": "hydrapple", 
-            "indeedee-f": "indeedee-f", "indeedee": "indeedee"
+            "indeedee-f": "indeedee-f", "indeedee": "indeedee",
+            "archaludon": "archaludon", "hydrapple": "hydrapple"
         };
         const checkName = name.replace(/ /g, "-").replace(/[^a-z0-9-]/g, "");
         if (absoluteExceptions[checkName]) return absoluteExceptions[checkName];
 
+        // Padrão: Remove tudo que não é alfanumérico
         return name.replace(/[^a-z0-9]/g, "");
     }
 
     // --- DIRETÓRIOS ---
-    const BASE_ANI = "https://play.pokemonshowdown.com/sprites/ani/";
-    const BASE_ANI_SHINY = "https://play.pokemonshowdown.com/sprites/ani-shiny/";
+    // MUDANÇA PRINCIPAL: Usando 'gen5ani' como fonte primária de animação
+    const BASE_ANI = "https://play.pokemonshowdown.com/sprites/gen5ani/";
+    const BASE_ANI_SHINY = "https://play.pokemonshowdown.com/sprites/gen5ani-shiny/"; // Caso exista, senão vai pro fallback
+    
     const BASE_GEN5 = "https://play.pokemonshowdown.com/sprites/gen5/";
     const BASE_GEN5_SHINY = "https://play.pokemonshowdown.com/sprites/gen5-shiny/";
+    
     const BASE_DEX = "https://play.pokemonshowdown.com/sprites/dex/";
     const BASE_DEX_SHINY = "https://play.pokemonshowdown.com/sprites/dex-shiny/";
+    
     const IMG_FALLBACK = "https://img.pokemondb.net/sprites/items/poke-ball.png";
 
     window.onload = function() {
@@ -400,45 +417,24 @@
         }
 
         for (const [index, pk] of team.entries()) {
+            // Agora 'cleanName' já está otimizado para Gen 5 (sem hífens para Paradoxos/Treasures)
             const cleanName = toShowdownName(pk.name);
             
-            // --- REMOÇÃO DE HÍFEN (Para Gen 5 Estático) ---
-            let gen5Name = cleanName;
-
-            // REGRA ESPECIAL URSHIFU RAPID STRIKE
-            if (cleanName === "urshifu-rapid-strike") {
-                gen5Name = "urshifu-rapidstrike";
-            } 
-            // OUTRAS EXCEÇÕES QUE REMOVEM TUDO (Paradoxos, Tapus, Kommo-o)
-            else {
-                const needsDehyphen = [
-                    "iron-", "great-", "scream-", "brute-", "flutter-", "slither-", "sandy-", 
-                    "roaring-", "walking-", "gouging-", "raging-", 
-                    "wo-chien", "chien-pao", "ting-lu", "chi-yu",
-                    "tapu-", "enamorus-therian",
-                    // ADICIONADOS AGORA:
-                    "kommo-o", "jangmo-o", "hakamo-o"
-                ];
-
-                for (let prefix of needsDehyphen) {
-                    if (cleanName.includes(prefix)) {
-                        gen5Name = cleanName.replace(/-/g, "");
-                        break;
-                    }
-                }
-            }
-
+            // Define Pastas
+            // Nota: Se 'gen5ani-shiny' não existir, o fallback vai cuidar
             const folderAni = pk.shiny ? BASE_ANI_SHINY : BASE_ANI;
             const folderGen5 = pk.shiny ? BASE_GEN5_SHINY : BASE_GEN5;
             const folderDex = pk.shiny ? BASE_DEX_SHINY : BASE_DEX;
 
+            // Como unificamos a lógica de nomes, usamos cleanName para Ani e Gen5
             const srcAni = `${folderAni}${cleanName}.gif`;
-            const srcGen5 = `${folderGen5}${gen5Name}.png`;
+            const srcGen5 = `${folderGen5}${cleanName}.png`;
             const srcDex = `${folderDex}${cleanName}.png`;
 
             const card = document.createElement('div');
             card.className = 'poke-card';
             
+            // FALLBACK TRIPLO: Gen5Ani -> Gen5Static -> Dex -> Pokébola
             card.innerHTML = `
                 <div class="card-header">
                     <span class="poke-name">${pk.display}</span>
