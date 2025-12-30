@@ -165,7 +165,7 @@
 <div id="rawText" class="raw-text-area"></div>
 
 <script>
-    // --- LÓGICA DE NOMES DO SHOWDOWN (Versão Final + Urshifu) ---
+    // --- LÓGICA DE NOMES DO SHOWDOWN ---
     function toShowdownName(rawName) {
         if (!rawName) return "pokeball";
         let name = rawName.toLowerCase();
@@ -224,7 +224,7 @@
         // 8. BASCULEGION
         if (name.includes("basculegion")) {
             if (name.includes("female") || name.includes("-f")) return "basculegion-f";
-            return "basculegion"; // Macho
+            return "basculegion";
         }
 
         // 9. URSALUNA
@@ -243,7 +243,7 @@
             return "rotom";
         }
 
-        // 11. GENIES (Landorus, Enamorus, etc)
+        // 11. GENIES (Incanade vs Therian)
         if (name.includes("landorus") || name.includes("thundurus") || name.includes("tornadus") || name.includes("enamorus")) {
             let baseName = "";
             if (name.includes("landorus")) baseName = "landorus";
@@ -255,19 +255,16 @@
             return baseName;
         }
 
-        // 12. URSHIFU (NOVO)
+        // 12. URSHIFU (Rapid vs Single)
         if (name.includes("urshifu")) {
             if (name.includes("rapid")) return "urshifu-rapid-strike";
-            return "urshifu"; // Single Strike (Golpe Singular) é o padrão
+            return "urshifu"; // Single Strike
         }
 
-        // --- LISTAS DE POKÉMON COM HÍFEN ---
+        // --- LISTAS DE POKÉMON COM HÍFEN (Para pasta ANI) ---
         const hyphenMons = [
-            // Treasures of Ruin
             "wo-chien", "chien-pao", "ting-lu", "chi-yu",
-            // Tapus
             "tapu koko", "tapu lele", "tapu bulu", "tapu fini",
-            // Paradoxos
             "iron bundle", "great tusk", "scream tail", "flutter mane", "slither wing", 
             "sandy shocks", "iron treads", "iron hands", "iron jugulis", "iron moth", 
             "iron thorns", "iron valiant", "roaring moon", "walking wake", "iron leaves",
@@ -402,23 +399,28 @@
         for (const [index, pk] of team.entries()) {
             const cleanName = toShowdownName(pk.name);
             
-            // --- REMOÇÃO INTELIGENTE DE HÍFEN PARA GEN 5 ---
-            // Nomes que precisam do hífen na pasta 'ani', mas NÃO na pasta 'gen5'
-            
+            // --- REMOÇÃO DE HÍFEN (Para Gen 5 Estático) ---
             let gen5Name = cleanName;
-            
-            // Lista atualizada com URSHIFU, Paradoxos, Tapus, Treasures e Enamorus Therian
-            const needsDehyphen = [
-                "iron-", "great-", "scream-", "brute-", "flutter-", "slither-", "sandy-", 
-                "roaring-", "walking-", "gouging-", "raging-", 
-                "wo-chien", "chien-pao", "ting-lu", "chi-yu",
-                "tapu-", "enamorus-therian", "urshifu-rapid"
-            ];
 
-            for (let prefix of needsDehyphen) {
-                if (cleanName.includes(prefix)) {
-                    gen5Name = cleanName.replace(/-/g, "");
-                    break;
+            // REGRA ESPECIAL URSHIFU RAPID STRIKE
+            // Link: urshifu-rapidstrike.png
+            if (cleanName === "urshifu-rapid-strike") {
+                gen5Name = "urshifu-rapidstrike";
+            } 
+            // OUTRAS EXCEÇÕES QUE REMOVEM TUDO (Paradoxos, Tapus, etc)
+            else {
+                const needsDehyphen = [
+                    "iron-", "great-", "scream-", "brute-", "flutter-", "slither-", "sandy-", 
+                    "roaring-", "walking-", "gouging-", "raging-", 
+                    "wo-chien", "chien-pao", "ting-lu", "chi-yu",
+                    "tapu-", "enamorus-therian"
+                ];
+
+                for (let prefix of needsDehyphen) {
+                    if (cleanName.includes(prefix)) {
+                        gen5Name = cleanName.replace(/-/g, "");
+                        break;
+                    }
                 }
             }
 
