@@ -439,7 +439,38 @@
 
   // --- CORREÇÃO DE NOMES PARA SPRITES (Showdown Style) ---
 function toShowdownName(rawName) {
+    if (!rawName) return "pokeball";
+    let name = rawName.toLowerCase().trim();
 
+    // 1. Mapa de exceções OBRIGATÓRIAS (o Showdown exige o hífen nestes arquivos)
+    const exceptions = {
+        "calyrex-shadow": "calyrex-shadow",
+        "calyrex-ice": "calyrex-ice",
+        "ho-oh": "ho-oh",
+        "porygon-z": "porygon-z",
+        "wo-chien": "wo-chien",
+        "chien-pao": "chien-pao",
+        "ting-lu": "ting-lu",
+        "chi-yu": "chi-yu",
+        "type: null": "typenull", // Caso especial
+        "jangmo-o": "jangmo-o",
+        "hakamo-o": "hakamo-o",
+        "kommo-o": "kommo-o"
+    };
+
+    // Verifica se o nome (tratado levemente) está nas exceções
+    const simpleCheck = name.replace(/ /g, "-");
+    if (exceptions[simpleCheck]) return exceptions[simpleCheck];
+    if (exceptions[name]) return exceptions[name];
+
+    // 2. Tratamento para Megas e Primals (geralmente funcionam melhor com sufixo no final no Showdown)
+    if (name.includes("mega ") && !name.includes("yanmega")) {
+        return name.replace("mega ", "").replace(/[^a-z0-9]/g, "") + "mega";
+    }
+    
+    // 3. Regra Padrão (Tauros Paldea, Iron Valiant, etc)
+    return name.replace(/[^a-z0-9]/g, "");
+}
 
   function createCard(data) {
       const encoded = LZString.compressToEncodedURIComponent(data.teamData);
@@ -455,7 +486,7 @@ function toShowdownName(rawName) {
       const deleteBtn = isOwner ? `<button class="btn-delete-team" onclick="window.deleteTeam('${data.id}')" title="Apagar Time">🗑️</button>` : '';
 
       let iconsHtml = '';
-     if(data.pokemon) {
+      if(data.pokemon) {
     data.pokemon.slice(0,6).forEach(p => {
         const cleanName = toShowdownName(p);
         
@@ -477,6 +508,7 @@ function toShowdownName(rawName) {
         `;
     });
 }
+
       const card = document.createElement('div'); card.className = 'feed-card';
       card.innerHTML = `
           <div class="card-header">
