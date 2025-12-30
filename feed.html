@@ -130,9 +130,11 @@
     .filter-input:focus { border-color: var(--cor-dourado); outline: none; }
 
     /* --- FEED GRID --- */
-    .feed-container {
-        max-width: 1200px; margin: 0 auto 30px; padding: 0 20px; width: 100%;
-        display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 25px;
+.feed-container {
+        max-width: 1400px; /* Aumentei a largura máxima total */
+        margin: 0 auto 30px; padding: 0 20px; width: 100%;
+        /* Aumentei de 320px para 380px para caber os sprites maiores */
+        display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 25px;
         justify-content: center;
     }
 
@@ -145,7 +147,7 @@
     .feed-card:hover { transform: translateY(-5px); border-color: #555; }
 
     .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-    .card-title { font-size: 1.2rem; font-weight: bold; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 65%; }
+    .card-title { font-size: 1.4rem; font-weight: bold; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 65%; }
     
     .card-header-right { display: flex; align-items: center; gap: 8px; }
     .card-tier { background: #252525; color: var(--cor-dourado); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: 1px solid #444; font-weight: bold; }
@@ -159,7 +161,9 @@
 
     .card-icons { 
         display: flex; gap: 5px; margin-bottom: 20px; background: rgba(0,0,0,0.4); 
-        padding: 10px; border-radius: 8px; justify-content: center; min-height: 70px; align-items: flex-end;
+        padding: 15px; border-radius: 8px; justify-content: center; 
+        min-height: 90px; /* Mais alto */
+        align-items: flex-end;
     }
     .card-icons img { 
         width: auto; height: auto; max-height: 50px; 
@@ -615,31 +619,28 @@ function toShowdownName(rawName) {
       const deleteBtn = isOwner ? `<button class="btn-delete-team" onclick="window.deleteTeam('${data.id}')" title="Apagar Time">🗑️</button>` : '';
 
       let iconsHtml = '';
- if(data.pokemon) {
+      if(data.pokemon) {
           data.pokemon.slice(0,6).forEach(p => {
-              // Pega o nome simplificado (ex: "ogerpon", "taurospaldea")
               const cleanName = toShowdownName(p);
               
-              // TENTATIVA 1: Sprite Gen 5 (Bonito)
-              // O Showdown aceita "taurospaldea" e "ogerpon" aqui tranquilamente
+              // MANTENDO GEN 5 (PIXEL ART)
               const srcGen5 = `https://play.pokemonshowdown.com/sprites/gen5/${cleanName}.png`;
               
-              // TENTATIVA 2: Sprite Dex (Ícone pequeno de segurança)
               const srcDex = `https://play.pokemonshowdown.com/sprites/dex/${cleanName}.png`;
-              
-              // TENTATIVA 3: PokemonDB (Para casos extremos como Paradoxos novos)
-              // O DB precisa de hífens, então se "cleanName" estiver tudo junto (ex: ironvaliant),
-              // ele pode falhar, mas como simplificamos os problemáticos (Tauros/Ogerpon), o risco é baixo.
               const srcDb = `https://img.pokemondb.net/sprites/scarlet-violet/icon/${cleanName}.png`;
 
+              // --- MUDANÇA DE TAMANHO AQUI ---
+              // Aumentei max-height de 45px para 65px
+              // Aumentei min-width de 30px para 40px
               iconsHtml += `
                   <img src="${srcGen5}" 
                        title="${p}" 
-                       style="width:auto; height:auto; max-height:45px; min-width:30px;"
+                       style="width:auto; height:auto; max-height:65px; min-width:40px;"
                        onerror="this.onerror=null; this.src='${srcDex}'; this.onerror=function(){this.src='${srcDb}'};">
               `;
           });
       }
+      
       const card = document.createElement('div'); card.className = 'feed-card';
       card.innerHTML = `
           <div class="card-header">
