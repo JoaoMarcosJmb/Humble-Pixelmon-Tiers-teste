@@ -450,69 +450,39 @@ function toShowdownName(rawName) {
     // 1. LIMPEZA PRELIMINAR (Remove Gênero, Item, Apelido)
     let name = rawName.toLowerCase();
     
-    // Remove tudo depois de um arroba (ex: "Ogerpon @ Mask")
+    // Remove tudo depois de um arroba (ex: "Ogerpon @ Mask" virou "Ogerpon")
     if (name.includes("@")) name = name.split("@")[0];
     
-    // Remove conteúdo entre parênteses (ex: "Tauros (M)")
+    // Remove conteúdo entre parênteses (ex: "Tauros (M)" virou "Tauros")
     name = name.replace(/\(.*\)/g, "");
     
-    // Remove espaços extras nas pontas
-    name = name.trim();
+    // Transforma espaços em hífens e remove caracteres estranhos (menos letras, números e hífens)
+    // Ex: "Tauros Paldea Blaze" -> "tauros-paldea-blaze"
+    name = name.trim().replace(/ /g, "-").replace(/[^a-z0-9-]/g, "");
 
-    // 2. EXCEÇÕES ESTRUTURAIS (Showdown exige hífen nestes)
-    const exceptions = {
-        // Calyrex
-        "calyrex-shadow": "calyrex-shadow",
-        "calyrex-ice": "calyrex-ice",
-        
-        // Ursaluna
-        "ursaluna-bloodmoon": "ursaluna-bloodmoon",
-        
-        // Ogerpon (Atenção: Showdown usa sufixos específicos)
-        "ogerpon-wellspring": "ogerpon-wellspring",
-        "ogerpon-hearthflame": "ogerpon-hearthflame",
-        "ogerpon-cornerstone": "ogerpon-cornerstone",
-        "ogerpon-teal": "ogerpon", // Forma base
-        
-        // Outros Hifenizados
-        "ho-oh": "ho-oh",
-        "porygon-z": "porygon-z",
-        "wo-chien": "wo-chien",
-        "chien-pao": "chien-pao",
-        "ting-lu": "ting-lu",
-        "chi-yu": "chi-yu",
-        "type: null": "typenull",
-        "jangmo-o": "jangmo-o",
-        "hakamo-o": "hakamo-o",
-        "kommo-o": "kommo-o",
-        
-        // Urshifu (A chatice do hífen)
-        "urshifu-rapid-strike": "urshifu-rapidstrike",
+    // 2. CORREÇÕES ESPECÍFICAS DE NOMES (Mapeia nomes errados para o padrão oficial)
+    const fixMap = {
+        "calyrex-shadow-rider": "calyrex-shadow",
+        "calyrex-ice-rider": "calyrex-ice",
+        "urshifu-rapid-strike": "urshifu-rapid-strike", // Garante o hífen
         "urshifu-single-strike": "urshifu",
-        
-        // Tauros Paldea (Geralmente é tudo junto, mas garantimos aqui)
-        "tauros-paldea-blaze": "taurospaldeablaze",
-        "tauros-paldea-aqua": "taurospaldeaaqua",
-        "tauros-paldea-combat": "taurospaldeacombat"
+        "tauros-paldea-combat": "tauros-paldea-combat", // Garante o hífen
+        "tauros-paldea-blaze": "tauros-paldea-blaze",
+        "tauros-paldea-aqua": "tauros-paldea-aqua",
+        "ogerpon-teal": "ogerpon",
+        "basculin-white-striped": "basculin-white-striped",
+        "gastrodon-east": "gastrodon-east",
+        "gastrodon-west": "gastrodon-west"
     };
 
-    // Tenta casar o nome limpo com as exceções
-    // Substitui espaços por hifens temporariamente para facilitar a busca na lista
-    const checkName = name.replace(/ /g, "-");
+    if (fixMap[name]) return fixMap[name];
+
+    // 3. REGRA DE MEGAS (Coloca o sufixo no final)
+    // Ex: "mega-charizard-x" -> "charizard-mega-x" (padrão de alguns DBs)
+    // Mas para o nosso Slug padrão, manteremos a ordem natural, pois o PokemonDB prefere "mega-charizard-y"
     
-    if (exceptions[checkName]) return exceptions[checkName];
-    if (exceptions[name]) return exceptions[name];
-
-    // 3. REGRA DE MEGAS
-    if (name.includes("mega ") && !name.includes("yanmega")) {
-        return name.replace("mega ", "").replace(/[^a-z0-9]/g, "") + "-mega";
-    }
-
-    // 4. FALLBACK PADRÃO (Remove tudo que não é letra/número)
-    // Isso resolve: Iron Valiant -> ironvaliant, Raging Bolt -> ragingbolt
-    return name.replace(/[^a-z0-9]/g, "");
+    return name;
 }
-
   function createCard(data) {
       const encoded = LZString.compressToEncodedURIComponent(data.teamData);
       const pasteLink = `paste.html?import=${encoded}`;
@@ -527,28 +497,43 @@ function toShowdownName(rawName) {
       const deleteBtn = isOwner ? `<button class="btn-delete-team" onclick="window.deleteTeam('${data.id}')" title="Apagar Time">🗑️</button>` : '';
 
       let iconsHtml = '';
-      if(data.pokemon) {
-    data.pokemon.slice(0,6).forEach(p => {
-        const cleanName = toShowdownName(p);
-        
-        // URL 1: Sprite Gen 5 (Animado ou Estático bonito)
-        const srcMain = `https://play.pokemonshowdown.com/sprites/gen5/${cleanName}.png`;
-        
-        // URL 2: Fallback para pasta DEX (Ícones pequenos - quase impossível falhar)
-        const srcBackup = `https://play.pokemonshowdown.com/sprites/dex/${cleanName}.png`;
-        
-        // URL 3: Placeholder final
-        const srcPlace = `https://img.pokemondb.net/sprites/items/poke-ball.png`;
+   if(data.pokemon) {
+          data.pokemon.slice(0,6).forEach(p => {
+              // 1. Obtém o "Slug" limpo (ex: "tauros-paldea-blaze")
+              const slug = toShowdownName(p);
+              
+              // 2. Prepara versões do nome para o Showdown (que odeia hífens na maioria das vezes)
+              // Padrão Showdown: "taurospaldeablaze" (sem hífen)
+              let showdownName = slug.replace(/-/g, "");
+              
+              // Exceções do Showdown que EXIGEM hífen (Gen 5 Style)
+              const showdownHyphenExceptions = ["calyrex-shadow", "calyrex-ice", "ho-oh", "porygon-z", "wo-chien", "chien-pao", "ting-lu", "chi-yu", "type-null", "jangmo-o", "hakamo-o", "kommo-o", "great-tusk", "scream-tail", "brute-bonnet", "flutter-mane", "slither-wing", "sandy-shocks", "iron-treads", "iron-bundle", "iron-hands", "iron-jugulis", "iron-moth", "iron-thorns", "iron-valiant", "roaring-moon", "iron-leaves", "walking-wake", "gouging-fire", "raging-bolt", "iron-boulder", "iron-crown"];
+              
+              // Se o slug estiver na lista de exceções, usamos ele com hífen no Showdown
+              if (showdownHyphenExceptions.includes(slug) || slug.endsWith("-mega") || slug.endsWith("-megax") || slug.endsWith("-megay")) {
+                  showdownName = slug;
+              }
 
-        // O truque está aqui: se srcMain falhar, troca para srcBackup.
-        iconsHtml += `
-            <img src="${srcMain}" 
-                 title="${p}" 
-                 style="width:auto; height:auto; max-height:45px;"
-                 onerror="this.onerror=null; this.src='${srcBackup}';">
-        `;
-    });
-}
+              // 3. Monta as 3 URLs de tentativa
+              // TENTATIVA 1: Showdown Gen 5 (Bonito, mas falha em novos mons)
+              const srcGen5 = `https://play.pokemonshowdown.com/sprites/gen5/${showdownName}.png`;
+              
+              // TENTATIVA 2: Showdown Dex (Ícone pequeno, quase sempre funciona, geralmente sem hífen)
+              const srcDex = `https://play.pokemonshowdown.com/sprites/dex/${showdownName.replace(/-/g, "")}.png`;
+              
+              // TENTATIVA 3 (A SALVAÇÃO): PokemonDB (Ícone moderno, usa hífen, tem TODOS da Gen 9)
+              // Atenção: PokemonDB usa o slug com hífens ("tauros-paldea-blaze")
+              const srcDb = `https://img.pokemondb.net/sprites/scarlet-violet/icon/${slug}.png`;
+
+              // Renderiza com sistema de fallback triplo
+              iconsHtml += `
+                  <img src="${srcGen5}" 
+                       title="${p}" 
+                       style="width:auto; height:auto; max-height:45px; min-width:30px; min-height:30px;"
+                       onerror="this.onerror=null; this.src='${srcDex}'; this.onerror=function(){this.src='${srcDb}'};">
+              `;
+          });
+      }
 
       const card = document.createElement('div'); card.className = 'feed-card';
       card.innerHTML = `
