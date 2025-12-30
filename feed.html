@@ -457,35 +457,27 @@ function toShowdownName(rawName) {
 
     // --- REGRAS ESPECÍFICAS ---
 
-    // 1. MEGA EVOLUÇÕES (Prioridade para tratar X e Y corretamente)
-    // Ignoramos Yanmega e Meganium pois eles têm "mega" no nome mas não são megas
+    // 1. MEGA EVOLUÇÕES (X e Y)
     if (name.includes("mega") && !name.includes("yanmega") && !name.includes("meganium")) {
-        
-        // Regra para Mega X (Charizard X, Mewtwo X)
         if (name.includes(" x") || name.includes("-x")) {
-            // Remove "mega", "x", traços e limpa o nome base
             let base = name.replace("mega", "").replace(" x", "").replace("-x", "").replace(/[^a-z0-9]/g, "");
             return base + "-megax";
         }
-
-        // Regra para Mega Y (Charizard Y, Mewtwo Y)
         if (name.includes(" y") || name.includes("-y")) {
             let base = name.replace("mega", "").replace(" y", "").replace("-y", "").replace(/[^a-z0-9]/g, "");
             return base + "-megay";
         }
-
-        // Regra para Mega Padrão (Lucario, Gengar, etc.)
         let base = name.replace("mega", "").replace(/[^a-z0-9]/g, "");
         return base + "-mega";
     }
 
-    // 2. PRIMAL REVERSION (Kyogre e Groudon Primal - Bônus útil)
+    // 2. PRIMAL (Kyogre/Groudon)
     if (name.includes("primal")) {
         let base = name.replace("primal", "").replace(/[^a-z0-9]/g, "");
         return base + "-primal";
     }
 
-    // 3. TAUROS
+    // 3. TAUROS (Paldea)
     if (name.includes("tauros")) {
         if (name.includes("aqua")) return "tauros-paldeaaqua";
         if (name.includes("blaze")) return "tauros-paldeablaze";
@@ -493,14 +485,14 @@ function toShowdownName(rawName) {
         return "tauros";
     }
 
-    // 4. KYUREM
+    // 4. KYUREM (Black/White)
     if (name.includes("kyurem")) {
         if (name.includes("black")) return "kyurem-black";
         if (name.includes("white")) return "kyurem-white";
         return "kyurem";
     }
 
-    // 5. OGERPON
+    // 5. OGERPON (Máscaras)
     if (name.includes("ogerpon")) {
         if (name.includes("cornerstone")) return "ogerpon-cornerstone";
         if (name.includes("hearthflame")) return "ogerpon-hearthflame";
@@ -508,25 +500,43 @@ function toShowdownName(rawName) {
         return "ogerpon";
     }
 
-    // 6. INDEEDEE
+    // 6. LYCANROC (NOVA REGRA)
+    if (name.includes("lycanroc")) {
+        if (name.includes("midnight")) return "lycanroc-midnight";
+        if (name.includes("dusk")) return "lycanroc-dusk"; // O link que você pediu
+        return "lycanroc"; // Midday (Dia) é o padrão
+    }
+
+    // 7. NECROZMA (NOVA REGRA)
+    if (name.includes("necrozma")) {
+        if (name.includes("dawn")) return "necrozma-dawnwings"; // O link que você pediu
+        if (name.includes("dusk") || name.includes("mane")) return "necrozma-duskmane";
+        if (name.includes("ultra")) return "necrozma-ultra";
+        return "necrozma"; // Normal
+    }
+
+    // 8. PALAFIN (NOVA REGRA)
+    if (name.includes("palafin")) {
+        if (name.includes("hero")) return "palafin-hero";
+        // Palafin Zero usa o sprite base "palafin.png"
+        return "palafin";
+    }
+
+    // 9. INDEEDEE / GENERO
     if (name.includes("indeedee")) {
         if (name.includes("-f") || name.includes("female")) return "indeedee-f";
         return "indeedee";
     }
 
-    // 7. FORMAS DE GALAR
+    // 10. FORMAS REGIONAIS (Galar, Alola, Hisui)
     if (name.includes("galar")) {
         let base = name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "");
         return base + "-galar";
     }
-    
-    // 8. FORMAS DE ALOLA
     if (name.includes("alola")) {
         let base = name.replace("alolan", "").replace("alola", "").replace(/[^a-z0-9]/g, "");
         return base + "-alola";
     }
-
-    // 9. FORMAS DE HISUI (Bônus para Legends Arceus)
     if (name.includes("hisui")) {
         let base = name.replace("hisuian", "").replace("hisui", "").replace(/[^a-z0-9]/g, "");
         return base + "-hisui";
@@ -553,7 +563,24 @@ function toShowdownName(rawName) {
         "basculegion-f": "basculegion-f",
         "basculegion": "basculegion",
         "oinkologne-f": "oinkologne-f",
-        "oinkologne": "oinkologne"
+        "oinkologne": "oinkologne",
+        // Paradoxos que o Showdown exige traço (exceções comuns)
+        "great-tusk": "great-tusk",
+        "scream-tail": "scream-tail",
+        "brute-bonnet": "brute-bonnet",
+        "flutter-mane": "flutter-mane",
+        "slither-wing": "slither-wing",
+        "sandy-shocks": "sandy-shocks",
+        "iron-treads": "iron-treads",
+        "iron-bundle": "iron-bundle",
+        "iron-hands": "iron-hands",
+        "iron-jugulis": "iron-jugulis",
+        "iron-moth": "iron-moth",
+        "iron-thorns": "iron-thorns",
+        "iron-valiant": "iron-valiant",
+        "roaring-moon": "roaring-moon",
+        "walking-wake": "walking-wake",
+        "iron-leaves": "iron-leaves"
     };
 
     const checkName = name.replace(/ /g, "-").replace(/[^a-z0-9-]/g, "");
