@@ -444,53 +444,64 @@
   }
 
   // --- CORREÇÃO DE NOMES PARA SPRITES (Showdown Style) ---
+// --- CORREÇÃO DE NOMES PARA SPRITES (Showdown Style) ---
 function toShowdownName(rawName) {
     if (!rawName) return "pokeball";
     
     // Normaliza para minúsculo
     let name = rawName.toLowerCase();
 
-    // --- REGRAS ESPECÍFICAS (O que você pediu) ---
+    // Remove itens e gênero antes de verificar nomes compostos
+    if (name.includes("@")) name = name.split("@")[0];
+    name = name.replace(/\(.*\)/g, "").trim(); // Remove (M), (F)
 
-    // 1. OGERPON: Qualquer forma vira sempre o Ogerpon normal (Teal Mask)
+    // --- REGRAS ESPECÍFICAS ---
+
+    // 1. OGERPON (Todas as formas viram o base)
     if (name.includes("ogerpon")) {
         return "ogerpon";
     }
 
-    // 2. TAUROS:
-    // Se tiver "paldea" no nome, retorna a base de Paldea (o touro preto lutador)
-    // Isso ignora se é Blaze, Aqua ou Combat -> tudo vira "taurospaldea"
+    // 2. TAUROS
+    // Se tiver "paldea", forçamos o sprite base de Paldea (o touro preto)
+    // Isso cobre: Combat, Blaze e Aqua.
     if (name.includes("tauros") && name.includes("paldea")) {
         return "taurospaldea";
     }
-    // Obs: O Tauros de Kanto passará direto aqui e será tratado lá embaixo como "tauros"
+    // Obs: Se for só "Tauros" (Kanto), ele não entra no if acima e segue o fluxo normal,
+    // resultando em "tauros" lá no final. (Correto)
 
-    // --- LIMPEZA PADRÃO (Para o resto dos Pokémon) ---
-    
-    // Remove itens e apelidos (ex: "Zacian @ Sword")
-    if (name.includes("@")) name = name.split("@")[0];
-    name = name.replace(/\(.*\)/g, "").trim(); // Remove (M), (F)
+    // 3. KYUREM (FIXO)
+    // O Showdown precisa do hífen para Black e White.
+    // Se deixarmos cair na limpeza final, vira "kyuremblack" e quebra.
+    if (name.includes("kyurem")) {
+        if (name.includes("black")) return "kyurem-black";
+        if (name.includes("white")) return "kyurem-white";
+        return "kyurem"; // Kyurem normal
+    }
 
-    // Exceções manuais importantes (Showdown exige hífen nestes)
+    // --- EXCEÇÕES DE HÍFEN (Showdown exige hífen nestes) ---
     const exceptions = {
-        "calyrex-shadow": "calyrex-shadow",
-        "calyrex-ice": "calyrex-ice",
         "ho-oh": "ho-oh",
         "porygon-z": "porygon-z",
         "wo-chien": "wo-chien",
         "chien-pao": "chien-pao",
         "ting-lu": "ting-lu",
         "chi-yu": "chi-yu",
-        "type: null": "typenull",
+        "type: null": "typenull", // exceção curiosa, o Showdown usa tudo junto
         "jangmo-o": "jangmo-o",
         "hakamo-o": "hakamo-o",
         "kommo-o": "kommo-o",
         "urshifu-rapid-strike": "urshifu-rapid-strike",
-        "urshifu-single-strike": "urshifu"
+        "urshifu-single-strike": "urshifu",
+        "calyrex-shadow": "calyrex-shadow",
+        "calyrex-ice": "calyrex-ice"
     };
 
-    // Verifica exceções
+    // Prepara o nome para checar na lista de exceções
+    // Transforma espaços em hífens e remove caracteres estranhos
     const checkName = name.replace(/ /g, "-").replace(/[^a-z0-9-]/g, "");
+
     if (exceptions[checkName]) return exceptions[checkName];
 
     // Tratamento de Mega
@@ -498,7 +509,8 @@ function toShowdownName(rawName) {
         return name.replace("mega ", "").replace(/[^a-z0-9]/g, "") + "mega";
     }
 
-    // Padrãozão: remove tudo que não é letra/número
+    // LIMPEZA PADRÃO (Para a grande maioria)
+    // Remove tudo que não é letra ou número
     return name.replace(/[^a-z0-9]/g, "");
 }
   function createCard(data) {
