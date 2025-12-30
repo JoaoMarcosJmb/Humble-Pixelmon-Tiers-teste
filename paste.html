@@ -165,43 +165,153 @@
 <div id="rawText" class="raw-text-area"></div>
 
 <script>
-    // --- URLs e Imagens ---
-    const POKEAPI_BASE = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/";
+    // --- LÓGICA DE NOMES DO SHOWDOWN (A "Ultimate" que criamos) ---
+    function toShowdownName(rawName) {
+        if (!rawName) return "pokeball";
+        
+        let name = rawName.toLowerCase();
+
+        // Limpeza inicial
+        if (name.includes("@")) name = name.split("@")[0];
+        name = name.replace(/\(.*\)/g, "").trim(); // Remove (M), (F)
+
+        // --- REGRAS ESPECÍFICAS ---
+
+        // 1. MEGA EVOLUÇÕES
+        if (name.includes("mega") && !name.includes("yanmega") && !name.includes("meganium")) {
+            if (name.includes(" x") || name.includes("-x")) {
+                let base = name.replace("mega", "").replace(" x", "").replace("-x", "").replace(/[^a-z0-9]/g, "");
+                return base + "-megax";
+            }
+            if (name.includes(" y") || name.includes("-y")) {
+                let base = name.replace("mega", "").replace(" y", "").replace("-y", "").replace(/[^a-z0-9]/g, "");
+                return base + "-megay";
+            }
+            let base = name.replace("mega", "").replace(/[^a-z0-9]/g, "");
+            return base + "-mega";
+        }
+
+        // 2. FORMAS ORIGIN
+        if (name.includes("origin")) {
+            let base = name.replace("origin", "").replace("forme", "").replace(/[^a-z0-9]/g, "");
+            return base + "-origin";
+        }
+
+        // 3. ZACIAN E ZAMAZENTA (Crowned)
+        if (name.includes("zacian")) {
+            if (name.includes("crowned")) return "zacian-crowned";
+            return "zacian";
+        }
+        if (name.includes("zamazenta")) {
+            if (name.includes("crowned")) return "zamazenta-crowned";
+            return "zamazenta";
+        }
+
+        // 4. DEOXYS
+        if (name.includes("deoxys")) {
+            if (name.includes("attack")) return "deoxys-attack";
+            if (name.includes("defense")) return "deoxys-defense";
+            if (name.includes("speed")) return "deoxys-speed";
+            return "deoxys";
+        }
+
+        // 5. TAUROS (Paldea)
+        if (name.includes("tauros")) {
+            if (name.includes("aqua")) return "tauros-paldeaaqua";
+            if (name.includes("blaze")) return "tauros-paldeablaze";
+            if (name.includes("combat") || name.includes("paldea")) return "tauros-paldeacombat";
+            return "tauros";
+        }
+
+        // 6. KYUREM
+        if (name.includes("kyurem")) {
+            if (name.includes("black")) return "kyurem-black";
+            if (name.includes("white")) return "kyurem-white";
+            return "kyurem";
+        }
+
+        // 7. OGERPON
+        if (name.includes("ogerpon")) {
+            if (name.includes("cornerstone")) return "ogerpon-cornerstone";
+            if (name.includes("hearthflame")) return "ogerpon-hearthflame";
+            if (name.includes("wellspring")) return "ogerpon-wellspring";
+            return "ogerpon";
+        }
+
+        // 8. LYCANROC
+        if (name.includes("lycanroc")) {
+            if (name.includes("midnight")) return "lycanroc-midnight";
+            if (name.includes("dusk")) return "lycanroc-dusk";
+            return "lycanroc";
+        }
+
+        // 9. NECROZMA
+        if (name.includes("necrozma")) {
+            if (name.includes("dawn")) return "necrozma-dawnwings";
+            if (name.includes("dusk") || name.includes("mane")) return "necrozma-duskmane";
+            if (name.includes("ultra")) return "necrozma-ultra";
+            return "necrozma";
+        }
+
+        // 10. PALAFIN
+        if (name.includes("palafin")) {
+            if (name.includes("hero")) return "palafin-hero";
+            return "palafin";
+        }
+
+        // 11. PRIMAL / INDEEDEE
+        if (name.includes("primal")) {
+            let base = name.replace("primal", "").replace(/[^a-z0-9]/g, "");
+            return base + "-primal";
+        }
+        if (name.includes("indeedee")) {
+            if (name.includes("-f") || name.includes("female")) return "indeedee-f";
+            return "indeedee";
+        }
+
+        // 12. REGIONAIS (Galar, Alola, Hisui)
+        if (name.includes("galar")) {
+            let base = name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "");
+            return base + "-galar";
+        }
+        if (name.includes("alola")) {
+            let base = name.replace("alolan", "").replace("alola", "").replace(/[^a-z0-9]/g, "");
+            return base + "-alola";
+        }
+        if (name.includes("hisui")) {
+            let base = name.replace("hisuian", "").replace("hisui", "").replace(/[^a-z0-9]/g, "");
+            return base + "-hisui";
+        }
+
+        // --- EXCEÇÕES GERAIS ---
+        const exceptions = {
+            "ho-oh": "ho-oh", "porygon-z": "porygon-z", "wo-chien": "wo-chien",
+            "chien-pao": "chien-pao", "ting-lu": "ting-lu", "chi-yu": "chi-yu",
+            "type: null": "typenull", "jangmo-o": "jangmo-o", "hakamo-o": "hakamo-o",
+            "kommo-o": "kommo-o", "urshifu-rapid-strike": "urshifu-rapid-strike",
+            "urshifu-single-strike": "urshifu", "calyrex-shadow": "calyrex-shadow",
+            "calyrex-ice": "calyrex-ice", "meowstic-f": "meowstic-f", "meowstic": "meowstic",
+            "basculegion-f": "basculegion-f", "basculegion": "basculegion",
+            "oinkologne-f": "oinkologne-f", "oinkologne": "oinkologne",
+            "great-tusk": "great-tusk", "scream-tail": "scream-tail", "brute-bonnet": "brute-bonnet",
+            "flutter-mane": "flutter-mane", "slither-wing": "slither-wing", "sandy-shocks": "sandy-shocks",
+            "iron-treads": "iron-treads", "iron-bundle": "iron-bundle", "iron-hands": "iron-hands",
+            "iron-jugulis": "iron-jugulis", "iron-moth": "iron-moth", "iron-thorns": "iron-thorns",
+            "iron-valiant": "iron-valiant", "roaring-moon": "roaring-moon", "walking-wake": "walking-wake",
+            "iron-leaves": "iron-leaves"
+        };
+
+        const checkName = name.replace(/ /g, "-").replace(/[^a-z0-9-]/g, "");
+        if (exceptions[checkName]) return exceptions[checkName];
+
+        return name.replace(/[^a-z0-9]/g, "");
+    }
+
+    // --- VARIÁVEIS DE IMAGEM ---
+    // Usaremos as URLs do Showdown pois elas batem com nossa função de nomes
+    const IMG_ANI = "https://play.pokemonshowdown.com/sprites/ani/";
+    const IMG_STATIC = "https://play.pokemonshowdown.com/sprites/gen5/";
     const IMG_FALLBACK = "https://img.pokemondb.net/sprites/items/poke-ball.png";
-
-    // --- CORREÇÕES DE NOMES (Showdown -> PokéAPI) ---
-    const NAME_FIXES = {
-        "landorus": "landorus-incarnate", "landorus-t": "landorus-therian",
-        "thundurus": "thundurus-incarnate", "thundurus-t": "thundurus-therian",
-        "tornadus": "tornadus-incarnate", "tornadus-t": "tornadus-therian",
-        "enamorus": "enamorus-incarnate", "enamorus-t": "enamorus-therian",
-        "urshifu": "urshifu-single-strike", "urshifu-rapid-strike": "urshifu-rapid-strike",
-        "toxtricity": "toxtricity-amped", "basculin": "basculin-red-striped",
-        "wormadam": "wormadam-plant", "giratina": "giratina-altered",
-        "shaymin": "shaymin-land", "meloetta": "meloetta-aria",
-        "aegislash": "aegislash-shield", "pumpkaboo": "pumpkaboo-average",
-        "gourgeist": "gourgeist-average", "zygarde": "zygarde-50",
-        "mimikyu": "mimikyu-disguised", "minior": "minior-red-meteor",
-        "morpeko": "morpeko-full-belly", "eiscue": "eiscue-ice",
-        "indeedee": "indeedee-male", "zacian": "zacian-hero",
-        "zamazenta": "zamazenta-hero", "darmanitan": "darmanitan-standard",
-        "lycanroc": "lycanroc-midday", "wishiwashi": "wishiwashi-solo",
-        "farfetchd": "farfetchd", "flabebe": "flabebe", "nidoran": "nidoran-m"
-    };
-
-    const toApiName = (n) => {
-        if(!n) return "unknown";
-        let clean = n.trim().toLowerCase()
-            .replace(/ /g,'-')
-            .replace(/[.'":]/g,'')
-            .replace(/♀/g,'-f')
-            .replace(/♂/g,'-m')
-            .replace(/é/g,'e')
-            .replace(/[^a-z0-9-]/g, '');
-
-        if(NAME_FIXES[clean]) return NAME_FIXES[clean];
-        return clean;
-    };
 
     window.onload = function() {
         const params = new URLSearchParams(window.location.search);
@@ -216,20 +326,15 @@
 
         let fullText = "";
         try {
-            // 1. Tenta descomprimir
             fullText = LZString.decompressFromEncodedURIComponent(code);
-            // 2. Se falhar, tenta o base64 antigo (retrocompatibilidade)
             if(!fullText) fullText = decodeURIComponent(escape(atob(code))); 
         } catch(e) {
             fullText = "Erro ao ler código.";
         }
 
-        // --- ATUALIZAÇÃO: Extrair Metadados ---
         extractMetadata(fullText);
 
-        // AJUSTE O NOME DO SEU ARQUIVO BUILDER AQUI SE FOR DIFERENTE
         const builderFile = "builder (15).html"; 
-        
         document.getElementById('editBtn').href = `${builderFile}?import=${code}`;
         document.getElementById('rawText').innerText = fullText;
 
@@ -237,34 +342,26 @@
         renderCards(pokemons);
     };
 
-    // --- LÓGICA PARA EXIBIR AUTOR E TIER ---
     function extractMetadata(text) {
-        // Regex para pegar: === [Gen 9] OU ===
         const tierMatch = text.match(/^===\s+(.*?)\s+===/m);
-        // Regex para pegar: // Author: Nick
         const authorMatch = text.match(/^\/\/\s+Author:\s+(.*)$/m);
 
         const infoArea = document.getElementById('teamInfoArea');
         const displayTier = document.getElementById('displayTier');
         const displayAuthor = document.getElementById('displayAuthor');
 
-        let hasInfo = false;
-
         if (tierMatch) {
             displayTier.innerText = tierMatch[1].trim();
-            hasInfo = true;
         } else {
             displayTier.style.display = 'none';
         }
 
         if (authorMatch) {
             displayAuthor.innerText = authorMatch[1].trim();
-            hasInfo = true;
         } else {
             displayAuthor.innerText = "Desconhecido";
         }
 
-        // Só mostra a barra se tiver alguma info ou se houver Pokémon
         if(text.trim().length > 10) infoArea.style.display = 'block';
     }
 
@@ -274,7 +371,6 @@
         const team = [];
 
         blocks.forEach(block => {
-            // Ignora blocos vazios, linhas de Tier (===) ou comentários (//)
             if(!block.trim() || block.trim().startsWith("===") || block.trim().startsWith("//")) return;
             
             const lines = block.split('\n');
@@ -282,14 +378,11 @@
             
             const firstLine = lines[0].split('@');
             let namePart = firstLine[0].trim();
-            
-            // Remove indicadores de gênero do nome
             namePart = namePart.replace(/\s?[\(\[][MF][\)\]]$/i, '').trim();
             
-            // Lógica de Apelido vs Espécie
             if(namePart.includes('(') && namePart.includes(')')) {
                 const match = namePart.match(/\(([^)]+)\)/);
-                if(match) pokemon.name = match[1]; // Espécie real
+                if(match) pokemon.name = match[1]; 
                 else pokemon.name = namePart;
             } else {
                 pokemon.name = namePart; 
@@ -300,9 +393,7 @@
 
             for(let i=1; i<lines.length; i++) {
                 const l = lines[i].trim();
-                // Pula linhas de comentário dentro do bloco do Pokémon
                 if (l.startsWith('//')) continue;
-
                 if(l.startsWith('Ability:')) pokemon.ability = l.split(':')[1].trim();
                 else if(l.startsWith('EVs:')) pokemon.evs = l.split(':')[1].trim();
                 else if(l.startsWith('IVs:')) pokemon.ivs = l.split(':')[1].trim();
@@ -314,7 +405,8 @@
         return team;
     }
 
-    async function renderCards(team) {
+    // --- RENDERIZAÇÃO ATUALIZADA (SEM FETCH) ---
+    function renderCards(team) {
         const container = document.getElementById('cardsContainer');
         container.innerHTML = "";
 
@@ -324,18 +416,28 @@
         }
 
         for (const [index, pk] of team.entries()) {
-            const apiName = toApiName(pk.name);
-            const imgId = `poke-img-${index}`;
+            // Usa a função inteligente para corrigir o nome
+            const cleanName = toShowdownName(pk.name);
+            
+            // Tentativa 1: Gif Animado
+            const srcAni = `${IMG_ANI}${cleanName}.gif`;
+            // Tentativa 2: Imagem Estática (Gen 5)
+            const srcStatic = `${IMG_STATIC}${cleanName}.png`;
 
             const card = document.createElement('div');
             card.className = 'poke-card';
+            
+            // Note o uso de onerror para fazer o fallback:
+            // Tenta Animado -> Se falhar, tenta Estático -> Se falhar, Poke Bola
             card.innerHTML = `
                 <div class="card-header">
                     <span class="poke-name">${pk.display}</span>
                     <span class="poke-item-text">${pk.item || ''}</span>
                 </div>
                 <div class="visual-area">
-                    <img src="${IMG_FALLBACK}" id="${imgId}" class="main-sprite">
+                    <img src="${srcAni}" 
+                         class="main-sprite"
+                         onerror="this.onerror=null; this.src='${srcStatic}'; this.onerror=function(){this.src='${IMG_FALLBACK}'};">
                     <div class="info-list">
                         <div><strong>Ability:</strong> ${pk.ability || '-'}</div>
                         <div><strong>Nature:</strong> ${pk.nature || '-'}</div>
@@ -348,26 +450,6 @@
                 </div>
             `;
             container.appendChild(card);
-
-            // Carrega imagem da PokéAPI
-            fetch(`https://pokeapi.co/api/v2/pokemon/${apiName}`)
-                .then(r => {
-                    if(!r.ok) throw new Error("404");
-                    return r.json();
-                })
-                .then(d => {
-                    document.getElementById(imgId).src = `${POKEAPI_BASE}${d.id}.png`;
-                })
-                .catch(() => {
-                    // Tenta nome limpo se falhar
-                    const clean = apiName.split('-')[0];
-                    if(clean !== apiName) {
-                        fetch(`https://pokeapi.co/api/v2/pokemon/${clean}`)
-                        .then(r=>r.json())
-                        .then(d=>{ document.getElementById(imgId).src = `${POKEAPI_BASE}${d.id}.png`; })
-                        .catch(e=>console.log(e));
-                    }
-                });
         }
     }
 
