@@ -161,7 +161,13 @@
         display: flex; gap: 5px; margin-bottom: 20px; background: rgba(0,0,0,0.4); 
         padding: 10px; border-radius: 8px; justify-content: center; min-height: 70px; align-items: flex-end;
     }
-    .card-icons img { width: auto; height: auto; max-height: 50px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); transition: transform 0.2s; }
+    .card-icons img { 
+        width: auto; height: auto; max-height: 50px; 
+        min-width: 30px; min-height: 30px; /* ADICIONE ISSO */
+        object-fit: contain; 
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); 
+        transition: transform 0.2s; 
+    }
     .card-icons img:hover { transform: scale(1.2); }
 
     .card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid #333; }
@@ -440,35 +446,70 @@
   // --- CORREÇÃO DE NOMES PARA SPRITES (Showdown Style) ---
 function toShowdownName(rawName) {
     if (!rawName) return "pokeball";
-    let name = rawName.toLowerCase().trim();
+    
+    // 1. LIMPEZA PRELIMINAR (Remove Gênero, Item, Apelido)
+    let name = rawName.toLowerCase();
+    
+    // Remove tudo depois de um arroba (ex: "Ogerpon @ Mask")
+    if (name.includes("@")) name = name.split("@")[0];
+    
+    // Remove conteúdo entre parênteses (ex: "Tauros (M)")
+    name = name.replace(/\(.*\)/g, "");
+    
+    // Remove espaços extras nas pontas
+    name = name.trim();
 
-    // 1. Mapa de exceções OBRIGATÓRIAS (o Showdown exige o hífen nestes arquivos)
+    // 2. EXCEÇÕES ESTRUTURAIS (Showdown exige hífen nestes)
     const exceptions = {
+        // Calyrex
         "calyrex-shadow": "calyrex-shadow",
         "calyrex-ice": "calyrex-ice",
+        
+        // Ursaluna
+        "ursaluna-bloodmoon": "ursaluna-bloodmoon",
+        
+        // Ogerpon (Atenção: Showdown usa sufixos específicos)
+        "ogerpon-wellspring": "ogerpon-wellspring",
+        "ogerpon-hearthflame": "ogerpon-hearthflame",
+        "ogerpon-cornerstone": "ogerpon-cornerstone",
+        "ogerpon-teal": "ogerpon", // Forma base
+        
+        // Outros Hifenizados
         "ho-oh": "ho-oh",
         "porygon-z": "porygon-z",
         "wo-chien": "wo-chien",
         "chien-pao": "chien-pao",
         "ting-lu": "ting-lu",
         "chi-yu": "chi-yu",
-        "type: null": "typenull", // Caso especial
+        "type: null": "typenull",
         "jangmo-o": "jangmo-o",
         "hakamo-o": "hakamo-o",
-        "kommo-o": "kommo-o"
+        "kommo-o": "kommo-o",
+        
+        // Urshifu (A chatice do hífen)
+        "urshifu-rapid-strike": "urshifu-rapidstrike",
+        "urshifu-single-strike": "urshifu",
+        
+        // Tauros Paldea (Geralmente é tudo junto, mas garantimos aqui)
+        "tauros-paldea-blaze": "taurospaldeablaze",
+        "tauros-paldea-aqua": "taurospaldeaaqua",
+        "tauros-paldea-combat": "taurospaldeacombat"
     };
 
-    // Verifica se o nome (tratado levemente) está nas exceções
-    const simpleCheck = name.replace(/ /g, "-");
-    if (exceptions[simpleCheck]) return exceptions[simpleCheck];
+    // Tenta casar o nome limpo com as exceções
+    // Substitui espaços por hifens temporariamente para facilitar a busca na lista
+    const checkName = name.replace(/ /g, "-");
+    
+    if (exceptions[checkName]) return exceptions[checkName];
     if (exceptions[name]) return exceptions[name];
 
-    // 2. Tratamento para Megas e Primals (geralmente funcionam melhor com sufixo no final no Showdown)
+    // 3. REGRA DE MEGAS
     if (name.includes("mega ") && !name.includes("yanmega")) {
-        return name.replace("mega ", "").replace(/[^a-z0-9]/g, "") + "mega";
+        return name.replace("mega ", "").replace(/[^a-z0-9]/g, "") + "-mega";
     }
-    
-    // 3. Regra Padrão (Tauros Paldea, Iron Valiant, etc)
+
+    // 4. FALLBACK PADRÃO (Remove tudo que não é letra/número)
+    // Isso resolve: Iron Valiant -> ironvaliant, Raging Bolt -> ragingbolt
     return name.replace(/[^a-z0-9]/g, "");
 }
 
