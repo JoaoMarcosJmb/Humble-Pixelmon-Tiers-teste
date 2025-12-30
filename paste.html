@@ -255,7 +255,7 @@
 
    window.onload = function() {
         const params = new URLSearchParams(window.location.search);
-        const code = params.get('import'); // Aqui ele pega o código já decodificado
+        const code = params.get('import');
 
         if(!code) {
             document.getElementById('cardsContainer').innerHTML = "<h3 style='color:#ff5555'>Erro: Link incompleto.</h3>";
@@ -266,7 +266,9 @@
 
         let fullText = "";
         try {
+            // Tenta descomprimir
             fullText = LZString.decompressFromEncodedURIComponent(code);
+            // Fallback para base64 antigo se falhar
             if(!fullText) fullText = decodeURIComponent(escape(atob(code))); 
         } catch(e) {
             fullText = "Erro ao ler código.";
@@ -274,13 +276,18 @@
 
         extractMetadata(fullText);
 
-        // NOME CORRETO DO ARQUIVO DO BUILDER
         const builderFile = "builder.html"; 
         
-        // --- CORREÇÃO DO XABU AQUI ---
-        // Usamos encodeURIComponent(code) para garantir que o código
-        // passe intacto para a URL do builder sem perder caracteres especiais.
-        document.getElementById('editBtn').href = `${builderFile}?import=${encodeURIComponent(code)}`;
+        // --- CORREÇÃO DEFINITIVA (RE-COMPRESSÃO) ---
+        // Se o texto foi lido com sucesso, geramos um NOVO código limpo para o botão.
+        // Isso elimina qualquer caractere corrompido que veio na URL antiga.
+        if(fullText && fullText !== "Erro ao ler código.") {
+             const freshCode = LZString.compressToEncodedURIComponent(fullText);
+             document.getElementById('editBtn').href = `${builderFile}?import=${freshCode}`;
+        } else {
+             // Se deu erro ao ler, esconde o botão de editar para não levar erro pro builder
+             document.getElementById('editBtn').style.display = 'none';
+        }
         
         document.getElementById('rawText').innerText = fullText;
 
