@@ -601,7 +601,7 @@ function toShowdownName(rawName) {
 
     return name.replace(/[^a-z0-9]/g, "");
 }
-function createCard(data) {
+  function createCard(data) {
       const encoded = LZString.compressToEncodedURIComponent(data.teamData);
       const pasteLink = `paste.html?import=${encoded}`;
       const user = auth.currentUser;
@@ -615,31 +615,32 @@ function createCard(data) {
       const deleteBtn = isOwner ? `<button class="btn-delete-team" onclick="window.deleteTeam('${data.id}')" title="Apagar Time">🗑️</button>` : '';
 
       let iconsHtml = '';
-      if(data.pokemon) {
+ if(data.pokemon) {
           data.pokemon.slice(0,6).forEach(p => {
+              // Pega o nome simplificado (ex: "ogerpon", "taurospaldea")
               const cleanName = toShowdownName(p);
               
-              const srcModerno = `https://play.pokemonshowdown.com/sprites/xy/${cleanName}.png`;
+              // TENTATIVA 1: Sprite Gen 5 (Bonito)
+              // O Showdown aceita "taurospaldea" e "ogerpon" aqui tranquilamente
+              const srcGen5 = `https://play.pokemonshowdown.com/sprites/gen5/${cleanName}.png`;
               
-              // Fallbacks
+              // TENTATIVA 2: Sprite Dex (Ícone pequeno de segurança)
               const srcDex = `https://play.pokemonshowdown.com/sprites/dex/${cleanName}.png`;
+              
+              // TENTATIVA 3: PokemonDB (Para casos extremos como Paradoxos novos)
+              // O DB precisa de hífens, então se "cleanName" estiver tudo junto (ex: ironvaliant),
+              // ele pode falhar, mas como simplificamos os problemáticos (Tauros/Ogerpon), o risco é baixo.
               const srcDb = `https://img.pokemondb.net/sprites/scarlet-violet/icon/${cleanName}.png`;
 
-              // --- CORREÇÃO VISUAL ---
-              // Define um quadrado fixo de 50x50px para cada imagem.
-              // O 'object-fit: contain' garante que o Pokémon caiba ali dentro sem esticar.
               iconsHtml += `
-                  <img src="${srcModerno}" 
+                  <img src="${srcGen5}" 
                        title="${p}" 
-                       style="width: 50px; height: 50px; object-fit: contain; margin: 0 2px;"
+                       style="width:auto; height:auto; max-height:45px; min-width:30px;"
                        onerror="this.onerror=null; this.src='${srcDex}'; this.onerror=function(){this.src='${srcDb}'};">
               `;
           });
       }
-      
       const card = document.createElement('div'); card.className = 'feed-card';
-      
-      // Adicionei style="align-items:center" na div card-icons para centralizar verticalmente
       card.innerHTML = `
           <div class="card-header">
               <h3 class="card-title">${data.title}</h3>
@@ -648,9 +649,7 @@ function createCard(data) {
                   ${deleteBtn}
               </div>
           </div>
-          <div class="card-icons" style="align-items: center; justify-content: center; height: 70px;">
-              ${iconsHtml}
-          </div>
+          <div class="card-icons">${iconsHtml}</div>
           <div class="card-footer">
               <div class="author-info">
                   <img src="${authorImg}" class="author-avatar">
