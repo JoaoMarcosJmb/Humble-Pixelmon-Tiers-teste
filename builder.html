@@ -320,10 +320,10 @@
     <main class="builder-area">
         <div class="builder-wrapper">
             <div class="toolbar">
-               <div class="toolbar-left">
-    <input type="text" id="teamNameInput" maxlength="40" placeholder="Nome do Time" onchange="saveCurrentTeamToStorage()">
-    <input type="text" id="teamAuthorInput" maxlength="20" placeholder="Autor / Nick" onchange="saveCurrentTeamToStorage()">
-</div>
+                <div class="toolbar-left">
+                    <input type="text" id="teamNameInput" maxlength="25" placeholder="Nome do Time" onchange="saveCurrentTeamToStorage()">
+                    <input type="text" id="teamAuthorInput" maxlength="16" placeholder="Autor / Nick" onchange="saveCurrentTeamToStorage()">
+                </div>
 <div class="toolbar-controls">
     <select id="teamTier" class="tier-select" onchange="carregarDados(this.value)">
         <option value="" disabled selected>Selecionar Tier</option>
@@ -430,6 +430,35 @@
         "jesus", "deus", "diabo", "demonio", "satanas", "lucifer", "oricha", "orixa", "umbanda", "macumba", // Podem gerar bloqueio indevido
         "gorda", "baleia", "obeso", // Adjetivos
     ];
+    
+    // --- CORREÇÃO DE NOMES DE GOLPES (U-turn, Soft-Boiled, etc) ---
+    const MOVE_EXCEPTIONS = {
+        "u-turn": "U-turn",
+        "v-create": "V-create",
+        "will-o-wisp": "Will-O-Wisp",
+        "soft-boiled": "Soft-Boiled",
+        "double-edge": "Double-Edge",
+        "freeze-dry": "Freeze-Dry",
+        "x-scissor": "X-Scissor",
+        "lock-on": "Lock-On",
+        "self-destruct": "Self-Destruct",
+        "trick-or-treat": "Trick-or-Treat",
+        "baby-doll-eyes": "Baby-Doll Eyes",
+        "topsy-turvy": "Topsy-Turvy",
+        "multi-attack": "Multi-Attack",
+        "power-up-punch": "Power-Up Punch",
+        "mud-slap": "Mud-Slap",
+        "fake-out": "Fake Out" // Garante o espaço correto
+    };
+
+    function formatMoveName(slug) {
+        if (!slug) return "";
+        // 1. Verifica se é uma exceção (golpe com traço)
+        if (MOVE_EXCEPTIONS[slug]) return MOVE_EXCEPTIONS[slug];
+        
+        // 2. Padrão: Remove traços e capitaliza (ex: thunder-punch -> Thunder Punch)
+        return slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
 
     // Função auxiliar para normalizar o texto antes de checar
     // Isso transforma "v1ad0" em "viado", "m3rd4" em "merda", etc.
@@ -865,12 +894,15 @@
                     currentAbilityInput.value = allowedAbilities[0] || "";
                 }
                 
-                // --- MOVES: Salva moves válidos ---
+                // --- MOVES: Salva moves válidos COM A NOVA FORMATAÇÃO ---
                 const moveList = document.getElementById(`moves-${id}`); 
                 moveList.innerHTML="";
                 let allowedMoves = []; 
+                
                 d.moves.forEach(m => { 
-                    const mName = formatText(m.move.name);
+                    // Usa a função correta para garantir U-turn, Will-O-Wisp, etc.
+                    const mName = formatMoveName(m.move.name); 
+                    
                     allowedMoves.push(mName); 
                     const o = document.createElement('option'); 
                     o.value = mName; 
