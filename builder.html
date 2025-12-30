@@ -549,7 +549,7 @@
     }
     function formatItemToShowdown(name) { return name.toLowerCase().replace(/[^a-z0-9]/g, ''); }
 
-    // --- INICIALIZAÇÃO (COM LEITURA DE LINK) ---
+// --- INICIALIZAÇÃO (COM LEITURA DE LINK CORRIGIDA) ---
     window.onload = async function() { 
         await initItens(); 
         await initMoves(); // CARREGA OS MOVES
@@ -559,13 +559,23 @@
 
         if(importData) {
             try {
-                const decodedText = decodeURIComponent(escape(atob(importData)));
-                document.getElementById('ioText').value = decodedText;
-                setTimeout(() => {
-                    processImport(); 
-                    window.history.replaceState({}, document.title, window.location.pathname);
-                    alert("Time carregado via Link Compartilhado!");
-                }, 500);
+                // 1. Tenta descomprimir usando LZString (O padrão atual)
+                let decodedText = LZString.decompressFromEncodedURIComponent(importData);
+                
+                // 2. Fallback: Se falhar (retornar null), tenta o método antigo (Base64) para compatibilidade
+                if (!decodedText) {
+                    decodedText = decodeURIComponent(escape(atob(importData)));
+                }
+
+                if (decodedText) {
+                    document.getElementById('ioText').value = decodedText;
+                    setTimeout(() => {
+                        processImport(); 
+                        // Limpa a URL para não ficar gigante
+                        window.history.replaceState({}, document.title, window.location.pathname);
+                        alert("Time carregado via Link Compartilhado!");
+                    }, 500);
+                }
             } catch(e) {
                 console.error(e);
                 alert("Link inválido ou corrompido.");
@@ -577,14 +587,6 @@
             else createNewTeam();
         }
     };
-
-    async function initItens() {
-        try { 
-            const r = await fetch('builder/itens.json'); 
-            if (r.ok) { todosItens = await r.json(); atualizarListaItens(null); } 
-        } catch (e) { console.warn("Erro itens", e); }
-    }
-
     // --- GERENCIAMENTO DE TIMES ---
     function loadAllTeams() {
         const data = localStorage.getItem('humbleTeamsList');
