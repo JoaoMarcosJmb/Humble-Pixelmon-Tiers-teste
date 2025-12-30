@@ -92,7 +92,7 @@
       background: rgba(30,30,30,0.95); padding: 12px 20px; border-radius: 8px; border: 1px solid var(--cor-borda);
       flex-wrap: wrap; gap: 15px; width: 100%;
     }
-    .toolbar-left { flex-grow: 1; display:flex; flex-direction:column; gap:5px; } /* Ajustado para caber o Autor */
+    .toolbar-left { flex-grow: 1; display:flex; flex-direction:column; gap:5px; } 
     .toolbar-controls { display: flex; gap: 10px; align-items: center; }
 
     #teamNameInput { 
@@ -399,8 +399,7 @@
     let allTeams = []; 
     let currentTeamIndex = null;
 
-    // --- LISTA DE PALAVRAS PROIBIDAS ---
-  // --- LISTA DE PALAVRAS PROIBIDAS (Expandida) ---
+    // --- LISTA DE PALAVRAS PROIBIDAS (Expandida) ---
     const BAD_WORDS = [
         // Base e Variações Comuns
         "puta", "puto", "pu.ta", "p.uta", "p4ta", "put4", "put@", "vagabunda", "vagaba", "rapariga", "piranha",
@@ -424,48 +423,100 @@
         "traveco", "travesti", "tr4veco", "shemale", "femboy", "tomboy",
         
         // Inglês Comum
-        "fuck", "fck", "dick", "pussy", "asshole", "bitch", "shit", "cunt", "whore", "cock", "suck",
-        
-        // Religioso / Outros (Cuidado com Falso Positivo)
-        "jesus", "deus", "diabo", "demonio", "satanas", "lucifer", "oricha", "orixa", "umbanda", "macumba", // Podem gerar bloqueio indevido
-        "gorda", "baleia", "obeso", // Adjetivos
+        "fuck", "fck", "dick", "pussy", "asshole", "bitch", "shit", "cunt", "whore", "cock", "suck"
     ];
-    
-    // --- CORREÇÃO DE NOMES DE GOLPES (U-turn, Soft-Boiled, etc) ---
-    const MOVE_EXCEPTIONS = {
-        "u-turn": "U-turn",
-        "v-create": "V-create",
-        "will-o-wisp": "Will-O-Wisp",
-        "soft-boiled": "Soft-Boiled",
-        "double-edge": "Double-Edge",
-        "freeze-dry": "Freeze-Dry",
-        "x-scissor": "X-Scissor",
-        "lock-on": "Lock-On",
-        "self-destruct": "Self-Destruct",
-        "trick-or-treat": "Trick-or-Treat",
-        "baby-doll-eyes": "Baby-Doll Eyes",
-        "topsy-turvy": "Topsy-Turvy",
-        "multi-attack": "Multi-Attack",
-        "power-up-punch": "Power-Up Punch",
-        "mud-slap": "Mud-Slap",
-        "fake-out": "Fake Out" // Garante o espaço correto
-    };
 
-    function formatMoveName(slug) {
-        if (!slug) return "";
-        // 1. Verifica se é uma exceção (golpe com traço)
-        if (MOVE_EXCEPTIONS[slug]) return MOVE_EXCEPTIONS[slug];
-        
-        // 2. Padrão: Remove traços e capitaliza (ex: thunder-punch -> Thunder Punch)
-        return slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-    }
+    // --- SUA LISTA GIGANTE DE MOVES (DATABASE LOCAL) ---
+    // Adicionei os principais competitivos e as exceções problemáticas.
+    // Você pode expandir essa lista copiando e colando mais golpes no mesmo formato.
+    const ALL_MOVES_DB = [
+        { "name": "U-turn", "type": "bug", "category": "physical" },
+        { "name": "Volt Switch", "type": "electric", "category": "special" },
+        { "name": "Will-O-Wisp", "type": "fire", "category": "status" },
+        { "name": "Soft-Boiled", "type": "normal", "category": "status" },
+        { "name": "Double-Edge", "type": "normal", "category": "physical" },
+        { "name": "Freeze-Dry", "type": "ice", "category": "special" },
+        { "name": "X-Scissor", "type": "bug", "category": "physical" },
+        { "name": "Lock-On", "type": "normal", "category": "status" },
+        { "name": "Self-Destruct", "type": "normal", "category": "physical" },
+        { "name": "Trick-or-Treat", "type": "ghost", "category": "status" },
+        { "name": "Baby-Doll Eyes", "type": "fairy", "category": "status" },
+        { "name": "Topsy-Turvy", "type": "dark", "category": "status" },
+        { "name": "Multi-Attack", "type": "normal", "category": "physical" },
+        { "name": "Power-Up Punch", "type": "fighting", "category": "physical" },
+        { "name": "Wake-Up Slap", "type": "fighting", "category": "physical" },
+        { "name": "Mud-Slap", "type": "ground", "category": "special" },
+        { "name": "Fake Out", "type": "normal", "category": "physical" },
+        { "name": "Thunder Punch", "type": "electric", "category": "physical" },
+        { "name": "Fire Punch", "type": "fire", "category": "physical" },
+        { "name": "Ice Punch", "type": "ice", "category": "physical" },
+        { "name": "Hidden Power", "type": "normal", "category": "special" },
+        { "name": "V-create", "type": "fire", "category": "physical" },
+        { "name": "Boomburst", "type": "normal", "category": "special" },
+        { "name": "Earthquake", "type": "ground", "category": "physical" },
+        { "name": "Surf", "type": "water", "category": "special" },
+        { "name": "Ice Beam", "type": "ice", "category": "special" },
+        { "name": "Thunderbolt", "type": "electric", "category": "special" },
+        { "name": "Flamethrower", "type": "fire", "category": "special" },
+        { "name": "Swords Dance", "type": "normal", "category": "status" },
+        { "name": "Dragon Dance", "type": "dragon", "category": "status" },
+        { "name": "Calm Mind", "type": "psychic", "category": "status" },
+        { "name": "Nasty Plot", "type": "dark", "category": "status" },
+        { "name": "Roost", "type": "flying", "category": "status" },
+        { "name": "Defog", "type": "flying", "category": "status" },
+        { "name": "Rapid Spin", "type": "normal", "category": "physical" },
+        { "name": "Stealth Rock", "type": "rock", "category": "status" },
+        { "name": "Spikes", "type": "ground", "category": "status" },
+        { "name": "Toxic Spikes", "type": "poison", "category": "status" },
+        { "name": "Sticky Web", "type": "bug", "category": "status" },
+        { "name": "Knock Off", "type": "dark", "category": "physical" },
+        { "name": "Close Combat", "type": "fighting", "category": "physical" },
+        { "name": "Draco Meteor", "type": "dragon", "category": "special" },
+        { "name": "Hyper Voice", "type": "normal", "category": "special" },
+        { "name": "Shadow Ball", "type": "ghost", "category": "special" },
+        { "name": "Sludge Bomb", "type": "poison", "category": "special" },
+        { "name": "Scald", "type": "water", "category": "special" },
+        { "name": "Hydro Pump", "type": "water", "category": "special" },
+        { "name": "Fire Blast", "type": "fire", "category": "special" },
+        { "name": "Focus Blast", "type": "fighting", "category": "special" },
+        { "name": "Stone Edge", "type": "rock", "category": "physical" },
+        { "name": "Play Rough", "type": "fairy", "category": "physical" },
+        { "name": "Moonblast", "type": "fairy", "category": "special" },
+        { "name": "Psychic", "type": "psychic", "category": "special" },
+        { "name": "Psyshock", "type": "psychic", "category": "special" },
+        { "name": "Hurricane", "type": "flying", "category": "special" },
+        { "name": "Brave Bird", "type": "flying", "category": "physical" },
+        { "name": "Flare Blitz", "type": "fire", "category": "physical" },
+        { "name": "Waterfall", "type": "water", "category": "physical" },
+        { "name": "Iron Head", "type": "steel", "category": "physical" },
+        { "name": "Flash Cannon", "type": "steel", "category": "special" },
+        { "name": "Gunk Shot", "type": "poison", "category": "physical" },
+        { "name": "Sucker Punch", "type": "dark", "category": "physical" },
+        { "name": "Pursuit", "type": "dark", "category": "physical" },
+        { "name": "Crunch", "type": "dark", "category": "physical" },
+        { "name": "Dark Pulse", "type": "dark", "category": "special" },
+        { "name": "Protect", "type": "normal", "category": "status" },
+        { "name": "Substitute", "type": "normal", "category": "status" },
+        { "name": "Toxic", "type": "poison", "category": "status" },
+        { "name": "Thunder Wave", "type": "electric", "category": "status" },
+        { "name": "Encore", "type": "normal", "category": "status" },
+        { "name": "Taunt", "type": "dark", "category": "status" }
+    ];
 
-    // Função auxiliar para normalizar o texto antes de checar
-    // Isso transforma "v1ad0" em "viado", "m3rd4" em "merda", etc.
+    // --- CRIAR ÍNDICE DE BUSCA RÁPIDA (MAPA) ---
+    // Transforma a lista acima em um dicionário para busca instantânea e à prova de erros
+    const MOVES_MAP = {};
+    ALL_MOVES_DB.forEach(move => {
+        // Cria uma chave "limpa" (ex: "u-turn" vira "uturn")
+        const key = move.name.toLowerCase().replace(/[^a-z0-9]/g, '');
+        MOVES_MAP[key] = move;
+    });
+
+    // Função auxiliar para normalizar o texto antes de checar profanidade
     function normalizeText(text) {
         if (!text) return "";
         return text.toLowerCase()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, "") // Remove acentos (é -> e)
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, "") // Remove acentos
             .replace(/0/g, "o")
             .replace(/1/g, "i")
             .replace(/3/g, "e")
@@ -473,24 +524,36 @@
             .replace(/5/g, "s")
             .replace(/@/g, "a")
             .replace(/\$/g, "s")
-            .replace(/\./g, "")   // Remove pontos (p.u.t.a -> puta)
-            .replace(/\s+/g, ""); // Remove espaços (p u t a -> puta)
+            .replace(/\./g, "")   
+            .replace(/\s+/g, ""); 
     }
 
     function hasProfanity(text) {
         if (!text) return false;
-        
-        // 1. Checagem direta (palavra exata como foi digitada)
         const lowerText = text.toLowerCase();
-        
-        // 2. Checagem normalizada (converte leet speak para texto limpo)
         const cleanText = normalizeText(text);
-
         return BAD_WORDS.some(word => {
-            // Verifica se a palavra proibida está contida no texto original ou no normalizado
             return lowerText.includes(word) || cleanText.includes(word);
         });
     }
+
+    // --- FUNÇÃO INTELIGENTE DE NOME DE GOLPE ---
+    // Usa o nosso banco de dados local para formatar corretamente
+    function formatMoveName(apiSlug) {
+        if (!apiSlug) return "";
+        
+        // 1. Limpa o nome que vem da API (ex: "u-turn" -> "uturn")
+        const cleanKey = apiSlug.toLowerCase().replace(/[^a-z0-9]/g, '');
+
+        // 2. Busca no nosso banco de dados local
+        if (MOVES_MAP[cleanKey]) {
+            return MOVES_MAP[cleanKey].name; // Retorna "U-turn" perfeito do JSON
+        }
+
+        // 3. Fallback: Se não achar na lista, formata padrão (Maiúscula em cada palavra)
+        return apiSlug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
+
     // --- FORMATADORES ---
     function formatToApiName(name) { 
         if(!name) return "";
@@ -894,13 +957,13 @@
                     currentAbilityInput.value = allowedAbilities[0] || "";
                 }
                 
-                // --- MOVES: Salva moves válidos COM A NOVA FORMATAÇÃO ---
+                // --- MOVES: Carrega moves válidos com formatação correta ---
                 const moveList = document.getElementById(`moves-${id}`); 
                 moveList.innerHTML="";
                 let allowedMoves = []; 
                 
                 d.moves.forEach(m => { 
-                    // Usa a função correta para garantir U-turn, Will-O-Wisp, etc.
+                    // USA A NOVA FUNÇÃO AQUI:
                     const mName = formatMoveName(m.move.name); 
                     
                     allowedMoves.push(mName); 
