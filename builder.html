@@ -819,17 +819,21 @@
                 }
 
                 // --- VALIDAÇÃO DE MOVES ---
+// --- VALIDAÇÃO DE MOVES ---
                 const moveInputs = ed.querySelectorAll('.p-move');
                 const allowedMoves = validMovesMap[id];
                 
                 moveInputs.forEach((inp, mIndex) => {
                     const moveVal = inp.value.trim();
                     if (moveVal) {
+                        // COMENTEI A RESTRIÇÃO ABAIXO PARA LIBERAR QUALQUER MOVE:
+                        /*
                         if (allowedMoves && !allowedMoves.includes(moveVal)) {
                             if (!moveVal.startsWith("Hidden Power")) { 
                                 errors.push(`#${i+1} ${name}: Não aprende o movimento "${moveVal}".`);
                             }
                         }
+                        */
                     }
                 });
             }
