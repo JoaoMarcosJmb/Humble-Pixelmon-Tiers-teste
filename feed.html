@@ -153,36 +153,44 @@
     }
 
     /* CORREÇÃO DE ALINHAMENTO DO CABEÇALHO */
+ /* --- CORREÇÃO DO HEADER (TÍTULO COMPLETO) --- */
+    
+    /* O Header agora se adapta ao tamanho do texto */
     .card-header {
         display: flex; 
         justify-content: space-between; 
-        align-items: center; 
+        align-items: flex-start; /* Alinha no topo caso o texto tenha 2 linhas */
         margin-bottom: 15px;
-        height: 40px; /* Altura fixa para alinhar todos os cards */
+        min-height: 45px; /* Altura mínima para manter padrão */
     }
 
     /* Container do Título + Badge */
     .card-header > div:first-child {
         display: flex !important;
         flex-direction: row !important;
+        flex-wrap: wrap; /* Permite que o badge desça se não couber */
         align-items: center;
         gap: 8px; 
-        overflow: hidden;
-        width: 70%; /* Garante espaço para o título */
+        flex: 1; /* Ocupa todo o espaço disponível à esquerda */
+        margin-right: 10px; /* Afasta um pouco da Tier */
     }
 
+    /* Título agora pode ter quebra de linha */
     .card-title {
-        font-size: 1.3rem;
+        font-size: 1.25rem; /* Levemente menor para caber melhor */
         font-weight: bold;
         color: #fff;
         margin: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
+        
+        /* MÁGICA PARA MOSTRAR O NOME INTEIRO: */
+        white-space: normal; /* Permite quebrar linha */
+        overflow: visible;   /* Mostra tudo */
+        text-overflow: clip; /* Remove os '...' */
+        line-height: 1.2;
+        word-break: break-word; /* Quebra palavras muito longas se necessário */
     }
 
-    /* Badge mais discreto e alinhado */
+    /* Badge Verificado */
     .verified-badge {
         display: inline-flex;
         align-items: center;
@@ -195,15 +203,32 @@
         text-transform: uppercase;
         white-space: nowrap;
         height: fit-content;
-        flex-shrink: 0; /* Impede o badge de amassar */
+        flex-shrink: 0; 
+        margin-top: 2px; /* Ajuste fino */
+    }
+
+    .card-header-right { 
+        display: flex; 
+        flex-direction: column; /* Tier em cima, botões embaixo */
+        align-items: flex-end; 
+        gap: 5px; 
+        min-width: fit-content; /* Garante que a direita não seja esmagada */
     }
     
-    .card-header-right { display: flex; align-items: center; gap: 8px; }
-    .card-tier { background: #252525; color: var(--cor-dourado); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: 1px solid #444; font-weight: bold; }
+    .card-tier { 
+        background: #252525; 
+        color: var(--cor-dourado); 
+        padding: 4px 8px; 
+        border-radius: 6px; 
+        font-size: 0.7rem; 
+        border: 1px solid #444; 
+        font-weight: bold; 
+        white-space: nowrap;
+    }
 
     /* Botões de Ação do ADM */
     .adm-controls {
-        display: flex; gap: 5px; margin-left: 10px;
+        display: flex; gap: 5px;
     }
     .btn-adm {
         border: 1px solid #555; background: #222; color: #aaa;
