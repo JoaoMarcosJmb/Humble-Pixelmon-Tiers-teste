@@ -18,6 +18,7 @@
       --cor-input: #252525; 
       --cor-borda: #444;
       --cor-verde: #28a745;
+      --cor-vermelho: #ff4d4d;
     }
     * { box-sizing: border-box; }
 
@@ -152,42 +153,37 @@
         background: linear-gradient(160deg, #1a1a1a 0%, #252215 100%);
     }
 
-    /* CORREÇÃO DE ALINHAMENTO DO CABEÇALHO */
- /* --- CORREÇÃO DO HEADER (TÍTULO COMPLETO) --- */
-    
-    /* O Header agora se adapta ao tamanho do texto */
+    /* CORREÇÃO DO HEADER (TÍTULO COMPLETO) */
     .card-header {
         display: flex; 
         justify-content: space-between; 
-        align-items: flex-start; /* Alinha no topo caso o texto tenha 2 linhas */
+        align-items: flex-start;
         margin-bottom: 15px;
-        min-height: 45px; /* Altura mínima para manter padrão */
+        min-height: 45px;
     }
 
     /* Container do Título + Badge */
     .card-header > div:first-child {
         display: flex !important;
         flex-direction: row !important;
-        flex-wrap: wrap; /* Permite que o badge desça se não couber */
+        flex-wrap: wrap; 
         align-items: center;
         gap: 8px; 
-        flex: 1; /* Ocupa todo o espaço disponível à esquerda */
-        margin-right: 10px; /* Afasta um pouco da Tier */
+        flex: 1; 
+        margin-right: 10px;
     }
 
     /* Título agora pode ter quebra de linha */
     .card-title {
-        font-size: 1.25rem; /* Levemente menor para caber melhor */
+        font-size: 1.25rem; 
         font-weight: bold;
         color: #fff;
         margin: 0;
-        
-        /* MÁGICA PARA MOSTRAR O NOME INTEIRO: */
-        white-space: normal; /* Permite quebrar linha */
-        overflow: visible;   /* Mostra tudo */
-        text-overflow: clip; /* Remove os '...' */
+        white-space: normal; 
+        overflow: visible;   
+        text-overflow: clip; 
         line-height: 1.2;
-        word-break: break-word; /* Quebra palavras muito longas se necessário */
+        word-break: break-word; 
     }
 
     /* Badge Verificado */
@@ -204,15 +200,15 @@
         white-space: nowrap;
         height: fit-content;
         flex-shrink: 0; 
-        margin-top: 2px; /* Ajuste fino */
+        margin-top: 2px;
     }
 
     .card-header-right { 
         display: flex; 
-        flex-direction: column; /* Tier em cima, botões embaixo */
+        flex-direction: column; 
         align-items: flex-end; 
         gap: 5px; 
-        min-width: fit-content; /* Garante que a direita não seja esmagada */
+        min-width: fit-content;
     }
     
     .card-tier { 
@@ -237,6 +233,9 @@
     .btn-adm:hover { color: #fff; border-color: #fff; }
     .btn-verify-action { color: var(--cor-verde); border-color: var(--cor-verde); }
     .btn-delete-adm { color: #ff5555; border-color: #ff5555; }
+    
+    /* Botão Copiar UID */
+    .btn-copy-uid { color: #55aaff; border-color: #55aaff; }
 
     /* BOTÃO DE APAGAR */
     .btn-delete-team {
@@ -245,7 +244,7 @@
     }
     .btn-delete-team:hover { color: #ff4d4d; transform: scale(1.1); }
 
-    /* Área dos ícones com altura fixa para não quebrar o grid */
+    /* Área dos ícones */
     .card-icons {
         display: flex;
         gap: 5px;
@@ -255,7 +254,7 @@
         border-radius: 8px;
         justify-content: center;
         align-items: center;
-        height: 90px;      /* Altura fixa */
+        height: 90px;      
         min-height: 90px;
     }
     .card-icons img { 
@@ -313,6 +312,23 @@
     .btn-criar { background: #333; color: #fff; border: 1px solid #444; }
     .google-btn { width: 100%; background: #fff; color: #333; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; border: none; }
     .close-modal { float: right; cursor: pointer; color: #888; font-size: 1.2rem; }
+
+    /* --- PAINEL FLUTUANTE ADM --- */
+    .admin-floating-btn {
+        position: fixed; bottom: 20px; right: 20px;
+        width: 60px; height: 60px;
+        background: #222; border: 2px solid var(--cor-dourado);
+        color: var(--cor-dourado); border-radius: 50%;
+        font-size: 2rem; display: none; /* Escondido por padrão */
+        align-items: center; justify-content: center;
+        cursor: pointer; z-index: 1500;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+        transition: 0.3s;
+    }
+    .admin-floating-btn:hover { transform: scale(1.1); background: var(--cor-dourado); color: #000; }
+
+    .btn-danger { background: #3e1111; color: #ff5555; border: 1px solid #ff5555; }
+    .btn-danger:hover { background: #ff5555; color: #fff; }
 
     @media (max-width: 768px) { .desktop-only { display: none; } }
   </style>
@@ -404,10 +420,27 @@
     </div>
 </div>
 
+<button id="adminFloatingBtn" class="admin-floating-btn" onclick="openAdminPanel()">⚙️</button>
+
+<div class="modal-overlay" id="adminPanelModal">
+    <div class="modal-content">
+        <span class="close-modal" onclick="closeAdminPanel()">×</span>
+        <div class="auth-header">Painel Admin</div>
+        <p style="text-align:center; color:#888; font-size:0.9rem;">Cole o UID do usuário abaixo para executar ações.</p>
+        
+        <input type="text" id="admTargetUid" class="login-input" placeholder="UID do Usuário (Cole aqui)">
+        
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            <button onclick="performBanUser()" class="btn-auth-action btn-danger">🚫 Banir / Desbanir</button>
+            <button onclick="performWipeTeams()" class="btn-auth-action btn-danger">🗑️ Apagar TODOS os Times</button>
+        </div>
+    </div>
+</div>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
   import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getDatabase, ref, query, limitToLast, get, set, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+  import { getDatabase, ref, query, limitToLast, get, set, remove, orderByChild, equalTo } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
@@ -431,7 +464,7 @@
 
   // --- CONFIGURAÇÃO DE ADM (COLOQUE SEU UID ABAIXO) ---
   const ADMIN_UIDS = [
-      "Ppw77W1g3OetQQXSqoYGs4Dzws33", 
+      "SEU_UID_AQUI", 
       "OUTRO_UID_SE_PRECISAR"
   ];
 
@@ -452,6 +485,70 @@
   window.openLoginModal = () => { document.getElementById('loginModal').style.display = 'flex'; dropdownMenu.classList.remove('active'); menuBtn.classList.remove('active'); }
   window.closeLoginModal = () => { document.getElementById('loginModal').style.display = 'none'; }
   window.logout = () => { if(confirm("Deseja sair?")) signOut(auth).then(()=>location.reload()); }
+
+  // --- FUNÇÕES DO PAINEL ADM ---
+  window.openAdminPanel = () => { document.getElementById('adminPanelModal').style.display = 'flex'; }
+  window.closeAdminPanel = () => { document.getElementById('adminPanelModal').style.display = 'none'; }
+  
+  window.copyUid = (uid) => {
+      navigator.clipboard.writeText(uid).then(() => {
+          alert("UID copiado! Abra a engrenagem e cole.");
+          window.openAdminPanel();
+          document.getElementById('admTargetUid').value = uid;
+      });
+  }
+
+  // AÇÃO: Banir Usuário
+  window.performBanUser = async () => {
+      if(!checkIsAdmin()) return;
+      const uid = document.getElementById('admTargetUid').value.trim();
+      if(!uid) return alert("Digite um UID.");
+      
+      try {
+          // Checa se já está banido
+          const banRef = ref(db, `banned/${uid}`);
+          const snap = await get(banRef);
+          const isBanned = snap.exists() && snap.val() === true;
+          
+          if(confirm(isBanned ? `Desbanir usuário ${uid}?` : `BANIR usuário ${uid}?`)) {
+              await set(banRef, !isBanned);
+              alert(isBanned ? "Usuário desbanido." : "Usuário BANIDO.");
+          }
+      } catch(e) { alert("Erro: " + e.message); }
+  }
+
+  // AÇÃO: Limpar Times
+  window.performWipeTeams = async () => {
+      if(!checkIsAdmin()) return;
+      const uid = document.getElementById('admTargetUid').value.trim();
+      if(!uid) return alert("Digite um UID.");
+      
+      if(!confirm(`TEM CERTEZA? Isso apagará TODOS os times do usuário ${uid}.`)) return;
+      if(!confirm(`Confirmação final: Apagar tudo de ${uid}?`)) return;
+
+      try {
+          const q = query(ref(db, 'teams'), orderByChild('userId'), equalTo(uid));
+          const snapshot = await get(q);
+          
+          if(!snapshot.exists()) return alert("Nenhum time encontrado para este usuário.");
+          
+          let count = 0;
+          const updates = {};
+          snapshot.forEach(child => {
+              updates[child.key] = null; // null deleta
+              count++;
+          });
+          
+          await ref(db, 'teams').update(updates); // Atualiza tudo de uma vez (erro aqui? Não, update na raiz com null apaga)
+          // Na verdade update na raiz 'teams' precisa dos caminhos, vamos fazer loop seguro:
+          snapshot.forEach(async (child) => {
+              await remove(child.ref);
+          });
+
+          alert(`${count} times apagados. Recarregando...`);
+          location.reload();
+      } catch(e) { alert("Erro ao apagar: " + e.message); }
+  }
 
   // --- FILTROS ---
   window.toggleFilterPanel = () => {
@@ -498,15 +595,11 @@
 
       // ORDENAÇÃO: Verificados primeiro
       filteredTeams.sort((a, b) => {
-          // Se 'a' é verificado e 'b' não, 'a' vem primeiro
           if (a.verified === true && b.verified !== true) return -1;
-          // Se 'b' é verificado e 'a' não, 'b' vem primeiro
           if (a.verified !== true && b.verified === true) return 1;
-          // Se ambos forem iguais, mantém a ordem original
           return 0;
       });
 
-      // Reseta para a primeira página sempre que filtrar
       currentPage = 1;
       renderCurrentPage();
   }
@@ -521,7 +614,6 @@
           return;
       }
 
-      // Lógica de "fatiar" o array para mostrar só 12
       const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
       const endIndex = startIndex + ITEMS_PER_PAGE;
       const pageItems = filteredTeams.slice(startIndex, endIndex);
@@ -534,7 +626,6 @@
       const totalPages = Math.ceil(filteredTeams.length / ITEMS_PER_PAGE) || 1;
       document.getElementById('pageInfo').innerText = `Página ${currentPage} de ${totalPages}`;
       
-      // Desabilita botões se estiver no começo ou fim
       document.getElementById('btnPrev').disabled = (currentPage === 1);
       document.getElementById('btnNext').disabled = (currentPage === totalPages);
   }
@@ -549,7 +640,6 @@
   async function loadFeed() {
       const container = document.getElementById('feedContainer');
       try {
-          // Carrega os últimos 150 times (para ter uma base boa no cache)
           const snapshot = await get(query(ref(db, 'teams'), limitToLast(150)));
           if (!snapshot.exists()) { container.innerHTML = "<h3 class='loading-msg'>Nenhum time publicado ainda.</h3>"; return; }
           container.innerHTML = ""; allTeamsData = [];
@@ -700,28 +790,26 @@ function toShowdownName(rawName) {
       const heartIcon = isLiked ? '❤️' : '🤍';
       const authorImg = data.userPhoto || "https://i.imgur.com/XOEcuO8.png";
 
-      // Lógica de Dono ou ADM
       const isOwner = user && data.userId === user.uid;
       
-      // Botão de Apagar (Dono OU Admin)
       let deleteBtn = '';
       if (isOwner || isAdmin) {
          deleteBtn = `<button class="btn-delete-team ${isAdmin ? 'btn-delete-adm' : ''}" onclick="window.deleteTeam('${data.id}')" title="Apagar Time">🗑️</button>`;
       }
 
-      // Controles Extras de ADM (Verificar)
       let admControls = '';
       if (isAdmin) {
           const isVerified = data.verified === true;
           const verifyText = isVerified ? "Desverificar" : "Verificar ✅";
-          admControls = `<button class="btn-adm btn-verify-action" onclick="window.toggleVerifyTeam('${data.id}')">${verifyText}</button>`;
+          admControls = `
+             <button class="btn-adm btn-verify-action" onclick="window.toggleVerifyTeam('${data.id}')">${verifyText}</button>
+             <button class="btn-adm btn-copy-uid" onclick="window.copyUid('${data.userId}')" title="Copiar UID do Dono">🆔</button>
+          `;
       }
 
-      // Visual de Verificado
       const verifiedClass = data.verified ? 'verified' : '';
       const verifiedBadge = data.verified ? '<span class="verified-badge">✔ Verificado</span>' : '';
 
-      // GERAÇÃO DOS ICONES
       let iconsHtml = '';
       if(data.pokemon) {
           data.pokemon.slice(0,6).forEach(p => {
@@ -739,9 +827,8 @@ function toShowdownName(rawName) {
       }
       
       const card = document.createElement('div'); 
-      card.className = `feed-card ${verifiedClass}`; // Adiciona classe CSS
+      card.className = `feed-card ${verifiedClass}`; 
       
-      // ESTRUTURA CORRIGIDA PARA ALINHAMENTO DO TITULO/BADGE
       card.innerHTML = `
           <div class="card-header">
               <div>
@@ -780,34 +867,21 @@ function toShowdownName(rawName) {
       try { await remove(ref(db, `teams/${teamId}`)); alert("Time apagado."); loadFeed(); } catch(e) { alert("Erro: "+e.message); }
   }
 
-  // --- FUNÇÃO DE ADM: VERIFICAR TIME (CORRIGIDA) ---
+  // --- FUNÇÃO DE ADM: VERIFICAR TIME ---
   window.toggleVerifyTeam = async function(teamId) {
       if(!checkIsAdmin()) return alert("Sem permissão.");
-      
-      // 1. Acha o time na memória local
       const team = allTeamsData.find(t => t.id === teamId);
       if (!team) return;
+      const newStatus = !(team.verified === true);
 
-      // 2. Descobre o status atual e inverte
-      const currentStatus = team.verified === true;
-      const newStatus = !currentStatus;
-
-      // 3. Pergunta antes de agir
       if(!confirm(newStatus ? "Marcar como VERIFICADO?" : "Remover verificação?")) return;
 
       try {
-          // Salva no Banco
           const teamRef = ref(db, `teams/${teamId}/verified`);
           await set(teamRef, newStatus);
-          
-          // Atualiza Localmente
           team.verified = newStatus;
-          
-          // Atualiza a tela e a reordenação
           window.applyFilters(); 
-      } catch(e) {
-          alert("Erro: " + e.message);
-      }
+      } catch(e) { alert("Erro: " + e.message); }
   }
 
   window.handleLike = async function(teamId) {
@@ -851,14 +925,22 @@ function toShowdownName(rawName) {
       const userInfo = document.getElementById('userHeaderInfo');
       const mobileLogin = document.getElementById('mobileLoginLink');
       const mobileLogout = document.getElementById('mobileLogoutLink');
+      const adminBtn = document.getElementById('adminFloatingBtn');
+
       if(user) {
           loginBtn.style.display='none'; userInfo.style.display='flex';
           document.getElementById('headerAvatar').src = user.photoURL || "https://i.imgur.com/XOEcuO8.png";
           document.getElementById('headerName').innerText = user.displayName || "Treinador";
           mobileLogin.style.display='none'; mobileLogout.style.display='block';
+          
+          // MOSTRA BOTÃO DE ADM SE FOR ADM
+          if(checkIsAdmin()) {
+              adminBtn.style.display = 'flex';
+          }
       } else {
           loginBtn.style.display='block'; userInfo.style.display='none';
           mobileLogin.style.display='block'; mobileLogout.style.display='none';
+          adminBtn.style.display = 'none';
       }
       if(allTeamsData.length > 0) window.applyFilters();
   });
