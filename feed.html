@@ -457,46 +457,79 @@ function toShowdownName(rawName) {
 
     // --- REGRAS ESPECÍFICAS ---
 
-    // 1. TAUROS (Paldea + Kanto)
+    // 1. MEGA EVOLUÇÕES (Prioridade para tratar X e Y corretamente)
+    // Ignoramos Yanmega e Meganium pois eles têm "mega" no nome mas não são megas
+    if (name.includes("mega") && !name.includes("yanmega") && !name.includes("meganium")) {
+        
+        // Regra para Mega X (Charizard X, Mewtwo X)
+        if (name.includes(" x") || name.includes("-x")) {
+            // Remove "mega", "x", traços e limpa o nome base
+            let base = name.replace("mega", "").replace(" x", "").replace("-x", "").replace(/[^a-z0-9]/g, "");
+            return base + "-megax";
+        }
+
+        // Regra para Mega Y (Charizard Y, Mewtwo Y)
+        if (name.includes(" y") || name.includes("-y")) {
+            let base = name.replace("mega", "").replace(" y", "").replace("-y", "").replace(/[^a-z0-9]/g, "");
+            return base + "-megay";
+        }
+
+        // Regra para Mega Padrão (Lucario, Gengar, etc.)
+        let base = name.replace("mega", "").replace(/[^a-z0-9]/g, "");
+        return base + "-mega";
+    }
+
+    // 2. PRIMAL REVERSION (Kyogre e Groudon Primal - Bônus útil)
+    if (name.includes("primal")) {
+        let base = name.replace("primal", "").replace(/[^a-z0-9]/g, "");
+        return base + "-primal";
+    }
+
+    // 3. TAUROS
     if (name.includes("tauros")) {
         if (name.includes("aqua")) return "tauros-paldeaaqua";
         if (name.includes("blaze")) return "tauros-paldeablaze";
         if (name.includes("combat") || name.includes("paldea")) return "tauros-paldeacombat";
-        return "tauros"; // Kanto
+        return "tauros";
     }
 
-    // 2. KYUREM (Black/White)
+    // 4. KYUREM
     if (name.includes("kyurem")) {
         if (name.includes("black")) return "kyurem-black";
         if (name.includes("white")) return "kyurem-white";
         return "kyurem";
     }
 
-    // 3. OGERPON (NOVA REGRA: Formas das Máscaras)
+    // 5. OGERPON
     if (name.includes("ogerpon")) {
-        // Cornerstone (Pedra/Rock)
         if (name.includes("cornerstone")) return "ogerpon-cornerstone";
-        
-        // Hearthflame (Fogo/Fire)
         if (name.includes("hearthflame")) return "ogerpon-hearthflame";
-        
-        // Wellspring (Água/Water)
         if (name.includes("wellspring")) return "ogerpon-wellspring";
-        
-        // Se for Teal Mask ou apenas "Ogerpon"
         return "ogerpon";
     }
 
-    // 4. FORMAS DE GALAR (Articuno, Zapdos, Moltres, etc.)
+    // 6. INDEEDEE
+    if (name.includes("indeedee")) {
+        if (name.includes("-f") || name.includes("female")) return "indeedee-f";
+        return "indeedee";
+    }
+
+    // 7. FORMAS DE GALAR
     if (name.includes("galar")) {
         let base = name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "");
         return base + "-galar";
     }
     
-    // 5. FORMAS DE ALOLA
+    // 8. FORMAS DE ALOLA
     if (name.includes("alola")) {
         let base = name.replace("alolan", "").replace("alola", "").replace(/[^a-z0-9]/g, "");
         return base + "-alola";
+    }
+
+    // 9. FORMAS DE HISUI (Bônus para Legends Arceus)
+    if (name.includes("hisui")) {
+        let base = name.replace("hisuian", "").replace("hisui", "").replace(/[^a-z0-9]/g, "");
+        return base + "-hisui";
     }
 
     // --- EXCEÇÕES GERAIS ---
@@ -514,16 +547,17 @@ function toShowdownName(rawName) {
         "urshifu-rapid-strike": "urshifu-rapid-strike",
         "urshifu-single-strike": "urshifu",
         "calyrex-shadow": "calyrex-shadow",
-        "calyrex-ice": "calyrex-ice"
+        "calyrex-ice": "calyrex-ice",
+        "meowstic-f": "meowstic-f", 
+        "meowstic": "meowstic",
+        "basculegion-f": "basculegion-f",
+        "basculegion": "basculegion",
+        "oinkologne-f": "oinkologne-f",
+        "oinkologne": "oinkologne"
     };
 
     const checkName = name.replace(/ /g, "-").replace(/[^a-z0-9-]/g, "");
     if (exceptions[checkName]) return exceptions[checkName];
-
-    // Tratamento de Mega
-    if (name.includes("mega ") && !name.includes("yanmega")) {
-        return name.replace("mega ", "").replace(/[^a-z0-9]/g, "") + "mega";
-    }
 
     // Limpeza Padrão
     return name.replace(/[^a-z0-9]/g, "");
