@@ -388,10 +388,10 @@
     const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
     const ITEM_ICON_BASE = "https://play.pokemonshowdown.com/sprites/itemicons/";
 
-    // --- VARIÁVEIS GLOBAIS (DECLARADAS APENAS UMA VEZ) ---
+    // --- VARIÁVEIS GLOBAIS ---
     let pokemonIdMap = {}; 
     let validAbilitiesMap = {}; 
-    let validMovesMap = {}; // Salva moves válidos por slot
+    let validMovesMap = {}; 
     let todosItens = [];
     let todosMoves = []; // VAI RECEBER O JSON
     let MOVES_MAP = {};  // VAI SER O ÍNDICE
@@ -400,7 +400,15 @@
     let allTeams = []; 
     let currentTeamIndex = null;
 
-    // --- LISTA DE PALAVRAS PROIBIDAS (Expandida) ---
+    // --- LISTA DE MOVES CUSTOMIZADOS (GOLPES EXTRAS) ---
+    // Adicione aqui: "Nome do Pokemon": ["Golpe 1", "Golpe 2"]
+    const CUSTOM_MOVES = {
+        "pikachu": ["Fly", "Surf"],
+        "lycanroc-dusk": ["Fake Out", "Happy Hour"],
+        "medicham": ["Fake Out"]
+    };
+
+    // --- LISTA DE PALAVRAS PROIBIDAS ---
     const BAD_WORDS = [
         "puta", "puto", "pu.ta", "p.uta", "p4ta", "put4", "put@", "vagabunda", "vagaba", "rapariga", "piranha",
         "merda", "m3rda", "bosta", "cagar", "cagado",
@@ -949,6 +957,19 @@
                     o.value = mName; 
                     moveList.appendChild(o); 
                 });
+
+                // --- ADICIONA MOVES CUSTOMIZADOS (DA LISTA CUSTOM_MOVES) ---
+                if (CUSTOM_MOVES[apiName]) {
+                    CUSTOM_MOVES[apiName].forEach(extraMove => {
+                        if (!allowedMoves.includes(extraMove)) {
+                            allowedMoves.push(extraMove);
+                            const o = document.createElement('option');
+                            o.value = extraMove;
+                            moveList.appendChild(o);
+                        }
+                    });
+                }
+
                 validMovesMap[id] = allowedMoves; 
             }
         } catch(e){
