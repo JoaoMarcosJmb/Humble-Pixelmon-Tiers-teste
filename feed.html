@@ -457,31 +457,46 @@ function toShowdownName(rawName) {
 
     // --- REGRAS ESPECÍFICAS ---
 
-    // 1. TAUROS (Lógica Flexível)
+    // 1. TAUROS (Paldea + Kanto)
     if (name.includes("tauros")) {
-        // Se tiver "aqua", já retorna o Aqua (Ex: "Tauros Aqua" ou "Tauros-Paldea-Aqua")
         if (name.includes("aqua")) return "tauros-paldeaaqua";
-        
-        // Se tiver "blaze", já retorna o Blaze (Ex: "Tauros Blaze")
         if (name.includes("blaze")) return "tauros-paldeablaze";
-        
-        // Se tiver "combat" OU "paldea", retorna a forma combat (Ex: "Tauros Paldea" ou "Tauros Combat")
         if (name.includes("combat") || name.includes("paldea")) return "tauros-paldeacombat";
-        
-        // Se não tiver nada disso (só "Tauros"), retorna o clássico de Kanto
-        return "tauros";
+        return "tauros"; // Kanto
     }
 
-    // 2. KYUREM (Black/White corrigido)
+    // 2. KYUREM (Black/White)
     if (name.includes("kyurem")) {
         if (name.includes("black")) return "kyurem-black";
         if (name.includes("white")) return "kyurem-white";
         return "kyurem";
     }
 
-    // 3. OGERPON (Unificado)
+    // 3. OGERPON (NOVA REGRA: Formas das Máscaras)
     if (name.includes("ogerpon")) {
+        // Cornerstone (Pedra/Rock)
+        if (name.includes("cornerstone")) return "ogerpon-cornerstone";
+        
+        // Hearthflame (Fogo/Fire)
+        if (name.includes("hearthflame")) return "ogerpon-hearthflame";
+        
+        // Wellspring (Água/Water)
+        if (name.includes("wellspring")) return "ogerpon-wellspring";
+        
+        // Se for Teal Mask ou apenas "Ogerpon"
         return "ogerpon";
+    }
+
+    // 4. FORMAS DE GALAR (Articuno, Zapdos, Moltres, etc.)
+    if (name.includes("galar")) {
+        let base = name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "");
+        return base + "-galar";
+    }
+    
+    // 5. FORMAS DE ALOLA
+    if (name.includes("alola")) {
+        let base = name.replace("alolan", "").replace("alola", "").replace(/[^a-z0-9]/g, "");
+        return base + "-alola";
     }
 
     // --- EXCEÇÕES GERAIS ---
