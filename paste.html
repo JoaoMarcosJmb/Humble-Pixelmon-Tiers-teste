@@ -165,7 +165,7 @@
 <div id="rawText" class="raw-text-area"></div>
 
 <script>
-    // --- LÓGICA DE NOMES DO SHOWDOWN (Ultimate v3) ---
+    // --- LÓGICA DE NOMES DO SHOWDOWN (Versão Final) ---
     function toShowdownName(rawName) {
         if (!rawName) return "pokeball";
         let name = rawName.toLowerCase();
@@ -206,20 +206,11 @@
             if (name.includes("wellspring")) return "ogerpon-wellspring";
             return "ogerpon";
         }
-        if (name.includes("lycanroc")) {
-            if (name.includes("midnight")) return "lycanroc-midnight";
-            if (name.includes("dusk")) return "lycanroc-dusk";
-            return "lycanroc";
-        }
-        if (name.includes("necrozma")) {
-            if (name.includes("dawn")) return "necrozma-dawnwings";
-            if (name.includes("dusk") || name.includes("mane")) return "necrozma-duskmane";
-            if (name.includes("ultra")) return "necrozma-ultra";
-            return "necrozma";
-        }
-        if (name.includes("palafin")) return name.includes("hero") ? "palafin-hero" : "palafin";
-        if (name.includes("primal")) return name.replace("primal", "").replace(/[^a-z0-9]/g, "") + "-primal";
-        if (name.includes("indeedee")) return (name.includes("-f") || name.includes("female")) ? "indeedee-f" : "indeedee";
+        // Novas regras de segurança para Paradoxos na pasta ANI (com hifen)
+        if (name.includes("iron bundle")) return "iron-bundle";
+        if (name.includes("great tusk")) return "great-tusk";
+        if (name.includes("scream tail")) return "scream-tail";
+        if (name.includes("flutter mane")) return "flutter-mane";
         
         // REGIONAIS
         if (name.includes("galar")) return name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "") + "-galar";
@@ -227,7 +218,7 @@
         if (name.includes("hisui")) return name.replace("hisuian", "").replace("hisui", "").replace(/[^a-z0-9]/g, "") + "-hisui";
         if (name.includes("paldea")) return name.replace("paldean", "").replace("paldea", "").replace(/[^a-z0-9]/g, "") + "-paldea";
 
-        // EXCEÇÕES (Nomes com hífen obrigatório)
+        // EXCEÇÕES (Nomes com hífen obrigatório para GIF)
         const exceptions = {
             "ho-oh": "ho-oh", "porygon-z": "porygon-z", "wo-chien": "wo-chien", "chien-pao": "chien-pao", 
             "ting-lu": "ting-lu", "chi-yu": "chi-yu", "type: null": "typenull", "jangmo-o": "jangmo-o", 
@@ -241,7 +232,8 @@
             "iron-jugulis": "iron-jugulis", "iron-moth": "iron-moth", "iron-thorns": "iron-thorns",
             "iron-valiant": "iron-valiant", "roaring-moon": "roaring-moon", "walking-wake": "walking-wake",
             "iron-leaves": "iron-leaves", "iron-boulder": "iron-boulder", "gouging-fire": "gouging-fire",
-            "raging-bolt": "raging-bolt", "iron-crown": "iron-crown"
+            "raging-bolt": "raging-bolt", "iron-crown": "iron-crown", "archaludon": "archaludon",
+            "hydrapple": "hydrapple"
         };
         const checkName = name.replace(/ /g, "-").replace(/[^a-z0-9-]/g, "");
         if (exceptions[checkName]) return exceptions[checkName];
@@ -250,11 +242,12 @@
     }
 
     // --- DIRETÓRIOS DE IMAGENS ---
-    // MUDANÇA: Voltamos o fallback para GEN5 conforme seu pedido
     const BASE_ANI = "https://play.pokemonshowdown.com/sprites/ani/";
     const BASE_ANI_SHINY = "https://play.pokemonshowdown.com/sprites/ani-shiny/";
-    const BASE_STATIC = "https://play.pokemonshowdown.com/sprites/gen5/";
-    const BASE_STATIC_SHINY = "https://play.pokemonshowdown.com/sprites/gen5-shiny/";
+    const BASE_GEN5 = "https://play.pokemonshowdown.com/sprites/gen5/";
+    const BASE_GEN5_SHINY = "https://play.pokemonshowdown.com/sprites/gen5-shiny/";
+    const BASE_DEX = "https://play.pokemonshowdown.com/sprites/dex/";
+    const BASE_DEX_SHINY = "https://play.pokemonshowdown.com/sprites/dex-shiny/";
     const IMG_FALLBACK = "https://img.pokemondb.net/sprites/items/poke-ball.png";
 
     window.onload = function() {
@@ -280,14 +273,14 @@
 
         const builderFile = "builder.html"; 
         
-        // --- CORREÇÃO DEFINITIVA DO LINK ---
+        // --- CORREÇÃO DO LINK ---
         if(fullText && fullText !== "Erro ao ler código.") {
-             // 1. Limpa espaços extras
-             const trimmedText = fullText.trim();
-             // 2. Comprime
-             const freshCode = LZString.compressToEncodedURIComponent(trimmedText);
-             // 3. ENCODA O URI (Isso evita o bug do Link Inválido)
-             document.getElementById('editBtn').href = `${builderFile}?import=${encodeURIComponent(freshCode)}`;
+             // Comprime DE NOVO para garantir um link novo e limpo
+             const freshCode = LZString.compressToEncodedURIComponent(fullText.trim());
+             
+             // MUDANÇA CRÍTICA: NÃO usamos mais encodeURIComponent aqui.
+             // O freshCode já é seguro para URL. Usar encodeURIComponent de novo estava quebrando o link.
+             document.getElementById('editBtn').href = `${builderFile}?import=${freshCode}`;
         } else {
              document.getElementById('editBtn').style.display = 'none';
         }
@@ -366,20 +359,24 @@
         for (const [index, pk] of team.entries()) {
             const cleanName = toShowdownName(pk.name);
             
-            // Define URLs: 1. Animado, 2. Estático (Gen 5)
+            // Define Pastas de Imagem
             const folderAni = pk.shiny ? BASE_ANI_SHINY : BASE_ANI;
-            const folderStatic = pk.shiny ? BASE_STATIC_SHINY : BASE_STATIC;
+            const folderGen5 = pk.shiny ? BASE_GEN5_SHINY : BASE_GEN5;
+            const folderDex = pk.shiny ? BASE_DEX_SHINY : BASE_DEX;
 
             const srcAni = `${folderAni}${cleanName}.gif`;
-            const srcStatic = `${folderStatic}${cleanName}.png`;
+            const srcGen5 = `${folderGen5}${cleanName}.png`;
+            const srcDex = `${folderDex}${cleanName}.png`;
 
             const card = document.createElement('div');
             card.className = 'poke-card';
             
-            // LÓGICA DE IMAGEM: 
-            // 1. Tenta GIF Animado
-            // 2. Se erro, tenta Gen 5 (Static)
-            // 3. Se erro, Pokébola
+            // --- O SEGREDO DO FALLBACK TRIPLO ---
+            // 1. Tenta srcAni (GIF)
+            // 2. Erro? Tenta srcGen5 (Estático bonito)
+            // 3. Erro? Tenta srcDex (Estático seguro - funciona pra Iron Bundle)
+            // 4. Erro? Pokébola.
+            
             card.innerHTML = `
                 <div class="card-header">
                     <span class="poke-name">${pk.display}</span>
@@ -389,7 +386,7 @@
                     <img src="${srcAni}" 
                          class="main-sprite"
                          title="${pk.shiny ? 'Shiny' : 'Normal'}"
-                         onerror="this.onerror=null; this.src='${srcStatic}'; this.onerror=function(){this.src='${IMG_FALLBACK}'};">
+                         onerror="this.onerror=null; this.src='${srcGen5}'; this.onerror=function(){this.src='${srcDex}'; this.onerror=function(){this.src='${IMG_FALLBACK}'}};">
                     <div class="info-list">
                         <div><strong>Ability:</strong> ${pk.ability || '-'}</div>
                         <div><strong>Nature:</strong> ${pk.nature || '-'}</div>
