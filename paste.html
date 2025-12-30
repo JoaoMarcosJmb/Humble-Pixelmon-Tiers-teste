@@ -165,138 +165,74 @@
 <div id="rawText" class="raw-text-area"></div>
 
 <script>
-    // --- LÓGICA DE NOMES DO SHOWDOWN (A "Ultimate" que criamos) ---
+    // --- LÓGICA DE NOMES DO SHOWDOWN (Ultimate) ---
     function toShowdownName(rawName) {
         if (!rawName) return "pokeball";
-        
         let name = rawName.toLowerCase();
 
         // Limpeza inicial
         if (name.includes("@")) name = name.split("@")[0];
-        name = name.replace(/\(.*\)/g, "").trim(); // Remove (M), (F)
+        name = name.replace(/\(.*\)/g, "").trim();
 
-        // --- REGRAS ESPECÍFICAS ---
-
-        // 1. MEGA EVOLUÇÕES
+        // REGRAS ESPECÍFICAS
         if (name.includes("mega") && !name.includes("yanmega") && !name.includes("meganium")) {
-            if (name.includes(" x") || name.includes("-x")) {
-                let base = name.replace("mega", "").replace(" x", "").replace("-x", "").replace(/[^a-z0-9]/g, "");
-                return base + "-megax";
-            }
-            if (name.includes(" y") || name.includes("-y")) {
-                let base = name.replace("mega", "").replace(" y", "").replace("-y", "").replace(/[^a-z0-9]/g, "");
-                return base + "-megay";
-            }
-            let base = name.replace("mega", "").replace(/[^a-z0-9]/g, "");
-            return base + "-mega";
+            if (name.includes(" x") || name.includes("-x")) return name.replace("mega", "").replace(" x", "").replace("-x", "").replace(/[^a-z0-9]/g, "") + "-megax";
+            if (name.includes(" y") || name.includes("-y")) return name.replace("mega", "").replace(" y", "").replace("-y", "").replace(/[^a-z0-9]/g, "") + "-megay";
+            return name.replace("mega", "").replace(/[^a-z0-9]/g, "") + "-mega";
         }
-
-        // 2. FORMAS ORIGIN
-        if (name.includes("origin")) {
-            let base = name.replace("origin", "").replace("forme", "").replace(/[^a-z0-9]/g, "");
-            return base + "-origin";
-        }
-
-        // 3. ZACIAN E ZAMAZENTA (Crowned)
-        if (name.includes("zacian")) {
-            if (name.includes("crowned")) return "zacian-crowned";
-            return "zacian";
-        }
-        if (name.includes("zamazenta")) {
-            if (name.includes("crowned")) return "zamazenta-crowned";
-            return "zamazenta";
-        }
-
-        // 4. DEOXYS
+        if (name.includes("origin")) return name.replace("origin", "").replace("forme", "").replace(/[^a-z0-9]/g, "") + "-origin";
+        if (name.includes("zacian")) return name.includes("crowned") ? "zacian-crowned" : "zacian";
+        if (name.includes("zamazenta")) return name.includes("crowned") ? "zamazenta-crowned" : "zamazenta";
         if (name.includes("deoxys")) {
             if (name.includes("attack")) return "deoxys-attack";
             if (name.includes("defense")) return "deoxys-defense";
             if (name.includes("speed")) return "deoxys-speed";
             return "deoxys";
         }
-
-        // 5. TAUROS (Paldea)
         if (name.includes("tauros")) {
             if (name.includes("aqua")) return "tauros-paldeaaqua";
             if (name.includes("blaze")) return "tauros-paldeablaze";
             if (name.includes("combat") || name.includes("paldea")) return "tauros-paldeacombat";
             return "tauros";
         }
-
-        // 6. KYUREM
         if (name.includes("kyurem")) {
             if (name.includes("black")) return "kyurem-black";
             if (name.includes("white")) return "kyurem-white";
             return "kyurem";
         }
-
-        // 7. OGERPON
         if (name.includes("ogerpon")) {
             if (name.includes("cornerstone")) return "ogerpon-cornerstone";
             if (name.includes("hearthflame")) return "ogerpon-hearthflame";
             if (name.includes("wellspring")) return "ogerpon-wellspring";
             return "ogerpon";
         }
-
-        // 8. LYCANROC
         if (name.includes("lycanroc")) {
             if (name.includes("midnight")) return "lycanroc-midnight";
             if (name.includes("dusk")) return "lycanroc-dusk";
             return "lycanroc";
         }
-
-        // 9. NECROZMA
         if (name.includes("necrozma")) {
             if (name.includes("dawn")) return "necrozma-dawnwings";
             if (name.includes("dusk") || name.includes("mane")) return "necrozma-duskmane";
             if (name.includes("ultra")) return "necrozma-ultra";
             return "necrozma";
         }
+        if (name.includes("palafin")) return name.includes("hero") ? "palafin-hero" : "palafin";
+        if (name.includes("primal")) return name.replace("primal", "").replace(/[^a-z0-9]/g, "") + "-primal";
+        if (name.includes("indeedee")) return (name.includes("-f") || name.includes("female")) ? "indeedee-f" : "indeedee";
+        
+        if (name.includes("galar")) return name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "") + "-galar";
+        if (name.includes("alola")) return name.replace("alolan", "").replace("alola", "").replace(/[^a-z0-9]/g, "") + "-alola";
+        if (name.includes("hisui")) return name.replace("hisuian", "").replace("hisui", "").replace(/[^a-z0-9]/g, "") + "-hisui";
 
-        // 10. PALAFIN
-        if (name.includes("palafin")) {
-            if (name.includes("hero")) return "palafin-hero";
-            return "palafin";
-        }
-
-        // 11. PRIMAL / INDEEDEE
-        if (name.includes("primal")) {
-            let base = name.replace("primal", "").replace(/[^a-z0-9]/g, "");
-            return base + "-primal";
-        }
-        if (name.includes("indeedee")) {
-            if (name.includes("-f") || name.includes("female")) return "indeedee-f";
-            return "indeedee";
-        }
-
-        // 12. REGIONAIS (Galar, Alola, Hisui)
-        if (name.includes("galar")) {
-            let base = name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "");
-            return base + "-galar";
-        }
-        if (name.includes("alola")) {
-            let base = name.replace("alolan", "").replace("alola", "").replace(/[^a-z0-9]/g, "");
-            return base + "-alola";
-        }
-        if (name.includes("hisui")) {
-            let base = name.replace("hisuian", "").replace("hisui", "").replace(/[^a-z0-9]/g, "");
-            return base + "-hisui";
-        }
-       if (name.includes("paldea")) {
-            let base = name.replace("paldeaian", "").replace("paldea", "").replace(/[^a-z0-9]/g, "");
-            return base + "-paldea";
-        }
-
-        // --- EXCEÇÕES GERAIS ---
+        // EXCEÇÕES (Paradoxos e outros com hífen obrigatório)
         const exceptions = {
-            "ho-oh": "ho-oh", "porygon-z": "porygon-z", "wo-chien": "wo-chien",
-            "chien-pao": "chien-pao", "ting-lu": "ting-lu", "chi-yu": "chi-yu",
-            "type: null": "typenull", "jangmo-o": "jangmo-o", "hakamo-o": "hakamo-o",
-            "kommo-o": "kommo-o", "urshifu-rapid-strike": "urshifu-rapid-strike",
-            "urshifu-single-strike": "urshifu", "calyrex-shadow": "calyrex-shadow",
-            "calyrex-ice": "calyrex-ice", "meowstic-f": "meowstic-f", "meowstic": "meowstic",
-            "basculegion-f": "basculegion-f", "basculegion": "basculegion",
-            "oinkologne-f": "oinkologne-f", "oinkologne": "oinkologne",
+            "ho-oh": "ho-oh", "porygon-z": "porygon-z", "wo-chien": "wo-chien", "chien-pao": "chien-pao", 
+            "ting-lu": "ting-lu", "chi-yu": "chi-yu", "type: null": "typenull", "jangmo-o": "jangmo-o", 
+            "hakamo-o": "hakamo-o", "kommo-o": "kommo-o", "urshifu-rapid-strike": "urshifu-rapid-strike", 
+            "urshifu-single-strike": "urshifu", "calyrex-shadow": "calyrex-shadow", "calyrex-ice": "calyrex-ice", 
+            "meowstic-f": "meowstic-f", "meowstic": "meowstic", "basculegion-f": "basculegion-f", 
+            "basculegion": "basculegion", "oinkologne-f": "oinkologne-f", "oinkologne": "oinkologne",
             "great-tusk": "great-tusk", "scream-tail": "scream-tail", "brute-bonnet": "brute-bonnet",
             "flutter-mane": "flutter-mane", "slither-wing": "slither-wing", "sandy-shocks": "sandy-shocks",
             "iron-treads": "iron-treads", "iron-bundle": "iron-bundle", "iron-hands": "iron-hands",
@@ -304,17 +240,17 @@
             "iron-valiant": "iron-valiant", "roaring-moon": "roaring-moon", "walking-wake": "walking-wake",
             "iron-leaves": "iron-leaves"
         };
-
         const checkName = name.replace(/ /g, "-").replace(/[^a-z0-9-]/g, "");
         if (exceptions[checkName]) return exceptions[checkName];
 
         return name.replace(/[^a-z0-9]/g, "");
     }
 
-    // --- VARIÁVEIS DE IMAGEM ---
-    // Usaremos as URLs do Showdown pois elas batem com nossa função de nomes
-    const IMG_ANI = "https://play.pokemonshowdown.com/sprites/ani/";
-    const IMG_STATIC = "https://play.pokemonshowdown.com/sprites/gen5/";
+    // --- DIRETÓRIOS DE IMAGENS DO SHOWDOWN ---
+    const BASE_ANI = "https://play.pokemonshowdown.com/sprites/ani/";
+    const BASE_ANI_SHINY = "https://play.pokemonshowdown.com/sprites/ani-shiny/";
+    const BASE_STATIC = "https://play.pokemonshowdown.com/sprites/gen5/";
+    const BASE_STATIC_SHINY = "https://play.pokemonshowdown.com/sprites/gen5-shiny/";
     const IMG_FALLBACK = "https://img.pokemondb.net/sprites/items/poke-ball.png";
 
     window.onload = function() {
@@ -349,22 +285,13 @@
     function extractMetadata(text) {
         const tierMatch = text.match(/^===\s+(.*?)\s+===/m);
         const authorMatch = text.match(/^\/\/\s+Author:\s+(.*)$/m);
-
         const infoArea = document.getElementById('teamInfoArea');
-        const displayTier = document.getElementById('displayTier');
-        const displayAuthor = document.getElementById('displayAuthor');
+        
+        if (tierMatch) document.getElementById('displayTier').innerText = tierMatch[1].trim();
+        else document.getElementById('displayTier').style.display = 'none';
 
-        if (tierMatch) {
-            displayTier.innerText = tierMatch[1].trim();
-        } else {
-            displayTier.style.display = 'none';
-        }
-
-        if (authorMatch) {
-            displayAuthor.innerText = authorMatch[1].trim();
-        } else {
-            displayAuthor.innerText = "Desconhecido";
-        }
+        if (authorMatch) document.getElementById('displayAuthor').innerText = authorMatch[1].trim();
+        else document.getElementById('displayAuthor').innerText = "Desconhecido";
 
         if(text.trim().length > 10) infoArea.style.display = 'block';
     }
@@ -378,7 +305,7 @@
             if(!block.trim() || block.trim().startsWith("===") || block.trim().startsWith("//")) return;
             
             const lines = block.split('\n');
-            const pokemon = { moves: [] };
+            const pokemon = { moves: [], shiny: false }; // Padrão shiny false
             
             const firstLine = lines[0].split('@');
             let namePart = firstLine[0].trim();
@@ -398,10 +325,12 @@
             for(let i=1; i<lines.length; i++) {
                 const l = lines[i].trim();
                 if (l.startsWith('//')) continue;
+                
                 if(l.startsWith('Ability:')) pokemon.ability = l.split(':')[1].trim();
                 else if(l.startsWith('EVs:')) pokemon.evs = l.split(':')[1].trim();
                 else if(l.startsWith('IVs:')) pokemon.ivs = l.split(':')[1].trim();
                 else if(l.includes('Nature')) pokemon.nature = l.split(' ')[0];
+                else if(l.startsWith('Shiny:')) pokemon.shiny = true; // Detecta Shiny
                 else if(l.startsWith('-')) pokemon.moves.push(l.substring(1).trim());
             }
             team.push(pokemon);
@@ -409,7 +338,6 @@
         return team;
     }
 
-    // --- RENDERIZAÇÃO ATUALIZADA (SEM FETCH) ---
     function renderCards(team) {
         const container = document.getElementById('cardsContainer');
         container.innerHTML = "";
@@ -420,19 +348,19 @@
         }
 
         for (const [index, pk] of team.entries()) {
-            // Usa a função inteligente para corrigir o nome
             const cleanName = toShowdownName(pk.name);
             
-            // Tentativa 1: Gif Animado
-            const srcAni = `${IMG_ANI}${cleanName}.gif`;
-            // Tentativa 2: Imagem Estática (Gen 5)
-            const srcStatic = `${IMG_STATIC}${cleanName}.png`;
+            // Define URLs com base no Shiny
+            const folderAni = pk.shiny ? BASE_ANI_SHINY : BASE_ANI;
+            const folderStatic = pk.shiny ? BASE_STATIC_SHINY : BASE_STATIC;
+
+            const srcAni = `${folderAni}${cleanName}.gif`;
+            const srcStatic = `${folderStatic}${cleanName}.png`;
 
             const card = document.createElement('div');
             card.className = 'poke-card';
             
-            // Note o uso de onerror para fazer o fallback:
-            // Tenta Animado -> Se falhar, tenta Estático -> Se falhar, Poke Bola
+            // O evento 'onerror' garante: Tenta GIF -> Falhou? Tenta PNG -> Falhou? Poke Bola
             card.innerHTML = `
                 <div class="card-header">
                     <span class="poke-name">${pk.display}</span>
@@ -441,6 +369,7 @@
                 <div class="visual-area">
                     <img src="${srcAni}" 
                          class="main-sprite"
+                         title="${pk.shiny ? 'Shiny' : 'Normal'}"
                          onerror="this.onerror=null; this.src='${srcStatic}'; this.onerror=function(){this.src='${IMG_FALLBACK}'};">
                     <div class="info-list">
                         <div><strong>Ability:</strong> ${pk.ability || '-'}</div>
@@ -462,6 +391,5 @@
         div.style.display = (div.style.display === 'block') ? 'none' : 'block';
     }
 </script>
-
 </body>
 </html>
