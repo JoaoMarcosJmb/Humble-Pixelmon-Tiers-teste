@@ -165,7 +165,7 @@
 <div id="rawText" class="raw-text-area"></div>
 
 <script>
-    // --- LÓGICA DE NOMES DO SHOWDOWN (Versão Final) ---
+    // --- LÓGICA DE NOMES DO SHOWDOWN ---
     function toShowdownName(rawName) {
         if (!rawName) return "pokeball";
         let name = rawName.toLowerCase();
@@ -175,11 +175,13 @@
         name = name.replace(/\(.*\)/g, "").trim();
 
         // REGRAS ESPECÍFICAS
+        // Megas
         if (name.includes("mega") && !name.includes("yanmega") && !name.includes("meganium")) {
             if (name.includes(" x") || name.includes("-x")) return name.replace("mega", "").replace(" x", "").replace("-x", "").replace(/[^a-z0-9]/g, "") + "-megax";
             if (name.includes(" y") || name.includes("-y")) return name.replace("mega", "").replace(" y", "").replace("-y", "").replace(/[^a-z0-9]/g, "") + "-megay";
             return name.replace("mega", "").replace(/[^a-z0-9]/g, "") + "-mega";
         }
+        // Formas
         if (name.includes("origin")) return name.replace("origin", "").replace("forme", "").replace(/[^a-z0-9]/g, "") + "-origin";
         if (name.includes("zacian")) return name.includes("crowned") ? "zacian-crowned" : "zacian";
         if (name.includes("zamazenta")) return name.includes("crowned") ? "zamazenta-crowned" : "zamazenta";
@@ -189,6 +191,7 @@
             if (name.includes("speed")) return "deoxys-speed";
             return "deoxys";
         }
+        // Tauros e Ogerpon
         if (name.includes("tauros")) {
             if (name.includes("aqua")) return "tauros-paldeaaqua";
             if (name.includes("blaze")) return "tauros-paldeablaze";
@@ -206,19 +209,27 @@
             if (name.includes("wellspring")) return "ogerpon-wellspring";
             return "ogerpon";
         }
-        // Novas regras de segurança para Paradoxos na pasta ANI (com hifen)
-        if (name.includes("iron bundle")) return "iron-bundle";
-        if (name.includes("great tusk")) return "great-tusk";
-        if (name.includes("scream tail")) return "scream-tail";
-        if (name.includes("flutter mane")) return "flutter-mane";
         
-        // REGIONAIS
+        // PARADOXOS: AQUI retornamos COM hífen para funcionar na animação (ANI)
+        // No renderCards nós tiramos o hífen para a Gen 5.
+        const paradoxList = [
+            "iron bundle", "great tusk", "scream tail", "flutter mane", "slither wing", 
+            "sandy shocks", "iron treads", "iron hands", "iron jugulis", "iron moth", 
+            "iron thorns", "iron valiant", "roaring moon", "walking wake", "iron leaves",
+            "gouging fire", "raging bolt", "iron boulder", "iron crown", "brute bonnet"
+        ];
+        // Verifica se o nome é um paradoxo e força o hífen
+        for (let p of paradoxList) {
+            if (name.includes(p)) return p.replace(" ", "-");
+        }
+
+        // Regionais
         if (name.includes("galar")) return name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "") + "-galar";
         if (name.includes("alola")) return name.replace("alolan", "").replace("alola", "").replace(/[^a-z0-9]/g, "") + "-alola";
         if (name.includes("hisui")) return name.replace("hisuian", "").replace("hisui", "").replace(/[^a-z0-9]/g, "") + "-hisui";
         if (name.includes("paldea")) return name.replace("paldean", "").replace("paldea", "").replace(/[^a-z0-9]/g, "") + "-paldea";
 
-        // EXCEÇÕES (Nomes com hífen obrigatório para GIF)
+        // Exceções Genéricas
         const exceptions = {
             "ho-oh": "ho-oh", "porygon-z": "porygon-z", "wo-chien": "wo-chien", "chien-pao": "chien-pao", 
             "ting-lu": "ting-lu", "chi-yu": "chi-yu", "type: null": "typenull", "jangmo-o": "jangmo-o", 
@@ -226,14 +237,7 @@
             "urshifu-single-strike": "urshifu", "calyrex-shadow": "calyrex-shadow", "calyrex-ice": "calyrex-ice", 
             "meowstic-f": "meowstic-f", "meowstic": "meowstic", "basculegion-f": "basculegion-f", 
             "basculegion": "basculegion", "oinkologne-f": "oinkologne-f", "oinkologne": "oinkologne",
-            "great-tusk": "great-tusk", "scream-tail": "scream-tail", "brute-bonnet": "brute-bonnet",
-            "flutter-mane": "flutter-mane", "slither-wing": "slither-wing", "sandy-shocks": "sandy-shocks",
-            "iron-treads": "iron-treads", "iron-bundle": "iron-bundle", "iron-hands": "iron-hands",
-            "iron-jugulis": "iron-jugulis", "iron-moth": "iron-moth", "iron-thorns": "iron-thorns",
-            "iron-valiant": "iron-valiant", "roaring-moon": "roaring-moon", "walking-wake": "walking-wake",
-            "iron-leaves": "iron-leaves", "iron-boulder": "iron-boulder", "gouging-fire": "gouging-fire",
-            "raging-bolt": "raging-bolt", "iron-crown": "iron-crown", "archaludon": "archaludon",
-            "hydrapple": "hydrapple"
+            "archaludon": "archaludon", "hydrapple": "hydrapple"
         };
         const checkName = name.replace(/ /g, "-").replace(/[^a-z0-9-]/g, "");
         if (exceptions[checkName]) return exceptions[checkName];
@@ -241,7 +245,7 @@
         return name.replace(/[^a-z0-9]/g, "");
     }
 
-    // --- DIRETÓRIOS DE IMAGENS ---
+    // --- DIRETÓRIOS ---
     const BASE_ANI = "https://play.pokemonshowdown.com/sprites/ani/";
     const BASE_ANI_SHINY = "https://play.pokemonshowdown.com/sprites/ani-shiny/";
     const BASE_GEN5 = "https://play.pokemonshowdown.com/sprites/gen5/";
@@ -275,11 +279,8 @@
         
         // --- CORREÇÃO DO LINK ---
         if(fullText && fullText !== "Erro ao ler código.") {
-             // Comprime DE NOVO para garantir um link novo e limpo
+             // Comprime apenas (sem encode extra) para gerar um link limpo
              const freshCode = LZString.compressToEncodedURIComponent(fullText.trim());
-             
-             // MUDANÇA CRÍTICA: NÃO usamos mais encodeURIComponent aqui.
-             // O freshCode já é seguro para URL. Usar encodeURIComponent de novo estava quebrando o link.
              document.getElementById('editBtn').href = `${builderFile}?import=${freshCode}`;
         } else {
              document.getElementById('editBtn').style.display = 'none';
@@ -295,13 +296,10 @@
         const tierMatch = text.match(/^===\s+(.*?)\s+===/m);
         const authorMatch = text.match(/^\/\/\s+Author:\s+(.*)$/m);
         const infoArea = document.getElementById('teamInfoArea');
-        
         if (tierMatch) document.getElementById('displayTier').innerText = tierMatch[1].trim();
         else document.getElementById('displayTier').style.display = 'none';
-
         if (authorMatch) document.getElementById('displayAuthor').innerText = authorMatch[1].trim();
         else document.getElementById('displayAuthor').innerText = "Desconhecido";
-
         if(text.trim().length > 10) infoArea.style.display = 'block';
     }
 
@@ -309,32 +307,22 @@
         if(!text) return [];
         const blocks = text.split(/\r?\n\r?\n/);
         const team = [];
-
         blocks.forEach(block => {
             if(!block.trim() || block.trim().startsWith("===") || block.trim().startsWith("//")) return;
-            
             const lines = block.split('\n');
             const pokemon = { moves: [], shiny: false }; 
-            
             const firstLine = lines[0].split('@');
             let namePart = firstLine[0].trim();
             namePart = namePart.replace(/\s?[\(\[][MF][\)\]]$/i, '').trim();
-            
             if(namePart.includes('(') && namePart.includes(')')) {
                 const match = namePart.match(/\(([^)]+)\)/);
-                if(match) pokemon.name = match[1]; 
-                else pokemon.name = namePart;
-            } else {
-                pokemon.name = namePart; 
-            }
+                if(match) pokemon.name = match[1]; else pokemon.name = namePart;
+            } else { pokemon.name = namePart; }
             pokemon.display = namePart;
-
             if(firstLine[1]) pokemon.item = firstLine[1].trim();
-
             for(let i=1; i<lines.length; i++) {
                 const l = lines[i].trim();
                 if (l.startsWith('//')) continue;
-                
                 if(l.startsWith('Ability:')) pokemon.ability = l.split(':')[1].trim();
                 else if(l.startsWith('EVs:')) pokemon.evs = l.split(':')[1].trim();
                 else if(l.startsWith('IVs:')) pokemon.ivs = l.split(':')[1].trim();
@@ -359,24 +347,35 @@
         for (const [index, pk] of team.entries()) {
             const cleanName = toShowdownName(pk.name);
             
-            // Define Pastas de Imagem
+            // --- CORREÇÃO DE NOMES GEN 5 PARA PARADOXOS ---
+            // A pasta 'ani' (animada) usa hífen: iron-bundle.gif (cleanName está certo)
+            // A pasta 'gen5' (estática) NÃO usa hífen: ironbundle.png (Link que você me mostrou)
+            // Então criamos um nome exclusivo para gen5 removendo os traços se for paradoxo.
+            let gen5Name = cleanName;
+            if(cleanName.startsWith("iron-") || cleanName.startsWith("great-") || cleanName.startsWith("scream-") || 
+               cleanName.startsWith("brute-") || cleanName.startsWith("flutter-") || cleanName.startsWith("slither-") || 
+               cleanName.startsWith("sandy-") || cleanName.startsWith("roaring-") || cleanName.startsWith("walking-") || 
+               cleanName.startsWith("gouging-") || cleanName.startsWith("raging-")) {
+                gen5Name = cleanName.replace(/-/g, "");
+            }
+
+            // Define Pastas
             const folderAni = pk.shiny ? BASE_ANI_SHINY : BASE_ANI;
             const folderGen5 = pk.shiny ? BASE_GEN5_SHINY : BASE_GEN5;
             const folderDex = pk.shiny ? BASE_DEX_SHINY : BASE_DEX;
 
-            const srcAni = `${folderAni}${cleanName}.gif`;
-            const srcGen5 = `${folderGen5}${cleanName}.png`;
-            const srcDex = `${folderDex}${cleanName}.png`;
+            // Links Finais
+            const srcAni = `${folderAni}${cleanName}.gif`;   // iron-bundle.gif
+            const srcGen5 = `${folderGen5}${gen5Name}.png`;  // ironbundle.png
+            const srcDex = `${folderDex}${cleanName}.png`;   // iron-bundle.png (Dex costuma aceitar hífen)
 
             const card = document.createElement('div');
             card.className = 'poke-card';
             
-            // --- O SEGREDO DO FALLBACK TRIPLO ---
-            // 1. Tenta srcAni (GIF)
-            // 2. Erro? Tenta srcGen5 (Estático bonito)
-            // 3. Erro? Tenta srcDex (Estático seguro - funciona pra Iron Bundle)
-            // 4. Erro? Pokébola.
-            
+            // FALLBACK TRIPLO:
+            // 1. Tenta GIF (ani)
+            // 2. Falhou? Tenta Estático (gen5) com nome corrigido
+            // 3. Falhou? Tenta Dex (segurança)
             card.innerHTML = `
                 <div class="card-header">
                     <span class="poke-name">${pk.display}</span>
