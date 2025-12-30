@@ -281,10 +281,13 @@
         if (name.includes("hisui")) return name.replace("hisuian", "").replace("hisui", "").replace(/[^a-z0-9]/g, "") + "-hisui";
         if (name.includes("paldea")) return name.replace("paldean", "").replace("paldea", "").replace(/[^a-z0-9]/g, "") + "-paldea";
 
-        // EXCEÇÕES ABSOLUTAS
+        // EXCEÇÕES ABSOLUTAS (Hífen em TUDO)
         const absoluteExceptions = {
             "ho-oh": "ho-oh", "porygon-z": "porygon-z", 
-            "type: null": "typenull", "jangmo-o": "jangmo-o", "hakamo-o": "hakamo-o", "kommo-o": "kommo-o", 
+            "type: null": "typenull", 
+            // Estes aqui precisam do hífen no toShowdownName para o GIF funcionar.
+            // A gente tira o hífen no renderCards para o Gen 5 funcionar.
+            "jangmo-o": "jangmo-o", "hakamo-o": "hakamo-o", "kommo-o": "kommo-o", 
             "calyrex-shadow": "calyrex-shadow", "calyrex-ice": "calyrex-ice", 
             "meowstic-f": "meowstic-f", "meowstic": "meowstic", 
             "basculegion-f": "basculegion-f", "basculegion": "basculegion", 
@@ -403,17 +406,18 @@
             let gen5Name = cleanName;
 
             // REGRA ESPECIAL URSHIFU RAPID STRIKE
-            // Link: urshifu-rapidstrike.png
             if (cleanName === "urshifu-rapid-strike") {
                 gen5Name = "urshifu-rapidstrike";
             } 
-            // OUTRAS EXCEÇÕES QUE REMOVEM TUDO (Paradoxos, Tapus, etc)
+            // OUTRAS EXCEÇÕES QUE REMOVEM TUDO (Paradoxos, Tapus, Kommo-o)
             else {
                 const needsDehyphen = [
                     "iron-", "great-", "scream-", "brute-", "flutter-", "slither-", "sandy-", 
                     "roaring-", "walking-", "gouging-", "raging-", 
                     "wo-chien", "chien-pao", "ting-lu", "chi-yu",
-                    "tapu-", "enamorus-therian"
+                    "tapu-", "enamorus-therian",
+                    // ADICIONADOS AGORA:
+                    "kommo-o", "jangmo-o", "hakamo-o"
                 ];
 
                 for (let prefix of needsDehyphen) {
