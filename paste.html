@@ -165,7 +165,7 @@
 <div id="rawText" class="raw-text-area"></div>
 
 <script>
-    // --- LÓGICA DE NOMES DO SHOWDOWN (Ultimate) ---
+    // --- LÓGICA DE NOMES DO SHOWDOWN (Ultimate v3) ---
     function toShowdownName(rawName) {
         if (!rawName) return "pokeball";
         let name = rawName.toLowerCase();
@@ -221,11 +221,13 @@
         if (name.includes("primal")) return name.replace("primal", "").replace(/[^a-z0-9]/g, "") + "-primal";
         if (name.includes("indeedee")) return (name.includes("-f") || name.includes("female")) ? "indeedee-f" : "indeedee";
         
+        // REGIONAIS
         if (name.includes("galar")) return name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "") + "-galar";
         if (name.includes("alola")) return name.replace("alolan", "").replace("alola", "").replace(/[^a-z0-9]/g, "") + "-alola";
         if (name.includes("hisui")) return name.replace("hisuian", "").replace("hisui", "").replace(/[^a-z0-9]/g, "") + "-hisui";
+        if (name.includes("paldea")) return name.replace("paldean", "").replace("paldea", "").replace(/[^a-z0-9]/g, "") + "-paldea";
 
-        // EXCEÇÕES (Paradoxos e outros com hífen obrigatório)
+        // EXCEÇÕES (Nomes com hífen obrigatório)
         const exceptions = {
             "ho-oh": "ho-oh", "porygon-z": "porygon-z", "wo-chien": "wo-chien", "chien-pao": "chien-pao", 
             "ting-lu": "ting-lu", "chi-yu": "chi-yu", "type: null": "typenull", "jangmo-o": "jangmo-o", 
@@ -238,7 +240,8 @@
             "iron-treads": "iron-treads", "iron-bundle": "iron-bundle", "iron-hands": "iron-hands",
             "iron-jugulis": "iron-jugulis", "iron-moth": "iron-moth", "iron-thorns": "iron-thorns",
             "iron-valiant": "iron-valiant", "roaring-moon": "roaring-moon", "walking-wake": "walking-wake",
-            "iron-leaves": "iron-leaves"
+            "iron-leaves": "iron-leaves", "iron-boulder": "iron-boulder", "gouging-fire": "gouging-fire",
+            "raging-bolt": "raging-bolt", "iron-crown": "iron-crown"
         };
         const checkName = name.replace(/ /g, "-").replace(/[^a-z0-9-]/g, "");
         if (exceptions[checkName]) return exceptions[checkName];
@@ -246,14 +249,15 @@
         return name.replace(/[^a-z0-9]/g, "");
     }
 
-    // --- DIRETÓRIOS DE IMAGENS DO SHOWDOWN ---
+    // --- DIRETÓRIOS DE IMAGENS ---
+    // MUDANÇA: Voltamos o fallback para GEN5 conforme seu pedido
     const BASE_ANI = "https://play.pokemonshowdown.com/sprites/ani/";
     const BASE_ANI_SHINY = "https://play.pokemonshowdown.com/sprites/ani-shiny/";
     const BASE_STATIC = "https://play.pokemonshowdown.com/sprites/gen5/";
     const BASE_STATIC_SHINY = "https://play.pokemonshowdown.com/sprites/gen5-shiny/";
     const IMG_FALLBACK = "https://img.pokemondb.net/sprites/items/poke-ball.png";
 
-   window.onload = function() {
+    window.onload = function() {
         const params = new URLSearchParams(window.location.search);
         const code = params.get('import');
 
@@ -266,9 +270,7 @@
 
         let fullText = "";
         try {
-            // Tenta descomprimir
             fullText = LZString.decompressFromEncodedURIComponent(code);
-            // Fallback para base64 antigo se falhar
             if(!fullText) fullText = decodeURIComponent(escape(atob(code))); 
         } catch(e) {
             fullText = "Erro ao ler código.";
@@ -278,14 +280,15 @@
 
         const builderFile = "builder.html"; 
         
-        // --- CORREÇÃO DEFINITIVA (RE-COMPRESSÃO) ---
-        // Se o texto foi lido com sucesso, geramos um NOVO código limpo para o botão.
-        // Isso elimina qualquer caractere corrompido que veio na URL antiga.
+        // --- CORREÇÃO DEFINITIVA DO LINK ---
         if(fullText && fullText !== "Erro ao ler código.") {
-             const freshCode = LZString.compressToEncodedURIComponent(fullText);
-             document.getElementById('editBtn').href = `${builderFile}?import=${freshCode}`;
+             // 1. Limpa espaços extras
+             const trimmedText = fullText.trim();
+             // 2. Comprime
+             const freshCode = LZString.compressToEncodedURIComponent(trimmedText);
+             // 3. ENCODA O URI (Isso evita o bug do Link Inválido)
+             document.getElementById('editBtn').href = `${builderFile}?import=${encodeURIComponent(freshCode)}`;
         } else {
-             // Se deu erro ao ler, esconde o botão de editar para não levar erro pro builder
              document.getElementById('editBtn').style.display = 'none';
         }
         
@@ -318,7 +321,7 @@
             if(!block.trim() || block.trim().startsWith("===") || block.trim().startsWith("//")) return;
             
             const lines = block.split('\n');
-            const pokemon = { moves: [], shiny: false }; // Padrão shiny false
+            const pokemon = { moves: [], shiny: false }; 
             
             const firstLine = lines[0].split('@');
             let namePart = firstLine[0].trim();
@@ -343,7 +346,7 @@
                 else if(l.startsWith('EVs:')) pokemon.evs = l.split(':')[1].trim();
                 else if(l.startsWith('IVs:')) pokemon.ivs = l.split(':')[1].trim();
                 else if(l.includes('Nature')) pokemon.nature = l.split(' ')[0];
-                else if(l.startsWith('Shiny:')) pokemon.shiny = true; // Detecta Shiny
+                else if(l.startsWith('Shiny:')) pokemon.shiny = true;
                 else if(l.startsWith('-')) pokemon.moves.push(l.substring(1).trim());
             }
             team.push(pokemon);
@@ -363,7 +366,7 @@
         for (const [index, pk] of team.entries()) {
             const cleanName = toShowdownName(pk.name);
             
-            // Define URLs com base no Shiny
+            // Define URLs: 1. Animado, 2. Estático (Gen 5)
             const folderAni = pk.shiny ? BASE_ANI_SHINY : BASE_ANI;
             const folderStatic = pk.shiny ? BASE_STATIC_SHINY : BASE_STATIC;
 
@@ -373,7 +376,10 @@
             const card = document.createElement('div');
             card.className = 'poke-card';
             
-            // O evento 'onerror' garante: Tenta GIF -> Falhou? Tenta PNG -> Falhou? Poke Bola
+            // LÓGICA DE IMAGEM: 
+            // 1. Tenta GIF Animado
+            // 2. Se erro, tenta Gen 5 (Static)
+            // 3. Se erro, Pokébola
             card.innerHTML = `
                 <div class="card-header">
                     <span class="poke-name">${pk.display}</span>
