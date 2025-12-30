@@ -469,14 +469,36 @@ function toShowdownName(rawName) {
         return base + "-mega";
     }
 
-    // 2. FORMAS ORIGIN (NOVA REGRA: Dialga, Palkia, Giratina)
+    // 2. FORMAS ORIGIN
     if (name.includes("origin")) {
-        // Remove "origin", "forme" e limpa a string para pegar o nome do pokémon
         let base = name.replace("origin", "").replace("forme", "").replace(/[^a-z0-9]/g, "");
         return base + "-origin";
     }
 
-    // 3. ZACIAN E ZAMAZENTA (Crowned)
+    // 3. FORMAS INCARNATE (NOVO: Landorus, Thundurus, etc)
+    // Se for Incarnate, removemos o sufixo pois o sprite base é apenas o nome (ex: landorus.png)
+    if (name.includes("incarnate")) {
+        let base = name.replace("incarnate", "").replace("forme", "").replace(/[^a-z0-9]/g, "");
+        return base;
+    }
+
+    // 4. URSALUNA (NOVO: Bloodmoon)
+    if (name.includes("ursaluna")) {
+        if (name.includes("bloodmoon") || name.includes("blood")) return "ursaluna-bloodmoon";
+        return "ursaluna";
+    }
+
+    // 5. ROTOM (NOVO: Todas as formas)
+    if (name.includes("rotom")) {
+        if (name.includes("wash")) return "rotom-wash";
+        if (name.includes("heat")) return "rotom-heat";
+        if (name.includes("frost")) return "rotom-frost";
+        if (name.includes("fan")) return "rotom-fan";
+        if (name.includes("mow")) return "rotom-mow";
+        return "rotom";
+    }
+
+    // 6. ZACIAN E ZAMAZENTA (Crowned)
     if (name.includes("zacian")) {
         if (name.includes("crowned")) return "zacian-crowned";
         return "zacian";
@@ -486,7 +508,7 @@ function toShowdownName(rawName) {
         return "zamazenta";
     }
 
-    // 4. DEOXYS (Attack, Defense, Speed)
+    // 7. DEOXYS
     if (name.includes("deoxys")) {
         if (name.includes("attack")) return "deoxys-attack";
         if (name.includes("defense")) return "deoxys-defense";
@@ -494,7 +516,7 @@ function toShowdownName(rawName) {
         return "deoxys";
     }
 
-    // 5. TAUROS (Paldea)
+    // 8. TAUROS (Paldea)
     if (name.includes("tauros")) {
         if (name.includes("aqua")) return "tauros-paldeaaqua";
         if (name.includes("blaze")) return "tauros-paldeablaze";
@@ -502,29 +524,30 @@ function toShowdownName(rawName) {
         return "tauros";
     }
 
-    // 6. KYUREM
+    // 9. KYUREM
     if (name.includes("kyurem")) {
         if (name.includes("black")) return "kyurem-black";
         if (name.includes("white")) return "kyurem-white";
         return "kyurem";
     }
 
-    // 7. OGERPON
+    // 10. OGERPON
     if (name.includes("ogerpon")) {
         if (name.includes("cornerstone")) return "ogerpon-cornerstone";
         if (name.includes("hearthflame")) return "ogerpon-hearthflame";
         if (name.includes("wellspring")) return "ogerpon-wellspring";
+        if (name.includes("teal")) return "ogerpon"; // Base
         return "ogerpon";
     }
 
-    // 8. LYCANROC
+    // 11. LYCANROC
     if (name.includes("lycanroc")) {
         if (name.includes("midnight")) return "lycanroc-midnight";
         if (name.includes("dusk")) return "lycanroc-dusk";
         return "lycanroc";
     }
 
-    // 9. NECROZMA
+    // 12. NECROZMA
     if (name.includes("necrozma")) {
         if (name.includes("dawn")) return "necrozma-dawnwings";
         if (name.includes("dusk") || name.includes("mane")) return "necrozma-duskmane";
@@ -532,13 +555,11 @@ function toShowdownName(rawName) {
         return "necrozma";
     }
 
-    // 10. PALAFIN
+    // 13. PALAFIN / PRIMAL / INDEEDEE
     if (name.includes("palafin")) {
         if (name.includes("hero")) return "palafin-hero";
         return "palafin";
     }
-
-    // 11. PRIMAL / INDEEDEE
     if (name.includes("primal")) {
         let base = name.replace("primal", "").replace(/[^a-z0-9]/g, "");
         return base + "-primal";
@@ -548,7 +569,7 @@ function toShowdownName(rawName) {
         return "indeedee";
     }
 
-    // 12. FORMAS REGIONAIS (Galar, Alola, Hisui)
+    // 14. FORMAS REGIONAIS (Galar, Alola, Hisui)
     if (name.includes("galar")) {
         let base = name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "");
         return base + "-galar";
@@ -558,6 +579,8 @@ function toShowdownName(rawName) {
         return base + "-alola";
     }
     if (name.includes("hisui")) {
+        // Correção para não quebrar Ursaluna caso passe por aqui
+        if (name.includes("ursaluna")) return "ursaluna";
         let base = name.replace("hisuian", "").replace("hisui", "").replace(/[^a-z0-9]/g, "");
         return base + "-hisui";
     }
@@ -594,7 +617,8 @@ function toShowdownName(rawName) {
         "iron-treads": "iron-treads", "iron-bundle": "iron-bundle", "iron-hands": "iron-hands",
         "iron-jugulis": "iron-jugulis", "iron-moth": "iron-moth", "iron-thorns": "iron-thorns",
         "iron-valiant": "iron-valiant", "roaring-moon": "roaring-moon", "walking-wake": "walking-wake",
-        "iron-leaves": "iron-leaves"
+        "iron-leaves": "iron-leaves", "gouging-fire": "gouging-fire", "raging-bolt": "raging-bolt",
+        "iron-boulder": "iron-boulder", "iron-crown": "iron-crown", "hydra-apple": "hydrapple", "archaludon": "archaludon"
     };
 
     const checkName = name.replace(/ /g, "-").replace(/[^a-z0-9-]/g, "");
