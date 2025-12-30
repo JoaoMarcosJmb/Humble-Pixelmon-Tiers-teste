@@ -152,13 +152,54 @@
         background: linear-gradient(160deg, #1a1a1a 0%, #252215 100%);
     }
 
-    .verified-badge {
-        display: inline-flex; align-items: center; gap: 5px;
-        background: var(--cor-dourado); color: #000;
-        font-size: 0.75rem; font-weight: bold;
-        padding: 2px 8px; border-radius: 4px;
-        margin-left: 10px; text-transform: uppercase;
+    /* CORREÇÃO DE ALINHAMENTO DO CABEÇALHO */
+    .card-header {
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        margin-bottom: 15px;
+        height: 40px; /* Altura fixa para alinhar todos os cards */
     }
+
+    /* Container do Título + Badge */
+    .card-header > div:first-child {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center;
+        gap: 8px; 
+        overflow: hidden;
+        width: 70%; /* Garante espaço para o título */
+    }
+
+    .card-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #fff;
+        margin: 0;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    /* Badge mais discreto e alinhado */
+    .verified-badge {
+        display: inline-flex;
+        align-items: center;
+        background: var(--cor-dourado);
+        color: #000;
+        font-size: 0.65rem;
+        font-weight: 800;
+        padding: 2px 6px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        white-space: nowrap;
+        height: fit-content;
+        flex-shrink: 0; /* Impede o badge de amassar */
+    }
+    
+    .card-header-right { display: flex; align-items: center; gap: 8px; }
+    .card-tier { background: #252525; color: var(--cor-dourado); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: 1px solid #444; font-weight: bold; }
 
     /* Botões de Ação do ADM */
     .adm-controls {
@@ -172,12 +213,6 @@
     .btn-verify-action { color: var(--cor-verde); border-color: var(--cor-verde); }
     .btn-delete-adm { color: #ff5555; border-color: #ff5555; }
 
-    .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-    .card-title { font-size: 1.4rem; font-weight: bold; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-    
-    .card-header-right { display: flex; align-items: center; gap: 8px; }
-    .card-tier { background: #252525; color: var(--cor-dourado); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: 1px solid #444; font-weight: bold; }
-
     /* BOTÃO DE APAGAR */
     .btn-delete-team {
         background: transparent; border: none; color: #666; font-size: 1.1rem; 
@@ -185,11 +220,18 @@
     }
     .btn-delete-team:hover { color: #ff4d4d; transform: scale(1.1); }
 
-    .card-icons { 
-        display: flex; gap: 5px; margin-bottom: 20px; background: rgba(0,0,0,0.4); 
-        padding: 15px; border-radius: 8px; justify-content: center; 
+    /* Área dos ícones com altura fixa para não quebrar o grid */
+    .card-icons {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 15px;
+        background: rgba(0,0,0,0.4);
+        padding: 10px;
+        border-radius: 8px;
+        justify-content: center;
+        align-items: center;
+        height: 90px;      /* Altura fixa */
         min-height: 90px;
-        align-items: flex-end;
     }
     .card-icons img { 
         width: auto; height: auto; max-height: 50px; 
@@ -364,8 +406,8 @@
 
   // --- CONFIGURAÇÃO DE ADM (COLOQUE SEU UID ABAIXO) ---
   const ADMIN_UIDS = [
-      "Ppw77W1g3OetQQXSqoYGs4Dzws33", 
-      "4C70bGJFCrWRvcVTpgrbMsoxfWq2"
+      "SEU_UID_AQUI", 
+      "OUTRO_UID_SE_PRECISAR"
   ];
 
   function checkIsAdmin() {
@@ -496,21 +538,15 @@
 
 function toShowdownName(rawName) {
     if (!rawName) return "pokeball";
-    
-    // Normaliza para minúsculo
     let name = rawName.toLowerCase();
-
-    // Limpeza inicial (remove itens, gênero e parenteses)
     if (name.includes("@")) name = name.split("@")[0];
     name = name.replace(/\(.*\)/g, "").trim();
 
     // --- REGRAS ESPECÍFICAS ---
-
     if (name.includes("basculegion")) {
         if (name.includes("female") || name.includes("-f")) return "basculegion-f";
         return "basculegion";
     }
-
     if (name.includes("mega") && !name.includes("yanmega") && !name.includes("meganium")) {
         if (name.includes(" x") || name.includes("-x")) {
             let base = name.replace("mega", "").replace(" x", "").replace("-x", "").replace(/[^a-z0-9]/g, "");
@@ -523,27 +559,22 @@ function toShowdownName(rawName) {
         let base = name.replace("mega", "").replace(/[^a-z0-9]/g, "");
         return base + "-mega";
     }
-
     if (name.includes("origin")) {
         let base = name.replace("origin", "").replace("forme", "").replace(/[^a-z0-9]/g, "");
         return base + "-origin";
     }
-
     if (name.includes("therian")) {
         let base = name.replace("therian", "").replace("forme", "").replace(/[^a-z0-9]/g, "");
         return base + "-therian";
     }
-
     if (name.includes("incarnate")) {
         let base = name.replace("incarnate", "").replace("forme", "").replace(/[^a-z0-9]/g, "");
         return base;
     }
-
     if (name.includes("ursaluna")) {
         if (name.includes("bloodmoon") || name.includes("blood")) return "ursaluna-bloodmoon";
         return "ursaluna";
     }
-
     if (name.includes("rotom")) {
         if (name.includes("wash")) return "rotom-wash";
         if (name.includes("heat")) return "rotom-heat";
@@ -552,28 +583,24 @@ function toShowdownName(rawName) {
         if (name.includes("mow")) return "rotom-mow";
         return "rotom";
     }
-
     if (name.includes("zacian")) {
         return name.includes("crowned") ? "zacian-crowned" : "zacian";
     }
     if (name.includes("zamazenta")) {
         return name.includes("crowned") ? "zamazenta-crowned" : "zamazenta";
     }
-
     if (name.includes("deoxys")) {
         if (name.includes("attack")) return "deoxys-attack";
         if (name.includes("defense")) return "deoxys-defense";
         if (name.includes("speed")) return "deoxys-speed";
         return "deoxys";
     }
-
     if (name.includes("tauros")) {
         if (name.includes("aqua")) return "tauros-paldeaaqua";
         if (name.includes("blaze")) return "tauros-paldeablaze";
         if (name.includes("combat") || name.includes("paldea")) return "tauros-paldeacombat";
         return "tauros";
     }
-
     if (name.includes("kyurem")) {
         if (name.includes("black")) return "kyurem-black";
         if (name.includes("white")) return "kyurem-white";
@@ -596,11 +623,9 @@ function toShowdownName(rawName) {
         if (name.includes("ultra")) return "necrozma-ultra";
         return "necrozma";
     }
-
     if (name.includes("palafin")) return name.includes("hero") ? "palafin-hero" : "palafin";
     if (name.includes("primal")) return name.replace("primal", "").replace(/[^a-z0-9]/g, "") + "-primal";
     if (name.includes("indeedee") && (name.includes("-f") || name.includes("female"))) return "indeedee-f";
-
     if (name.includes("galar")) return name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "") + "-galar";
     if (name.includes("alola")) return name.replace("alolan", "").replace("alola", "").replace(/[^a-z0-9]/g, "") + "-alola";
     if (name.includes("paldea")) return name.replace("paldeaian", "").replace("paldea", "").replace(/[^a-z0-9]/g, "") + "-paldea";
@@ -637,7 +662,7 @@ function toShowdownName(rawName) {
     return name.replace(/[^a-z0-9]/g, "");
 }
 
-  // --- CRIAÇÃO DE CARDS (ATUALIZADO COM ADM) ---
+  // --- CRIAÇÃO DE CARDS (ATUALIZADO COM ADM E ALINHAMENTO) ---
   function createCard(data) {
       const encoded = LZString.compressToEncodedURIComponent(data.teamData);
       const pasteLink = `paste.html?import=${encoded}`;
@@ -664,7 +689,7 @@ function toShowdownName(rawName) {
       if (isAdmin) {
           const isVerified = data.verified === true;
           const verifyText = isVerified ? "Desverificar" : "Verificar ✅";
-          admControls = `<button class="btn-adm btn-verify-action" onclick="window.toggleVerifyTeam('${data.id}', ${!isVerified})">${verifyText}</button>`;
+          admControls = `<button class="btn-adm btn-verify-action" onclick="window.toggleVerifyTeam('${data.id}')">${verifyText}</button>`;
       }
 
       // Visual de Verificado
@@ -691,10 +716,11 @@ function toShowdownName(rawName) {
       const card = document.createElement('div'); 
       card.className = `feed-card ${verifiedClass}`; // Adiciona classe CSS
       
+      // ESTRUTURA CORRIGIDA PARA ALINHAMENTO DO TITULO/BADGE
       card.innerHTML = `
           <div class="card-header">
-              <div style="display:flex; flex-direction:column; max-width: 65%;">
-                  <h3 class="card-title" style="max-width:100%">${data.title}</h3>
+              <div>
+                  <h3 class="card-title" title="${data.title}">${data.title}</h3>
                   ${verifiedBadge} 
               </div>
               <div class="card-header-right">
@@ -729,21 +755,31 @@ function toShowdownName(rawName) {
       try { await remove(ref(db, `teams/${teamId}`)); alert("Time apagado."); loadFeed(); } catch(e) { alert("Erro: "+e.message); }
   }
 
-  // --- FUNÇÃO DE ADM: VERIFICAR TIME ---
-  window.toggleVerifyTeam = async function(teamId, status) {
+  // --- FUNÇÃO DE ADM: VERIFICAR TIME (CORRIGIDA) ---
+  window.toggleVerifyTeam = async function(teamId) {
       if(!checkIsAdmin()) return alert("Sem permissão.");
-      if(!confirm(status ? "Marcar time como VERIFICADO?" : "Remover verificação?")) return;
+      
+      // 1. Acha o time na memória local
+      const team = allTeamsData.find(t => t.id === teamId);
+      if (!team) return;
+
+      // 2. Descobre o status atual e inverte
+      const currentStatus = team.verified === true;
+      const newStatus = !currentStatus;
+
+      // 3. Pergunta antes de agir
+      if(!confirm(newStatus ? "Marcar como VERIFICADO?" : "Remover verificação?")) return;
 
       try {
-          // Atualiza apenas o campo 'verified' no Firebase
+          // Salva no Banco
           const teamRef = ref(db, `teams/${teamId}/verified`);
-          await set(teamRef, status);
+          await set(teamRef, newStatus);
           
-          // Atualiza localmente para não precisar recarregar tudo
-          const team = allTeamsData.find(t => t.id === teamId);
-          if(team) team.verified = status;
+          // Atualiza Localmente
+          team.verified = newStatus;
           
-          window.applyFilters(); // Re-renderiza para mudar a ordem/cor
+          // Atualiza a tela e a reordenação
+          window.applyFilters(); 
       } catch(e) {
           alert("Erro: " + e.message);
       }
