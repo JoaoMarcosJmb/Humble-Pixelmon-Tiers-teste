@@ -471,13 +471,25 @@ function toShowdownName(rawName) {
         return base + "-mega";
     }
 
-    // 2. PRIMAL (Kyogre/Groudon)
-    if (name.includes("primal")) {
-        let base = name.replace("primal", "").replace(/[^a-z0-9]/g, "");
-        return base + "-primal";
+    // 2. ZACIAN E ZAMAZENTA (NOVA REGRA: Crowned vs Hero)
+    if (name.includes("zacian")) {
+        if (name.includes("crowned")) return "zacian-crowned";
+        return "zacian"; // Hero of Many Battles (base)
+    }
+    if (name.includes("zamazenta")) {
+        if (name.includes("crowned")) return "zamazenta-crowned";
+        return "zamazenta"; // Hero of Many Battles (base)
     }
 
-    // 3. TAUROS (Paldea)
+    // 3. DEOXYS (NOVA REGRA: Formas)
+    if (name.includes("deoxys")) {
+        if (name.includes("attack")) return "deoxys-attack";
+        if (name.includes("defense")) return "deoxys-defense";
+        if (name.includes("speed")) return "deoxys-speed";
+        return "deoxys"; // Normal
+    }
+
+    // 4. TAUROS (Paldea)
     if (name.includes("tauros")) {
         if (name.includes("aqua")) return "tauros-paldeaaqua";
         if (name.includes("blaze")) return "tauros-paldeablaze";
@@ -485,14 +497,14 @@ function toShowdownName(rawName) {
         return "tauros";
     }
 
-    // 4. KYUREM (Black/White)
+    // 5. KYUREM
     if (name.includes("kyurem")) {
         if (name.includes("black")) return "kyurem-black";
         if (name.includes("white")) return "kyurem-white";
         return "kyurem";
     }
 
-    // 5. OGERPON (Máscaras)
+    // 6. OGERPON
     if (name.includes("ogerpon")) {
         if (name.includes("cornerstone")) return "ogerpon-cornerstone";
         if (name.includes("hearthflame")) return "ogerpon-hearthflame";
@@ -500,35 +512,38 @@ function toShowdownName(rawName) {
         return "ogerpon";
     }
 
-    // 6. LYCANROC (NOVA REGRA)
+    // 7. LYCANROC
     if (name.includes("lycanroc")) {
         if (name.includes("midnight")) return "lycanroc-midnight";
-        if (name.includes("dusk")) return "lycanroc-dusk"; // O link que você pediu
-        return "lycanroc"; // Midday (Dia) é o padrão
+        if (name.includes("dusk")) return "lycanroc-dusk";
+        return "lycanroc";
     }
 
-    // 7. NECROZMA (NOVA REGRA)
+    // 8. NECROZMA
     if (name.includes("necrozma")) {
-        if (name.includes("dawn")) return "necrozma-dawnwings"; // O link que você pediu
+        if (name.includes("dawn")) return "necrozma-dawnwings";
         if (name.includes("dusk") || name.includes("mane")) return "necrozma-duskmane";
         if (name.includes("ultra")) return "necrozma-ultra";
-        return "necrozma"; // Normal
+        return "necrozma";
     }
 
-    // 8. PALAFIN (NOVA REGRA)
+    // 9. PALAFIN
     if (name.includes("palafin")) {
         if (name.includes("hero")) return "palafin-hero";
-        // Palafin Zero usa o sprite base "palafin.png"
         return "palafin";
     }
 
-    // 9. INDEEDEE / GENERO
+    // 10. PRIMAL / INDEEDEE / GENERO
+    if (name.includes("primal")) {
+        let base = name.replace("primal", "").replace(/[^a-z0-9]/g, "");
+        return base + "-primal";
+    }
     if (name.includes("indeedee")) {
         if (name.includes("-f") || name.includes("female")) return "indeedee-f";
         return "indeedee";
     }
 
-    // 10. FORMAS REGIONAIS (Galar, Alola, Hisui)
+    // 11. FORMAS REGIONAIS (Galar, Alola, Hisui)
     if (name.includes("galar")) {
         let base = name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "");
         return base + "-galar";
@@ -564,22 +579,12 @@ function toShowdownName(rawName) {
         "basculegion": "basculegion",
         "oinkologne-f": "oinkologne-f",
         "oinkologne": "oinkologne",
-        // Paradoxos que o Showdown exige traço (exceções comuns)
-        "great-tusk": "great-tusk",
-        "scream-tail": "scream-tail",
-        "brute-bonnet": "brute-bonnet",
-        "flutter-mane": "flutter-mane",
-        "slither-wing": "slither-wing",
-        "sandy-shocks": "sandy-shocks",
-        "iron-treads": "iron-treads",
-        "iron-bundle": "iron-bundle",
-        "iron-hands": "iron-hands",
-        "iron-jugulis": "iron-jugulis",
-        "iron-moth": "iron-moth",
-        "iron-thorns": "iron-thorns",
-        "iron-valiant": "iron-valiant",
-        "roaring-moon": "roaring-moon",
-        "walking-wake": "walking-wake",
+        // Paradoxos
+        "great-tusk": "great-tusk", "scream-tail": "scream-tail", "brute-bonnet": "brute-bonnet",
+        "flutter-mane": "flutter-mane", "slither-wing": "slither-wing", "sandy-shocks": "sandy-shocks",
+        "iron-treads": "iron-treads", "iron-bundle": "iron-bundle", "iron-hands": "iron-hands",
+        "iron-jugulis": "iron-jugulis", "iron-moth": "iron-moth", "iron-thorns": "iron-thorns",
+        "iron-valiant": "iron-valiant", "roaring-moon": "roaring-moon", "walking-wake": "walking-wake",
         "iron-leaves": "iron-leaves"
     };
 
