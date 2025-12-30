@@ -130,10 +130,9 @@
     .filter-input:focus { border-color: var(--cor-dourado); outline: none; }
 
     /* --- FEED GRID --- */
-.feed-container {
-        max-width: 1400px; /* Aumentei a largura máxima total */
+    .feed-container {
+        max-width: 1400px;
         margin: 0 auto 30px; padding: 0 20px; width: 100%;
-        /* Aumentei de 320px para 380px para caber os sprites maiores */
         display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 25px;
         justify-content: center;
     }
@@ -146,8 +145,35 @@
     }
     .feed-card:hover { transform: translateY(-5px); border-color: #555; }
 
+    /* --- ESTILO PARA TIMES VERIFICADOS (NOVO) --- */
+    .feed-card.verified {
+        border-color: var(--cor-dourado);
+        box-shadow: 0 0 15px rgba(209, 167, 32, 0.3); /* Brilho dourado */
+        background: linear-gradient(160deg, #1a1a1a 0%, #252215 100%);
+    }
+
+    .verified-badge {
+        display: inline-flex; align-items: center; gap: 5px;
+        background: var(--cor-dourado); color: #000;
+        font-size: 0.75rem; font-weight: bold;
+        padding: 2px 8px; border-radius: 4px;
+        margin-left: 10px; text-transform: uppercase;
+    }
+
+    /* Botões de Ação do ADM */
+    .adm-controls {
+        display: flex; gap: 5px; margin-left: 10px;
+    }
+    .btn-adm {
+        border: 1px solid #555; background: #222; color: #aaa;
+        cursor: pointer; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem;
+    }
+    .btn-adm:hover { color: #fff; border-color: #fff; }
+    .btn-verify-action { color: var(--cor-verde); border-color: var(--cor-verde); }
+    .btn-delete-adm { color: #ff5555; border-color: #ff5555; }
+
     .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-    .card-title { font-size: 1.4rem; font-weight: bold; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 65%; }
+    .card-title { font-size: 1.4rem; font-weight: bold; color: #fff; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
     
     .card-header-right { display: flex; align-items: center; gap: 8px; }
     .card-tier { background: #252525; color: var(--cor-dourado); padding: 4px 10px; border-radius: 6px; font-size: 0.75rem; border: 1px solid #444; font-weight: bold; }
@@ -162,12 +188,12 @@
     .card-icons { 
         display: flex; gap: 5px; margin-bottom: 20px; background: rgba(0,0,0,0.4); 
         padding: 15px; border-radius: 8px; justify-content: center; 
-        min-height: 90px; /* Mais alto */
+        min-height: 90px;
         align-items: flex-end;
     }
     .card-icons img { 
         width: auto; height: auto; max-height: 50px; 
-        min-width: 30px; min-height: 30px; /* ADICIONE ISSO */
+        min-width: 30px; min-height: 30px;
         object-fit: contain; 
         filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); 
         transition: transform 0.2s; 
@@ -335,6 +361,17 @@
   let allTeamsData = []; // Armazena todos os times carregados (Cache local)
   let filteredTeams = []; // Times filtrados para exibição
   let myTeamsMode = false;
+
+  // --- CONFIGURAÇÃO DE ADM (COLOQUE SEU UID ABAIXO) ---
+  const ADMIN_UIDS = [
+      "SEU_UID_AQUI", 
+      "OUTRO_UID_SE_PRECISAR"
+  ];
+
+  function checkIsAdmin() {
+      const user = auth.currentUser;
+      return user && ADMIN_UIDS.includes(user.uid);
+  }
   
   // PAGINAÇÃO
   const ITEMS_PER_PAGE = 12; // MÁXIMO DE CARDS POR PÁGINA
@@ -390,6 +427,16 @@
           let myTeamMatch = true;
           if(myTeamsMode && currentUser) myTeamMatch = (data.userId === currentUser.uid);
           return titleMatch && tierMatch && authorMatch && pokeMatch && myTeamMatch;
+      });
+
+      // ORDENAÇÃO: Verificados primeiro
+      filteredTeams.sort((a, b) => {
+          // Se 'a' é verificado e 'b' não, 'a' vem primeiro
+          if (a.verified === true && b.verified !== true) return -1;
+          // Se 'b' é verificado e 'a' não, 'b' vem primeiro
+          if (a.verified !== true && b.verified === true) return 1;
+          // Se ambos forem iguais, mantém a ordem original
+          return 0;
       });
 
       // Reseta para a primeira página sempre que filtrar
@@ -459,14 +506,11 @@ function toShowdownName(rawName) {
 
     // --- REGRAS ESPECÍFICAS ---
 
-    // 1. BASCULEGION (Correção solicitada)
-    // Intercepta logo para evitar que caia na regra de Hisui ou gere nomes estranhos
     if (name.includes("basculegion")) {
         if (name.includes("female") || name.includes("-f")) return "basculegion-f";
-        return "basculegion"; // Retorna o nome base para o link funcionar
+        return "basculegion";
     }
 
-    // 2. MEGA EVOLUÇÕES
     if (name.includes("mega") && !name.includes("yanmega") && !name.includes("meganium")) {
         if (name.includes(" x") || name.includes("-x")) {
             let base = name.replace("mega", "").replace(" x", "").replace("-x", "").replace(/[^a-z0-9]/g, "");
@@ -480,31 +524,26 @@ function toShowdownName(rawName) {
         return base + "-mega";
     }
 
-    // 3. FORMAS ORIGIN
     if (name.includes("origin")) {
         let base = name.replace("origin", "").replace("forme", "").replace(/[^a-z0-9]/g, "");
         return base + "-origin";
     }
 
-    // 4. FORMAS THERIAN
     if (name.includes("therian")) {
         let base = name.replace("therian", "").replace("forme", "").replace(/[^a-z0-9]/g, "");
         return base + "-therian";
     }
 
-    // 5. FORMAS INCARNATE
     if (name.includes("incarnate")) {
         let base = name.replace("incarnate", "").replace("forme", "").replace(/[^a-z0-9]/g, "");
         return base;
     }
 
-    // 6. URSALUNA
     if (name.includes("ursaluna")) {
         if (name.includes("bloodmoon") || name.includes("blood")) return "ursaluna-bloodmoon";
         return "ursaluna";
     }
 
-    // 7. ROTOM
     if (name.includes("rotom")) {
         if (name.includes("wash")) return "rotom-wash";
         if (name.includes("heat")) return "rotom-heat";
@@ -514,7 +553,6 @@ function toShowdownName(rawName) {
         return "rotom";
     }
 
-    // 8. ZACIAN E ZAMAZENTA (Crowned)
     if (name.includes("zacian")) {
         return name.includes("crowned") ? "zacian-crowned" : "zacian";
     }
@@ -522,7 +560,6 @@ function toShowdownName(rawName) {
         return name.includes("crowned") ? "zamazenta-crowned" : "zamazenta";
     }
 
-    // 9. DEOXYS
     if (name.includes("deoxys")) {
         if (name.includes("attack")) return "deoxys-attack";
         if (name.includes("defense")) return "deoxys-defense";
@@ -530,7 +567,6 @@ function toShowdownName(rawName) {
         return "deoxys";
     }
 
-    // 10. TAUROS (Paldea)
     if (name.includes("tauros")) {
         if (name.includes("aqua")) return "tauros-paldeaaqua";
         if (name.includes("blaze")) return "tauros-paldeablaze";
@@ -538,7 +574,6 @@ function toShowdownName(rawName) {
         return "tauros";
     }
 
-    // 11. KYUREM / OGERPON / LYCANROC / NECROZMA
     if (name.includes("kyurem")) {
         if (name.includes("black")) return "kyurem-black";
         if (name.includes("white")) return "kyurem-white";
@@ -562,18 +597,15 @@ function toShowdownName(rawName) {
         return "necrozma";
     }
 
-    // 12. PALAFIN / PRIMAL / INDEEDEE
     if (name.includes("palafin")) return name.includes("hero") ? "palafin-hero" : "palafin";
     if (name.includes("primal")) return name.replace("primal", "").replace(/[^a-z0-9]/g, "") + "-primal";
     if (name.includes("indeedee") && (name.includes("-f") || name.includes("female"))) return "indeedee-f";
 
-    // 13. FORMAS REGIONAIS (Galar, Alola, Hisui, Paldea)
     if (name.includes("galar")) return name.replace("galarian", "").replace("galar", "").replace(/[^a-z0-9]/g, "") + "-galar";
     if (name.includes("alola")) return name.replace("alolan", "").replace("alola", "").replace(/[^a-z0-9]/g, "") + "-alola";
     if (name.includes("paldea")) return name.replace("paldeaian", "").replace("paldea", "").replace(/[^a-z0-9]/g, "") + "-paldea";
     
     if (name.includes("hisui")) {
-        // Exceções de Hisui que não usam sufixo -hisui no Showdown
         if (name.includes("sneasler")) return "sneasler";
         if (name.includes("overqwil")) return "overqwil";
         if (name.includes("wyrdeer")) return "wyrdeer";
@@ -584,7 +616,6 @@ function toShowdownName(rawName) {
         return base + "-hisui";
     }
 
-    // --- EXCEÇÕES GERAIS ---
     const exceptions = {
         "ho-oh": "ho-oh", "porygon-z": "porygon-z", "wo-chien": "wo-chien", "chien-pao": "chien-pao",
         "ting-lu": "ting-lu", "chi-yu": "chi-yu", "type: null": "typenull", "jangmo-o": "jangmo-o",
@@ -605,33 +636,49 @@ function toShowdownName(rawName) {
 
     return name.replace(/[^a-z0-9]/g, "");
 }
+
+  // --- CRIAÇÃO DE CARDS (ATUALIZADO COM ADM) ---
   function createCard(data) {
       const encoded = LZString.compressToEncodedURIComponent(data.teamData);
       const pasteLink = `paste.html?import=${encoded}`;
       const user = auth.currentUser;
+      const isAdmin = checkIsAdmin(); // Checa se é ADM
+
       const likesCount = data.likes ? Object.keys(data.likes).length : 0;
       const isLiked = user && data.likes && data.likes[user.uid];
       const likeClass = isLiked ? 'liked' : '';
       const heartIcon = isLiked ? '❤️' : '🤍';
       const authorImg = data.userPhoto || "https://i.imgur.com/XOEcuO8.png";
 
+      // Lógica de Dono ou ADM
       const isOwner = user && data.userId === user.uid;
-      const deleteBtn = isOwner ? `<button class="btn-delete-team" onclick="window.deleteTeam('${data.id}')" title="Apagar Time">🗑️</button>` : '';
+      
+      // Botão de Apagar (Dono OU Admin)
+      let deleteBtn = '';
+      if (isOwner || isAdmin) {
+         deleteBtn = `<button class="btn-delete-team ${isAdmin ? 'btn-delete-adm' : ''}" onclick="window.deleteTeam('${data.id}')" title="Apagar Time">🗑️</button>`;
+      }
 
+      // Controles Extras de ADM (Verificar)
+      let admControls = '';
+      if (isAdmin) {
+          const isVerified = data.verified === true;
+          const verifyText = isVerified ? "Desverificar" : "Verificar ✅";
+          admControls = `<button class="btn-adm btn-verify-action" onclick="window.toggleVerifyTeam('${data.id}', ${!isVerified})">${verifyText}</button>`;
+      }
+
+      // Visual de Verificado
+      const verifiedClass = data.verified ? 'verified' : '';
+      const verifiedBadge = data.verified ? '<span class="verified-badge">✔ Verificado</span>' : '';
+
+      // GERAÇÃO DOS ICONES
       let iconsHtml = '';
       if(data.pokemon) {
           data.pokemon.slice(0,6).forEach(p => {
               const cleanName = toShowdownName(p);
-              
-              // MANTENDO GEN 5 (PIXEL ART)
               const srcGen5 = `https://play.pokemonshowdown.com/sprites/gen5/${cleanName}.png`;
-              
               const srcDex = `https://play.pokemonshowdown.com/sprites/dex/${cleanName}.png`;
               const srcDb = `https://img.pokemondb.net/sprites/scarlet-violet/icon/${cleanName}.png`;
-
-              // --- MUDANÇA DE TAMANHO AQUI ---
-              // Aumentei max-height de 45px para 65px
-              // Aumentei min-width de 30px para 40px
               iconsHtml += `
                   <img src="${srcGen5}" 
                        title="${p}" 
@@ -641,13 +688,21 @@ function toShowdownName(rawName) {
           });
       }
       
-      const card = document.createElement('div'); card.className = 'feed-card';
+      const card = document.createElement('div'); 
+      card.className = `feed-card ${verifiedClass}`; // Adiciona classe CSS
+      
       card.innerHTML = `
           <div class="card-header">
-              <h3 class="card-title">${data.title}</h3>
+              <div style="display:flex; flex-direction:column; max-width: 65%;">
+                  <h3 class="card-title" style="max-width:100%">${data.title}</h3>
+                  ${verifiedBadge} 
+              </div>
               <div class="card-header-right">
                   <span class="card-tier">${data.tier}</span>
-                  ${deleteBtn}
+                  <div class="adm-controls">
+                    ${admControls}
+                    ${deleteBtn}
+                  </div>
               </div>
           </div>
           <div class="card-icons">${iconsHtml}</div>
@@ -673,6 +728,27 @@ function toShowdownName(rawName) {
       if(!confirm("Apagar este time?")) return;
       try { await remove(ref(db, `teams/${teamId}`)); alert("Time apagado."); loadFeed(); } catch(e) { alert("Erro: "+e.message); }
   }
+
+  // --- FUNÇÃO DE ADM: VERIFICAR TIME ---
+  window.toggleVerifyTeam = async function(teamId, status) {
+      if(!checkIsAdmin()) return alert("Sem permissão.");
+      if(!confirm(status ? "Marcar time como VERIFICADO?" : "Remover verificação?")) return;
+
+      try {
+          // Atualiza apenas o campo 'verified' no Firebase
+          const teamRef = ref(db, `teams/${teamId}/verified`);
+          await set(teamRef, status);
+          
+          // Atualiza localmente para não precisar recarregar tudo
+          const team = allTeamsData.find(t => t.id === teamId);
+          if(team) team.verified = status;
+          
+          window.applyFilters(); // Re-renderiza para mudar a ordem/cor
+      } catch(e) {
+          alert("Erro: " + e.message);
+      }
+  }
+
   window.handleLike = async function(teamId) {
       const user = auth.currentUser;
       if(!user) { openLoginModal(); return; }
