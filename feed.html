@@ -561,6 +561,10 @@ function toShowdownName(rawName) {
         let base = name.replace("hisuian", "").replace("hisui", "").replace(/[^a-z0-9]/g, "");
         return base + "-hisui";
     }
+    if (name.includes("paldea")) {
+        let base = name.replace("paldeaian", "").replace("paldea", "").replace(/[^a-z0-9]/g, "");
+        return base + "-paldea";
+    }
 
     // --- EXCEÇÕES GERAIS ---
     const exceptions = {
