@@ -418,7 +418,7 @@
         "pau", "pinto", "piroca", "pica", "rolan", "rola", "penis", "p1nto", "p1roca", "ereto", "gozo", "gozar", "gozada", "gozeidinha", "sperma", "porra", "p0rra",
         "cu", "c.u", "c*", "anus", "anal", "furico", "arrombado", "arrombada",
         "boquete", "boqueteiro", "boqueteira", "chupa", "chupei", "mamada", "mamar",
-        "sexo", "sex", "s3x", "transar", "trepar", "suruba", "orgia", "estupro", "abuso", "abusado", "molestado", "pedofilo", "pedofilia", "zoofilo", "zoofilia", "zoofililo", "zoophilo", "d.dirry",
+        "sexo", "sex", "s3x", "transar", "trepar", "suruba", "orgia", "estupro", "abuso", "abusado", "molestado", "pedofilo", "pedofilia", "zoofilo", "zoofilia", "zoofililo", "d.dirry",
         "jack", "estuprador", 
         "corno", "c0rno", "cornudo", "chifrudo", "chuca", "xuca", "x4ca", "ch4ca", "retardado", "autista", "prostituta",
         "preto", "negro", "neguim", "neguinho", "criolo", "crioulo", "macaco", "macaca", "m4caco", "m4caca", "escravo", "senzala",
@@ -522,7 +522,7 @@
 
         if (!loaded) {
             console.error("ERRO: moves.json não encontrado.");
-            // alert("Não foi possível carregar a lista de golpes (moves.json). Verifique se o arquivo está na pasta 'builder/'.");
+            alert("Não foi possível carregar a lista de golpes (moves.json). Verifique se o arquivo está na pasta 'builder/'.");
         }
     }
 
@@ -549,7 +549,7 @@
     }
     function formatItemToShowdown(name) { return name.toLowerCase().replace(/[^a-z0-9]/g, ''); }
 
-    // --- INICIALIZAÇÃO (COM LEITURA DE LINK CORRIGIDA) ---
+    // --- INICIALIZAÇÃO (COM LEITURA DE LINK) ---
     window.onload = async function() { 
         await initItens(); 
         await initMoves(); // CARREGA OS MOVES
@@ -559,23 +559,13 @@
 
         if(importData) {
             try {
-                // 1. Tenta descomprimir usando LZString (O padrão atual)
-                let decodedText = LZString.decompressFromEncodedURIComponent(importData);
-                
-                // 2. Fallback: Se falhar (retornar null), tenta o método antigo (Base64) para compatibilidade
-                if (!decodedText) {
-                    decodedText = decodeURIComponent(escape(atob(importData)));
-                }
-
-                if (decodedText) {
-                    document.getElementById('ioText').value = decodedText;
-                    setTimeout(() => {
-                        processImport(); 
-                        // Limpa a URL para não ficar gigante
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                        alert("Time carregado via Link Compartilhado!");
-                    }, 500);
-                }
+                const decodedText = decodeURIComponent(escape(atob(importData)));
+                document.getElementById('ioText').value = decodedText;
+                setTimeout(() => {
+                    processImport(); 
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    alert("Time carregado via Link Compartilhado!");
+                }, 500);
             } catch(e) {
                 console.error(e);
                 alert("Link inválido ou corrompido.");
@@ -782,7 +772,7 @@
 
         } catch(e){ 
             console.error("Erro ao carregar Tier Local", e); 
-            // alert("Erro ao carregar lista de Pokémon.");
+            alert("Erro ao carregar lista de Pokémon.");
         }
         atualizarListaItens(tier);
     }
@@ -833,13 +823,11 @@
                 moveInputs.forEach((inp, mIndex) => {
                     const moveVal = inp.value.trim();
                     if (moveVal) {
-                        /* // REMOVIDA RESTRIÇÃO DE MOVES QUE O POKÉMON NÃO APRENDE
                         if (allowedMoves && !allowedMoves.includes(moveVal)) {
                             if (!moveVal.startsWith("Hidden Power")) { 
                                 errors.push(`#${i+1} ${name}: Não aprende o movimento "${moveVal}".`);
                             }
                         }
-                        */
                     }
                 });
             }
