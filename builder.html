@@ -418,7 +418,7 @@
         "pau", "pinto", "piroca", "pica", "rolan", "rola", "penis", "p1nto", "p1roca", "ereto", "gozo", "gozar", "gozada", "gozeidinha", "sperma", "porra", "p0rra",
         "cu", "c.u", "c*", "anus", "anal", "furico", "arrombado", "arrombada",
         "boquete", "boqueteiro", "boqueteira", "chupa", "chupei", "mamada", "mamar",
-        "sexo", "sex", "s3x", "transar", "trepar", "suruba", "orgia", "estupro", "abuso", "abusado", "molestado", "pedofilo", "pedofilia", "zoofilo", "zoofilia", "zoofililo", "d.dirry",
+        "sexo", "sex", "s3x", "transar", "trepar", "suruba", "orgia", "estupro", "abuso", "abusado", "molestado", "pedofilo", "pedofilia", "zoofilo", "zoofilia", "zoofililo", "zoophilo", "d.dirry",
         "jack", "estuprador", 
         "corno", "c0rno", "cornudo", "chifrudo", "chuca", "xuca", "x4ca", "ch4ca", "retardado", "autista", "prostituta",
         "preto", "negro", "neguim", "neguinho", "criolo", "crioulo", "macaco", "macaca", "m4caco", "m4caca", "escravo", "senzala",
@@ -522,7 +522,7 @@
 
         if (!loaded) {
             console.error("ERRO: moves.json não encontrado.");
-            alert("Não foi possível carregar a lista de golpes (moves.json). Verifique se o arquivo está na pasta 'builder/'.");
+            // alert("Não foi possível carregar a lista de golpes (moves.json). Verifique se o arquivo está na pasta 'builder/'.");
         }
     }
 
@@ -549,7 +549,7 @@
     }
     function formatItemToShowdown(name) { return name.toLowerCase().replace(/[^a-z0-9]/g, ''); }
 
-// --- INICIALIZAÇÃO (COM LEITURA DE LINK CORRIGIDA) ---
+    // --- INICIALIZAÇÃO (COM LEITURA DE LINK CORRIGIDA) ---
     window.onload = async function() { 
         await initItens(); 
         await initMoves(); // CARREGA OS MOVES
@@ -587,6 +587,14 @@
             else createNewTeam();
         }
     };
+
+    async function initItens() {
+        try { 
+            const r = await fetch('builder/itens.json'); 
+            if (r.ok) { todosItens = await r.json(); atualizarListaItens(null); } 
+        } catch (e) { console.warn("Erro itens", e); }
+    }
+
     // --- GERENCIAMENTO DE TIMES ---
     function loadAllTeams() {
         const data = localStorage.getItem('humbleTeamsList');
@@ -774,7 +782,7 @@
 
         } catch(e){ 
             console.error("Erro ao carregar Tier Local", e); 
-            alert("Erro ao carregar lista de Pokémon.");
+            // alert("Erro ao carregar lista de Pokémon.");
         }
         atualizarListaItens(tier);
     }
@@ -819,15 +827,13 @@
                 }
 
                 // --- VALIDAÇÃO DE MOVES ---
-// --- VALIDAÇÃO DE MOVES ---
                 const moveInputs = ed.querySelectorAll('.p-move');
                 const allowedMoves = validMovesMap[id];
                 
                 moveInputs.forEach((inp, mIndex) => {
                     const moveVal = inp.value.trim();
                     if (moveVal) {
-                        // COMENTEI A RESTRIÇÃO ABAIXO PARA LIBERAR QUALQUER MOVE:
-                        /*
+                        /* // REMOVIDA RESTRIÇÃO DE MOVES QUE O POKÉMON NÃO APRENDE
                         if (allowedMoves && !allowedMoves.includes(moveVal)) {
                             if (!moveVal.startsWith("Hidden Power")) { 
                                 errors.push(`#${i+1} ${name}: Não aprende o movimento "${moveVal}".`);
