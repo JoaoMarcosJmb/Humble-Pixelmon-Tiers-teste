@@ -4,7 +4,13 @@
   <meta charset="UTF-8">
   <title>Humble Builder - Validator</title>
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
+  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
+  
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+
   <style>
     /* --- VARIÁVEIS & RESET --- */
     :root { 
@@ -393,15 +399,14 @@
     let validAbilitiesMap = {}; 
     let validMovesMap = {}; 
     let todosItens = [];
-    let todosMoves = []; // VAI RECEBER O JSON
-    let MOVES_MAP = {};  // VAI SER O ÍNDICE
+    let todosMoves = []; 
+    let MOVES_MAP = {};  
     let slotCounter = 0; 
     let slotBaseStats = {}; 
     let allTeams = []; 
     let currentTeamIndex = null;
 
-    // --- LISTA DE MOVES CUSTOMIZADOS (GOLPES EXTRAS) ---
-    // Adicione aqui: "Nome do Pokemon": ["Golpe 1", "Golpe 2"]
+    // --- LISTA DE MOVES CUSTOMIZADOS ---
     const CUSTOM_MOVES = {
         "Deoxys-Speed": ["Spikes"],
         "medicham": ["Fake Out"]
@@ -450,30 +455,19 @@
     // --- FORMATAÇÃO GERAL DE TEXTO ---
     function formatText(str) { 
         if (!str) return ''; 
-        // Separa por hífen, capitaliza cada palavra e junta com espaço
         return str.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '); 
     }
 
     // --- CARREGAMENTO E LIMPEZA AUTOMÁTICA DO MOVES.JSON ---
     async function initMoves() {
-        // Lista de Exceções: Golpes que DEVEM manter o hífen
+        // Lista de Exceções
         const EXCEPTIONS = {
-            "u-turn": "U-turn",
-            "v-create": "V-create",
-            "will-o-wisp": "Will-O-Wisp",
-            "soft-boiled": "Soft-Boiled",
-            "double-edge": "Double-Edge",
-            "freeze-dry": "Freeze-Dry",
-            "x-scissor": "X-Scissor",
-            "lock-on": "Lock-On",
-            "self-destruct": "Self-Destruct",
-            "trick-or-treat": "Trick-or-Treat",
-            "baby-doll-eyes": "Baby-Doll Eyes",
-            "topsy-turvy": "Topsy-Turvy",
-            "multi-attack": "Multi-Attack",
-            "power-up-punch": "Power-Up Punch",
-            "wake-up-slap": "Wake-Up Slap",
-            "mud-slap": "Mud-Slap"
+            "u-turn": "U-turn", "v-create": "V-create", "will-o-wisp": "Will-O-Wisp",
+            "soft-boiled": "Soft-Boiled", "double-edge": "Double-Edge", "freeze-dry": "Freeze-Dry",
+            "x-scissor": "X-Scissor", "lock-on": "Lock-On", "self-destruct": "Self-Destruct",
+            "trick-or-treat": "Trick-or-Treat", "baby-doll-eyes": "Baby-Doll Eyes",
+            "topsy-turvy": "Topsy-Turvy", "multi-attack": "Multi-Attack",
+            "power-up-punch": "Power-Up Punch", "wake-up-slap": "Wake-Up Slap", "mud-slap": "Mud-Slap"
         };
 
         const paths = ['builder/moves.json', 'moves.json']; 
@@ -485,93 +479,60 @@
                 if (r.ok) {
                     const rawData = await r.json();
                     
-                    // --- O PULO DO GATO: LIMPAR OS NOMES AQUI ---
                     todosMoves = rawData.map(m => {
                         let prettyName = m.name;
                         const lowerName = m.name.toLowerCase();
-
-                        // 1. Se estiver na lista de exceções, usa ela (ex: u-turn -> U-turn)
-                        if (EXCEPTIONS[lowerName]) {
-                            prettyName = EXCEPTIONS[lowerName];
-                        } 
-                        // 2. Se não, tira os traços e deixa Maiúscula (ex: fake-out -> Fake Out)
-                        else if (m.name.includes('-')) {
-                            prettyName = formatText(m.name);
-                        }
-
-                        // Retorna o objeto com o nome corrigido para a memória
+                        if (EXCEPTIONS[lowerName]) { prettyName = EXCEPTIONS[lowerName]; } 
+                        else if (m.name.includes('-')) { prettyName = formatText(m.name); }
                         return { ...m, name: prettyName };
                     });
 
                     loaded = true;
-                    console.log(`Moves carregados e formatados de: ${path}`);
+                    console.log(`Moves carregados: ${path}`);
                     
-                    // Recria o Mapa de Busca com os nomes já bonitos
                     MOVES_MAP = {};
                     todosMoves.forEach(move => {
-                        // Chave limpa para facilitar a busca (sem traços, sem espaços)
-                        // ex: "fake-out", "Fake Out", "fake out" -> "fakeout"
                         const key = move.name.toLowerCase().replace(/[^a-z0-9]/g, '');
                         MOVES_MAP[key] = move;
                     });
-
                     break;
                 }
-            } catch (e) { console.log(`Tentando próximo caminho...`); }
+            } catch (e) { console.log(`Tentando próximo...`); }
         }
 
-        if (!loaded) {
-            console.error("ERRO: moves.json não encontrado.");
-            // alert("Não foi possível carregar a lista de golpes (moves.json). Verifique se o arquivo está na pasta 'builder/'.");
-        }
+        if (!loaded) console.error("ERRO: moves.json não encontrado.");
     }
 
-    // --- FUNÇÃO INTELIGENTE DE NOME DE GOLPE (USANDO O JSON) ---
     function formatMoveName(apiSlug) {
         if (!apiSlug) return "";
-        
-        // 1. Limpa o nome que vem da API (ex: "u-turn" -> "uturn")
         const cleanKey = apiSlug.toLowerCase().replace(/[^a-z0-9]/g, '');
-
-        // 2. Busca no nosso banco de dados carregado e formatado
-        if (MOVES_MAP[cleanKey]) {
-            return MOVES_MAP[cleanKey].name; // Retorna "Fake Out" ou "U-turn" perfeito
-        }
-
-        // 3. Fallback se não tiver no JSON
+        if (MOVES_MAP[cleanKey]) return MOVES_MAP[cleanKey].name; 
         return formatText(apiSlug);
     }
 
-    // --- FORMATADORES ---
     function formatToApiName(name) { 
         if(!name) return "";
         return name.trim().toLowerCase().replace(/ /g, '-').replace(/\./g, '').replace(/'/g, '').replace(/:/g, '').replace(/♀/g, '-f').replace(/♂/g, '-m'); 
     }
     function formatItemToShowdown(name) { return name.toLowerCase().replace(/[^a-z0-9]/g, ''); }
 
-    // --- INICIALIZAÇÃO (COM LEITURA DE LINK CORRIGIDA) ---
+    // --- INICIALIZAÇÃO (CORRIGIDA) ---
     window.onload = async function() { 
         await initItens(); 
-        await initMoves(); // CARREGA OS MOVES
+        await initMoves(); 
         
         const params = new URLSearchParams(window.location.search);
         const importData = params.get('import');
 
         if(importData) {
             try {
-                // 1. Tenta descomprimir usando LZString (O padrão atual)
                 let decodedText = LZString.decompressFromEncodedURIComponent(importData);
-                
-                // 2. Fallback: Se falhar (retornar null), tenta o método antigo (Base64) para compatibilidade
-                if (!decodedText) {
-                    decodedText = decodeURIComponent(escape(atob(importData)));
-                }
+                if (!decodedText) decodedText = decodeURIComponent(escape(atob(importData)));
 
                 if (decodedText) {
                     document.getElementById('ioText').value = decodedText;
                     setTimeout(() => {
                         processImport(); 
-                        // Limpa a URL para não ficar gigante
                         window.history.replaceState({}, document.title, window.location.pathname);
                         alert("Time carregado via Link Compartilhado!");
                     }, 500);
@@ -749,15 +710,12 @@
         const dl = document.getElementById('list-pokemon'); dl.innerHTML = "";
         pokemonIdMap = {}; 
         
-        // --- ESTRATÉGIA DE FUNDIR JSONs ---
         let arquivosParaCarregar = [`tiers_1.16/${tier}.json`];
-
         if (tier.startsWith('National_Dex') && tier !== 'National_Dex') {
             arquivosParaCarregar.unshift('tiers_1.16/National_Dex.json');
         }
 
         let dadosFundidos = {};
-
         try {
             for (const arq of arquivosParaCarregar) {
                 const r = await fetch(arq);
@@ -779,11 +737,7 @@
                     pokemonIdMap[chaveNormalizada] = true;
                 }
             });
-
-        } catch(e){ 
-            console.error("Erro ao carregar Tier Local", e); 
-            // alert("Erro ao carregar lista de Pokémon.");
-        }
+        } catch(e){ console.error("Erro ao carregar Tier Local", e); }
         atualizarListaItens(tier);
     }
     
@@ -795,12 +749,15 @@
         });
     }
     
-    function validateTeam(silent = false) {
+    // --- VALIDATE TEAM (COM AJUSTE DE FEEDBACK) ---
+    // Agora aceita 'showSuccess'. Se false, não mostra "Time Válido" (bom para o botão Publicar)
+    function validateTeam(showSuccess = true) {
         const tier = document.getElementById('teamTier').value;
         const teamName = document.getElementById('teamNameInput').value;
         const authorName = document.getElementById('teamAuthorInput').value;
 
-        if(!tier) { if(!silent) alert("Selecione uma Tier."); return false; }
+        // Erros bloqueantes (Sempre mostra alerta)
+        if(!tier) { alert("Selecione uma Tier."); return false; }
         
         if (hasProfanity(teamName) || hasProfanity(authorName)) {
             alert("O nome do time ou do autor contém termos ofensivos/proibidos.\nPor favor, altere para continuar.");
@@ -825,23 +782,6 @@
                     if (!ability) errors.push(`#${i+1} ${name}: Precisa de uma habilidade.`);
                     else if (!validAbilitiesMap[id].includes(ability)) errors.push(`#${i+1} ${name}: Habilidade "${ability}" inválida.`);
                 }
-
-                // --- VALIDAÇÃO DE MOVES ---
-                const moveInputs = ed.querySelectorAll('.p-move');
-                const allowedMoves = validMovesMap[id];
-                
-                moveInputs.forEach((inp, mIndex) => {
-                    const moveVal = inp.value.trim();
-                    if (moveVal) {
-                        /* // REMOVIDA RESTRIÇÃO DE MOVES QUE O POKÉMON NÃO APRENDE
-                        if (allowedMoves && !allowedMoves.includes(moveVal)) {
-                            if (!moveVal.startsWith("Hidden Power")) { 
-                                errors.push(`#${i+1} ${name}: Não aprende o movimento "${moveVal}".`);
-                            }
-                        }
-                        */
-                    }
-                });
             }
         });
 
@@ -849,7 +789,8 @@
             alert("Erros encontrados:\n\n" + errors.join("\n"));
             return false;
         } else {
-            if(!silent) alert("Time Válido!");
+            // Sucesso! Só mostra alerta se showSuccess for true (Botão Validar)
+            if(showSuccess) alert("Time Válido!");
             return true;
         }
     }
@@ -918,8 +859,7 @@
             if(pokemonIdMap[apiName] && typeof pokemonIdMap[apiName] !== 'boolean') {
                  src = `${POKEAPI_IMG}${pokemonIdMap[apiName]}.png`;
             }
-            img.src = src;
-            tabImg.src = src;
+            img.src = src; tabImg.src = src;
             return;
         }
 
@@ -930,8 +870,7 @@
                 const d = await r.json();
                 
                 const newSrc = `${POKEAPI_IMG}${d.id}.png`;
-                img.src = newSrc; 
-                tabImg.src = newSrc;
+                img.src = newSrc; tabImg.src = newSrc;
 
                 slotBaseStats[id] = { hp:d.stats[0].base_stat, atk:d.stats[1].base_stat, def:d.stats[2].base_stat, spa:d.stats[3].base_stat, spd:d.stats[4].base_stat, spe:d.stats[5].base_stat };
                 recalcStats(id);
@@ -944,9 +883,7 @@
                 d.abilities.forEach(a => { 
                     const formattedAbi = formatText(a.ability.name);
                     allowedAbilities.push(formattedAbi);
-                    const o = document.createElement('option'); 
-                    o.value = formattedAbi; 
-                    abilList.appendChild(o); 
+                    const o = document.createElement('option'); o.value = formattedAbi; abilList.appendChild(o); 
                 });
                 validAbilitiesMap[id] = allowedAbilities; 
 
@@ -954,38 +891,27 @@
                     currentAbilityInput.value = allowedAbilities[0] || "";
                 }
                 
-                // --- MOVES: Carrega moves usando a formatação correta ---
                 const moveList = document.getElementById(`moves-${id}`); 
                 moveList.innerHTML="";
                 let allowedMoves = []; 
                 
                 d.moves.forEach(m => { 
-                    // USA A FUNÇÃO formatMoveName QUE LÊ O JSON
                     const mName = formatMoveName(m.move.name); 
-                    
                     allowedMoves.push(mName); 
-                    const o = document.createElement('option'); 
-                    o.value = mName; 
-                    moveList.appendChild(o); 
+                    const o = document.createElement('option'); o.value = mName; moveList.appendChild(o); 
                 });
 
-                // --- ADICIONA MOVES CUSTOMIZADOS (DA LISTA CUSTOM_MOVES) ---
                 if (CUSTOM_MOVES[apiName]) {
                     CUSTOM_MOVES[apiName].forEach(extraMove => {
                         if (!allowedMoves.includes(extraMove)) {
                             allowedMoves.push(extraMove);
-                            const o = document.createElement('option');
-                            o.value = extraMove;
-                            moveList.appendChild(o);
+                            const o = document.createElement('option'); o.value = extraMove; moveList.appendChild(o);
                         }
                     });
                 }
-
                 validMovesMap[id] = allowedMoves; 
             }
-        } catch(e){
-            console.error("Erro API", e);
-        }
+        } catch(e){ console.error("Erro API", e); }
     }
 
     function updateItemIcon(id, input) {
@@ -1002,9 +928,7 @@
         if (v < 0) v = 0; 
         let usedByOthers = 0;
         STATS.forEach(s => {
-            if (s !== stat) {
-                usedByOthers += parseInt(document.getElementById(`num-${id}-${s}`).value) || 0;
-            }
+            if (s !== stat) usedByOthers += parseInt(document.getElementById(`num-${id}-${s}`).value) || 0;
         });
         const remainingGlobal = 508 - usedByOthers;
         const maxAllowed = Math.min(252, remainingGlobal);
@@ -1022,14 +946,11 @@
         const nature = document.getElementById(`editor-${id}`).querySelector('.p-nature').value;
         
         let mods = { atk:1, def:1, spa:1, spd:1, spe:1 };
-
         if(NATURES_INFO[nature] && NATURES_INFO[nature]!=="Neutral") {
             const parts = NATURES_INFO[nature].split(','); 
             parts.forEach(p => { 
-                p = p.trim(); 
-                const type = p.substring(1).toLowerCase(); 
-                if(p.startsWith('+')) mods[type] = 1.1; 
-                if(p.startsWith('-')) mods[type] = 0.9; 
+                p = p.trim(); const type = p.substring(1).toLowerCase(); 
+                if(p.startsWith('+')) mods[type] = 1.1; if(p.startsWith('-')) mods[type] = 0.9; 
             });
         }
 
@@ -1042,14 +963,12 @@
             
             let final = 0;
             if(b > 0) {
-                if(s === 'HP') {
-                    final = b === 1 ? 1 : Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + level + 10;
-                } else {
+                if(s === 'HP') final = b === 1 ? 1 : Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + level + 10;
+                else {
                     const rawStat = Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + 5;
                     final = Math.floor(rawStat * mods[k]);
                 }
             }
-            
             document.getElementById(`val-${id}-${k}`).innerText = final;
             document.getElementById(`bar-${id}-${k}`).style.width = Math.min((b/255)*100, 100)+"%";
         });
@@ -1152,11 +1071,6 @@
         }
     }
 
-    function publishTeam() {
-        // Função de placeholder caso o módulo não carregue (mas a lógica real está no módulo abaixo)
-        alert("Carregando sistema de publicação...");
-    }
-
     function copyToClipboard() { navigator.clipboard.writeText(document.getElementById('ioText').value); alert("Copiado!"); }
     
     function processImport() {
@@ -1201,178 +1115,156 @@
         document.getElementById('ioModal').style.display='none';
         saveCurrentTeamToStorage();
     }
-  </script>
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { 
-    getAuth, 
-    signInWithPopup, 
-    GoogleAuthProvider, 
-    signOut, 
-    onAuthStateChanged,
-    signInWithEmailAndPassword,
-    createUserWithEmailAndPassword,
-    updateProfile
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  
-  import { 
-    getDatabase, 
-    ref, 
-    push, 
-    set,
-    serverTimestamp
-  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
-    authDomain: "sampleteans.firebaseapp.com",
-    databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
-    projectId: "sampleteans",
-    storageBucket: "sampleteans.firebasestorage.app",
-    messagingSenderId: "1069510029261",
-    appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
-  };
+    // --- FIREBASE LOGIC (COMPAT MODE) ---
+    
+    const firebaseConfig = {
+      apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
+      authDomain: "sampleteans.firebaseapp.com",
+      databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
+      projectId: "sampleteans",
+      storageBucket: "sampleteans.firebasestorage.app",
+      messagingSenderId: "1069510029261",
+      appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getDatabase(app); 
-  const provider = new GoogleAuthProvider();
+    // Inicializa o Firebase (modo antigo e robusto)
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database(); 
+    const provider = new firebase.auth.GoogleAuthProvider();
 
-  // --- Elementos de Auth ---
-  const loginForm = document.getElementById('loginForm');
-  const userProfile = document.getElementById('userProfile');
-  const emailInput = document.getElementById('emailInput');
-  const passInput = document.getElementById('passInput');
-  const btnGoogleLogin = document.getElementById('btnGoogleLogin');
-  const btnEmailLogin = document.getElementById('btnEmailLogin');
-  const btnEmailRegister = document.getElementById('btnEmailRegister');
-  const btnLogout = document.getElementById('btnLogout');
-  const userPhoto = document.getElementById('userPhoto');
-  const userName = document.getElementById('userName');
-  const userEmail = document.getElementById('userEmail');
+    // Elementos de Auth
+    const loginForm = document.getElementById('loginForm');
+    const userProfile = document.getElementById('userProfile');
+    const emailInput = document.getElementById('emailInput');
+    const passInput = document.getElementById('passInput');
+    const btnGoogleLogin = document.getElementById('btnGoogleLogin');
+    const btnEmailLogin = document.getElementById('btnEmailLogin');
+    const btnEmailRegister = document.getElementById('btnEmailRegister');
+    const btnLogout = document.getElementById('btnLogout');
+    const userPhoto = document.getElementById('userPhoto');
+    const userName = document.getElementById('userName');
+    const userEmail = document.getElementById('userEmail');
 
-  // --- LÓGICA DE PUBLICAR COMPLETA ---
-  window.publishTeam = async function() {
-      // Bloqueio de Validação (Silencioso para o usuario corrigir, mas impede o envio)
-      if (!validateTeam(true)) { 
-          return; 
-      }
-      
-      const user = auth.currentUser;
-      
-      if(!user) {
-          alert("Você precisa estar logado para publicar!");
-          document.getElementById("menuBtn").classList.add("active"); 
-          document.querySelector(".sidebar").style.display = "flex";
-          return;
-      }
+    // --- FUNÇÃO PUBLICAR (AGORA GLOBAL E ACESSÍVEL) ---
+    async function publishTeam() {
+        // Agora chamamos validateTeam(false) para garantir que ele MOSTRE erros se existirem.
+        // O parâmetro 'false' (showSuccess=false) impede que ele mostre "Time Válido" se der certo.
+        if (!validateTeam(false)) return; 
+        
+        const user = auth.currentUser;
+        if(!user) {
+            alert("Você precisa estar logado para publicar!");
+            document.getElementById("menuBtn").classList.add("active"); 
+            document.querySelector(".sidebar").style.display = "flex";
+            return;
+        }
 
-      const title = document.getElementById('teamNameInput').value;
-      const author = document.getElementById('teamAuthorInput').value;
-      const tier = document.getElementById('teamTier').value;
-      const teamText = getTeamAsText(); 
+        const title = document.getElementById('teamNameInput').value;
+        const author = document.getElementById('teamAuthorInput').value;
+        const tier = document.getElementById('teamTier').value;
+        const teamText = getTeamAsText(); 
 
-      if(!title || title === "Novo Time") { alert("Dê um nome ao time."); return; }
-      if(!tier) { alert("Selecione uma Tier."); return; }
-      if(teamText.length < 50) { alert("O time parece estar vazio."); return; }
+        if(!title || title === "Novo Time") { alert("Dê um nome ao time."); return; }
+        if(!tier) { alert("Selecione uma Tier."); return; }
+        if(teamText.length < 50) { alert("O time parece estar vazio."); return; }
 
-      let sprites = [];
-      document.querySelectorAll('.poke-editor').forEach(ed => {
-          const name = ed.querySelector('.p-name').value;
-          if(name) sprites.push(name.toLowerCase());
-      });
+        let sprites = [];
+        document.querySelectorAll('.poke-editor').forEach(ed => {
+            const name = ed.querySelector('.p-name').value;
+            if(name) sprites.push(name.toLowerCase());
+        });
 
-      const btn = document.querySelector('.btn-publish');
-      const originalText = btn.innerHTML;
-      btn.innerHTML = "Enviando...";
-      btn.disabled = true;
+        const btn = document.querySelector('.btn-publish');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = "Enviando...";
+        btn.disabled = true;
 
-      try {
-          // --- REALTIME DATABASE ---
-          const teamsListRef = ref(db, 'teams');
-          const newTeamRef = push(teamsListRef);
-          
-          await set(newTeamRef, {
-              title: title,
-              author: author || user.displayName || "Treinador",
-              tier: tier,
-              teamData: teamText,
-              pokemon: sprites,
-              userId: user.uid,
-              userPhoto: user.photoURL || null,
-              createdAt: serverTimestamp()
-          });
+        try {
+            // Push para o Database
+            const newRef = db.ref('teams').push();
+            await newRef.set({
+                title: title,
+                author: author || user.displayName || "Treinador",
+                tier: tier,
+                teamData: teamText,
+                pokemon: sprites,
+                userId: user.uid,
+                userPhoto: user.photoURL || null,
+                createdAt: firebase.database.ServerValue.TIMESTAMP
+            });
 
-          alert("Time publicado com sucesso no Feed!");
-      } catch (error) {
-          console.error("Erro ao publicar: ", error);
-          alert("Erro ao publicar: " + error.message);
-      } finally {
-          btn.innerHTML = originalText;
-          btn.disabled = false;
-      }
-  }
-
-  // --- MÉTODOS DE AUTH ---
-  if(btnGoogleLogin) {
-      btnGoogleLogin.addEventListener('click', () => {
-        signInWithPopup(auth, provider).then(async (result) => {
-             if(confirm(`Logado como ${result.user.displayName}. Alterar Nick?`)) {
-                 const newNick = prompt("Novo Nick:");
-                 if(newNick) {
-                     await updateProfile(result.user, { displayName: newNick });
-                     location.reload();
-                 }
-            }
-        }).catch((e) => alert("Erro: " + e.message));
-      });
-  }
-
-  if(btnEmailLogin) {
-      btnEmailLogin.addEventListener('click', () => {
-        signInWithEmailAndPassword(auth, emailInput.value, passInput.value)
-            .catch((e) => alert("Erro Login: " + e.message));
-      });
-  }
-
-  if(btnEmailRegister) {
-      btnEmailRegister.addEventListener('click', () => {
-        if(passInput.value.length < 6) { alert("Senha curta."); return; }
-        createUserWithEmailAndPassword(auth, emailInput.value, passInput.value)
-            .then(async (cred) => {
-                const nick = prompt("Qual seu Nick de Treinador?");
-                if(nick) await updateProfile(cred.user, { displayName: nick });
-                location.reload();
-            })
-            .catch((e) => alert("Erro Cadastro: " + e.message));
-      });
-  }
-
-  if(btnLogout) {
-      btnLogout.addEventListener('click', () => {
-        if(confirm("Sair?")) signOut(auth).then(() => location.reload());
-      });
-  }
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      if(loginForm) loginForm.style.display = 'none';
-      if(userProfile) {
-          userProfile.style.display = 'flex';
-          userPhoto.src = user.photoURL ? user.photoURL : "https://i.imgur.com/XOEcuO8.png"; 
-          userName.innerText = user.displayName ? user.displayName : "Treinador";
-          userEmail.innerText = user.email;
-
-          const authorInput = document.getElementById('teamAuthorInput');
-          if(authorInput && !authorInput.value && user.displayName) {
-              authorInput.value = user.displayName;
-          }
-      }
-    } else {
-      if(loginForm) loginForm.style.display = 'flex';
-      if(userProfile) userProfile.style.display = 'none';
+            alert("Time publicado com sucesso no Feed!");
+        } catch (error) {
+            console.error("Erro ao publicar: ", error);
+            alert("Erro ao publicar: " + error.message);
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
     }
-  });
+
+    // --- LISTENERS DE AUTH ---
+    if(btnGoogleLogin) {
+        btnGoogleLogin.addEventListener('click', () => {
+            auth.signInWithPopup(provider).then(async (result) => {
+                 if(confirm(`Logado como ${result.user.displayName}. Alterar Nick?`)) {
+                     const newNick = prompt("Novo Nick:");
+                     if(newNick) {
+                         await result.user.updateProfile({ displayName: newNick });
+                         location.reload();
+                     }
+                }
+            }).catch((e) => alert("Erro: " + e.message));
+        });
+    }
+
+    if(btnEmailLogin) {
+        btnEmailLogin.addEventListener('click', () => {
+            auth.signInWithEmailAndPassword(emailInput.value, passInput.value)
+                .catch((e) => alert("Erro Login: " + e.message));
+        });
+    }
+
+    if(btnEmailRegister) {
+        btnEmailRegister.addEventListener('click', () => {
+            if(passInput.value.length < 6) { alert("Senha curta."); return; }
+            auth.createUserWithEmailAndPassword(emailInput.value, passInput.value)
+                .then(async (cred) => {
+                    const nick = prompt("Qual seu Nick de Treinador?");
+                    if(nick) await cred.user.updateProfile({ displayName: nick });
+                    location.reload();
+                })
+                .catch((e) => alert("Erro Cadastro: " + e.message));
+        });
+    }
+
+    if(btnLogout) {
+        btnLogout.addEventListener('click', () => {
+            if(confirm("Sair?")) auth.signOut().then(() => location.reload());
+        });
+    }
+
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            if(loginForm) loginForm.style.display = 'none';
+            if(userProfile) {
+                userProfile.style.display = 'flex';
+                userPhoto.src = user.photoURL ? user.photoURL : "https://i.imgur.com/XOEcuO8.png"; 
+                userName.innerText = user.displayName ? user.displayName : "Treinador";
+                userEmail.innerText = user.email;
+
+                const authorInput = document.getElementById('teamAuthorInput');
+                if(authorInput && !authorInput.value && user.displayName) {
+                    authorInput.value = user.displayName;
+                }
+            }
+        } else {
+            if(loginForm) loginForm.style.display = 'flex';
+            if(userProfile) userProfile.style.display = 'none';
+        }
+    });
 </script>
 </body>
 </html>
