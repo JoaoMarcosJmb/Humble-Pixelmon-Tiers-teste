@@ -4,13 +4,7 @@
   <meta charset="UTF-8">
   <title>Humble Builder - Validator</title>
   <link rel="icon" type="image/png" href="img/mike_anotando2.png">
-  
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lz-string/1.4.4/lz-string.min.js"></script>
-  
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-
   <style>
     /* --- VARIÁVEIS & RESET --- */
     :root { 
@@ -98,7 +92,7 @@
       background: rgba(30,30,30,0.95); padding: 12px 20px; border-radius: 8px; border: 1px solid var(--cor-borda);
       flex-wrap: wrap; gap: 15px; width: 100%;
     }
-    .toolbar-left { flex-grow: 1; display:flex; flex-direction:column; gap:5px; } 
+    .toolbar-left { flex-grow: 1; display:flex; flex-direction:column; gap:5px; } /* Ajustado para caber o Autor */
     .toolbar-controls { display: flex; gap: 10px; align-items: center; }
 
     #teamNameInput { 
@@ -107,6 +101,7 @@
     }
     #teamNameInput:focus { border-color: var(--cor-dourado); outline: none; }
     
+    /* Estilo do Input de Autor */
     #teamAuthorInput {
         background: transparent; border: none; border-bottom: 1px solid #444;
         color: #aaa; font-size: 0.9rem; padding: 2px; width: 100%;
@@ -394,26 +389,20 @@
     const IMG_ERROR = "https://img.pokemondb.net/sprites/items/poke-ball.png"; 
     const ITEM_ICON_BASE = "https://play.pokemonshowdown.com/sprites/itemicons/";
 
-    // --- VARIÁVEIS GLOBAIS ---
+    // --- VARIÁVEIS GLOBAIS (DECLARADAS APENAS UMA VEZ) ---
     let pokemonIdMap = {}; 
     let validAbilitiesMap = {}; 
-    let validMovesMap = {}; 
+    let validMovesMap = {}; // Salva moves válidos por slot
     let todosItens = [];
-    let todosMoves = []; 
-    let MOVES_MAP = {};  
     let slotCounter = 0; 
     let slotBaseStats = {}; 
     let allTeams = []; 
     let currentTeamIndex = null;
 
-    // --- LISTA DE MOVES CUSTOMIZADOS ---
-    const CUSTOM_MOVES = {
-        "Deoxys-Speed": ["Spikes"],
-        "medicham": ["Fake Out"]
-    };
-
     // --- LISTA DE PALAVRAS PROIBIDAS ---
+  // --- LISTA DE PALAVRAS PROIBIDAS (Expandida) ---
     const BAD_WORDS = [
+        // Base e Variações Comuns
         "puta", "puto", "pu.ta", "p.uta", "p4ta", "put4", "put@", "vagabunda", "vagaba", "rapariga", "piranha",
         "merda", "m3rda", "bosta", "cagar", "cagado",
         "caralho", "krl", "carai", "caraio", "c4ralho", "pqp",
@@ -423,120 +412,111 @@
         "pau", "pinto", "piroca", "pica", "rolan", "rola", "penis", "p1nto", "p1roca", "ereto", "gozo", "gozar", "gozada", "gozeidinha", "sperma", "porra", "p0rra",
         "cu", "c.u", "c*", "anus", "anal", "furico", "arrombado", "arrombada",
         "boquete", "boqueteiro", "boqueteira", "chupa", "chupei", "mamada", "mamar",
-        "sexo", "sex", "s3x", "transar", "trepar", "suruba", "orgia", "estupro", "abuso", "abusado", "molestado", "pedofilo", "pedofilia", "zoofilo", "zoofilia", "zoofililo", "zoophilo", "d.dirry",
+        "sexo", "sex", "s3x", "transar", "trepar", "suruba", "orgia", "estupro", "abuso", "abusado", "molestado", "pedofilo", "pedofilia", "zoofilo", "zoofilia", "zoofililo", "d.dirry",
         "jack", "estuprador", 
         "corno", "c0rno", "cornudo", "chifrudo", "chuca", "xuca", "x4ca", "ch4ca", "retardado", "autista", "prostituta",
+        
+        // Racismo e Ódio (Termos pesados)
         "preto", "negro", "neguim", "neguinho", "criolo", "crioulo", "macaco", "macaca", "m4caco", "m4caca", "escravo", "senzala",
         "hitler", "h1tler", "nazista", "nazi", "ritler", "suastica", "ariano",
-        "judeu", "judiaria", 
+        "judeu", "judiaria", // Contexto ofensivo comum em jogos
         "nigga", "nigger", 
         "traveco", "travesti", "tr4veco", "shemale", "femboy", "tomboy",
-        "fuck", "fck", "dick", "pussy", "asshole", "bitch", "shit", "cunt", "whore", "cock", "suck"
+        
+        // Inglês Comum
+        "fuck", "fck", "dick", "pussy", "asshole", "bitch", "shit", "cunt", "whore", "cock", "suck",
+        
+        // Religioso / Outros (Cuidado com Falso Positivo)
+        "jesus", "deus", "diabo", "demonio", "satanas", "lucifer", "oricha", "orixa", "umbanda", "macumba", // Podem gerar bloqueio indevido
+        "gorda", "baleia", "obeso", // Adjetivos
     ];
+    
+    // --- CORREÇÃO DE NOMES DE GOLPES (U-turn, Soft-Boiled, etc) ---
+    const MOVE_EXCEPTIONS = {
+        "u-turn": "U-turn",
+        "v-create": "V-create",
+        "will-o-wisp": "Will-O-Wisp",
+        "soft-boiled": "Soft-Boiled",
+        "double-edge": "Double-Edge",
+        "freeze-dry": "Freeze-Dry",
+        "x-scissor": "X-Scissor",
+        "lock-on": "Lock-On",
+        "self-destruct": "Self-Destruct",
+        "trick-or-treat": "Trick-or-Treat",
+        "baby-doll-eyes": "Baby-Doll Eyes",
+        "topsy-turvy": "Topsy-Turvy",
+        "multi-attack": "Multi-Attack",
+        "power-up-punch": "Power-Up Punch",
+        "mud-slap": "Mud-Slap",
+        "fake-out": "Fake Out" // Garante o espaço correto
+    };
 
+    function formatMoveName(slug) {
+        if (!slug) return "";
+        // 1. Verifica se é uma exceção (golpe com traço)
+        if (MOVE_EXCEPTIONS[slug]) return MOVE_EXCEPTIONS[slug];
+        
+        // 2. Padrão: Remove traços e capitaliza (ex: thunder-punch -> Thunder Punch)
+        return slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    }
+
+    // Função auxiliar para normalizar o texto antes de checar
+    // Isso transforma "v1ad0" em "viado", "m3rd4" em "merda", etc.
     function normalizeText(text) {
         if (!text) return "";
         return text.toLowerCase()
-            .normalize('NFD').replace(/[\u0300-\u036f]/g, "") 
-            .replace(/0/g, "o").replace(/1/g, "i").replace(/3/g, "e").replace(/4/g, "a")
-            .replace(/5/g, "s").replace(/@/g, "a").replace(/\$/g, "s").replace(/\./g, "")   
-            .replace(/\s+/g, ""); 
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, "") // Remove acentos (é -> e)
+            .replace(/0/g, "o")
+            .replace(/1/g, "i")
+            .replace(/3/g, "e")
+            .replace(/4/g, "a")
+            .replace(/5/g, "s")
+            .replace(/@/g, "a")
+            .replace(/\$/g, "s")
+            .replace(/\./g, "")   // Remove pontos (p.u.t.a -> puta)
+            .replace(/\s+/g, ""); // Remove espaços (p u t a -> puta)
     }
 
     function hasProfanity(text) {
         if (!text) return false;
+        
+        // 1. Checagem direta (palavra exata como foi digitada)
         const lowerText = text.toLowerCase();
+        
+        // 2. Checagem normalizada (converte leet speak para texto limpo)
         const cleanText = normalizeText(text);
+
         return BAD_WORDS.some(word => {
+            // Verifica se a palavra proibida está contida no texto original ou no normalizado
             return lowerText.includes(word) || cleanText.includes(word);
         });
     }
-
-    // --- FORMATAÇÃO GERAL DE TEXTO ---
-    function formatText(str) { 
-        if (!str) return ''; 
-        return str.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '); 
-    }
-
-    // --- CARREGAMENTO E LIMPEZA AUTOMÁTICA DO MOVES.JSON ---
-    async function initMoves() {
-        // Lista de Exceções
-        const EXCEPTIONS = {
-            "u-turn": "U-turn", "v-create": "V-create", "will-o-wisp": "Will-O-Wisp",
-            "soft-boiled": "Soft-Boiled", "double-edge": "Double-Edge", "freeze-dry": "Freeze-Dry",
-            "x-scissor": "X-Scissor", "lock-on": "Lock-On", "self-destruct": "Self-Destruct",
-            "trick-or-treat": "Trick-or-Treat", "baby-doll-eyes": "Baby-Doll Eyes",
-            "topsy-turvy": "Topsy-Turvy", "multi-attack": "Multi-Attack",
-            "power-up-punch": "Power-Up Punch", "wake-up-slap": "Wake-Up Slap", "mud-slap": "Mud-Slap"
-        };
-
-        const paths = ['builder/moves.json', 'moves.json']; 
-        let loaded = false;
-
-        for (const path of paths) {
-            try {
-                const r = await fetch(path);
-                if (r.ok) {
-                    const rawData = await r.json();
-                    
-                    todosMoves = rawData.map(m => {
-                        let prettyName = m.name;
-                        const lowerName = m.name.toLowerCase();
-                        if (EXCEPTIONS[lowerName]) { prettyName = EXCEPTIONS[lowerName]; } 
-                        else if (m.name.includes('-')) { prettyName = formatText(m.name); }
-                        return { ...m, name: prettyName };
-                    });
-
-                    loaded = true;
-                    console.log(`Moves carregados: ${path}`);
-                    
-                    MOVES_MAP = {};
-                    todosMoves.forEach(move => {
-                        const key = move.name.toLowerCase().replace(/[^a-z0-9]/g, '');
-                        MOVES_MAP[key] = move;
-                    });
-                    break;
-                }
-            } catch (e) { console.log(`Tentando próximo...`); }
-        }
-
-        if (!loaded) console.error("ERRO: moves.json não encontrado.");
-    }
-
-    function formatMoveName(apiSlug) {
-        if (!apiSlug) return "";
-        const cleanKey = apiSlug.toLowerCase().replace(/[^a-z0-9]/g, '');
-        if (MOVES_MAP[cleanKey]) return MOVES_MAP[cleanKey].name; 
-        return formatText(apiSlug);
-    }
-
+    // --- FORMATADORES ---
     function formatToApiName(name) { 
         if(!name) return "";
         return name.trim().toLowerCase().replace(/ /g, '-').replace(/\./g, '').replace(/'/g, '').replace(/:/g, '').replace(/♀/g, '-f').replace(/♂/g, '-m'); 
     }
+    
     function formatItemToShowdown(name) { return name.toLowerCase().replace(/[^a-z0-9]/g, ''); }
+    function formatText(str) { if (!str) return ''; return str.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '); }
 
-    // --- INICIALIZAÇÃO (CORRIGIDA) ---
+    // --- INICIALIZAÇÃO (COM LEITURA DE LINK) ---
     window.onload = async function() { 
         await initItens(); 
-        await initMoves(); 
         
         const params = new URLSearchParams(window.location.search);
         const importData = params.get('import');
 
         if(importData) {
             try {
-                let decodedText = LZString.decompressFromEncodedURIComponent(importData);
-                if (!decodedText) decodedText = decodeURIComponent(escape(atob(importData)));
-
-                if (decodedText) {
-                    document.getElementById('ioText').value = decodedText;
-                    setTimeout(() => {
-                        processImport(); 
-                        window.history.replaceState({}, document.title, window.location.pathname);
-                        alert("Time carregado via Link Compartilhado!");
-                    }, 500);
-                }
+                const decodedText = decodeURIComponent(escape(atob(importData)));
+                document.getElementById('ioText').value = decodedText;
+                
+                setTimeout(() => {
+                    processImport(); 
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                    alert("Time carregado via Link Compartilhado!");
+                }, 500);
             } catch(e) {
                 console.error(e);
                 alert("Link inválido ou corrompido.");
@@ -592,7 +572,7 @@
     function createNewTeam() {
         currentTeamIndex = null;
         document.getElementById('teamNameInput').value = "";
-        document.getElementById('teamAuthorInput').value = "";
+        document.getElementById('teamAuthorInput').value = ""; // Limpa Autor
         document.getElementById('teamTier').value = "";
         resetBuilderUI();
         addNewSlot(); 
@@ -604,7 +584,7 @@
         document.getElementById('editorsContainer').innerHTML = "";
         slotCounter = 0; slotBaseStats = {};
         validAbilitiesMap = {};
-        validMovesMap = {};
+        validMovesMap = {}; // Limpa mapa de moves
     }
 
     async function editTeam(index) {
@@ -710,12 +690,15 @@
         const dl = document.getElementById('list-pokemon'); dl.innerHTML = "";
         pokemonIdMap = {}; 
         
+        // --- ESTRATÉGIA DE FUNDIR JSONs ---
         let arquivosParaCarregar = [`tiers_1.16/${tier}.json`];
+
         if (tier.startsWith('National_Dex') && tier !== 'National_Dex') {
             arquivosParaCarregar.unshift('tiers_1.16/National_Dex.json');
         }
 
         let dadosFundidos = {};
+
         try {
             for (const arq of arquivosParaCarregar) {
                 const r = await fetch(arq);
@@ -737,7 +720,11 @@
                     pokemonIdMap[chaveNormalizada] = true;
                 }
             });
-        } catch(e){ console.error("Erro ao carregar Tier Local", e); }
+
+        } catch(e){ 
+            console.error("Erro ao carregar Tier Local", e); 
+            alert("Erro ao carregar lista de Pokémon.");
+        }
         atualizarListaItens(tier);
     }
     
@@ -756,6 +743,7 @@
 
         if(!tier) { if(!silent) alert("Selecione uma Tier."); return false; }
         
+        // --- FILTRO DE PALAVRAS ---
         if (hasProfanity(teamName) || hasProfanity(authorName)) {
             alert("O nome do time ou do autor contém termos ofensivos/proibidos.\nPor favor, altere para continuar.");
             return false;
@@ -779,6 +767,21 @@
                     if (!ability) errors.push(`#${i+1} ${name}: Precisa de uma habilidade.`);
                     else if (!validAbilitiesMap[id].includes(ability)) errors.push(`#${i+1} ${name}: Habilidade "${ability}" inválida.`);
                 }
+
+                // --- VALIDAÇÃO DE MOVES ---
+                const moveInputs = ed.querySelectorAll('.p-move');
+                const allowedMoves = validMovesMap[id];
+                
+                moveInputs.forEach((inp, mIndex) => {
+                    const moveVal = inp.value.trim();
+                    if (moveVal) {
+                        if (allowedMoves && !allowedMoves.includes(moveVal)) {
+                            if (!moveVal.startsWith("Hidden Power")) { 
+                                errors.push(`#${i+1} ${name}: Não aprende o movimento "${moveVal}".`);
+                            }
+                        }
+                    }
+                });
             }
         });
 
@@ -855,7 +858,8 @@
             if(pokemonIdMap[apiName] && typeof pokemonIdMap[apiName] !== 'boolean') {
                  src = `${POKEAPI_IMG}${pokemonIdMap[apiName]}.png`;
             }
-            img.src = src; tabImg.src = src;
+            img.src = src;
+            tabImg.src = src;
             return;
         }
 
@@ -866,7 +870,8 @@
                 const d = await r.json();
                 
                 const newSrc = `${POKEAPI_IMG}${d.id}.png`;
-                img.src = newSrc; tabImg.src = newSrc;
+                img.src = newSrc; 
+                tabImg.src = newSrc;
 
                 slotBaseStats[id] = { hp:d.stats[0].base_stat, atk:d.stats[1].base_stat, def:d.stats[2].base_stat, spa:d.stats[3].base_stat, spd:d.stats[4].base_stat, spe:d.stats[5].base_stat };
                 recalcStats(id);
@@ -879,7 +884,9 @@
                 d.abilities.forEach(a => { 
                     const formattedAbi = formatText(a.ability.name);
                     allowedAbilities.push(formattedAbi);
-                    const o = document.createElement('option'); o.value = formattedAbi; abilList.appendChild(o); 
+                    const o = document.createElement('option'); 
+                    o.value = formattedAbi; 
+                    abilList.appendChild(o); 
                 });
                 validAbilitiesMap[id] = allowedAbilities; 
 
@@ -887,27 +894,25 @@
                     currentAbilityInput.value = allowedAbilities[0] || "";
                 }
                 
+                // --- MOVES: Salva moves válidos COM A NOVA FORMATAÇÃO ---
                 const moveList = document.getElementById(`moves-${id}`); 
                 moveList.innerHTML="";
                 let allowedMoves = []; 
                 
                 d.moves.forEach(m => { 
+                    // Usa a função correta para garantir U-turn, Will-O-Wisp, etc.
                     const mName = formatMoveName(m.move.name); 
+                    
                     allowedMoves.push(mName); 
-                    const o = document.createElement('option'); o.value = mName; moveList.appendChild(o); 
+                    const o = document.createElement('option'); 
+                    o.value = mName; 
+                    moveList.appendChild(o); 
                 });
-
-                if (CUSTOM_MOVES[apiName]) {
-                    CUSTOM_MOVES[apiName].forEach(extraMove => {
-                        if (!allowedMoves.includes(extraMove)) {
-                            allowedMoves.push(extraMove);
-                            const o = document.createElement('option'); o.value = extraMove; moveList.appendChild(o);
-                        }
-                    });
-                }
                 validMovesMap[id] = allowedMoves; 
             }
-        } catch(e){ console.error("Erro API", e); }
+        } catch(e){
+            console.error("Erro API", e);
+        }
     }
 
     function updateItemIcon(id, input) {
@@ -924,7 +929,9 @@
         if (v < 0) v = 0; 
         let usedByOthers = 0;
         STATS.forEach(s => {
-            if (s !== stat) usedByOthers += parseInt(document.getElementById(`num-${id}-${s}`).value) || 0;
+            if (s !== stat) {
+                usedByOthers += parseInt(document.getElementById(`num-${id}-${s}`).value) || 0;
+            }
         });
         const remainingGlobal = 508 - usedByOthers;
         const maxAllowed = Math.min(252, remainingGlobal);
@@ -942,11 +949,14 @@
         const nature = document.getElementById(`editor-${id}`).querySelector('.p-nature').value;
         
         let mods = { atk:1, def:1, spa:1, spd:1, spe:1 };
+
         if(NATURES_INFO[nature] && NATURES_INFO[nature]!=="Neutral") {
             const parts = NATURES_INFO[nature].split(','); 
             parts.forEach(p => { 
-                p = p.trim(); const type = p.substring(1).toLowerCase(); 
-                if(p.startsWith('+')) mods[type] = 1.1; if(p.startsWith('-')) mods[type] = 0.9; 
+                p = p.trim(); 
+                const type = p.substring(1).toLowerCase(); 
+                if(p.startsWith('+')) mods[type] = 1.1; 
+                if(p.startsWith('-')) mods[type] = 0.9; 
             });
         }
 
@@ -959,12 +969,14 @@
             
             let final = 0;
             if(b > 0) {
-                if(s === 'HP') final = b === 1 ? 1 : Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + level + 10;
-                else {
+                if(s === 'HP') {
+                    final = b === 1 ? 1 : Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + level + 10;
+                } else {
                     const rawStat = Math.floor(((2 * b + iv + Math.floor(ev / 4)) * level) / 100) + 5;
                     final = Math.floor(rawStat * mods[k]);
                 }
             }
+            
             document.getElementById(`val-${id}-${k}`).innerText = final;
             document.getElementById(`bar-${id}-${k}`).style.width = Math.min((b/255)*100, 100)+"%";
         });
@@ -1067,6 +1079,11 @@
         }
     }
 
+    function publishTeam() {
+        // Função de placeholder caso o módulo não carregue (mas a lógica real está no módulo abaixo)
+        alert("Carregando sistema de publicação...");
+    }
+
     function copyToClipboard() { navigator.clipboard.writeText(document.getElementById('ioText').value); alert("Copiado!"); }
     
     function processImport() {
@@ -1111,155 +1128,178 @@
         document.getElementById('ioModal').style.display='none';
         saveCurrentTeamToStorage();
     }
+  </script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { 
+    getAuth, 
+    signInWithPopup, 
+    GoogleAuthProvider, 
+    signOut, 
+    onAuthStateChanged,
+    signInWithEmailAndPassword,
+    createUserWithEmailAndPassword,
+    updateProfile
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+  
+  import { 
+    getDatabase, 
+    ref, 
+    push, 
+    set,
+    serverTimestamp
+  } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // --- FIREBASE LOGIC (COMPAT MODE) ---
-    // Agora isso roda em escopo global, sem precisar de módulos ou servidor complexo
-    
-    const firebaseConfig = {
-      apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
-      authDomain: "sampleteans.firebaseapp.com",
-      databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
-      projectId: "sampleteans",
-      storageBucket: "sampleteans.firebasestorage.app",
-      messagingSenderId: "1069510029261",
-      appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyCno7O_ZGLTDYvSG5kzYU-KpduucWcxQe8",
+    authDomain: "sampleteans.firebaseapp.com",
+    databaseURL: "https://sampleteans-default-rtdb.firebaseio.com",
+    projectId: "sampleteans",
+    storageBucket: "sampleteans.firebasestorage.app",
+    messagingSenderId: "1069510029261",
+    appId: "1:1069510029261:web:ccafa840ebf0e2a0e85e84"
+  };
 
-    // Inicializa o Firebase (modo antigo e robusto)
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.database(); 
-    const provider = new firebase.auth.GoogleAuthProvider();
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app); 
+  const provider = new GoogleAuthProvider();
 
-    // Elementos de Auth
-    const loginForm = document.getElementById('loginForm');
-    const userProfile = document.getElementById('userProfile');
-    const emailInput = document.getElementById('emailInput');
-    const passInput = document.getElementById('passInput');
-    const btnGoogleLogin = document.getElementById('btnGoogleLogin');
-    const btnEmailLogin = document.getElementById('btnEmailLogin');
-    const btnEmailRegister = document.getElementById('btnEmailRegister');
-    const btnLogout = document.getElementById('btnLogout');
-    const userPhoto = document.getElementById('userPhoto');
-    const userName = document.getElementById('userName');
-    const userEmail = document.getElementById('userEmail');
+  // --- Elementos de Auth ---
+  const loginForm = document.getElementById('loginForm');
+  const userProfile = document.getElementById('userProfile');
+  const emailInput = document.getElementById('emailInput');
+  const passInput = document.getElementById('passInput');
+  const btnGoogleLogin = document.getElementById('btnGoogleLogin');
+  const btnEmailLogin = document.getElementById('btnEmailLogin');
+  const btnEmailRegister = document.getElementById('btnEmailRegister');
+  const btnLogout = document.getElementById('btnLogout');
+  const userPhoto = document.getElementById('userPhoto');
+  const userName = document.getElementById('userName');
+  const userEmail = document.getElementById('userEmail');
 
-    // --- FUNÇÃO PUBLICAR (AGORA GLOBAL E ACESSÍVEL) ---
-    async function publishTeam() {
-        if (!validateTeam(true)) return; // Se tiver erro no time, para.
-        
-        const user = auth.currentUser;
-        if(!user) {
-            alert("Você precisa estar logado para publicar!");
-            document.getElementById("menuBtn").classList.add("active"); 
-            document.querySelector(".sidebar").style.display = "flex";
-            return;
-        }
+  // --- LÓGICA DE PUBLICAR COMPLETA ---
+  window.publishTeam = async function() {
+      // Bloqueio de Validação (Silencioso para o usuario corrigir, mas impede o envio)
+      if (!validateTeam(true)) { 
+          return; 
+      }
+      
+      const user = auth.currentUser;
+      
+      if(!user) {
+          alert("Você precisa estar logado para publicar!");
+          document.getElementById("menuBtn").classList.add("active"); 
+          document.querySelector(".sidebar").style.display = "flex";
+          return;
+      }
 
-        const title = document.getElementById('teamNameInput').value;
-        const author = document.getElementById('teamAuthorInput').value;
-        const tier = document.getElementById('teamTier').value;
-        const teamText = getTeamAsText(); 
+      const title = document.getElementById('teamNameInput').value;
+      const author = document.getElementById('teamAuthorInput').value;
+      const tier = document.getElementById('teamTier').value;
+      const teamText = getTeamAsText(); 
 
-        if(!title || title === "Novo Time") { alert("Dê um nome ao time."); return; }
-        if(!tier) { alert("Selecione uma Tier."); return; }
-        if(teamText.length < 50) { alert("O time parece estar vazio."); return; }
+      if(!title || title === "Novo Time") { alert("Dê um nome ao time."); return; }
+      if(!tier) { alert("Selecione uma Tier."); return; }
+      if(teamText.length < 50) { alert("O time parece estar vazio."); return; }
 
-        let sprites = [];
-        document.querySelectorAll('.poke-editor').forEach(ed => {
-            const name = ed.querySelector('.p-name').value;
-            if(name) sprites.push(name.toLowerCase());
-        });
+      let sprites = [];
+      document.querySelectorAll('.poke-editor').forEach(ed => {
+          const name = ed.querySelector('.p-name').value;
+          if(name) sprites.push(name.toLowerCase());
+      });
 
-        const btn = document.querySelector('.btn-publish');
-        const originalText = btn.innerHTML;
-        btn.innerHTML = "Enviando...";
-        btn.disabled = true;
+      const btn = document.querySelector('.btn-publish');
+      const originalText = btn.innerHTML;
+      btn.innerHTML = "Enviando...";
+      btn.disabled = true;
 
-        try {
-            // Push para o Database
-            const newRef = db.ref('teams').push();
-            await newRef.set({
-                title: title,
-                author: author || user.displayName || "Treinador",
-                tier: tier,
-                teamData: teamText,
-                pokemon: sprites,
-                userId: user.uid,
-                userPhoto: user.photoURL || null,
-                createdAt: firebase.database.ServerValue.TIMESTAMP
-            });
+      try {
+          // --- REALTIME DATABASE ---
+          const teamsListRef = ref(db, 'teams');
+          const newTeamRef = push(teamsListRef);
+          
+          await set(newTeamRef, {
+              title: title,
+              author: author || user.displayName || "Treinador",
+              tier: tier,
+              teamData: teamText,
+              pokemon: sprites,
+              userId: user.uid,
+              userPhoto: user.photoURL || null,
+              createdAt: serverTimestamp()
+          });
 
-            alert("Time publicado com sucesso no Feed!");
-        } catch (error) {
-            console.error("Erro ao publicar: ", error);
-            alert("Erro ao publicar: " + error.message);
-        } finally {
-            btn.innerHTML = originalText;
-            btn.disabled = false;
-        }
-    }
+          alert("Time publicado com sucesso no Feed!");
+      } catch (error) {
+          console.error("Erro ao publicar: ", error);
+          alert("Erro ao publicar: " + error.message);
+      } finally {
+          btn.innerHTML = originalText;
+          btn.disabled = false;
+      }
+  }
 
-    // --- LISTENERS DE AUTH ---
-    if(btnGoogleLogin) {
-        btnGoogleLogin.addEventListener('click', () => {
-            auth.signInWithPopup(provider).then(async (result) => {
-                 if(confirm(`Logado como ${result.user.displayName}. Alterar Nick?`)) {
-                     const newNick = prompt("Novo Nick:");
-                     if(newNick) {
-                         await result.user.updateProfile({ displayName: newNick });
-                         location.reload();
-                     }
-                }
-            }).catch((e) => alert("Erro: " + e.message));
-        });
-    }
-
-    if(btnEmailLogin) {
-        btnEmailLogin.addEventListener('click', () => {
-            auth.signInWithEmailAndPassword(emailInput.value, passInput.value)
-                .catch((e) => alert("Erro Login: " + e.message));
-        });
-    }
-
-    if(btnEmailRegister) {
-        btnEmailRegister.addEventListener('click', () => {
-            if(passInput.value.length < 6) { alert("Senha curta."); return; }
-            auth.createUserWithEmailAndPassword(emailInput.value, passInput.value)
-                .then(async (cred) => {
-                    const nick = prompt("Qual seu Nick de Treinador?");
-                    if(nick) await cred.user.updateProfile({ displayName: nick });
-                    location.reload();
-                })
-                .catch((e) => alert("Erro Cadastro: " + e.message));
-        });
-    }
-
-    if(btnLogout) {
-        btnLogout.addEventListener('click', () => {
-            if(confirm("Sair?")) auth.signOut().then(() => location.reload());
-        });
-    }
-
-    auth.onAuthStateChanged((user) => {
-        if (user) {
-            if(loginForm) loginForm.style.display = 'none';
-            if(userProfile) {
-                userProfile.style.display = 'flex';
-                userPhoto.src = user.photoURL ? user.photoURL : "https://i.imgur.com/XOEcuO8.png"; 
-                userName.innerText = user.displayName ? user.displayName : "Treinador";
-                userEmail.innerText = user.email;
-
-                const authorInput = document.getElementById('teamAuthorInput');
-                if(authorInput && !authorInput.value && user.displayName) {
-                    authorInput.value = user.displayName;
-                }
+  // --- MÉTODOS DE AUTH ---
+  if(btnGoogleLogin) {
+      btnGoogleLogin.addEventListener('click', () => {
+        signInWithPopup(auth, provider).then(async (result) => {
+             if(confirm(`Logado como ${result.user.displayName}. Alterar Nick?`)) {
+                 const newNick = prompt("Novo Nick:");
+                 if(newNick) {
+                     await updateProfile(result.user, { displayName: newNick });
+                     location.reload();
+                 }
             }
-        } else {
-            if(loginForm) loginForm.style.display = 'flex';
-            if(userProfile) userProfile.style.display = 'none';
-        }
-    });
+        }).catch((e) => alert("Erro: " + e.message));
+      });
+  }
+
+  if(btnEmailLogin) {
+      btnEmailLogin.addEventListener('click', () => {
+        signInWithEmailAndPassword(auth, emailInput.value, passInput.value)
+            .catch((e) => alert("Erro Login: " + e.message));
+      });
+  }
+
+  if(btnEmailRegister) {
+      btnEmailRegister.addEventListener('click', () => {
+        if(passInput.value.length < 6) { alert("Senha curta."); return; }
+        createUserWithEmailAndPassword(auth, emailInput.value, passInput.value)
+            .then(async (cred) => {
+                const nick = prompt("Qual seu Nick de Treinador?");
+                if(nick) await updateProfile(cred.user, { displayName: nick });
+                location.reload();
+            })
+            .catch((e) => alert("Erro Cadastro: " + e.message));
+      });
+  }
+
+  if(btnLogout) {
+      btnLogout.addEventListener('click', () => {
+        if(confirm("Sair?")) signOut(auth).then(() => location.reload());
+      });
+  }
+
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      if(loginForm) loginForm.style.display = 'none';
+      if(userProfile) {
+          userProfile.style.display = 'flex';
+          userPhoto.src = user.photoURL ? user.photoURL : "https://i.imgur.com/XOEcuO8.png"; 
+          userName.innerText = user.displayName ? user.displayName : "Treinador";
+          userEmail.innerText = user.email;
+
+          const authorInput = document.getElementById('teamAuthorInput');
+          if(authorInput && !authorInput.value && user.displayName) {
+              authorInput.value = user.displayName;
+          }
+      }
+    } else {
+      if(loginForm) loginForm.style.display = 'flex';
+      if(userProfile) userProfile.style.display = 'none';
+    }
+  });
 </script>
 </body>
 </html>
